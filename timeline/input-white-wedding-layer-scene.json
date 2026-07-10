@@ -1,0 +1,2718 @@
+{
+  "project": {
+    "name": "input-white-wedding-layer-scene",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "music": [
+    {
+      "path": "music/a thousand years.mp3",
+      "volume": 0.75
+    }
+  ],
+  "audio": {
+    "fade_in": 2,
+    "fade_out": 3,
+    "crossfade": 0
+  },
+  "output": {
+    "path": "output/input-white-wedding-layer-scene.mp4"
+  },
+  "slides": [
+    {
+      "id": "input_white_wedding_001",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/001.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/002.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/003.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "SAVE THE DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quốc và Nhi",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_002",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "JAPAN BEGINNING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quốc làm việc tại Nhật, Nhi là du\nhọc sinh nơi đất khách",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/004.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/005.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/006.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_003",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/007.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/008.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/009.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "CÙNG QUÊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Cùng quê hương, cùng xa nhà, hai người tìm thấy nhau giữa\nNhật Bản",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_004",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/010.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/011.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/012.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "FIRST MEETING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Một lần gặp gỡ bình thường đã mở ra\nmột hành trình rất dài",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_004",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/008.jpg",
+        "input/009.jpg",
+        "input/010.jpg",
+        "input/011.jpg",
+        "input/012.jpg",
+        "input/013.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_005",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/013.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/014.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/015.jpg",
+          "x": 890,
+          "y": 550,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "OUR STORY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Từ những ngày đầu bỡ ngỡ,\ncả hai dần trở thành điểm\ntựa của nhau",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_006",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/016.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/017.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/018.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "IN JAPAN",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Những con phố, chuyến đi và ngày thường ở Nhật\nlưu lại thật nhiều kỷ niệm",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_007",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "LOVE GROWS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Tình yêu lớn lên qua sự quan tâm,\nchờ đợi và những lần cùng nhau cố\ngắng",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/019.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/020.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/021.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_008",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/022.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/023.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/024.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "FOUR YEARS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Bốn năm bên nhau, đủ để hiểu, thương và chọn đi tiếp cùng\nnhau",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_008",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/020.jpg",
+        "input/021.jpg",
+        "input/022.jpg",
+        "input/023.jpg",
+        "input/024.jpg",
+        "input/025.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_009",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/025.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/026.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/027.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "PROMISE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Từ Nhật Bản, lời hứa về một mái nhà\nchung ngày càng rõ ràng hơn",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_010",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/028.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/029.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/030.jpg",
+          "x": 890,
+          "y": 550,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "COMING HOME",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Sau hành trình yêu xa quê,\ncả hai trở về với gia đình\nvà quê hương",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_011",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/031.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/032.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/033.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "QUẢNG TRỊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Đám cưới ở Quảng Trị là điểm hẹn của tình yêu\nvà lời chúc phúc",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_012",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Hôm nay, câu chuyện Quốc và Nhi\nđược kể lại bằng những nụ cười",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/034.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/035.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/036.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_012",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/032.jpg",
+        "input/033.jpg",
+        "input/034.jpg",
+        "input/035.jpg",
+        "input/036.jpg",
+        "input/037.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_013",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/037.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/038.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/039.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "SAVE THE DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quốc và Nhi",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_014",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/040.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/041.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/042.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "JAPAN BEGINNING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Một chàng trai làm việc tại Nhật và\nmột cô du học sinh cùng quê",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_015",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/043.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/044.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/045.jpg",
+          "x": 890,
+          "y": 550,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "CÙNG QUÊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Giữa nơi xa, hai trái tim\nnhận ra mình có chung một\nmiền nhớ",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_016",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/046.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/047.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/048.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "FIRST MEETING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Từ gặp gỡ đến thương yêu, mọi điều bắt đầu\nthật nhẹ nhàng",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_016",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/044.jpg",
+        "input/045.jpg",
+        "input/046.jpg",
+        "input/047.jpg",
+        "input/048.jpg",
+        "input/049.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_017",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "OUR STORY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Từng khoảnh khắc nhỏ góp lại thành\nmột câu chuyện rất riêng",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/049.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/050.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/051.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_018",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/052.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/053.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/054.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "IN JAPAN",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Nhật Bản giữ lại những năm tháng thanh xuân của hai người",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_019",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/055.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/056.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/057.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "LOVE GROWS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Có những ngày bình yên, có cả những\nngày cùng nhau vượt qua khó khăn",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_020",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/058.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/059.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/060.jpg",
+          "x": 890,
+          "y": 550,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "FOUR YEARS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Bốn năm là một hành trình\nđủ dài để tình yêu trở nên\nbền chặt",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_020",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/056.jpg",
+        "input/057.jpg",
+        "input/058.jpg",
+        "input/059.jpg",
+        "input/060.jpg",
+        "input/061.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_021",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/061.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/062.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/063.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "PROMISE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Cả hai chọn nhau không chỉ cho hiện tại mà còn\ncho những ngày sau",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_022",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "COMING HOME",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Tình yêu ấy trở về quê nhà trong\nvòng tay của gia đình",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/064.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/065.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/066.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_023",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/067.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/068.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/069.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "QUẢNG TRỊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quảng Trị chứng kiến ngày Quốc và Nhi chính thức về chung\nmột nhà",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_024",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/070.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/071.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/072.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Một cái kết đẹp cho hành trình bắt đầu\ntừ Nhật Bản",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_024",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/068.jpg",
+        "input/069.jpg",
+        "input/070.jpg",
+        "input/071.jpg",
+        "input/072.jpg",
+        "input/073.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_025",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/073.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/074.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/075.jpg",
+          "x": 890,
+          "y": 550,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "SAVE THE DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quốc và Nhi",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_026",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/076.jpg",
+          "x": 90,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/077.jpg",
+          "x": 690,
+          "y": 185,
+          "width": 470,
+          "height": 620,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/078.jpg",
+          "x": 1200,
+          "y": 145,
+          "width": 560,
+          "height": 700,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "JAPAN BEGINNING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 600,
+          "y": 55,
+          "width": 720,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Hai người trẻ xa quê gặp nhau giữa những ngày\nở Nhật",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 920,
+          "width": 1000,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_027",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "text",
+          "text": "CÙNG QUÊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 170,
+          "width": 760,
+          "height": 148,
+          "size": 82,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Cùng quê là một sợi dây gần gũi,\ntình yêu là điều giữ họ lại bên\nnhau",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 340,
+          "width": 760,
+          "height": 61,
+          "size": 34,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "image",
+          "path": "input/079.jpg",
+          "x": 980,
+          "y": 95,
+          "width": 760,
+          "height": 820,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/080.jpg",
+          "x": 560,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/081.jpg",
+          "x": 70,
+          "y": 715,
+          "width": 330,
+          "height": 250,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_028",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/082.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 1040,
+          "height": 680,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/083.jpg",
+          "x": 120,
+          "y": 130,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_right",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/084.jpg",
+          "x": 120,
+          "y": 485,
+          "width": 430,
+          "height": 300,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "FOUR YEARS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 90,
+          "y": 850,
+          "width": 1740,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Sau bốn năm, những kỷ niệm trở thành lời khẳng định cho\ntình yêu",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 940,
+          "width": 1400,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_film_roll_028",
+      "duration": 18,
+      "effect": "film_roll_up",
+      "images": [
+        "input/080.jpg",
+        "input/081.jpg",
+        "input/082.jpg",
+        "input/083.jpg",
+        "input/084.jpg",
+        "input/085.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "input_white_wedding_029",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/085.jpg",
+          "x": 110,
+          "y": 135,
+          "width": 790,
+          "height": 810,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/086.jpg",
+          "x": 980,
+          "y": 135,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_down",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/087.jpg",
+          "x": 1380,
+          "y": 560,
+          "width": 380,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_left",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "QUẢNG TRỊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 970,
+          "y": 565,
+          "width": 790,
+          "height": 112,
+          "size": 62,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Từ Nhật Bản đến Quảng Trị, hành trình\nấy đi tới ngày cưới",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 970,
+          "y": 675,
+          "width": 760,
+          "height": 58,
+          "size": 32,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    },
+    {
+      "id": "input_white_wedding_030",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/088.jpg",
+          "x": 190,
+          "y": 140,
+          "width": 640,
+          "height": 800,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "image",
+          "path": "input/089.jpg",
+          "x": 890,
+          "y": 120,
+          "width": 390,
+          "height": 360,
+          "fit": "contain",
+          "animation": "slide_up",
+          "start": 0,
+          "duration": 6
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1320,
+          "y": 220,
+          "width": 500,
+          "height": 104,
+          "size": 58,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        },
+        {
+          "type": "text",
+          "text": "Quốc và Nhi, từ hôm nay\ncùng viết tiếp một chương\nmới",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1320,
+          "y": 355,
+          "width": 460,
+          "height": 54,
+          "size": 30,
+          "color": "#634c31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2,
+          "duration": 5.4
+        }
+      ]
+    }
+  ]
+}

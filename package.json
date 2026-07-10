@@ -1,0 +1,24 @@
+{
+  "name": "wedding-render-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local render engine: timeline.json + images + music -> final.mp4 via FFmpeg",
+  "scripts": {
+    "desktop": "electron desktop/main.cjs",
+    "gen": "tsx src/generateTimeline.ts",
+    "render": "tsx src/index.ts",
+    "analyze:assets": "node scripts/analyzeAssets.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "electron": "^43.1.0",
+    "ffmpeg-static": "^5.3.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

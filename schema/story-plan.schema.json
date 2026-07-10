@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slideshow-render-engine/story-plan.schema.json",
+  "title": "Story Plan — film structure (Phase B / node 7)",
+  "description": "Contract for analysis/story_plan.json. Turns the chosen direction + director notes into the film's five-act structure: Opening → Love Story → Ceremony → Family & Friends → Ending. Each segment names its goal, feeling, rhythm, which photo content to pull, a caption idea, and ONE priority effect from the engine whitelist. Emphasis is a coarse enum (low/medium/high), NOT a duration — the timeline node computes real durations from music energy. Guardrail: segments come from the fixed ordered set, emotion/effect are enum-clamped, tags filtered to the controlled vocabulary.",
+  "type": "object",
+  "required": ["generatedBy", "choice", "segments"],
+  "additionalProperties": false,
+  "properties": {
+    "generatedBy": { "type": "string", "pattern": "^(stub|text:.+)$" },
+    "model": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "choice": { "enum": ["A", "B", "C", "D"] },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/segment" }
+    }
+  },
+  "$defs": {
+    "segment": {
+      "type": "object",
+      "required": ["segment", "goal", "emotion", "pacing", "emphasis", "photoTags", "priorityEffect", "captionIdea"],
+      "additionalProperties": false,
+      "properties": {
+        "segment": { "enum": ["opening", "love_story", "ceremony", "family_friends", "ending"], "description": "Which act. Unique and in canonical order." },
+        "goal": { "type": "string", "minLength": 1, "maxLength": 200, "description": "What this act should accomplish for the viewer." },
+        "emotion": { "enum": ["joyful", "tender", "romantic", "celebratory", "calm", "solemn", "playful"], "description": "Target feeling (photo-content emotion vocabulary)." },
+        "pacing": { "enum": ["slow", "medium", "fast", "dynamic"] },
+        "emphasis": { "enum": ["low", "medium", "high"], "description": "Relative screen-time weight — a creative dial, NOT a duration." },
+        "photoTags": { "type": "array", "items": { "enum": ["couple", "bride", "groom", "solo", "group", "family", "friends", "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance", "reception", "party", "portrait", "candid", "detail", "decor", "venue", "scenery", "food"] }, "description": "Which content tags this act draws from (controlled vocabulary)." },
+        "priorityEffect": { "type": "string", "description": "One effect enum to lean on in this act (see timeline.schema.json $defs/effect); runtime guardrail enforces validity." },
+        "captionIdea": { "type": "string", "minLength": 1, "maxLength": 200, "description": "A caption direction (theme, not final copy)." }
+      }
+    }
+  }
+}

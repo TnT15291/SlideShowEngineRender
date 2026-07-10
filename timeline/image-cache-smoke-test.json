@@ -1,0 +1,52 @@
+{
+  "project": {
+    "name": "image-cache-smoke-test",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "music": [],
+  "audio": {
+    "fade_in": 0,
+    "fade_out": 0,
+    "crossfade": 0
+  },
+  "output": {
+    "path": "output/image-cache-smoke-test.mp4"
+  },
+  "slides": [
+    {
+      "id": "image_cache_smoke",
+      "duration": 2,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "none",
+        "duration": 0
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#fbf6ed"
+        },
+        {
+          "type": "image",
+          "path": "input/089.jpg",
+          "x": 160,
+          "y": 90,
+          "width": 1600,
+          "height": 900,
+          "fit": "contain",
+          "opacity": 1,
+          "animation": "fade",
+          "start": 0,
+          "duration": 2
+        }
+      ]
+    }
+  ]
+}

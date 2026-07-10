@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/renderWithRetry.mjs --max-retries 2)",
+      "Bash(tee \"C:/Users/nhatt/AppData/Local/Temp/claude/d--Claude-Projects-SlideshowRenderEngine/ccb03c7a-25f8-40af-a06e-a3df36326840/scratchpad/realrender.log\")",
+      "Bash(tail -8 \"C:/Users/nhatt/AppData/Local/Temp/claude/d--Claude-Projects-SlideshowRenderEngine/ccb03c7a-25f8-40af-a06e-a3df36326840/scratchpad/realrender.log\")",
+      "Bash(ls -la output/quoc-nhi-full-v2.mp4)"
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "video": "output/korean-soft-romance-demo.mp4",
+  "scenes": 9,
+  "passed": 9,
+  "flagged": 0,
+  "problems": [],
+  "results": [
+    {
+      "id": "s01_opening_title",
+      "effect": "layer_scene",
+      "at": 3.6,
+      "yavg": 139.625,
+      "range": 225,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_first_chapter",
+      "effect": "layer_scene",
+      "at": 9.8,
+      "yavg": 181.72,
+      "range": 222,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_memory_wall",
+      "effect": "memory_wall",
+      "at": 15.6,
+      "yavg": 57.5912,
+      "range": 235,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s04_together_journey",
+      "effect": "collage_grid",
+      "at": 20.69,
+      "yavg": 123.309,
+      "range": 231,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_soft_portraits",
+      "effect": "layer_scene",
+      "at": 26.58,
+      "yavg": 190.103,
+      "range": 229,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_family_blessing",
+      "effect": "layer_scene",
+      "at": 32.98,
+      "yavg": 172.098,
+      "range": 229,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_wedding_day_montage",
+      "effect": "film_roll_left",
+      "at": 41.83,
+      "yavg": 97.215,
+      "range": 227,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_hero_promise",
+      "effect": "dark_feather",
+      "at": 50.28,
+      "yavg": 76.3232,
+      "range": 228,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s09_ending",
+      "effect": "layer_scene",
+      "at": 56.28,
+      "yavg": 189.402,
+      "range": 160,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    }
+  ]
+}

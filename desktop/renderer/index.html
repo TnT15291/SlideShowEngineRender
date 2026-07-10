@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Render Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="mark">W</div>
+          <div>
+            <h1>Wedding Render Studio</h1>
+            <p>Local slideshow production</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Studio sections">
+          <button class="nav-item active" data-view="project" type="button">Project</button>
+          <button class="nav-item" data-view="assets" type="button">Assets</button>
+          <button class="nav-item" data-view="pipeline" type="button">Pipeline</button>
+          <button class="nav-item" data-view="director" type="button">Director</button>
+          <button class="nav-item" data-view="timeline" type="button">Timeline</button>
+          <button class="nav-item" data-view="render" type="button">Render</button>
+        </nav>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p id="viewEyebrow" class="eyebrow">Step 1</p>
+            <h2 id="viewTitle">Project Workspace</h2>
+          </div>
+          <button id="chooseProject" class="primary-button" type="button">
+            <span aria-hidden="true">+</span>
+            Choose Folder
+          </button>
+        </header>
+
+        <section id="projectView" class="view-panel project-panel" aria-live="polite">
+          <div class="project-heading">
+            <div>
+              <p class="label">Selected project</p>
+              <h3 id="projectName">Loading...</h3>
+              <p id="projectPath" class="path-line"></p>
+            </div>
+            <div id="projectStatus" class="status-pill">Checking</div>
+          </div>
+
+          <div class="grid">
+            <article class="card">
+              <h4>Core Folders</h4>
+              <div id="folderChecks" class="check-list"></div>
+            </article>
+
+            <article class="card">
+              <h4>Engine Files</h4>
+              <div id="fileChecks" class="check-list"></div>
+            </article>
+
+            <article class="card">
+              <h4>Asset Catalog</h4>
+              <div id="assetCounts" class="asset-counts"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="assetsView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">Asset intake</p>
+              <h3>Import and analyze local resources</h3>
+              <p class="muted-line">Files are copied into the selected project, then cataloged for AI Director.</p>
+            </div>
+            <div class="toolbar-actions">
+              <select id="assetType" class="select-control" aria-label="Asset type">
+                <option value="background">Background</option>
+                <option value="overlay">Overlay</option>
+                <option value="frame">Frame</option>
+                <option value="font">Font</option>
+              </select>
+              <button id="importAsset" class="secondary-button" type="button">Import</button>
+              <button id="analyzeAssets" class="primary-button" type="button">Analyze Assets</button>
+            </div>
+          </div>
+
+          <div id="assetMessage" class="message-line"></div>
+
+          <div class="grid asset-grid">
+            <article class="card">
+              <h4>Catalog Counts</h4>
+              <div id="assetManagerCounts" class="asset-counts"></div>
+            </article>
+
+            <article class="card wide-card">
+              <h4>AI Director Menu</h4>
+              <div id="assetList" class="asset-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="pipelineView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">Lite pipeline</p>
+              <h3>Analyze, generate, and validate</h3>
+              <p class="muted-line">Runs the rule-based path with director/plan disabled.</p>
+            </div>
+          </div>
+
+          <div class="pipeline-controls">
+            <label class="field-label">
+              Music path
+              <div class="inline-field">
+                <input id="musicPath" class="text-input" value="music/a thousand years.mp3" />
+                <button id="chooseMusic" class="secondary-button" type="button">Browse</button>
+              </div>
+            </label>
+
+            <label class="field-label">
+              Timeline output
+              <input id="timelinePath" class="text-input" value="timeline/desktop-lite.json" />
+            </label>
+
+            <div class="pipeline-actions">
+              <button id="analyzeInputs" class="secondary-button" type="button">Analyze Inputs</button>
+              <button id="generateLite" class="secondary-button" type="button">Generate Lite Timeline</button>
+              <button id="dryRunTimeline" class="primary-button" type="button">Dry Run</button>
+            </div>
+          </div>
+
+          <article class="card log-card">
+            <div class="log-heading">
+              <h4>Pipeline Log</h4>
+              <button id="clearPipelineLog" class="secondary-button small-button" type="button">Clear</button>
+            </div>
+            <pre id="pipelineLog" class="log-output">Ready.</pre>
+          </article>
+        </section>
+
+        <section id="directorView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">AI Director</p>
+              <h3>Story direction and asset choices</h3>
+              <p class="muted-line">Runs semantic photo analysis, story options, director notes, and story plan.</p>
+            </div>
+          </div>
+
+          <div class="director-controls">
+            <label class="field-label wide-field">
+              Creative brief
+              <textarea id="directorBrief" class="text-area" rows="3" placeholder="cinematic Korean-style wedding film, soft romantic, elegant captions"></textarea>
+            </label>
+
+            <label class="field-label">
+              Story choice
+              <select id="storyChoice" class="select-control">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </label>
+
+            <label class="field-label">
+              Director timeline output
+              <input id="directorTimelinePath" class="text-input" value="timeline/desktop-director.json" />
+            </label>
+
+            <div class="pipeline-actions">
+              <button id="analyzeSemantics" class="secondary-button" type="button">Analyze Semantics</button>
+              <button id="generateOptions" class="secondary-button" type="button">Story Options</button>
+              <button id="generateNotes" class="secondary-button" type="button">Director Notes</button>
+              <button id="generatePlan" class="secondary-button" type="button">Story Plan</button>
+              <button id="generateDirectorTimeline" class="primary-button" type="button">Generate Timeline</button>
+            </div>
+          </div>
+
+          <div class="grid director-grid">
+            <article class="card wide-card">
+              <h4>Story Options</h4>
+              <div id="storyOptionsList" class="asset-list"></div>
+            </article>
+
+            <article class="card">
+              <h4>Asset Choices</h4>
+              <div id="assetChoicesList" class="asset-counts"></div>
+            </article>
+          </div>
+
+          <article class="card log-card">
+            <div class="log-heading">
+              <h4>Director Log</h4>
+              <button id="clearDirectorLog" class="secondary-button small-button" type="button">Clear</button>
+            </div>
+            <pre id="directorLog" class="log-output">Ready.</pre>
+          </article>
+        </section>
+
+        <section id="timelineView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">Timeline editor</p>
+              <h3>Review scenes and make quick edits</h3>
+              <p class="muted-line">Edits duration, text, and image references in the selected timeline JSON.</p>
+            </div>
+          </div>
+
+          <div class="pipeline-controls">
+            <label class="field-label">
+              Timeline path
+              <input id="timelineEditorPath" class="text-input" value="timeline/desktop-director.json" />
+            </label>
+            <div class="pipeline-actions">
+              <button id="loadTimeline" class="secondary-button" type="button">Load Timeline</button>
+              <button id="saveSlide" class="primary-button" type="button">Save Slide</button>
+            </div>
+          </div>
+
+          <div id="timelineMessage" class="message-line"></div>
+
+          <div class="timeline-editor">
+            <aside class="card slide-list-card">
+              <h4>Scenes</h4>
+              <div id="slideList" class="slide-list"></div>
+            </aside>
+
+            <article class="card slide-editor-card">
+              <h4 id="slideEditorTitle">No slide selected</h4>
+              <div id="slideEditor" class="slide-editor"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="renderView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">Render queue</p>
+              <h3>Render final video</h3>
+              <p class="muted-line">Runs the engine for real. Use Dry Run first when possible.</p>
+            </div>
+            <div id="renderStatus" class="status-pill">Idle</div>
+          </div>
+
+          <div class="pipeline-controls">
+            <label class="field-label">
+              Timeline to render
+              <input id="renderTimelinePath" class="text-input" value="timeline/desktop-lite.json" />
+            </label>
+
+            <div class="pipeline-actions">
+              <button id="startRender" class="primary-button" type="button">Start Render</button>
+              <button id="cancelRender" class="secondary-button" type="button" disabled>Cancel</button>
+              <button id="openRenderOutput" class="secondary-button" type="button">Open Output</button>
+            </div>
+          </div>
+
+          <div class="render-progress">
+            <div class="progress-meta">
+              <span id="renderPhase">Waiting to render</span>
+              <strong id="renderPercent">0%</strong>
+            </div>
+            <div class="progress-track" aria-label="Render progress">
+              <div id="renderProgressBar" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <article class="card log-card">
+            <div class="log-heading">
+              <h4>Render Log</h4>
+              <button id="clearRenderLog" class="secondary-button small-button" type="button">Clear</button>
+            </div>
+            <pre id="renderLog" class="log-output">Ready.</pre>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

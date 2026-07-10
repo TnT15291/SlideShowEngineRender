@@ -1,0 +1,504 @@
+{
+  "generatedAt": "2026-07-10T04:52:18.028Z",
+  "version": 1,
+  "purpose": "Short asset menu for AI Director. Choose ids only; timeline generator maps ids to local paths.",
+  "counts": {
+    "fonts": 10,
+    "overlays": 8,
+    "backgrounds": 5,
+    "frames": 3
+  },
+  "fonts": [
+    {
+      "id": "font_bevietnampro",
+      "label": "Clean Vietnamese body text",
+      "summary": "VN-safe sans font for long Vietnamese captions.",
+      "type": "font",
+      "roles": [
+        "caption",
+        "subtitle",
+        "body"
+      ],
+      "mood": [
+        "clean",
+        "modern",
+        "safe"
+      ],
+      "supportsVietnamese": true,
+      "readability": "high"
+    },
+    {
+      "id": "font_charm",
+      "label": "Gentle script subtitle",
+      "summary": "Light script accent for gentle subtitles.",
+      "type": "font",
+      "roles": [
+        "subtitle",
+        "accent"
+      ],
+      "mood": [
+        "gentle",
+        "romantic",
+        "soft"
+      ],
+      "supportsVietnamese": false,
+      "readability": "medium_for_short_text"
+    },
+    {
+      "id": "font_dancingscript",
+      "label": "Soft handwritten script",
+      "summary": "Casual script for short decorative text.",
+      "type": "font",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "soft",
+        "romantic",
+        "friendly"
+      ],
+      "supportsVietnamese": false,
+      "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_greatvibes",
+      "label": "Romantic script title",
+      "summary": "Script font for short names/titles; avoid long Vietnamese text.",
+      "type": "font",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "romantic",
+        "classic",
+        "soft"
+      ],
+      "supportsVietnamese": false,
+      "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_italianno",
+      "label": "Thin romantic script",
+      "summary": "Thin script accent for short Latin phrases.",
+      "type": "font",
+      "roles": [
+        "accent"
+      ],
+      "mood": [
+        "romantic",
+        "delicate",
+        "classic"
+      ],
+      "supportsVietnamese": false,
+      "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_lobster",
+      "label": "Bold retro script",
+      "summary": "Bold script for high-energy short headings.",
+      "type": "font",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "bold",
+        "retro",
+        "joyful"
+      ],
+      "supportsVietnamese": false,
+      "readability": "medium_for_short_text"
+    },
+    {
+      "id": "font_meaculpa",
+      "label": "Fine calligraphy accent",
+      "summary": "Fine calligraphy for short decorative accents.",
+      "type": "font",
+      "roles": [
+        "accent"
+      ],
+      "mood": [
+        "delicate",
+        "romantic",
+        "classic"
+      ],
+      "supportsVietnamese": false,
+      "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_pacifico",
+      "label": "Playful rounded script",
+      "summary": "Playful script for upbeat moments and short titles.",
+      "type": "font",
+      "roles": [
+        "accent",
+        "title"
+      ],
+      "mood": [
+        "joyful",
+        "warm",
+        "casual"
+      ],
+      "supportsVietnamese": false,
+      "readability": "medium_for_short_text"
+    },
+    {
+      "id": "font_playfairdisplay",
+      "label": "Elegant serif display",
+      "summary": "VN-safe serif for elegant headings and subtitles.",
+      "type": "font",
+      "roles": [
+        "title",
+        "subtitle"
+      ],
+      "mood": [
+        "elegant",
+        "classic",
+        "luxury"
+      ],
+      "supportsVietnamese": true,
+      "readability": "medium"
+    },
+    {
+      "id": "font_windsong",
+      "label": "Decorative wedding script",
+      "summary": "Ornate script accent for short Latin words.",
+      "type": "font",
+      "roles": [
+        "accent"
+      ],
+      "mood": [
+        "romantic",
+        "ornate",
+        "classic"
+      ],
+      "supportsVietnamese": false,
+      "readability": "low_for_long_text"
+    }
+  ],
+  "overlays": [
+    {
+      "id": "ov_light_leak_soft",
+      "label": "Soft cinematic light leak",
+      "summary": "Soft cinematic light leak; use as a soft fullscreen screen blend.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "variant": "soft",
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.55
+    },
+    {
+      "id": "ov_light_leak_sunset",
+      "label": "Sunset cinematic light leak",
+      "summary": "Sunset cinematic light leak; use as a soft fullscreen screen blend.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "warm"
+      ],
+      "variant": "sunset",
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.55
+    },
+    {
+      "id": "ov_light_leak_warm",
+      "label": "Warm cinematic light leak",
+      "summary": "Warm cinematic light leak; use as a soft fullscreen screen blend.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "warm"
+      ],
+      "variant": "warm",
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.55
+    },
+    {
+      "id": "ov_particles",
+      "label": "Particles",
+      "summary": "Particles; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_cutestock_golden_bokeh_overlay_hd",
+      "label": "Cutestock Golden Bokeh Overlay Hd",
+      "summary": "Cutestock Golden Bokeh Overlay Hd; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "warm"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_mixkit_bokeh_lights_black_720",
+      "label": "Mixkit Bokeh Lights Black 720",
+      "summary": "Mixkit Bokeh Lights Black 720; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_mixkit_natural_light_leaks_bokeh_720",
+      "label": "Mixkit Natural Light Leaks Bokeh 720",
+      "summary": "Mixkit Natural Light Leaks Bokeh 720; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_mixkit_sunlight_flare_overlay_720",
+      "label": "Mixkit Sunlight Flare Overlay 720",
+      "summary": "Mixkit Sunlight Flare Overlay 720; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "warm"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    }
+  ],
+  "backgrounds": [
+    {
+      "id": "bg_mixkit_blurred_bokeh_effect_720",
+      "label": "Mixkit Blurred Bokeh Effect 720",
+      "summary": "Mixkit Blurred Bokeh Effect 720; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ]
+    },
+    {
+      "id": "bg_mixkit_girl_smells_bouquet_romantic_1080",
+      "label": "Mixkit Girl Smells Bouquet Romantic 1080",
+      "summary": "Mixkit Girl Smells Bouquet Romantic 1080; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "intimate"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_mixkit_waiting_with_flowers_romantic_720",
+      "label": "Mixkit Waiting With Flowers Romantic 720",
+      "summary": "Mixkit Waiting With Flowers Romantic 720; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "intimate"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_mixkit_wedding_flower_arrangement_calla_lilies_1080",
+      "label": "Mixkit Wedding Flower Arrangement Calla Lilies 1080",
+      "summary": "Mixkit Wedding Flower Arrangement Calla Lilies 1080; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ]
+    },
+    {
+      "id": "bg_mixkit_yellow_pink_bokeh_background_1080",
+      "label": "Mixkit Yellow Pink Bokeh Background 1080",
+      "summary": "Mixkit Yellow Pink Bokeh Background 1080; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "pink"
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "id": "frame_floral_corner_soft_1920x1080",
+      "label": "Floral Corner Soft 1920x1080",
+      "summary": "Floral Corner Soft 1920x1080; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_openclipart_floral_border_frame",
+      "label": "Openclipart Floral Border Frame",
+      "summary": "Openclipart Floral Border Frame; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_openclipart_floral_corner_frame",
+      "label": "Openclipart Floral Corner Frame",
+      "summary": "Openclipart Floral Corner Frame; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    }
+  ]
+}

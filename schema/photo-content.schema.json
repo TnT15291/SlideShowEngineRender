@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slideshow-render-engine/photo-content.schema.json",
+  "title": "Photo Content Analysis — semantic layer for the AI Director (Phase A / node 2)",
+  "description": "Contract for analysis/photo_content.json. It merges the rule-based technical signals from analysis/photos.json (quality, orientation, focal point) with a SEMANTIC layer (what is in the photo + narrative scores). The semantic layer is produced by one batched vision call; see $defs/aiResult for exactly what the vision model may return. Guardrail: the model returns records keyed by INDEX only and never emits file paths, config, or any field outside $defs/aiResult — the scaffold owns the index->file mapping and clamps/validates every field.",
+  "type": "object",
+  "required": ["generatedBy", "count", "photos"],
+  "additionalProperties": false,
+  "properties": {
+    "generatedBy": {
+      "type": "string",
+      "description": "'stub' while the vision call is not wired, else 'vision:<model-id>'. Downstream/QA reads this to know whether the semantic fields are real or placeholder.",
+      "pattern": "^(stub|vision:.+)$"
+    },
+    "model": { "type": "string", "description": "Vision model id when generatedBy != stub." },
+    "generatedAt": { "type": "string", "description": "ISO timestamp." },
+    "count": { "type": "integer", "minimum": 0 },
+    "photos": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/photoRecord" }
+    }
+  },
+
+  "$defs": {
+    "tag": {
+      "description": "Controlled wedding vocabulary (whitelist — like the effect enum). The model must pick from this list; unknown tags are dropped by the scaffold.",
+      "enum": [
+        "couple", "bride", "groom", "solo", "group", "family", "friends",
+        "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance",
+        "reception", "party", "portrait", "candid",
+        "detail", "decor", "venue", "scenery", "food"
+      ]
+    },
+    "emotion": {
+      "enum": ["joyful", "tender", "romantic", "celebratory", "calm", "solemn", "playful"]
+    },
+    "aiResult": {
+      "type": "object",
+      "description": "EXACTLY what the vision model returns per photo. No file paths, no config — keyed by index into the batch the scaffold sent. This is also the validation contract the scaffold enforces on the model's raw output before merging.",
+      "required": ["index", "tags", "emotion", "heroScore", "emotionScore", "storyImportance"],
+      "additionalProperties": false,
+      "properties": {
+        "index": { "type": "integer", "minimum": 0, "description": "0-based position in the batch (scaffold maps it back to a file)." },
+        "tags": { "type": "array", "items": { "$ref": "#/$defs/tag" }, "description": "0..n controlled tags describing the photo." },
+        "emotion": { "$ref": "#/$defs/emotion" },
+        "heroScore": { "type": "number", "minimum": 0, "maximum": 1, "description": "How much this photo deserves a hero / full-bleed slot." },
+        "emotionScore": { "type": "number", "minimum": 0, "maximum": 1, "description": "Emotional weight of the moment." },
+        "storyImportance": { "type": "number", "minimum": 0, "maximum": 1, "description": "How load-bearing this photo is for the narrative." },
+        "note": { "type": "string", "maxLength": 240, "description": "Optional one-line caption idea / observation." }
+      }
+    },
+    "photoRecord": {
+      "type": "object",
+      "description": "One merged record: technical fields carried from photos.json + the semantic fields from aiResult.",
+      "required": ["file", "orient", "tags", "emotion", "heroScore", "emotionScore", "storyImportance", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string", "minLength": 1, "description": "Path, owned by the scaffold (never by the model)." },
+        "orient": { "enum": ["portrait", "landscape", "square"] },
+        "quality": { "type": "number", "description": "Carried from photos.json (rule-based)." },
+        "sharpness": { "type": "number" },
+        "meanLuma": { "type": "number" },
+        "focusX": { "type": "number", "minimum": 0, "maximum": 1, "description": "Carried focal point for face-safe cropping." },
+        "focusY": { "type": "number", "minimum": 0, "maximum": 1 },
+        "tags": { "type": "array", "items": { "$ref": "#/$defs/tag" } },
+        "emotion": { "$ref": "#/$defs/emotion" },
+        "heroScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "emotionScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "storyImportance": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" },
+        "source": { "type": "string", "pattern": "^(stub|vision:.+)$", "description": "Per-record provenance of the semantic fields." }
+      }
+    }
+  }
+}

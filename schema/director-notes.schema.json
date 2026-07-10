@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slideshow-render-engine/director-notes.schema.json",
+  "title": "Creative Brief + Director Notes (Phase B / nodes 5+6, one call)",
+  "description": "Contract for analysis/director_notes.json. Nodes 5 (Creative Brief — qualitative direction) and 6 (Director Notes — how to use the engine) are one continuous chain, so they are produced in a SINGLE DeepSeek call and stored together. director_notes is the guardrailed half (Phụ lục A): every effect/transition/curves/easing/overlay value the model returns is clamped to the engine whitelists loaded from timeline.schema.json — unknown values are replaced with safe defaults, and the model may set no file paths, quality presets, durations, or coordinates.",
+  "type": "object",
+  "required": ["generatedBy", "choice", "creative_brief", "director_notes"],
+  "additionalProperties": false,
+  "properties": {
+    "generatedBy": { "type": "string", "pattern": "^(stub|text:.+)$" },
+    "model": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "choice": { "enum": ["A", "B", "C", "D"], "description": "Which story option this brief realises." },
+    "storyTitle": { "type": "string", "maxLength": 60 },
+    "creative_brief": {
+      "type": "object",
+      "description": "Node 5 — qualitative direction. Free text/enum only; drives no math.",
+      "required": ["style", "emotionalArc", "colorMood", "captionPhilosophy", "pacing", "structure", "photoSelection"],
+      "additionalProperties": false,
+      "properties": {
+        "style": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "emotionalArc": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "colorMood": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "captionPhilosophy": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "pacing": { "enum": ["slow", "medium", "fast", "dynamic"] },
+        "structure": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "photoSelection": { "type": "string", "minLength": 1, "maxLength": 240 }
+      }
+    },
+    "director_notes": {
+      "type": "object",
+      "description": "Node 6 — engine-language decisions. Every *Effect/*Transition value is one of the engine enums (see timeline.schema.json $defs/effect and $defs/transitionType); the runtime guardrail is what enforces this, so these are typed as strings here.",
+      "required": ["openingEffect", "defaultTransition", "endingTransition", "montageEffect", "heroEffect", "portraitEffect", "groupEffect", "detailEffect", "easingCalm", "easingEnergetic"],
+      "additionalProperties": false,
+      "properties": {
+        "openingEffect": { "type": "string", "description": "Effect enum for the opening slide (e.g. slow_zoom_in)." },
+        "defaultTransition": { "type": "string", "description": "Transition enum used between most slides (e.g. crossfade)." },
+        "endingTransition": { "type": "string", "description": "Transition enum into the final slide (e.g. fade_slow)." },
+        "montageEffect": { "enum": ["film_roll_up", "film_roll_left", "film_roll_right"], "description": "Which film-roll effect montage sequences use." },
+        "heroEffect": { "type": "string", "description": "Effect enum for hero / full-bleed photos (e.g. dark_feather)." },
+        "portraitEffect": { "type": "string", "description": "Effect enum for portraits (e.g. portrait_blur_background)." },
+        "groupEffect": { "type": "string", "description": "Effect enum for group photos (e.g. collage_grid, memory_wall)." },
+        "detailEffect": { "type": "string", "description": "Effect enum for detail/decor shots." },
+        "colorCurves": { "type": ["string", "null"], "description": "curvesPreset enum or null for none." },
+        "overlayVariant": { "enum": ["warm", "soft", "sunset", null], "description": "Bundled light-leak variant or null." },
+        "easingCalm": { "enum": ["gentle", "snap", "bounce"], "description": "Motion easing for calm/emotional beats." },
+        "easingEnergetic": { "enum": ["gentle", "snap", "bounce"], "description": "Motion easing for energetic/peak beats." },
+        "notes": { "type": "array", "items": { "type": "string", "maxLength": 200 }, "description": "Free director commentary (advisory; not executed directly)." }
+      }
+    },
+    "asset_choices": {
+      "type": "object",
+      "description": "Optional asset ids chosen from analysis/assets_catalog.ai.json. Runtime guardrails drop ids not present in the catalog; timeline generation maps valid ids to local paths from assets_catalog.full.json.",
+      "additionalProperties": false,
+      "properties": {
+        "titleFontId": { "type": ["string", "null"] },
+        "bodyFontId": { "type": ["string", "null"] },
+        "overlayId": { "type": ["string", "null"] },
+        "openingBackgroundId": { "type": ["string", "null"] },
+        "endingBackgroundId": { "type": ["string", "null"] },
+        "frameId": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

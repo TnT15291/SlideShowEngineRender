@@ -1,0 +1,198 @@
+{
+  "documentation": {
+    "title": "White Weddings Theme — MASTER timeline, first 5 scenes",
+    "synthesizedFrom": [
+      "white-weddings-theme-first-5.analysis.json (Codex) — exact source data: real font names, pt sizes, letter spacing, EMU/px geometry, rId→media map",
+      "white-weddings-theme-first-5.detailed.json (mine) — runnable layer_scene, canvas-resolved coordinates, frame-measured per-scene durations, crossfades, staggered fades",
+      "input-white-wedding-layer-scene.json — richer per-layer motion vocabulary (directional slide_up/left/right entrances)"
+    ],
+    "designRules": {
+      "notTemplated": "Each scene has its OWN duration, its OWN transition length, and per-element motion chosen to match that scene's reference behavior — no repeated 6s/9.775s block, no uniform fade-everything.",
+      "durationsAreSceneSpecific": "Slide durations come from frame measurement of the reference MP4, not an average.",
+      "coordinates": "px on the 1920x1080 canvas, resolved from PPTX group transforms (top-level group offset = the photo's on-canvas position).",
+      "fitCover": "Photo frames use fit=cover to fill their card edge-to-edge like the source (not letterboxed contain).",
+      "runnableVsSource": "slides[] carry engine-safe values (local substitute fonts, box-fitted px sizes). The exact Canva source values live in documentation.scenes[].elements for ground truth."
+    },
+    "canvas": { "width": 1920, "height": 1080, "background": "#FBF6ED" },
+    "palette": { "cream_bg": "#FBF6ED", "ink_dark": "#2D2D33", "warm_brown_text": "#634C31", "numeral_white": "#FFFDFC" },
+    "fontMapping": {
+      "note": "Canva fonts are not installed locally; nearest local substitutes are used. Source pt→px on this canvas ≈ pt×1.333 (20in slide → 1920px @ 96dpi). Substitute px are box-fitted (Playfair/BeVietnam run wider than the originals).",
+      "Perandory": "fonts/PlayfairDisplay.ttf",
+      "Pinyon Script": "fonts/GreatVibes-Regular.ttf",
+      "Noto Serif Display": "fonts/PlayfairDisplay.ttf",
+      "Vietnamese body copy": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "measuredTimeline": {
+      "unit": "seconds in the reference MP4 (±0.4s; boundaries are ~0.6-0.8s crossfades)",
+      "scene1": { "start": 0.0, "end": 5.2 },
+      "scene2": { "start": 5.2, "end": 10.8 },
+      "scene3": { "start": 10.8, "end": 15.0 },
+      "scene4": { "start": 15.0, "end": 19.3 },
+      "scene5": { "start": 19.3, "end": 23.6 }
+    },
+    "engineFidelityNotes": [
+      "Reproduced: full-bleed bg photo, N cover-cropped positioned photo cards, multi-font positioned text incl. Vietnamese, cream panels (drawbox), per-layer fade AND directional slide entrances, per-scene crossfades, deck music.",
+      "Approximated: rounded-corner frames (drawbox is square), exact Canva fonts, negative letter-spacing (drawtext cannot tighten tracking — source values kept only as documentation), the scene-1 card-dissolve reveal, and per-layer Ken-Burns on the background.",
+      "drawtext does not auto-wrap — body copy carries explicit newlines."
+    ],
+    "scenes": [
+      {
+        "scene": 1, "id": "ww_001_save_the_date", "sourceSlide": "ppt/slides/slide1.xml → svg 1.svg",
+        "measured": { "start": 0.0, "end": 5.2, "span": 5.2 },
+        "referenceMotion": "Cream SAVE-the-DATE card + 3 photo frames fade/rise in over ~1s; numerals 30·11·25 settle in below; card dissolves (~t=4) to reveal the bg photo, then crossfades out.",
+        "media": { "rId2": "image1.png (bg couple)", "rId3": "image2.png", "rId4": "image3.jpeg", "rId5": "image4.png", "rId6": "image112.svg (audio-play icon, not rendered)", "rId7/8": "aAG30aP3rRE.m4a (deck music)" },
+        "elements": [
+          { "shape": "Freeform 2", "role": "background", "image": "image1.png", "canvas": {"x":0,"y":0,"w":1920,"h":1080} },
+          { "shape": "Freeform 4", "role": "card", "fill": "#FBF6ED (rounded in source; drawbox square here)" },
+          { "shape": "Group 6/8/10", "role": "3 photos", "images": ["image2.png","image3.jpeg","image4.png"], "canvasApprox": ["160,358,504x577","711,358,504x577","1262,358,504x577"] },
+          { "shape": "TextBox 15", "text": "save", "font": "Perandory", "pt": 79.13, "letterSpacingPt": -2.53, "color": "#2D2D33", "canvas": {"x":636,"y":150,"w":295,"h":151} },
+          { "shape": "TextBox 17", "text": "the", "font": "Pinyon Script", "pt": 79.13, "letterSpacingPt": -2.53, "color": "#2D2D33", "canvas": {"x":882,"y":160,"w":176,"h":141} },
+          { "shape": "TextBox 16", "text": "date", "font": "Perandory", "pt": 79.13, "letterSpacingPt": -2.53, "color": "#2D2D33", "canvas": {"x":996,"y":150,"w":295,"h":151} },
+          { "shape": "TextBox 12", "text": "30", "font": "Perandory", "pt": 229.6, "color": "#FFFDFC", "canvas": {"x":257,"y":599,"w":310,"h":436} },
+          { "shape": "TextBox 13", "text": "11", "font": "Perandory", "pt": 229.6, "color": "#FFFDFC", "canvas": {"x":831,"y":577,"w":460,"h":436} },
+          { "shape": "TextBox 14", "text": "25", "font": "Perandory", "pt": 229.6, "color": "#FFFDFC", "canvas": {"x":1411,"y":577,"w":403,"h":436} }
+        ]
+      },
+      {
+        "scene": 2, "id": "ww_002_invitation", "sourceSlide": "ppt/slides/slide2.xml → svg 2.svg",
+        "measured": { "start": 5.2, "end": 10.8, "span": 5.6 },
+        "referenceMotion": "Cream stage; the tall right-hand photo eases in from the right; heading fades, then the invitation paragraph fades in ~0.5s later; small cloud motif behind the seam.",
+        "media": { "rId2": "image5.jpeg (right portrait)", "rId3": "image6.png (cloud motif)" },
+        "elements": [
+          { "shape": "TextBox 4", "text": "Trường & Giang", "font": "Noto Serif Display", "pt": 93.64, "letterSpacingPt": -2.99, "color": "#634C31", "canvas": {"x":60,"y":217,"w":886,"h":167} },
+          { "shape": "TextBox 6", "text": "Chúng con rất hân hạnh được chào đón  sự góp mặt của các vị khách quý. Sự hiện diện của tất cả mọi người là lời chúc tốt đẹp nhất dành cho chúng con.", "font": "Noto Serif Display", "pt": 33.99, "color": "#634C31", "canvas": {"x":60,"y":465,"w":784,"h":376} },
+          { "shape": "Group 2", "role": "right photo", "image": "image5.jpeg", "canvas": {"x":960,"y":-66,"w":960,"h":1175} },
+          { "shape": "Freeform 5", "role": "cloud motif", "image": "image6.png", "canvas": {"x":872,"y":486,"w":176,"h":171} }
+        ]
+      },
+      {
+        "scene": 3, "id": "ww_003_special_day", "sourceSlide": "ppt/slides/slide3.xml → svg 3.svg",
+        "measured": { "start": 10.8, "end": 15.0, "span": 4.2 },
+        "referenceMotion": "Three photo frames enter from their own sides (left slides right, centre tall rises, right slides left); heading top-left fades; one caption line fades in centred along the bottom.",
+        "media": { "rId2": "image7.jpeg (right)", "rId3": "image8.jpeg (centre tall)", "rId4": "image9.jpeg (left)" },
+        "elements": [
+          { "shape": "Group 6", "role": "left photo", "image": "image9.jpeg", "canvas": {"x":108,"y":265,"w":551,"h":551} },
+          { "shape": "Group 4", "role": "centre tall photo", "image": "image8.jpeg", "canvas": {"x":709,"y":0,"w":600,"h":868} },
+          { "shape": "Group 2", "role": "right photo", "image": "image7.jpeg", "canvas": {"x":1333,"y":434,"w":551,"h":551} },
+          { "shape": "TextBox 8", "text": "SPECIAL DAY", "font": "Noto Serif Display", "pt": 81.64, "letterSpacingPt": -2.61, "color": "#634C31", "canvas": {"x":40,"y":91,"w":644,"h":147} },
+          { "shape": "TextBox 9", "text": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con", "font": "Noto Serif Display", "pt": 33.99, "color": "#634C31", "canvas": {"x":87,"y":875,"w":1057,"h":124} }
+        ]
+      },
+      {
+        "scene": 4, "id": "ww_004_story", "sourceSlide": "ppt/slides/slide4.xml → svg 4.svg",
+        "measured": { "start": 15.0, "end": 19.3, "span": 4.3 },
+        "referenceMotion": "Left portrait rises, wide right photo eases in from the right, cloud motif between; the story paragraph fades in centred across the bottom.",
+        "media": { "rId2": "image10.png (left portrait)", "rId3": "image11.jpeg (right landscape)", "rId4": "image6.png (cloud motif)" },
+        "elements": [
+          { "shape": "Group 2", "role": "left portrait", "image": "image10.png", "canvas": {"x":71,"y":108,"w":659,"h":659} },
+          { "shape": "Group 4", "role": "right landscape", "image": "image11.jpeg", "canvas": {"x":906,"y":63,"w":970,"h":704} },
+          { "shape": "Freeform 6", "role": "cloud motif", "image": "image6.png", "canvas": {"x":817,"y":437,"w":176,"h":171} },
+          { "shape": "TextBox 7", "text": "Sau quãng thời gian tìm hiểu và yêu thương nhau, chúng con đã chính thức về chung một nhà  trong sự chúc phúc của gia đình, họ hàng hai bên, anh chị em, bạn bè, đồng nghiệp.", "font": "Noto Serif Display", "pt": 33.99, "color": "#634C31", "canvas": {"x":71,"y":843,"w":1688,"h":187} }
+        ]
+      },
+      {
+        "scene": 5, "id": "ww_005_big_day", "sourceSlide": "ppt/slides/slide5.xml → svg 5.svg",
+        "measured": { "start": 19.3, "end": 23.6, "span": 4.3 },
+        "referenceMotion": "Left column stacks in (top frame slides right, bottom frame slides right), centre hero photo rises; heading + 5-line paragraph fade in on the right. Final scene — no outgoing transition.",
+        "media": { "rId2": "image12.png (centre)", "rId3": "image4.png (top-left, reused)", "rId4": "image13.png (bottom-left)", "rId5": "image2.png (centre overlap, reused)" },
+        "elements": [
+          { "shape": "Group 4", "role": "top-left frame", "image": "image4.png", "canvas": {"x":36,"y":150,"w":545,"h":396} },
+          { "shape": "Group 6", "role": "bottom-left frame", "image": "image13.png", "canvas": {"x":36,"y":565,"w":545,"h":396} },
+          { "shape": "Group 2", "role": "centre hero", "image": "image12.png", "canvas": {"x":572,"y":108,"w":618,"h":894} },
+          { "shape": "TextBox 10", "text": "THE BIG DAY", "font": "Noto Serif Display", "pt": 81.64, "letterSpacingPt": -2.61, "color": "#634C31", "canvas": {"x":1194,"y":142,"w":635,"h":147} },
+          { "shape": "TextBox 11", "text": "Không có khoảnh khắc nào thật sự hoàn hảo, chỉ có hai con người chọn cùng nhau tạo nên điều hoàn hảo. Và hôm nay, câu chuyện ấy được kể lại bằng những nụ cười.", "font": "Noto Serif Display", "pt": 37.74, "color": "#634C31", "canvas": {"x":1227,"y":376,"w":585,"h":766} }
+        ]
+      }
+    ]
+  },
+
+  "project": { "name": "white-weddings-theme-first-5-master", "width": 1920, "height": 1080, "fps": 30 },
+
+  "music": [
+    { "path": "assets/white-weddings-theme/media/aAG30aP3rRE.m4a", "volume": 0.8 }
+  ],
+  "audio": { "fade_in": 0.5, "fade_out": 1.0, "crossfade": 0 },
+
+  "output": { "path": "output/white-weddings-theme-first-5-master.mp4" },
+
+  "slides": [
+    {
+      "id": "ww_001_save_the_date",
+      "duration": 5.8,
+      "effect": "layer_scene",
+      "transition": { "type": "crossfade", "duration": 0.8 },
+      "captions": [],
+      "layers": [
+        { "type": "image", "path": "assets/white-weddings-theme/media/image1.png", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover", "animation": "none" },
+        { "type": "rect", "x": 108, "y": 95, "width": 1704, "height": 175, "color": "#FBF6ED", "opacity": 0.95, "animation": "fade", "start": 0.0, "duration": 4.4 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image2.png", "x": 160, "y": 358, "width": 504, "height": 577, "fit": "cover", "animation": "slide_up", "start": 0.15 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image3.jpeg", "x": 711, "y": 358, "width": 504, "height": 577, "fit": "cover", "animation": "fade", "start": 0.25 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image4.png", "x": 1262, "y": 358, "width": 504, "height": 577, "fit": "cover", "animation": "slide_up", "start": 0.35 },
+        { "type": "text", "text": "SAVE", "font": "fonts/PlayfairDisplay.ttf", "x": 636, "y": 150, "width": 295, "height": 151, "size": 84, "color": "#2D2D33", "align": "center", "animation": "fade", "start": 0.1 },
+        { "type": "text", "text": "the", "font": "fonts/GreatVibes-Regular.ttf", "x": 872, "y": 150, "width": 196, "height": 141, "size": 76, "color": "#2D2D33", "align": "center", "animation": "fade", "start": 0.3 },
+        { "type": "text", "text": "DATE", "font": "fonts/PlayfairDisplay.ttf", "x": 996, "y": 150, "width": 295, "height": 151, "size": 84, "color": "#2D2D33", "align": "center", "animation": "fade", "start": 0.1 },
+        { "type": "text", "text": "30", "font": "fonts/PlayfairDisplay.ttf", "x": 257, "y": 610, "width": 310, "height": 436, "size": 230, "color": "#FFFDFC", "align": "center", "animation": "fade", "start": 0.5 },
+        { "type": "text", "text": "11", "font": "fonts/PlayfairDisplay.ttf", "x": 831, "y": 590, "width": 460, "height": 436, "size": 230, "color": "#FFFDFC", "align": "center", "animation": "fade", "start": 0.7 },
+        { "type": "text", "text": "25", "font": "fonts/PlayfairDisplay.ttf", "x": 1411, "y": 590, "width": 403, "height": 436, "size": 230, "color": "#FFFDFC", "align": "center", "animation": "fade", "start": 0.9 }
+      ]
+    },
+    {
+      "id": "ww_002_invitation",
+      "duration": 6.4,
+      "effect": "layer_scene",
+      "transition": { "type": "crossfade", "duration": 0.7 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#FBF6ED", "animation": "none", "start": 0.0 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image5.jpeg", "x": 960, "y": -66, "width": 960, "height": 1175, "fit": "cover", "animation": "slide_left", "start": 0.1 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image6.png", "x": 872, "y": 486, "width": 176, "height": 171, "fit": "contain", "opacity": 0.7, "animation": "fade", "start": 0.5 },
+        { "type": "text", "text": "Trường & Giang", "font": "fonts/PlayfairDisplay.ttf", "x": 60, "y": 217, "width": 886, "height": 167, "size": 100, "color": "#634C31", "align": "left", "animation": "fade", "start": 0.25 },
+        { "type": "text", "text": "Chúng con rất hân hạnh được chào đón sự góp mặt\ncủa các vị khách quý.\nSự hiện diện của tất cả mọi người là lời chúc\ntốt đẹp nhất dành cho chúng con.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 60, "y": 470, "width": 800, "height": 376, "size": 32, "color": "#634C31", "align": "left", "lineSpacing": 18, "animation": "fade", "start": 0.7 }
+      ]
+    },
+    {
+      "id": "ww_003_special_day",
+      "duration": 4.8,
+      "effect": "layer_scene",
+      "transition": { "type": "crossfade", "duration": 0.6 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#FBF6ED", "animation": "none", "start": 0.0 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image9.jpeg", "x": 108, "y": 265, "width": 551, "height": 551, "fit": "cover", "animation": "slide_right", "start": 0.15 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image8.jpeg", "x": 709, "y": 106, "width": 500, "height": 760, "fit": "cover", "animation": "slide_up", "start": 0.25 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image7.jpeg", "x": 1262, "y": 434, "width": 551, "height": 551, "fit": "cover", "animation": "slide_left", "start": 0.35 },
+        { "type": "text", "text": "SPECIAL DAY", "font": "fonts/PlayfairDisplay.ttf", "x": 40, "y": 91, "width": 700, "height": 147, "size": 90, "color": "#634C31", "align": "left", "animation": "fade", "start": 0.2 },
+        { "type": "text", "text": "Ngày hôm nay là một ngày\nvô cùng ý nghĩa đối với chúng con", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 60, "y": 880, "width": 1120, "height": 124, "size": 36, "color": "#634C31", "align": "center", "lineSpacing": 16, "animation": "fade", "start": 0.6 }
+      ]
+    },
+    {
+      "id": "ww_004_story",
+      "duration": 5.0,
+      "effect": "layer_scene",
+      "transition": { "type": "crossfade", "duration": 0.6 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#FBF6ED", "animation": "none", "start": 0.0 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image10.png", "x": 71, "y": 130, "width": 620, "height": 660, "fit": "cover", "animation": "slide_up", "start": 0.15 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image11.jpeg", "x": 906, "y": 120, "width": 940, "height": 620, "fit": "cover", "animation": "slide_left", "start": 0.25 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image6.png", "x": 720, "y": 380, "width": 176, "height": 171, "fit": "contain", "opacity": 0.6, "animation": "fade", "start": 0.45 },
+        { "type": "text", "text": "Sau quãng thời gian tìm hiểu và yêu thương nhau, chúng con đã chính thức về chung một nhà\ntrong sự chúc phúc của gia đình, họ hàng hai bên, anh chị em, bạn bè, đồng nghiệp.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 116, "y": 870, "width": 1688, "height": 187, "size": 33, "color": "#634C31", "align": "center", "lineSpacing": 16, "animation": "fade", "start": 0.5 }
+      ]
+    },
+    {
+      "id": "ww_005_big_day",
+      "duration": 4.4,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#FBF6ED", "animation": "none", "start": 0.0 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image4.png", "x": 36, "y": 150, "width": 500, "height": 396, "fit": "cover", "animation": "slide_right", "start": 0.15 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image13.png", "x": 36, "y": 565, "width": 500, "height": 396, "fit": "cover", "animation": "slide_right", "start": 0.28 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image12.png", "x": 560, "y": 110, "width": 590, "height": 860, "fit": "cover", "animation": "slide_up", "start": 0.2 },
+        { "type": "text", "text": "THE BIG DAY", "font": "fonts/PlayfairDisplay.ttf", "x": 1194, "y": 150, "width": 635, "height": 147, "size": 82, "color": "#634C31", "align": "center", "animation": "fade", "start": 0.3 },
+        { "type": "text", "text": "Không có khoảnh khắc nào thật sự\nhoàn hảo, chỉ có hai con người\nchọn cùng nhau tạo nên điều hoàn hảo.\nVà hôm nay, câu chuyện ấy được kể lại\nbằng những nụ cười.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 1210, "y": 400, "width": 620, "height": 620, "size": 32, "color": "#634C31", "align": "center", "lineSpacing": 18, "animation": "fade", "start": 0.7 }
+      ]
+    }
+  ]
+}

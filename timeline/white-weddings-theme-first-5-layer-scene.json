@@ -1,0 +1,100 @@
+{
+  "project": {
+    "name": "white-weddings-theme-first-5-layer-scene",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "music": [
+    {
+      "path": "assets/white-weddings-theme/media/aAG30aP3rRE.m4a",
+      "volume": 0.8
+    }
+  ],
+  "audio": {
+    "fade_in": 0.5,
+    "fade_out": 1,
+    "crossfade": 0
+  },
+  "output": {
+    "path": "output/white-weddings-theme-first-5-layer-scene.mp4"
+  },
+  "slides": [
+    {
+      "id": "ww_001_save_the_date",
+      "duration": 9.775,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "image", "path": "assets/white-weddings-theme/media/image1.png", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover" },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image2.png", "x": 160, "y": 360, "width": 430, "height": 500, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image3.jpeg", "x": 745, "y": 360, "width": 430, "height": 500, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image4.png", "x": 1325, "y": 360, "width": 430, "height": 500, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "save", "font": "fonts/PlayfairDisplay.ttf", "x": 636, "y": 150, "width": 295, "height": 151, "size": 76, "color": "#2d2d33", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "the", "font": "fonts/GreatVibes-Regular.ttf", "x": 882, "y": 160, "width": 176, "height": 141, "size": 68, "color": "#2d2d33", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "date", "font": "fonts/PlayfairDisplay.ttf", "x": 996, "y": 150, "width": 295, "height": 151, "size": 76, "color": "#2d2d33", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "30", "font": "fonts/PlayfairDisplay.ttf", "x": 257, "y": 599, "width": 310, "height": 436, "size": 220, "color": "#fffdfc", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "11", "font": "fonts/PlayfairDisplay.ttf", "x": 831, "y": 577, "width": 460, "height": 436, "size": 220, "color": "#fffdfc", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "25", "font": "fonts/PlayfairDisplay.ttf", "x": 1411, "y": 577, "width": 403, "height": 436, "size": 220, "color": "#fffdfc", "align": "center", "animation": "fade", "duration": 9.775 }
+      ]
+    },
+    {
+      "id": "ww_002_invitation",
+      "duration": 9.775,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#fbf6ed" },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image5.jpeg", "x": 1000, "y": 90, "width": 760, "height": 900, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image6.png", "x": 1160, "y": 70, "width": 560, "height": 560, "fit": "contain", "opacity": 0.75 },
+        { "type": "text", "text": "Trường & Giang", "font": "fonts/PlayfairDisplay.ttf", "x": 60, "y": 217, "width": 886, "height": 167, "size": 82, "color": "#634c31", "align": "left", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "Chúng con rất hân hạnh được chào đón\nsự góp mặt của các vị khách quý.\nSự hiện diện của tất cả mọi người\nlà lời chúc tốt đẹp nhất dành cho chúng con.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 60, "y": 465, "width": 784, "height": 376, "size": 30, "color": "#634c31", "align": "left", "lineSpacing": 18, "animation": "fade", "duration": 9.775 }
+      ]
+    },
+    {
+      "id": "ww_003_special_day",
+      "duration": 9.775,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#fbf6ed" },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image7.jpeg", "x": 760, "y": 100, "width": 430, "height": 640, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image8.jpeg", "x": 1210, "y": 170, "width": 460, "height": 620, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image9.jpeg", "x": 980, "y": 560, "width": 430, "height": 360, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "SPECIAL DAY", "font": "fonts/PlayfairDisplay.ttf", "x": 40, "y": 91, "width": 644, "height": 147, "size": 76, "color": "#634c31", "align": "left", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 87, "y": 875, "width": 1057, "height": 124, "size": 38, "color": "#634c31", "align": "left", "animation": "fade", "duration": 9.775 }
+      ]
+    },
+    {
+      "id": "ww_004_story",
+      "duration": 9.775,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "image", "path": "assets/white-weddings-theme/media/image10.png", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover" },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image11.jpeg", "x": 1110, "y": 120, "width": 560, "height": 650, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image6.png", "x": 120, "y": 90, "width": 460, "height": 460, "fit": "contain", "opacity": 0.55 },
+        { "type": "text", "text": "Sau quãng thời gian tìm hiểu và yêu thương nhau, chúng con đã chính thức về chung một nhà\ntrong sự chúc phúc của gia đình, họ hàng hai bên, anh chị em, bạn bè, đồng nghiệp.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 71, "y": 843, "width": 1688, "height": 187, "size": 31, "color": "#634c31", "align": "center", "lineSpacing": 16, "animation": "fade", "duration": 9.775 }
+      ]
+    },
+    {
+      "id": "ww_005_big_day",
+      "duration": 9.775,
+      "effect": "layer_scene",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [],
+      "layers": [
+        { "type": "rect", "x": 0, "y": 0, "width": 1920, "height": 1080, "color": "#fbf6ed" },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image12.png", "x": 70, "y": 110, "width": 520, "height": 790, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image4.png", "x": 610, "y": 140, "width": 360, "height": 480, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "image", "path": "assets/white-weddings-theme/media/image13.png", "x": 610, "y": 650, "width": 360, "height": 270, "fit": "cover", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "THE BIG DAY", "font": "fonts/PlayfairDisplay.ttf", "x": 1194, "y": 142, "width": 635, "height": 147, "size": 76, "color": "#634c31", "align": "center", "animation": "fade", "duration": 9.775 },
+        { "type": "text", "text": "Không có khoảnh khắc nào thật sự\nhoàn hảo, chỉ có hai con người\nchọn cùng nhau tạo nên điều hoàn hảo.\nVà hôm nay, câu chuyện ấy được kể lại\nbằng những nụ cười.", "font": "fonts/BeVietnamPro-Regular.ttf", "x": 1227, "y": 376, "width": 585, "height": 766, "size": 30, "color": "#634c31", "align": "left", "lineSpacing": 18, "animation": "fade", "duration": 9.775 }
+      ]
+    }
+  ]
+}

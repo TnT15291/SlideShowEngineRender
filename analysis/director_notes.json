@@ -1,0 +1,41 @@
+{
+  "generatedBy": "stub",
+  "generatedAt": "2026-07-10T05:03:01.957Z",
+  "choice": "C",
+  "storyTitle": "Korean Romance",
+  "creative_brief": {
+    "style": "Korean Romance — dreamy, soft, bright.",
+    "emotionalArc": "airy and tender throughout, blooming at the couple moments",
+    "colorMood": "warm, soft, filmic",
+    "captionPhilosophy": "gentle and sparse",
+    "pacing": "medium",
+    "structure": "Opening → Love Story → Ceremony → Family & Friends → Ending.",
+    "photoSelection": "Lead with hero-worthy frames; group candids into montages; keep tender portraits full and unhurried."
+  },
+  "director_notes": {
+    "openingEffect": "slow_zoom_in",
+    "defaultTransition": "crossfade",
+    "endingTransition": "fade_slow",
+    "montageEffect": "film_roll_up",
+    "heroEffect": "dark_feather",
+    "portraitEffect": "portrait_blur_background",
+    "groupEffect": "collage_grid",
+    "detailEffect": "circle_focus",
+    "colorCurves": "vintage",
+    "overlayVariant": "soft",
+    "easingCalm": "gentle",
+    "easingEnergetic": "gentle",
+    "notes": [
+      "Hold hero frames a beat longer to honour the dreamy, soft, bright tone.",
+      "Reserve bounce easing for at most one playful peak."
+    ]
+  },
+  "asset_choices": {
+    "titleFontId": "font_playfairdisplay",
+    "bodyFontId": "font_bevietnampro",
+    "overlayId": "ov_light_leak_soft",
+    "openingBackgroundId": "bg_mixkit_blurred_bokeh_effect_720",
+    "endingBackgroundId": "bg_mixkit_blurred_bokeh_effect_720",
+    "frameId": "frame_floral_corner_soft_1920x1080"
+  }
+}

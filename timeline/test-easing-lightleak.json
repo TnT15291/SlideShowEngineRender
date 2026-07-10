@@ -1,0 +1,35 @@
+{
+  "project": { "name": "easing-lightleak-test", "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+  "output": { "path": "output/test-easing-lightleak.mp4" },
+  "overlays": [
+    { "variant": "warm" },
+    { "variant": "sunset", "blend": "add", "opacity": 0.35, "start": 12, "end": 20 },
+    { "variant": "soft", "opacity": 0.5, "start": 24, "end": 28 }
+  ],
+  "slides": [
+    { "id": "s1_zoom_default", "image": "input/002.jpg", "duration": 4, "effect": "slow_zoom_in",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "zoom_in / default", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s2_zoom_gentle", "image": "input/002.jpg", "duration": 4, "effect": "slow_zoom_in", "easing": "gentle",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "zoom_in / gentle", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s3_kb_default", "image": "input/004.jpg", "duration": 4, "effect": "kenburns_br",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "kenburns_br / default", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s4_kb_snap", "image": "input/004.jpg", "duration": 4, "effect": "kenburns_br", "easing": "snap",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "kenburns_br / snap", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s5_pan_default", "image": "input/006.jpg", "duration": 4, "effect": "pan_right",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "pan_right / default", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s6_pan_bounce", "image": "input/006.jpg", "duration": 4, "effect": "pan_right", "easing": "bounce",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "pan_right / bounce", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s7_zoomout_snap", "image": "input/008.jpg", "duration": 4, "effect": "slow_zoom_out", "easing": "snap",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "zoom_out / snap", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] },
+    { "id": "s8_still_leaks", "image": "input/006.jpg", "duration": 4, "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [{ "text": "still / soft leak window", "role": "caption", "position": "bottom_center", "start": 0.3, "duration": 3.4 }] }
+  ]
+}

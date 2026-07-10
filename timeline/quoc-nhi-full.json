@@ -1,0 +1,1155 @@
+{
+  "project": {
+    "name": "quoc-nhi-full",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "music/a thousand years.mp3",
+      "volume": 0.8
+    }
+  ],
+  "audio": {
+    "fade_in": 1.5,
+    "fade_out": 3,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5600,
+    "saturation": 1.05,
+    "contrast": 1.03,
+    "glow": 0.12
+  },
+  "output": {
+    "path": "output/quoc-nhi-full.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_hero",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/002.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in"
+        },
+        {
+          "type": "rect",
+          "x": 108,
+          "y": 92,
+          "width": 1704,
+          "height": 162,
+          "color": "#FBF6ED",
+          "opacity": 0.92,
+          "animation": "fade"
+        },
+        {
+          "type": "image",
+          "path": "input/001.jpg",
+          "x": 160,
+          "y": 300,
+          "width": 504,
+          "height": 512,
+          "fit": "cover",
+          "frame": {
+            "radius": 26,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/003.jpg",
+          "x": 711,
+          "y": 300,
+          "width": 504,
+          "height": 512,
+          "fit": "cover",
+          "frame": {
+            "radius": 26,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.28
+        },
+        {
+          "type": "image",
+          "path": "input/005.jpg",
+          "x": 1262,
+          "y": 300,
+          "width": 504,
+          "height": 512,
+          "fit": "cover",
+          "frame": {
+            "radius": 26,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.4
+        },
+        {
+          "type": "text",
+          "text": "SAVE THE DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 636,
+          "y": 142,
+          "width": 648,
+          "height": 151,
+          "size": 80,
+          "color": "#2D2D33",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.1
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 850,
+          "width": 1920,
+          "height": 230,
+          "color": "#FBF6ED",
+          "opacity": 0.9,
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "Quốc & Nhi",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 890,
+          "width": 1400,
+          "height": 170,
+          "size": 104,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s02_japan",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/007.jpg",
+          "x": 1040,
+          "y": 90,
+          "width": 780,
+          "height": 900,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 28,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_left",
+          "start": 0.1
+        },
+        {
+          "type": "text",
+          "text": "JAPAN BEGINNING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 210,
+          "width": 900,
+          "height": 180,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Quốc làm việc tại Nhật, Nhi là du học sinh nơi đất khách.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 470,
+          "width": 820,
+          "height": 380,
+          "size": 34,
+          "color": "#634C31",
+          "align": "left",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s03_cungque",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/004.jpg",
+          "x": 108,
+          "y": 265,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/009.jpg",
+          "x": 709,
+          "y": 106,
+          "width": 500,
+          "height": 760,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.28
+        },
+        {
+          "type": "image",
+          "path": "input/006.jpg",
+          "x": 1262,
+          "y": 434,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_left",
+          "start": 0.4
+        },
+        {
+          "type": "text",
+          "text": "CÙNG QUÊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 40,
+          "y": 91,
+          "width": 640,
+          "height": 150,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Cùng quê hương, cùng xa nhà, hai người tìm thấy nhau giữa Nhật Bản.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 60,
+          "y": 885,
+          "width": 1800,
+          "height": 130,
+          "size": 34,
+          "color": "#634C31",
+          "align": "center",
+          "lineSpacing": 14,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.55
+        }
+      ]
+    },
+    {
+      "id": "m1_interlude",
+      "duration": 13,
+      "effect": "film_roll_up",
+      "images": [
+        "input/001.jpg",
+        "input/002.jpg",
+        "input/003.jpg",
+        "input/004.jpg",
+        "input/005.jpg",
+        "input/006.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "s04_firstmeeting",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/012.jpg",
+          "x": 100,
+          "y": 90,
+          "width": 780,
+          "height": 900,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 28,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.1
+        },
+        {
+          "type": "text",
+          "text": "FIRST MEETING",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1020,
+          "y": 210,
+          "width": 900,
+          "height": 180,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Một lần gặp gỡ bình thường đã mở ra một hành trình rất dài.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1020,
+          "y": 470,
+          "width": 820,
+          "height": 380,
+          "size": 34,
+          "color": "#634C31",
+          "align": "left",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s05_ourstory",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/008.jpg",
+          "x": 36,
+          "y": 150,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "frame": {
+            "radius": 22,
+            "border": 10,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/010.jpg",
+          "x": 36,
+          "y": 565,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "frame": {
+            "radius": 22,
+            "border": 10,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.28
+        },
+        {
+          "type": "image",
+          "path": "input/013.jpg",
+          "x": 560,
+          "y": 110,
+          "width": 590,
+          "height": 860,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 26,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "OUR STORY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1194,
+          "y": 170,
+          "width": 660,
+          "height": 150,
+          "size": 88,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Từ những ngày đầu bỡ ngỡ, cả hai dần trở thành điểm tựa của nhau.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1200,
+          "y": 430,
+          "width": 640,
+          "height": 560,
+          "size": 34,
+          "color": "#634C31",
+          "align": "center",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s06_injapan",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/011.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 600,
+          "width": 1920,
+          "height": 480,
+          "color": "#000000",
+          "opacity": 0.4,
+          "animation": "fade"
+        },
+        {
+          "type": "text",
+          "text": "IN JAPAN",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 700,
+          "width": 1400,
+          "height": 90,
+          "size": 52,
+          "color": "#FFFFFF",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Những con phố, chuyến đi và ngày thường ở Nhật lưu lại thật nhiều kỷ niệm.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 810,
+          "width": 1400,
+          "height": 220,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "lineSpacing": 16,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.5
+        }
+      ]
+    },
+    {
+      "id": "m2_interlude",
+      "duration": 13,
+      "effect": "film_roll_up",
+      "images": [
+        "input/007.jpg",
+        "input/008.jpg",
+        "input/009.jpg",
+        "input/010.jpg",
+        "input/011.jpg",
+        "input/012.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "s07_lovegrows",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/023.jpg",
+          "x": 1040,
+          "y": 90,
+          "width": 780,
+          "height": 900,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 28,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_left",
+          "start": 0.1
+        },
+        {
+          "type": "text",
+          "text": "LOVE GROWS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 70,
+          "y": 210,
+          "width": 900,
+          "height": 180,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Tình yêu lớn lên qua sự quan tâm, chờ đợi và những lần cùng nhau cố gắng.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 70,
+          "y": 470,
+          "width": 820,
+          "height": 380,
+          "size": 34,
+          "color": "#634C31",
+          "align": "left",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s08_fouryears",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/014.jpg",
+          "x": 108,
+          "y": 265,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/024.jpg",
+          "x": 709,
+          "y": 106,
+          "width": 500,
+          "height": 760,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.28
+        },
+        {
+          "type": "image",
+          "path": "input/015.jpg",
+          "x": 1262,
+          "y": 434,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "frame": {
+            "radius": 24,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_left",
+          "start": 0.4
+        },
+        {
+          "type": "text",
+          "text": "FOUR YEARS",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 40,
+          "y": 91,
+          "width": 640,
+          "height": 150,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Bốn năm bên nhau, đủ để hiểu, thương và chọn đi tiếp cùng nhau.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 60,
+          "y": 885,
+          "width": 1800,
+          "height": 130,
+          "size": 34,
+          "color": "#634C31",
+          "align": "center",
+          "lineSpacing": 14,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.55
+        }
+      ]
+    },
+    {
+      "id": "s09_promise",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/026.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 26,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/016.jpg",
+          "x": 906,
+          "y": 150,
+          "width": 940,
+          "height": 560,
+          "fit": "cover",
+          "motion": "pan_left",
+          "frame": {
+            "radius": 26,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_left",
+          "start": 0.28
+        },
+        {
+          "type": "text",
+          "text": "PROMISE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 906,
+          "y": 740,
+          "width": 940,
+          "height": 120,
+          "size": 68,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Từ Nhật Bản, lời hứa về một mái nhà chung ngày càng rõ ràng hơn.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 900,
+          "width": 1688,
+          "height": 130,
+          "size": 33,
+          "color": "#634C31",
+          "align": "center",
+          "lineSpacing": 14,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.55
+        }
+      ]
+    },
+    {
+      "id": "m3_interlude",
+      "duration": 13,
+      "effect": "film_roll_up",
+      "images": [
+        "input/013.jpg",
+        "input/014.jpg",
+        "input/015.jpg",
+        "input/016.jpg",
+        "input/017.jpg",
+        "input/018.jpg"
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": []
+    },
+    {
+      "id": "s10_cominghome",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/031.jpg",
+          "x": 100,
+          "y": 90,
+          "width": 780,
+          "height": 900,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 28,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.1
+        },
+        {
+          "type": "text",
+          "text": "COMING HOME",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1020,
+          "y": 210,
+          "width": 900,
+          "height": 180,
+          "size": 90,
+          "color": "#634C31",
+          "align": "left",
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Sau hành trình yêu xa quê, cả hai trở về với gia đình và quê hương.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1020,
+          "y": 470,
+          "width": 820,
+          "height": 380,
+          "size": 34,
+          "color": "#634C31",
+          "align": "left",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s11_quangtri",
+      "duration": 6,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/017.jpg",
+          "x": 36,
+          "y": 150,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "frame": {
+            "radius": 22,
+            "border": 10,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/018.jpg",
+          "x": 36,
+          "y": 565,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "frame": {
+            "radius": 22,
+            "border": 10,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_right",
+          "start": 0.28
+        },
+        {
+          "type": "image",
+          "path": "input/036.jpg",
+          "x": 560,
+          "y": 110,
+          "width": 590,
+          "height": 860,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "frame": {
+            "radius": 26,
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "slide_up",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "QUẢNG TRỊ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1194,
+          "y": 170,
+          "width": 660,
+          "height": 150,
+          "size": 88,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Đám cưới ở Quảng Trị là điểm hẹn của tình yêu và lời chúc phúc.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1200,
+          "y": 430,
+          "width": 640,
+          "height": 560,
+          "size": 34,
+          "color": "#634C31",
+          "align": "center",
+          "lineSpacing": 20,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ]
+    },
+    {
+      "id": "s12_thebigday",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.7
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/019.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 600,
+          "width": 1920,
+          "height": 480,
+          "color": "#000000",
+          "opacity": 0.4,
+          "animation": "fade"
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 700,
+          "width": 1400,
+          "height": 90,
+          "size": 52,
+          "color": "#FFFFFF",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Hôm nay, câu chuyện Quốc và Nhi được kể lại bằng những nụ cười.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 810,
+          "width": 1400,
+          "height": 220,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "lineSpacing": 16,
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.5
+        }
+      ]
+    },
+    {
+      "id": "s99_closing",
+      "duration": 8,
+      "effect": "layer_scene",
+      "transition": {
+        "type": "none",
+        "duration": 0
+      },
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Quốc & Nhi",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 240,
+          "size": 140,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.4
+        },
+        {
+          "type": "text",
+          "text": "Quảng Trị · 2025",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 660,
+          "width": 1400,
+          "height": 90,
+          "size": 44,
+          "color": "#634C31",
+          "align": "center",
+          "animation": "fade",
+          "start": 0.9
+        }
+      ]
+    }
+  ]
+}

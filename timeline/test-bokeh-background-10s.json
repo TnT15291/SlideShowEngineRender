@@ -1,0 +1,94 @@
+{
+  "project": {
+    "name": "test-bokeh-background-10s",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "output": {
+    "path": "output/test-bokeh-background-10s.mp4"
+  },
+  "color": {
+    "contrast": 1.05,
+    "saturation": 1.06,
+    "vignette": true,
+    "sharpen": 0.2
+  },
+  "overlays": [
+    {
+      "path": "assets/backgrounds/mixkit_yellow_pink_bokeh_background_1080.mp4",
+      "position": "fullscreen",
+      "opacity": 0.18,
+      "margin": 0,
+      "blend": "screen",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "path": "assets/overlays/mixkit_sunlight_flare_overlay_720.mp4",
+      "position": "fullscreen",
+      "opacity": 0.12,
+      "margin": 0,
+      "blend": "screen",
+      "start": 0,
+      "end": 10
+    },
+    {
+      "path": "assets/frames/floral_corner_soft_1920x1080.png",
+      "position": "fullscreen",
+      "opacity": 0.85,
+      "margin": 0,
+      "blend": "alpha",
+      "start": 0,
+      "end": 10
+    }
+  ],
+  "slides": [
+    {
+      "id": "test_001",
+      "image": "input/027.jpg",
+      "duration": 5,
+      "effect": "slow_zoom_in",
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      },
+      "captions": [
+        {
+          "text": "Quốc & Thanh",
+          "role": "title",
+          "position": "center",
+          "start": 0.4,
+          "duration": 2.6,
+          "color": "#ffffff",
+          "outline": { "color": "black", "width": 2 },
+          "shadow": true,
+          "animation": "fade"
+        }
+      ]
+    },
+    {
+      "id": "test_002",
+      "image": "input/056.jpg",
+      "duration": 5.8,
+      "effect": "portrait_blur_background",
+      "transition": {
+        "type": "none",
+        "duration": 0
+      },
+      "captions": [
+        {
+          "text": "Bokeh + background + floral frame",
+          "role": "subtitle",
+          "position": "bottom_center",
+          "start": 0.5,
+          "duration": 4.2,
+          "color": "#ffffff",
+          "outline": { "color": "black", "width": 2 },
+          "shadow": true,
+          "animation": "slide_up"
+        }
+      ]
+    }
+  ]
+}

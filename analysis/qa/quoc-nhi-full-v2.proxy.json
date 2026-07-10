@@ -1,0 +1,260 @@
+{
+  "timeline": "timeline/quoc-nhi-full-v2.json",
+  "video": "output/quoc-nhi-full-v2.mp4",
+  "generatedAt": "2026-07-10T05:11:09.248Z",
+  "inputs": {
+    "music": "analysis/music/a thousand years.json",
+    "photoContent": {
+      "path": "analysis/photo_content.json",
+      "generatedBy": "stub"
+    }
+  },
+  "checks": {
+    "pacing": {
+      "status": "ran",
+      "tolerance": 0.25,
+      "flagged": 1,
+      "scenes": [
+        {
+          "id": "s01_hero",
+          "kind": "story",
+          "start": 0,
+          "end": 6.9,
+          "dur": 6.9,
+          "energyStart": 0,
+          "energyMean": 0.178,
+          "flags": [],
+          "expected": 6.5,
+          "deviation": 0.062,
+          "energyDrift": 0.178
+        },
+        {
+          "id": "s02_japan",
+          "kind": "story",
+          "start": 5.95,
+          "end": 13.12,
+          "dur": 7.17,
+          "energyStart": 0.235,
+          "energyMean": 0.217,
+          "flags": [],
+          "expected": 6.4,
+          "deviation": 0.12,
+          "energyDrift": -0.018
+        },
+        {
+          "id": "s03_cungque",
+          "kind": "story",
+          "start": 12.29,
+          "end": 19.79,
+          "dur": 7.5,
+          "energyStart": 0.106,
+          "energyMean": 0.162,
+          "flags": [],
+          "expected": 6.5,
+          "deviation": 0.154,
+          "energyDrift": 0.056
+        },
+        {
+          "id": "m1",
+          "kind": "montage",
+          "start": 18.89,
+          "end": 31.43,
+          "dur": 12.54,
+          "energyStart": 0.192,
+          "energyMean": 0.247,
+          "flags": [],
+          "barLength": 1.791,
+          "barOffset": 0.003
+        },
+        {
+          "id": "s04_firstmeeting",
+          "kind": "story",
+          "start": 30.83,
+          "end": 38,
+          "dur": 7.17,
+          "energyStart": 0.205,
+          "energyMean": 0.313,
+          "flags": [],
+          "expected": 6.2,
+          "deviation": 0.156,
+          "energyDrift": 0.108
+        },
+        {
+          "id": "s05_ourstory",
+          "kind": "story",
+          "start": 37.15,
+          "end": 44.32,
+          "dur": 7.17,
+          "energyStart": 0.227,
+          "energyMean": 0.315,
+          "flags": [],
+          "expected": 6.2,
+          "deviation": 0.156,
+          "energyDrift": 0.088
+        },
+        {
+          "id": "s06_injapan",
+          "kind": "story",
+          "start": 43.48,
+          "end": 50.2,
+          "dur": 6.72,
+          "energyStart": 0.43,
+          "energyMean": 0.432,
+          "flags": [],
+          "expected": 6,
+          "deviation": 0.12,
+          "energyDrift": 0.002
+        },
+        {
+          "id": "m2",
+          "kind": "montage",
+          "start": 49.46,
+          "end": 62,
+          "dur": 12.54,
+          "energyStart": 0.564,
+          "energyMean": 0.393,
+          "flags": [],
+          "barLength": 1.791,
+          "barOffset": 0.003
+        },
+        {
+          "id": "s07_lovegrows",
+          "kind": "story",
+          "start": 61.4,
+          "end": 68.79,
+          "dur": 7.39,
+          "energyStart": 0.121,
+          "energyMean": 0.455,
+          "flags": [
+            "too_slow_for_music"
+          ],
+          "expected": 5.9,
+          "deviation": 0.253,
+          "energyDrift": 0.334
+        },
+        {
+          "id": "s08_fouryears",
+          "kind": "story",
+          "start": 67.9,
+          "end": 74.28,
+          "dur": 6.38,
+          "energyStart": 0.536,
+          "energyMean": 0.498,
+          "flags": [],
+          "expected": 5.8,
+          "deviation": 0.1,
+          "energyDrift": -0.038
+        },
+        {
+          "id": "s09_promise",
+          "kind": "story",
+          "start": 73.6,
+          "end": 79.98,
+          "dur": 6.38,
+          "energyStart": 0.527,
+          "energyMean": 0.53,
+          "flags": [],
+          "expected": 5.7,
+          "deviation": 0.119,
+          "energyDrift": 0.003
+        },
+        {
+          "id": "m3",
+          "kind": "montage",
+          "start": 79.29,
+          "end": 91.83,
+          "dur": 12.54,
+          "energyStart": 0.616,
+          "energyMean": 0.426,
+          "flags": [],
+          "barLength": 1.791,
+          "barOffset": 0.003
+        },
+        {
+          "id": "s10_cominghome",
+          "kind": "story",
+          "start": 91.23,
+          "end": 97.61,
+          "dur": 6.38,
+          "energyStart": 0.554,
+          "energyMean": 0.551,
+          "flags": [],
+          "expected": 5.7,
+          "deviation": 0.119,
+          "energyDrift": -0.003
+        },
+        {
+          "id": "s11_quangtri",
+          "kind": "story",
+          "start": 96.94,
+          "end": 102.84,
+          "dur": 5.9,
+          "energyStart": 0.476,
+          "energyMean": 0.592,
+          "flags": [],
+          "expected": 5.6,
+          "deviation": 0.054,
+          "energyDrift": 0.116
+        },
+        {
+          "id": "s12_thebigday",
+          "kind": "story",
+          "start": 102.13,
+          "end": 107.83,
+          "dur": 5.7,
+          "energyStart": 0.566,
+          "energyMean": 0.552,
+          "flags": [],
+          "expected": 5.7,
+          "deviation": 0,
+          "energyDrift": -0.014
+        },
+        {
+          "id": "s99_closing",
+          "kind": "closing",
+          "start": 107.16,
+          "end": 115.16,
+          "dur": 8,
+          "energyStart": 0.457,
+          "energyMean": 0.537,
+          "flags": []
+        }
+      ]
+    },
+    "hero": {
+      "status": "skipped",
+      "margin": 0.15,
+      "flagged": 0,
+      "slots": [],
+      "reason": "photo_content.generatedBy=stub — Hero Scores are placeholders, not real judgements (set OPENAI_API_KEY and re-run analyzePhotoContent)"
+    },
+    "bookend": {
+      "status": "skipped",
+      "frames": {
+        "opening": "analysis/qa/frames/quoc-nhi-full-v2.opening.jpg",
+        "ending": "analysis/qa/frames/quoc-nhi-full-v2.ending.jpg",
+        "at": {
+          "opening": 3.45,
+          "ending": 111.16
+        }
+      },
+      "reason": "no DEEPSEEK_API_KEY — frames sampled, scoring skipped (this check is the one that genuinely needs AI vision)"
+    }
+  },
+  "advisories": [],
+  "problems": [
+    {
+      "id": "s07_lovegrows",
+      "check": "pacing",
+      "flags": [
+        "too_slow_for_music"
+      ],
+      "detail": "held 7.39s over music whose mean energy (0.46) implies 5.9s (25%); energy at its start was 0.12",
+      "fix": {
+        "kind": "set_duration",
+        "to": 5.9
+      }
+    }
+  ],
+  "verdict": "review"
+}

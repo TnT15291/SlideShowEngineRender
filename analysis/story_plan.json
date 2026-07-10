@@ -1,0 +1,72 @@
+{
+  "generatedBy": "stub",
+  "generatedAt": "2026-07-10T05:10:59.815Z",
+  "choice": "C",
+  "segments": [
+    {
+      "segment": "opening",
+      "goal": "Set the tone and introduce the couple.",
+      "emotion": "calm",
+      "pacing": "slow",
+      "emphasis": "medium",
+      "photoTags": [
+        "couple",
+        "portrait"
+      ],
+      "priorityEffect": "slow_zoom_in",
+      "captionIdea": "Names and date, quietly stated."
+    },
+    {
+      "segment": "love_story",
+      "goal": "Trace how their relationship grew.",
+      "emotion": "romantic",
+      "pacing": "medium",
+      "emphasis": "high",
+      "photoTags": [
+        "couple",
+        "candid"
+      ],
+      "priorityEffect": "dark_feather",
+      "captionIdea": "Short lines about their journey together."
+    },
+    {
+      "segment": "ceremony",
+      "goal": "Honour the vows and the moment they marry.",
+      "emotion": "tender",
+      "pacing": "slow",
+      "emphasis": "high",
+      "photoTags": [
+        "ceremony",
+        "vows"
+      ],
+      "priorityEffect": "portrait_blur_background",
+      "captionIdea": "A single vow-like line."
+    },
+    {
+      "segment": "family_friends",
+      "goal": "Celebrate the people around them.",
+      "emotion": "joyful",
+      "pacing": "dynamic",
+      "emphasis": "medium",
+      "photoTags": [
+        "family",
+        "friends"
+      ],
+      "priorityEffect": "collage_grid",
+      "captionIdea": "Warmth and gratitude to loved ones."
+    },
+    {
+      "segment": "ending",
+      "goal": "Close on a lasting, hopeful note.",
+      "emotion": "romantic",
+      "pacing": "slow",
+      "emphasis": "medium",
+      "photoTags": [
+        "couple",
+        "portrait"
+      ],
+      "priorityEffect": "dark_feather",
+      "captionIdea": "Names again, and a thank-you or a date."
+    }
+  ]
+}

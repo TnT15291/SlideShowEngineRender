@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slideshow-render-engine/story-options.schema.json",
+  "title": "Story Options — 4 narrative directions (Phase B / node 3)",
+  "description": "Contract for analysis/story_options.json. The AI proposes FOUR distinct ways to tell this couple's story, judged from the aggregate photo-content profile (NOT the raw images). Emotion/story only — NO effect or transition names appear here (those are decided later in director_notes). The scaffold computes the deterministic `profile` and owns option ids A..D; the model only fills the qualitative fields, which the guardrail trims and enum-clamps.",
+  "type": "object",
+  "required": ["generatedBy", "profile", "options", "recommended"],
+  "additionalProperties": false,
+  "properties": {
+    "generatedBy": { "type": "string", "pattern": "^(stub|text:.+)$", "description": "'stub' until the DeepSeek text call is keyed, else 'text:deepseek/<model>'." },
+    "model": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "profile": {
+      "type": "object",
+      "description": "Deterministic aggregate of analysis/photo_content.json the scaffold computed and fed the model (provenance + the numbers the AI was NOT allowed to invent).",
+      "required": ["count", "tags", "emotions", "orient", "heroCount"],
+      "additionalProperties": true,
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "tags": { "type": "object", "description": "tag -> count." },
+        "emotions": { "type": "object", "description": "emotion -> count." },
+        "orient": { "type": "object", "description": "orientation -> count." },
+        "heroCount": { "type": "integer", "minimum": 0, "description": "photos with heroScore >= 0.6." },
+        "topEmotion": { "type": "string" }
+      }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/option" }
+    },
+    "recommended": { "enum": ["A", "B", "C", "D"], "description": "Default pick if the client does not choose (node 4). The scaffold sets this to the first option; the model is asked to order options best-fit-first." }
+  },
+  "$defs": {
+    "option": {
+      "type": "object",
+      "required": ["id", "title", "mood", "pacing", "emotionalArc", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["A", "B", "C", "D"], "description": "Assigned by the scaffold in order — not trusted from the model." },
+        "title": { "type": "string", "minLength": 1, "maxLength": 60, "description": "Short marketing-style name, e.g. 'Luxury Wedding Film'." },
+        "mood": { "type": "string", "minLength": 1, "maxLength": 120, "description": "Emotional tone in a few words." },
+        "pacing": { "enum": ["slow", "medium", "fast", "dynamic"], "description": "Overall rhythm; a qualitative choice, not a duration." },
+        "emotionalArc": { "type": "string", "minLength": 1, "maxLength": 200, "description": "How feeling should build across the film." },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 300, "description": "One or two sentences on the storytelling approach — emotion/narrative only, no engine terms." },
+        "captionTone": { "type": "string", "maxLength": 120, "description": "Optional: voice of the on-screen text (minimal, poetic, warm...)." },
+        "fitReason": { "type": "string", "maxLength": 240, "description": "Optional: why this direction suits THIS photo set (references the profile)." }
+      }
+    }
+  }
+}
