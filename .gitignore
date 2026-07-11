@@ -5,7 +5,17 @@ output/
 logs/
 *.log
 
-# Local Claude Code state (settings.json IS tracked; these are per-machine).
+# Secrets. Nothing here loads a .env — the API keys come from the environment
+# (OPENAI_API_KEY, DEEPSEEK_API_KEY), set once at Windows User scope like
+# FFMPEG_PATH already is. A .env would therefore be BOTH inert and committable,
+# which is the worst pair of properties a secrets file can have. Ignored so that
+# writing one can only waste your time, never leak a key.
+.env
+.env.*
+!.env.example
+
+# Local Claude Code state (settings.json IS tracked and must never hold a key;
+# these are per-machine).
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
 
