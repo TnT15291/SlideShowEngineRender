@@ -1,0 +1,141 @@
+{
+  "id": "modern-teal-01",
+  "version": 1,
+  "name": "Modern Teal",
+  "tier": "smart_lite",
+  "libraryTheme": "modern_teal",
+  "source": {
+    "origin": "original",
+    "notes": "Modern minimal, contemporary, lots of whitespace with a 2026 Color-of-the-Year 'Transformative Teal' accent. Clean crisp grade, no overlays. Original recipe."
+  },
+  "fit": {
+    "bestFor": ["modern_minimal", "prewedding", "editorial", "couple_journey"],
+    "minPhotos": 30,
+    "idealPhotos": 60
+  },
+  "musicProfile": { "moods": ["calm", "modern", "piano"], "energy": "low" },
+  "briefFields": {
+    "required": ["bride", "groom"],
+    "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]
+  },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 6000, "saturation": 1.06, "contrast": 1.05, "glow": 0.06 },
+    "audio": { "fade_in": 1.5, "fade_out": 3, "crossfade": 0 },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": { "cream": "#F3F1EC", "ink": "#1C2B30", "brown": "#1C2B30", "white": "#FFFFFF" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 5, "calmSceneSec": 6, "buildSceneSec": 4, "montageSec": 10, "closingSec": 7.5 },
+    "transitionStrategy": {
+      "default": { "type": "crossfade", "duration": 0.5 },
+      "calm": { "type": "smooth_up", "duration": 0.6 },
+      "memory": { "type": "dissolve", "duration": 0.5 },
+      "peak": { "type": "smooth_left", "duration": 0.4 },
+      "final": { "type": "none", "duration": 0 }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": ["qualityNorm", "heroScore", "emotionScore", "skinFrac"],
+      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "darkPhotoMaxMeanLuma": 75
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_open",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_in" }
+      ],
+      "text": { "quote": "{{bride}} & {{groom}}" }
+    },
+    {
+      "id": "s02_duo",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "portrait", "orient": "portrait", "quality": "best", "motion": "zoom_in" },
+        { "slot": "wide", "orient": "landscape", "quality": "best" }
+      ],
+      "text": { "body": "Mình bắt đầu từ những điều giản dị nhất." }
+    },
+    {
+      "id": "s03_circle",
+      "effect": "circle_focus",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "any", "quality": "best" }
+      ]
+    },
+    {
+      "id": "s04_journey",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        { "slot": "left", "orient": "any", "quality": "good" },
+        { "slot": "centre", "orient": "any", "quality": "best", "motion": "zoom_in" },
+        { "slot": "right", "orient": "any", "quality": "good" }
+      ],
+      "text": {
+        "heading": { "value": "Hành trình", "color": "#2E6F6A" },
+        "caption": "Từng bước, từng nơi, đều có nhau bên cạnh."
+      }
+    },
+    {
+      "id": "s05_breath",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_out" }
+      ],
+      "text": { "quote": "Ít mà chất, giống như tình mình." }
+    },
+    {
+      "id": "s06_hero_zoom",
+      "effect": "slow_zoom_in",
+      "easing": "gentle",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "landscape", "quality": "best" }
+      ]
+    },
+    {
+      "id": "s07_grid",
+      "effect": "collage_grid",
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        { "slot": "grid", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }
+      ]
+    },
+    {
+      "id": "s08_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

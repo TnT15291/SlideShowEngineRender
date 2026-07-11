@@ -1,0 +1,139 @@
+{
+  "id": "i-do-editorial",
+  "version": 1,
+  "name": "I Do — Editorial (minimal captions)",
+  "tier": "smart_lite",
+  "libraryTheme": "editorial_bold",
+  "source": {
+    "origin": "original",
+    "notes": "One-off job: editorial-bold recipe with captions stripped to bookends + a single mid line. Photos = sharp-only subset; music = Em Đồng Ý (I Do)."
+  },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "high" },
+    "color": { "temperature": 6200, "saturation": 1.0, "contrast": 1.07, "brightness": 0.01, "glow": 0.05 },
+    "audio": { "fade_in": 1.5, "fade_out": 4, "crossfade": 0 },
+    "overlays": [
+      { "variant": "soft", "position": "fullscreen", "opacity": 0.12, "blend": "screen", "start": 0 }
+    ],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": { "cream": "#F5F2EC", "ink": "#17171B", "brown": "#17171B", "white": "#FFFFFF" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 5.5, "calmSceneSec": 6.5, "buildSceneSec": 4.2, "montageSec": 11, "closingSec": 8 },
+    "transitionStrategy": {
+      "default": { "type": "crossfade", "duration": 0.6 },
+      "calm": { "type": "fade_slow", "duration": 0.9 },
+      "memory": { "type": "dissolve", "duration": 0.6 },
+      "peak": { "type": "smooth_left", "duration": 0.4 },
+      "final": { "type": "none", "duration": 0 }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": ["qualityNorm", "sharpness", "skinFrac"],
+      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "darkPhotoMaxMeanLuma": 70
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_open",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_in" }
+      ],
+      "text": { "quote": "Quốc & Nhi" }
+    },
+    {
+      "id": "s02_beginning",
+      "effect": "layer_scene",
+      "layout": "collage_cluster_text",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "portrait", "quality": "best", "motion": "zoom_in" },
+        { "slot": "tl", "orient": "landscape", "quality": "good" },
+        { "slot": "bl", "orient": "landscape", "quality": "good" }
+      ]
+    },
+    {
+      "id": "s03_chapter",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "peak",
+      "photoSlots": [
+        { "slot": "left", "orient": "any", "quality": "good" },
+        { "slot": "centre", "orient": "any", "quality": "best", "motion": "zoom_in" },
+        { "slot": "right", "orient": "any", "quality": "good" }
+      ]
+    },
+    {
+      "id": "s04_breath",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_out" }
+      ],
+      "text": { "quote": "Chỉ cần có nhau." }
+    },
+    {
+      "id": "s05_duo",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "portrait", "orient": "portrait", "quality": "best", "motion": "zoom_in" },
+        { "slot": "wide", "orient": "landscape", "quality": "best" }
+      ]
+    },
+    {
+      "id": "s06_grid",
+      "effect": "collage_grid",
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        { "slot": "grid", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }
+      ]
+    },
+    {
+      "id": "s07_montage",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        { "slot": "film_roll", "count": 8, "orient": "any", "quality": "good", "preferEmotion": true }
+      ]
+    },
+    {
+      "id": "s08_candid",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "p1", "orient": "any", "quality": "good" },
+        { "slot": "p2", "orient": "any", "quality": "good" },
+        { "slot": "p3", "orient": "any", "quality": "good" }
+      ]
+    },
+    {
+      "id": "s09_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": { "names": "Quốc & Nhi" }
+    }
+  ]
+}

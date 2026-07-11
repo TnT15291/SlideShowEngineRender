@@ -1,13 +1,20 @@
 // Apply a reusable story template to the current analyzed photos/music and emit
 // a render-engine timeline. This is the Smart Lite path: template-driven story,
-// no Quoc-Nhi hardcoded narrative.
+// no hardcoded narrative.
+//
+// Geometry is NOT computed here. Every layer_scene scene names a layout in
+// layouts/library.json; this script only resolves photoSlots -> image paths,
+// fills {{tokens}} into the layout's text slots, picks durations from music
+// energy, then emits valid timeline JSON. Adding a new template = writing a new
+// JSON recipe (which layouts, in what order, with what copy) -- no code change.
 //
 // Usage:
 //   node scripts/applyStoryTemplate.mjs --music "music/a thousand years.mp3"
-//     [--template story-templates/korean-soft-romance-01.json]
+//     [--template story-templates/warm-film-01.json]
 //     [--photos analysis/photos.json]
+//     [--library layouts/library.json]
 //     [--brief jobs/demo/brief.json]
-//     [--out timeline/korean-soft-romance-demo.json]
+//     [--out timeline/<template-id>.json]
 import fs from "node:fs";
 import path from "node:path";
 
@@ -17,19 +24,22 @@ const arg = (flag, def) => {
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
 
-const templatePath = arg("--template", "story-templates/korean-soft-romance-01.json");
+const templatePath = arg("--template", "story-templates/warm-film-01.json");
 const photosPath = arg("--photos", "analysis/photos.json");
 const musicPath = arg("--music", "music/a thousand years.mp3");
-const outPath = arg("--out", "timeline/korean-soft-romance-demo.json");
+const libraryPath = arg("--library", "layouts/library.json");
 const briefPath = arg("--brief", "");
 
 const template = JSON.parse(fs.readFileSync(path.resolve(root, templatePath), "utf8"));
+const library = JSON.parse(fs.readFileSync(path.resolve(root, libraryPath), "utf8"));
 const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "utf8"));
 const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
 const music = JSON.parse(fs.readFileSync(path.resolve(root, `analysis/music/${musicName}.json`), "utf8"));
 const brief = briefPath && fs.existsSync(path.resolve(root, briefPath))
   ? JSON.parse(fs.readFileSync(path.resolve(root, briefPath), "utf8"))
   : {};
+
+const outPath = arg("--out", `timeline/${template.id}.json`);
 
 const tokens = {
   bride: brief.bride || "Bride",
@@ -42,7 +52,7 @@ const tokens = {
 };
 
 function fill(text = "") {
-  return text.replace(/\{\{(\w+)\}\}/g, (_, key) => tokens[key] || "");
+  return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) => tokens[key] || "");
 }
 
 const photos = photosDoc.photos || [];
@@ -78,32 +88,13 @@ function take(slot = {}, count = 1) {
   return count === 1 ? picked[0] : picked;
 }
 
-function takeSeq(count) {
-  const out = [];
-  for (let i = 0; i < count; i++) {
-    let chosen = null;
-    for (let n = 0; n < photos.length; n++) {
-      const p = photos[(seq + n) % photos.length];
-      if (!used.has(p.file)) {
-        chosen = p;
-        seq = (seq + n + 1) % photos.length;
-        break;
-      }
-    }
-    chosen ||= photos[seq++ % photos.length];
-    used.add(chosen.file);
-    out.push(chosen.file);
-  }
-  return out;
-}
-
 function photo(slotName, scene, fallback = {}) {
-  const slot = scene.photoSlots.find((s) => s.slot === slotName) || fallback;
+  const slot = (scene.photoSlots || []).find((s) => s.slot === slotName) || fallback;
   return take(slot, 1);
 }
 
 function photosFor(slotName, scene, defaultCount) {
-  const slot = scene.photoSlots.find((s) => s.slot === slotName) || { count: defaultCount };
+  const slot = (scene.photoSlots || []).find((s) => s.slot === slotName) || { count: defaultCount };
   return take(slot, slot.count || defaultCount);
 }
 
@@ -120,9 +111,6 @@ function pic(file, x, y, width, height, extra = {}) {
   };
 }
 
-const C = template.defaults.palette;
-const F = template.defaults.fonts;
-const card = template.layoutPresets.soft_card;
 const rect = (x, y, width, height, color, opacity, extra = {}) =>
   ({ type: "rect", x, y, width, height, color, opacity, ...extra });
 const txt = (text, font, x, y, width, height, size, color, align = "center", extra = {}) =>
@@ -159,83 +147,217 @@ function transitionFor(role, isLast) {
   return t[role] || t.default;
 }
 
-function sceneById(id) {
-  return template.scenes.find((s) => s.id === id);
-}
+// ---------- library-driven layer_scene builder ----------
+// The story-template scene names a layout id; the layout owns all pixel
+// geometry. The scene only refines photo selection per slot (orient/quality/
+// motion/frame) and supplies copy keyed by the layout's text-slot ids.
 
-function buildLayerScene(scene) {
-  const title = fill(scene.captionPattern);
-  const subtitle = fill(scene.subtitlePattern || scene.fallbackSubtitlePattern || "");
+const themeRef = template.libraryTheme || "white_weddings";
+const libTheme = () => (library.designTokens?.themes || {})[themeRef] || {};
 
-  switch (scene.id) {
-    case "s01_opening_title": {
-      const bg = photo("background", scene);
-      const left = photo("portrait_left", scene);
-      const right = photo("portrait_right", scene);
-      return {
-        effect: "layer_scene",
-        captions: [],
-        layers: [
-          pic(bg, 0, 0, 1920, 1080, { motion: "zoom_in" }),
-          rect(0, 0, 1920, 1080, "#000000", 0.18),
-          pic(left, 210, 280, 520, 560, { frame: card, animation: "slide_up", start: 0.15 }),
-          pic(right, 1190, 280, 520, 560, { frame: card, animation: "slide_up", start: 0.25 }),
-          rect(0, 815, 1920, 265, C.cream, 0.92, { animation: "fade", start: 0.35 }),
-          txt(title, F.title, 260, 850, 1400, 125, 104, C.brown, "center", { animation: "fade", start: 0.5 }),
-          txt(subtitle, F.body, 260, 975, 1400, 55, 34, C.brown, "center", { animation: "fade", start: 0.75 }),
-        ],
-      };
-    }
-    case "s02_first_chapter":
-    case "s05_soft_portraits":
-    case "s06_family_blessing": {
-      const main = photo(scene.id === "s06_family_blessing" ? "family_hero" : "hero", scene, { orient: "portrait" });
-      const support = scene.id === "s05_soft_portraits"
-        ? [photo("left", scene), photo("right", scene)]
-        : photosFor(scene.id === "s06_family_blessing" ? "family_support" : "supporting", scene, 2);
-      return {
-        effect: "layer_scene",
-        captions: [],
-        layers: [
-          rect(0, 0, 1920, 1080, C.cream, 1),
-          pic(main, 120, 120, 720, 820, { motion: "zoom_in", frame: card, animation: "slide_right", start: 0.1 }),
-          pic(support[0], 1010, 135, 700, 330, { frame: card, animation: "slide_left", start: 0.25 }),
-          pic(support[1], 1010, 515, 700, 330, { frame: card, animation: "slide_left", start: 0.38 }),
-          txt(title, F.heading, 930, 875, 880, 130, 42, C.brown, "center", { lineSpacing: 14, animation: "fade", start: 0.65 }),
-        ],
-      };
-    }
-    case "s09_ending": {
-      const bg = photo("background", scene);
-      return {
-        effect: "layer_scene",
-        captions: [],
-        layers: [
-          pic(bg, 0, 0, 1920, 1080, { motion: "zoom_out" }),
-          rect(0, 0, 1920, 1080, C.cream, 0.58),
-          txt(title, F.title, 240, 385, 1440, 180, 140, C.brown, "center", { animation: "fade", start: 0.35 }),
-          txt(subtitle || tokens.thankYouLine, F.body, 300, 620, 1320, 90, 42, C.brown, "center", { animation: "fade", start: 0.8 }),
-        ],
-      };
-    }
-    default:
-      throw new Error(`No layer builder for ${scene.id}`);
+function resolveColor(spec) {
+  if (typeof spec !== "string") return "#000000";
+  if (spec.startsWith("theme.")) {
+    const th = libTheme();
+    return th.palette?.[spec.slice(6)] || th.background || "#000000";
   }
+  return spec;
 }
+
+function resolveFont(role) {
+  const th = libTheme();
+  return th.fonts?.[role]
+    || template.defaults?.fonts?.[role]
+    || template.defaults?.fonts?.body
+    || "fonts/BeVietnamPro-Regular.ttf";
+}
+
+function resolveFrame(name) {
+  if (!name) return undefined;
+  if (typeof name === "object") return name;
+  return template.layoutPresets?.[name] || library.designTokens?.framePreset?.[name] || undefined;
+}
+
+function hexLuma(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+  if (!m) return 255; // named colors: assume light
+  const v = parseInt(m[1], 16);
+  return 0.2126 * ((v >> 16) & 255) + 0.7152 * ((v >> 8) & 255) + 0.0722 * (v & 255);
+}
+
+function themeInk() {
+  const pal = libTheme().palette || {};
+  return pal.text || pal.warm_brown || pal.ink_dark || template.defaults?.palette?.brown || "#2D2D33";
+}
+
+// Over a full-bleed photo, text is white unless a LIGHT panel backs it; over a
+// dark scrim panel it stays white. On solid theme backgrounds use theme ink.
+function defaultTextColor(slot, layout) {
+  if (layout.background?.type !== "photo_full_bleed") return themeInk();
+  const cx = slot.x + slot.width / 2;
+  const cy = slot.y + slot.height / 2;
+  const backing = (layout.panels || []).find(
+    (p) => cx >= p.x && cx <= p.x + p.width && cy >= p.y && cy <= p.y + p.height
+  );
+  if (!backing || hexLuma(resolveColor(backing.color)) < 140) return "#FFFFFF";
+  return themeInk();
+}
+
+const stagger = () => library.designTokens?.motionPresets?.staggerSeconds || {};
+function photoStart(idx) {
+  const s = stagger();
+  return +(((s.photoBase ?? 0.15) + idx * (s.photoStep ?? 0.1))).toFixed(2);
+}
+function textStart(role) {
+  const s = stagger();
+  return ["heading", "eyebrow", "display", "names"].includes(role) ? (s.heading ?? 0.2) : (s.body ?? 0.5);
+}
+
+function buildLayerSceneFromLayout(scene) {
+  const layout = (library.layouts || []).find((l) => l.id === scene.layout);
+  if (!layout) throw new Error(`Scene ${scene.id}: unknown layout '${scene.layout}' (not in ${libraryPath})`);
+  const canvas = library.meta?.canvas || { width: 1920, height: 1080 };
+  const bg = layout.background || { type: "cream" };
+  const bgSlotId = bg.type === "photo_full_bleed" ? bg.slot : null;
+  const defOf = (id) => (scene.photoSlots || []).find((s) => s.slot === id) || {};
+  const layers = [];
+
+  // 1) background: full-bleed photo or a solid theme fill.
+  if (bg.type === "photo_full_bleed") {
+    const slot = (layout.photoSlots || []).find((s) => s.id === bgSlotId)
+      || { x: 0, y: 0, width: canvas.width, height: canvas.height };
+    const def = defOf(bgSlotId);
+    const file = take({ orient: def.orient }, 1);
+    layers.push(pic(file, slot.x, slot.y, slot.width, slot.height, {
+      fit: def.fit || slot.fit || "cover",
+      ...(def.motion ? { motion: def.motion } : {}),
+    }));
+  } else {
+    const bgColor = bg.type === "cream"
+      ? (libTheme().background || "#FBF6ED")
+      : resolveColor(bg.color || "#000000");
+    layers.push(rect(0, 0, canvas.width, canvas.height, bgColor, 1));
+  }
+
+  // 2) panels (scrims / title pills), drawn above the background. Panels with
+  //    z:"over_photos" wait until after the photo layers (e.g. a scrim that
+  //    must darken foreground photos so text stays legible).
+  const allPanels = layout.panels || [];
+  for (const p of allPanels.filter((p) => p.z !== "over_photos")) {
+    layers.push(rect(p.x, p.y, p.width, p.height, resolveColor(p.color), p.opacity ?? 1));
+  }
+
+  // 3) photo slots: the layout drives how many + where; the scene refines
+  //    which photo lands in each (orientation, quality, motion, frame).
+  let pIdx = 0;
+  for (const slot of layout.photoSlots || []) {
+    if (slot.id === bgSlotId) continue;
+    const def = defOf(slot.id);
+    const file = take({ orient: def.orient }, 1);
+    const frame = resolveFrame(def.frame || slot.frame);
+    const anim = def.animation || slot.suggestedAnimation;
+    const animated = anim && anim !== "none";
+    layers.push(pic(file, slot.x, slot.y, slot.width, slot.height, {
+      fit: def.fit || slot.fit || "cover",
+      ...(def.motion ? { motion: def.motion } : {}),
+      ...(frame ? { frame } : {}),
+      ...(slot.rotation != null ? { rotation: slot.rotation } : {}),
+      ...(animated ? { animation: anim, start: photoStart(pIdx) } : {}),
+    }));
+    pIdx++;
+  }
+
+  // 4) panels layered over the photos (text-legibility scrims).
+  for (const p of allPanels.filter((p) => p.z === "over_photos")) {
+    layers.push(rect(p.x, p.y, p.width, p.height, resolveColor(p.color), p.opacity ?? 1));
+  }
+
+  // 5) optional full-frame decor PNG (1920x1080 wedding frame) under the text.
+  if (scene.frameOverlay) {
+    layers.push({
+      type: "image", path: scene.frameOverlay,
+      x: 0, y: 0, width: canvas.width, height: canvas.height,
+      fit: "stretch",
+    });
+  }
+
+  // 6) text slots: only render the ones this scene supplies copy for.
+  for (const slot of layout.textSlots || []) {
+    const raw = scene.text ? scene.text[slot.id] : undefined;
+    const obj = raw && typeof raw === "object" ? raw : null;
+    const value = fill(obj ? obj.value : raw);
+    if (!value) continue;
+    const role = obj?.fontRole || slot.fontRole || "body";
+    layers.push(txt(
+      value,
+      resolveFont(role),
+      slot.x, slot.y, slot.width, slot.height,
+      obj?.sizePx || slot.sizePx || 40,
+      obj?.color || slot.color || defaultTextColor(slot, layout),
+      slot.align || "left",
+      {
+        ...(slot.lineSpacing ? { lineSpacing: slot.lineSpacing } : {}),
+        animation: "fade",
+        start: textStart(slot.role),
+      }
+    ));
+  }
+
+  return { effect: "layer_scene", captions: [], layers };
+}
+
+// Emit a caption only when the scene actually supplies copy — recipes that want
+// "photos only" montage beats just omit captionPattern.
+const capsFor = (pattern, role = "caption") => {
+  const t = fill(pattern);
+  return t ? [cap(t, role)] : [];
+};
+
+// Whole-slide effects that take one photo (slot "hero" in the recipe).
+const SINGLE_IMAGE_EFFECTS = new Set([
+  "still", "slow_zoom_in", "slow_zoom_out",
+  "pan_left", "pan_right", "pan_up", "pan_down",
+  "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br",
+  "portrait_blur_background", "polaroid", "circle_focus", "dark_feather",
+]);
+// The engine only accepts `easing` on zoom/pan/kenburns effects.
+const EASING_EFFECTS = new Set([
+  "slow_zoom_in", "slow_zoom_out",
+  "pan_left", "pan_right", "pan_up", "pan_down",
+  "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br",
+]);
 
 function buildScene(scene) {
-  if (scene.effect === "layer_scene") return buildLayerScene(scene);
+  if (scene.effect === "layer_scene") return buildLayerSceneFromLayout(scene);
   if (scene.effect === "memory_wall") {
-    return { effect: "memory_wall", images: photosFor("memories", scene, 5), captions: [cap(fill(scene.captionPattern))] };
+    return { effect: "memory_wall", images: photosFor("memories", scene, 5), captions: capsFor(scene.captionPattern) };
   }
   if (scene.effect === "collage_grid") {
-    return { effect: "collage_grid", images: photosFor("grid", scene, 6), captions: [cap(fill(scene.captionPattern))] };
+    return { effect: "collage_grid", images: photosFor("grid", scene, 6), captions: capsFor(scene.captionPattern) };
   }
-  if (scene.effect === "film_roll_left") {
-    return { effect: "film_roll_left", images: photosFor("film_roll", scene, 8), captions: [cap(fill(scene.captionPattern))] };
+  if (scene.effect === "film_roll_left" || scene.effect === "film_roll_up" || scene.effect === "film_roll_right") {
+    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), captions: capsFor(scene.captionPattern) };
   }
-  if (scene.effect === "dark_feather") {
-    return { effect: "dark_feather", image: photo("hero", scene), captions: [cap(fill(scene.captionPattern), "subtitle")] };
+  if (scene.effect === "double_exposure") {
+    return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern) };
+  }
+  if (scene.effect === "video_background") {
+    if (!scene.background) throw new Error(`Scene ${scene.id}: video_background needs a 'background' video path`);
+    return { effect: "video_background", background: scene.background, captions: capsFor(scene.captionPattern) };
+  }
+  if (scene.effect === "mask_reveal") {
+    return {
+      effect: "mask_reveal",
+      image: photo("hero", scene),
+      mask: scene.mask || "assets/masks/particle_gather.mp4",
+      captions: capsFor(scene.captionPattern),
+    };
+  }
+  if (SINGLE_IMAGE_EFFECTS.has(scene.effect)) {
+    const role = scene.effect === "dark_feather" ? "subtitle" : "caption";
+    const slide = { effect: scene.effect, image: photo("hero", scene), captions: capsFor(scene.captionPattern, role) };
+    if (scene.easing && EASING_EFFECTS.has(scene.effect)) slide.easing = scene.easing;
+    return slide;
   }
   throw new Error(`Unsupported template effect ${scene.effect}`);
 }
@@ -264,7 +386,7 @@ const timeline = {
   audio: template.defaults.audio,
   color: template.defaults.color,
   overlays: template.defaults.overlays,
-  output: { path: "output/korean-soft-romance-demo.mp4" },
+  output: { path: `output/${template.id}.mp4` },
   slides,
 };
 

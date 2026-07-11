@@ -1,0 +1,168 @@
+{
+  "id": "warm-film-01",
+  "version": 1,
+  "name": "Warm Film",
+  "tier": "smart_lite",
+  "libraryTheme": "warm_film",
+  "source": {
+    "origin": "original",
+    "notes": "Warm analog 35mm nostalgia (2026 trend: vintage film frames, sun-kissed grain, editorial nostalgia). Light leaks + grain + polaroid scatter. Original recipe."
+  },
+  "fit": {
+    "bestFor": ["prewedding", "candid", "soft_romance", "family_warmth", "outdoor"],
+    "minPhotos": 35,
+    "idealPhotos": 70
+  },
+  "musicProfile": { "moods": ["romantic", "warm", "acoustic"], "energy": "low_to_medium" },
+  "briefFields": {
+    "required": ["bride", "groom"],
+    "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]
+  },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 4600, "saturation": 1.06, "contrast": 1.03, "glow": 0.16, "grain": 6, "vignette": true },
+    "audio": { "fade_in": 1.5, "fade_out": 3, "crossfade": 0 },
+    "overlays": [
+      { "variant": "warm", "position": "fullscreen", "opacity": 0.35, "blend": "screen", "start": 0 },
+      { "path": "assets/overlays/cutestock_golden_bokeh_overlay_hd.mp4", "position": "fullscreen", "opacity": 0.2, "blend": "screen", "start": 0 }
+    ],
+    "fonts": {
+      "title": "fonts/DancingScript.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": { "cream": "#F4ECE0", "ink": "#4A3B2C", "brown": "#5A4632", "white": "#FFFBF4" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 5.5, "calmSceneSec": 7, "buildSceneSec": 4.5, "montageSec": 12, "closingSec": 8 },
+    "transitionStrategy": {
+      "default": { "type": "crossfade", "duration": 0.8 },
+      "calm": { "type": "fade_slow", "duration": 1 },
+      "memory": { "type": "dissolve", "duration": 0.7 },
+      "peak": { "type": "dissolve", "duration": 0.6 },
+      "final": { "type": "none", "duration": 0 }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": ["qualityNorm", "heroScore", "emotionScore", "skinFrac"],
+      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "darkPhotoMaxMeanLuma": 70
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_open",
+      "effect": "layer_scene",
+      "layout": "hero_title_card",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_in" },
+        { "slot": "strip_1", "orient": "portrait", "quality": "high", "frame": "card" },
+        { "slot": "strip_2", "orient": "portrait", "quality": "high", "frame": "card" },
+        { "slot": "strip_3", "orient": "portrait", "quality": "high", "frame": "card" }
+      ],
+      "text": {
+        "eyebrow": "{{bride}} & {{groom}}",
+        "date": { "value": "{{date}}", "sizePx": 110 }
+      }
+    },
+    {
+      "id": "s02_candid",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "p1", "orient": "any", "quality": "good" },
+        { "slot": "p2", "orient": "any", "quality": "good" },
+        { "slot": "p3", "orient": "any", "quality": "good" }
+      ],
+      "text": { "heading": "Chuyện mình" }
+    },
+    {
+      "id": "s03_chapter",
+      "effect": "layer_scene",
+      "layout": "collage_cluster_text",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "portrait", "quality": "best", "motion": "zoom_in" },
+        { "slot": "tl", "orient": "landscape", "quality": "good" },
+        { "slot": "bl", "orient": "landscape", "quality": "good" }
+      ],
+      "text": {
+        "heading": "Ngày đầu",
+        "body": "Mình gặp nhau thật tình cờ, rồi thương nhau lúc nào chẳng hay."
+      }
+    },
+    {
+      "id": "s04_flowers",
+      "effect": "video_background",
+      "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Ngày mình nói lời đồng ý.",
+      "photoSlots": []
+    },
+    {
+      "id": "s05_breath",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_out" }
+      ],
+      "text": { "quote": "Nắng của mình, là nhau." }
+    },
+    {
+      "id": "s06_family",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        { "slot": "left", "orient": "any", "quality": "good" },
+        { "slot": "centre", "orient": "any", "quality": "best", "motion": "zoom_in" },
+        { "slot": "right", "orient": "any", "quality": "good" }
+      ],
+      "text": {
+        "heading": "Gia đình",
+        "caption": "Tình yêu hôm nay có thêm lời chúc phúc của những người thương."
+      }
+    },
+    {
+      "id": "s07_montage",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "captionPattern": "Và hôm nay, mình chính thức về chung một nhà.",
+      "photoSlots": [
+        { "slot": "film_roll", "count": 8, "orient": "any", "quality": "good", "preferEmotion": true }
+      ]
+    },
+    {
+      "id": "s08_instant",
+      "effect": "polaroid",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "any", "quality": "best" }
+      ]
+    },
+    {
+      "id": "s09_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

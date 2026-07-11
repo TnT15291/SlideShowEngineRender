@@ -1,0 +1,446 @@
+{
+  "project": {
+    "name": "i-do-editorial",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "high"
+  },
+  "music": [
+    {
+      "path": "music/Em Đồng Ý (I Do).mp3",
+      "volume": 0.82
+    }
+  ],
+  "audio": {
+    "fade_in": 1.5,
+    "fade_out": 4,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 6200,
+    "saturation": 1,
+    "contrast": 1.07,
+    "brightness": 0.01,
+    "glow": 0.05
+  },
+  "overlays": [
+    {
+      "variant": "soft",
+      "position": "fullscreen",
+      "opacity": 0.12,
+      "blend": "screen",
+      "start": 0
+    }
+  ],
+  "output": {
+    "path": "output/i-do-editorial.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_open",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/008.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.499,
+          "motion": "zoom_in"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Quốc & Nhi",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "size": 56,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.9
+      }
+    },
+    {
+      "id": "s02_beginning",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/010.jpg",
+          "x": 36,
+          "y": 150,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.547,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/030.jpg",
+          "x": 36,
+          "y": 565,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "focusX": 0.574,
+          "focusY": 0.477,
+          "animation": "slide_right",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/001.jpg",
+          "x": 560,
+          "y": 110,
+          "width": 590,
+          "height": 860,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.519,
+          "motion": "zoom_in",
+          "animation": "slide_up",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s03_chapter",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/057.jpg",
+          "x": 108,
+          "y": 265,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.577,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/064.jpg",
+          "x": 709,
+          "y": 106,
+          "width": 500,
+          "height": 760,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.511,
+          "motion": "zoom_in",
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/068.jpg",
+          "x": 1262,
+          "y": 434,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.502,
+          "animation": "slide_left",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.4
+      }
+    },
+    {
+      "id": "s04_breath",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/029.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.616,
+          "focusY": 0.463,
+          "motion": "zoom_out"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chỉ cần có nhau.",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "size": 56,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s05_duo",
+      "duration": 6.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/062.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.525,
+          "motion": "zoom_in",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/004.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.404,
+          "focusY": 0.459,
+          "animation": "slide_left",
+          "start": 0.25
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s06_grid",
+      "duration": 4.931,
+      "effect": "collage_grid",
+      "images": [
+        "input/063.jpg",
+        "input/039.jpg",
+        "input/012.jpg",
+        "input/056.jpg",
+        "input/061.jpg",
+        "input/034.jpg"
+      ],
+      "captions": [],
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.4
+      }
+    },
+    {
+      "id": "s07_montage",
+      "duration": 11,
+      "effect": "film_roll_left",
+      "images": [
+        "input/043.jpg",
+        "input/033.jpg",
+        "input/037.jpg",
+        "input/002.jpg",
+        "input/015.jpg",
+        "input/018.jpg",
+        "input/035.jpg",
+        "input/059.jpg"
+      ],
+      "captions": [],
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.4
+      }
+    },
+    {
+      "id": "s08_candid",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/049.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.454,
+          "focusY": 0.546,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/005.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.428,
+          "focusY": 0.704,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/022.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.63,
+          "focusY": 0.575,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s09_closing",
+      "duration": 8,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Quốc & Nhi",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ]
+}
