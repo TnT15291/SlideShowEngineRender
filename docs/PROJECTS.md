@@ -44,17 +44,40 @@ that phase and every downstream phase run again.
 
 ## Tiers
 
-Both tiers run through this same isolation, job manifest and resume logic. They
-differ only in which nodes build the story and the timeline:
+All three tiers run through this same isolation, job manifest and resume logic.
+They differ only in which nodes build the story and the timeline:
 
 ```powershell
+# template — an art-directed recipe, zero AI calls
+node scripts/runProject.mjs --project projects/my-video --tier template `
+  --recipe story-templates/warm-film-01.json
+
 npm run lite:ai -- --project projects/my-video   # rule-based timeline, AI writes the words
 npm run premium -- --project projects/my-video   # the AI-director chain (nodes 3,4,5+6,7,8+9,10+11)
 ```
 
-Premium adds: four story options, a customer choice with an enforced response
+**template** applies a recipe from `story-templates/` using the full engine —
+layer scenes, LUTs, reveal masks, frames. It makes **no AI calls at all**: the
+copy lives in the recipe, and photo slots are matched on orientation and
+sharpness, so the vision node is skipped. Vision is the only node whose cost
+scales with the photo count, and a cheap tier that quietly runs the expensive
+node is not a cheap tier. Set the recipe in `project.json` (`"recipe"`) or pass
+`--recipe`; a missing one is a hard error rather than a silent fall back to a
+default recipe the customer never chose.
+
+**lite** generates the timeline from rules (zoom/pan/kenburns on a uniform
+duration) and has DeepSeek write the words for these particular photos.
+
+**premium** adds four story options, a customer choice with an enforced response
 window, director notes, a story plan, a validate/retry/fallback loop that drops
 back to Lite rather than failing, and a QA loop that repairs and re-renders.
+
+The ladder is deliberately not a straight line: **template looks richer than
+lite**, because a human art-directed it. What it cannot do is fit its words to
+this particular couple's photos. That is what going up the ladder buys.
+
+Note `npm run lite` (`buildClip.mjs`) is the pre-isolation entry point. It also
+runs recipes, but against the repository root — do not use it for real jobs.
 
 The tier is never guessed. It comes from `"tier"` in `project.json` or `--tier`.
 Premium can fall back to Lite mid-run, so the tier that reaches delivery is read

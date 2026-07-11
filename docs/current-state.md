@@ -30,31 +30,52 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 
 ---
 
-## 1b. Hai tier, một orchestrator
+## 1b. Ba tier, một orchestrator
 
 ```
-npm run lite:ai  -- --project projects/x        (= runProject --tier lite)
-npm run premium  -- --project projects/x        (= runProject --tier premium)
+node scripts/runProject.mjs --project projects/x --tier template   # + --recipe
+npm run lite:ai -- --project projects/x                            # = --tier lite
+npm run premium -- --project projects/x                            # = --tier premium
 ```
 
-Chung: `analyze` → `plan` → `build` → `render` → `qa` → `deliver`, chung job manifest + `--resume`.
+Cả ba dùng **chung** project isolation, job manifest, `--resume`, và chung khung phase
+`analyze → plan → build → render → qa → deliver`. Chỉ khác ở **cách dựng story + timeline**.
 
-| Phase | `--tier lite` | `--tier premium` |
-|---|---|---|
-| plan | selection policy → chọn ảnh → `generateProjectStory` (AI viết lời) | selection policy → chọn ảnh → **node 3** story options → **node 4** user choice → **node 5+6** director notes → **node 7** story plan |
-| build | `generateProjectTimeline` (6 effect, 4 transition, duration đều) | **node 8+9** `renderWithRetry` — sinh timeline bám director, validate bằng engine thật, sửa/`fallback` về Lite |
-| render | engine | *(QA loop tự render — xem dưới)* |
-| qa | `qaProxy` + `qaClip` — **chỉ đo** | **node 10+11** `qaLoop` — đo → sửa tất định → render lại, trần 2 revise |
-| deliver | `--tier lite` | `--tier` = **tier sống sót thật**, đọc từ `analysis/tier.json` |
+| Phase | `--tier template` | `--tier lite` | `--tier premium` |
+|---|---|---|---|
+| analyze | ảnh + nhạc. **BỎ vision** | ảnh + **vision** + nhạc | ảnh + **vision** + nhạc |
+| plan | policy → chọn ảnh. *Không plan gì* — recipe đã mang sẵn cấu trúc + câu chữ | policy → chọn ảnh → `generateProjectStory` (AI viết lời) | policy → chọn ảnh → **n3** story options → **n4** user choice → **n5+6** director notes → **n7** story plan |
+| build | `applyStoryTemplate` từ recipe | `generateProjectTimeline` | **n8+9** `renderWithRetry` (validate → sửa → fallback Lite) |
+| qa | `qaProxy` + `qaClip` — chỉ đo | `qaProxy` + `qaClip` — chỉ đo | **n10+11** `qaLoop` — đo → sửa → render lại (trần 2) |
+| deliver | `--tier template` | `--tier lite` | `--tier` = **tier sống sót**, đọc từ `analysis/tier.json` |
+| **Chi phí AI** | **0 call** | vision (×ảnh) + 1 text call | vision (×ảnh) + ~4 text call |
+
+**Thang này CỐ Ý không thẳng.** `template` nhìn **giàu hơn** `lite` — vì có người thật art-direct nó
+(`layer_scene`, LUT, mask, frame, polaroid, double exposure) — trong khi `lite` chỉ có 6 effect
+zoom/pan + duration đều. Cái `template` **không** làm được là **uốn câu chữ theo đúng bộ ảnh này**.
+Đó mới là thứ khách trả tiền khi leo thang.
+
+**Tier rẻ phải rẻ thật.** Vision là node **duy nhất** có chi phí tỉ lệ với số ảnh, và recipe **không hề
+đọc** output của nó (nó khớp slot theo orient + độ nét). Nên `--tier template` chạy
+`analyzeProject --skip-vision`. Một tier rẻ mà âm thầm chạy node đắt nhất thì không phải tier rẻ.
 
 **`tier` không bao giờ bị đoán.** Nó nằm trong `project.json` (`"tier"`) hoặc cờ `--tier`. Premium có thể
-**tụt xuống Lite giữa chừng** (node 9 fallback) — chỉ vòng chạy mới biết điều đó, nên `renderWithRetry`
-**ghi ra `analysis/tier.json`**. Trước đây orchestrator moi tier bằng cách regex stdout, đổi câu log là
-âm thầm thành `"unknown"`.
+**tụt xuống Lite giữa chừng** (node 9 fallback) — chỉ vòng chạy mới biết, nên `renderWithRetry`
+**ghi ra `analysis/tier.json`**. Trước đây orchestrator moi tier bằng regex stdout, đổi câu log là âm thầm
+thành `"unknown"`.
+
+**Recipe thiếu = lỗi cứng.** Tier template không có recipe → **dừng**, không âm thầm rơi về một recipe mặc
+định mà khách chưa từng chọn.
 
 **Node 4 có kết cục thứ ba.** Khách chưa trả lời mà cửa sổ còn hạn → `exit 3` và job manifest ghi
 `status: "paused"` (KHÔNG phải `failed`). Job không hỏng, nó **đang đợi một con người**. Gọi nó là
 `failed` là bảo người vận hành đi sửa thứ không hề gãy.
+
+⬜ **Còn hở**: recipe chưa giãn theo nhạc (nhạc 203s → video ~73s). Cơ chế scene `repeatable` đang được
+một phiên song song xây (`test/template-scaling.test.mjs`).
+
+⚠️ **`npm run lite` (`buildClip.mjs`) là lối cũ chạy ở ROOT, không isolation** — nó cũng chạy recipe, nên
+đừng nhầm với `lite:ai`. Dùng `--tier template` cho job thật.
 
 ---
 
