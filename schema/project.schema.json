@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project.schema.json",
+  "title": "Slideshow project manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "name",
+    "inputDir",
+    "music",
+    "analysisDir",
+    "timeline",
+    "output",
+    "quality"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "promptFile": { "type": "string", "minLength": 1 },
+    "inputDir": { "type": "string", "minLength": 1 },
+    "music": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "analysisDir": { "type": "string", "minLength": 1 },
+    "selectionPolicy": { "type": "string", "minLength": 1 },
+    "selectedPhotos": { "type": "string", "minLength": 1 },
+    "story": { "type": "string", "minLength": 1 },
+    "timeline": { "type": "string", "minLength": 1 },
+    "output": { "type": "string", "minLength": 1 },
+    "quality": { "enum": ["draft", "share", "high", "master"] }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "generatedAt", "generatedBy", "source", "mode", "reason"],
+  "properties": {
+    "version": { "const": 1 },
+    "generatedAt": { "type": "string" },
+    "generatedBy": { "type": "string" },
+    "source": { "type": "string" },
+    "mode": { "enum": ["keep_all", "best_only", "hybrid"] },
+    "keepCategories": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "optimizeCategories": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "reason": { "type": "string" }
+  }
+}

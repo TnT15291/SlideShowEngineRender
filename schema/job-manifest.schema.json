@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job-manifest.schema.json",
+  "title": "Project pipeline job manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "projectId", "status", "startedAt", "updatedAt", "phases", "artifacts"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["running", "completed", "failed"] },
+    "startedAt": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "minLength": 1 },
+    "currentPhase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "message"],
+      "properties": {
+        "phase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },
+        "message": { "type": "string", "minLength": 1 },
+        "exitCode": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "phases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"],
+      "properties": {
+        "validate": { "$ref": "#/$defs/phase" },
+        "analyze": { "$ref": "#/$defs/phase" },
+        "plan": { "$ref": "#/$defs/phase" },
+        "build": { "$ref": "#/$defs/phase" },
+        "render": { "$ref": "#/$defs/phase" },
+        "qa": { "$ref": "#/$defs/phase" },
+        "deliver": { "$ref": "#/$defs/phase" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["photos", "photoContent", "selection", "story", "timeline", "qaDir", "output", "deliveryDir"],
+      "properties": {
+        "photos": { "type": "string", "minLength": 1 },
+        "photoContent": { "type": "string", "minLength": 1 },
+        "selection": { "type": "string", "minLength": 1 },
+        "story": { "type": "string", "minLength": 1 },
+        "timeline": { "type": "string", "minLength": 1 },
+        "qaDir": { "type": "string", "minLength": 1 },
+        "output": { "type": "string", "minLength": 1 },
+        "deliveryDir": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "running", "completed", "failed", "skipped"] },
+        "startedAt": { "type": "string", "minLength": 1 },
+        "completedAt": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
