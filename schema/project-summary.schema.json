@@ -22,9 +22,9 @@
     "timeline": { "type": "string", "minLength": 1 },
 
     "tier": {
-      "description": "Which pipeline actually produced the timeline. Only the caller that generated it knows (renderWithRetry passes --tier); delivery must not guess, hence 'unknown'.",
+      "description": "Which pipeline actually produced the timeline. Only the caller that generated it knows (runProject passes --tier); delivery must not guess, hence 'unknown'. 'director' is what the premium tier is called once it has survived — premium can fall back to lite mid-run.",
       "type": "string",
-      "enum": ["director", "lite", "unknown"]
+      "enum": ["director", "template", "lite", "unknown"]
     },
 
     "provenance": {

@@ -66,7 +66,7 @@ const base = path.basename(tlPath).replace(/\.[^.]+$/, "");
 
 const outDir = arg("--out-dir", `output/deliver/${base}`);
 const tier = arg("--tier", "unknown");
-if (!["director", "lite", "unknown"].includes(tier)) die(`--tier must be director|lite|unknown, got "${tier}"`);
+if (!["director", "template", "lite", "unknown"].includes(tier)) die(`--tier must be director|template|lite|unknown, got "${tier}"`);
 const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const previewHeight = Number(arg("--preview-height", "720"));

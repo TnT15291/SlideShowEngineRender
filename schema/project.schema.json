@@ -33,6 +33,7 @@
     "timeline": { "type": "string", "minLength": 1 },
     "output": { "type": "string", "minLength": 1 },
     "quality": { "enum": ["draft", "share", "high", "master"] },
-    "tier": { "enum": ["lite", "premium"] }
+    "tier": { "enum": ["template", "lite", "premium"] },
+    "recipe": { "type": "string", "minLength": 1 }
   }
 }

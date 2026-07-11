@@ -46,7 +46,13 @@ const manifest = {
   output: "output/final.mp4",
   quality: arg("--quality", "share"),
   tier: arg("--tier", "lite"),
+  ...(arg("--recipe") ? { recipe: arg("--recipe") } : {}),
 };
-if (!["lite", "premium"].includes(manifest.tier)) throw new Error(`--tier must be lite|premium, got "${manifest.tier}"`);
+if (!["template", "lite", "premium"].includes(manifest.tier)) {
+  throw new Error(`--tier must be template|lite|premium, got "${manifest.tier}"`);
+}
+if (manifest.tier === "template" && !manifest.recipe) {
+  throw new Error(`tier "template" needs --recipe story-templates/<id>.json — the recipe IS the product`);
+}
 fs.writeFileSync(path.join(dir, "project.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(`Created ${path.relative(root, dir)} (${music.length} music track(s)).`);

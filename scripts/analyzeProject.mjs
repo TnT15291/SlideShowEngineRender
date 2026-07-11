@@ -19,7 +19,15 @@ run([
   "--out", photos,
   "--file-prefix", project.rel(project.manifest.inputDir),
 ], "photos");
-run(["scripts/analyzePhotoContent.mjs", "--photos", photos, "--out", content], "photo content");
+
+// Vision is the ONLY node whose cost scales with the photo count, and the template
+// tier never reads its output — recipes match slots on orientation and sharpness.
+// Running it there would make the cheap tier the expensive one.
+if (process.argv.includes("--skip-vision")) {
+  console.log("[analyzeProject] photo content: skipped (--skip-vision)");
+} else {
+  run(["scripts/analyzePhotoContent.mjs", "--photos", photos, "--out", content], "photo content");
+}
 
 for (const track of project.manifest.music || []) {
   const musicPath = project.rel(track);

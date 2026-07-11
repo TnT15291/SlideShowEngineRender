@@ -1,11 +1,20 @@
-// The one orchestrator. Both product tiers run through the same project isolation,
-// the same job manifest and the same resume rules; they differ only in which nodes
-// build the story and the timeline.
+// The one orchestrator. All three product tiers run through the same project
+// isolation, the same job manifest and the same resume rules; they differ only in
+// which nodes build the story and the timeline.
 //
-//   lite    — rule-based, optional AI story text. Cheap, no director layer.
-//   premium — the AI-director chain: story options (3) -> customer choice (4) ->
-//             director notes (5+6) -> story plan (7) -> generate/validate/fallback
-//             (8+9) -> render + QA revise loop (10+11).
+//   template — an art-directed recipe from story-templates/, rendered with the full
+//              engine (layer_scene, LUTs, masks, frames). ZERO AI calls: the copy is
+//              in the recipe and slots are matched on orientation/sharpness, so the
+//              vision node is skipped. This is the cheap tier, and the cheapest tier
+//              must not quietly run the one node whose cost scales with photo count.
+//   lite     — rule-based timeline (zoom/pan/kenburns), AI writes the words.
+//   premium  — the AI-director chain: story options (3) -> customer choice (4) ->
+//              director notes (5+6) -> story plan (7) -> generate/validate/fallback
+//              (8+9) -> render + QA revise loop (10+11).
+//
+// Note the ladder is not a straight line: `template` looks RICHER than `lite`, since
+// a human art-directed it. What it cannot do is adapt its words to these particular
+// photos. That is what you buy going up.
 //
 // Tier comes from `project.json` ("tier") or --tier; it is never inferred. The tier
 // that reaches delivery is the tier that actually SURVIVED — premium can fall back
@@ -30,9 +39,19 @@ const choice = (arg("--choice", "auto") || "auto").toUpperCase();
 const node = process.execPath;
 
 const tier = (arg("--tier") || project.manifest.tier || "lite").toLowerCase();
-if (!["lite", "premium"].includes(tier)) throw new Error(`--tier must be lite|premium, got "${tier}"`);
+if (!["template", "lite", "premium"].includes(tier)) throw new Error(`--tier must be template|lite|premium, got "${tier}"`);
 if (!["A", "B", "C", "D", "AUTO"].includes(choice)) throw new Error(`--choice must be A|B|C|D|auto, got "${choice}"`);
 if (dryRun && deliver) throw new Error("--deliver cannot be used with --dry-run");
+
+// The recipe IS the product in the template tier, so a missing one is a hard error,
+// not a silent fall back to some default recipe the customer never chose.
+const recipe = arg("--recipe") || project.manifest.recipe || "";
+if (tier === "template" && !recipe) {
+  throw new Error(`tier "template" needs a recipe: set "recipe" in project.json or pass --recipe story-templates/<id>.json`);
+}
+if (tier === "template" && !fs.existsSync(path.resolve(root, recipe))) {
+  throw new Error(`recipe not found: ${recipe}`);
+}
 
 const analysisDir = project.rel(project.manifest.analysisDir);
 const timeline = project.rel(project.manifest.timeline);
@@ -148,7 +167,11 @@ try {
   if (skipAnalysis) {
     tracker.skip("analyze", "--skip-analysis");
   } else if (!reuse("analyze")) {
-    phase("analyze", () => run(["scripts/analyzeProject.mjs", "--project", projectArg], "analyze"));
+    phase("analyze", () => {
+      const args = ["scripts/analyzeProject.mjs", "--project", projectArg];
+      if (tier === "template") args.push("--skip-vision"); // recipes never read it — see header
+      run(args, "analyze");
+    });
   }
 
   if (!reuse("plan")) {
@@ -156,7 +179,10 @@ try {
       run(["scripts/generateSelectionPolicy.mjs", "--project", projectArg], "selection policy");
       run(["scripts/selectProjectPhotos.mjs", "--project", projectArg], "photo selection");
 
-      if (tier === "lite") {
+      if (tier === "template") {
+        // Nothing to plan: the recipe already carries the structure and the words.
+        console.log(`[runProject] story: ${recipe} (recipe copy, no AI)`);
+      } else if (tier === "lite") {
         run(["scripts/generateProjectStory.mjs", "--project", projectArg], "story");
       } else {
         run(["scripts/generateStoryOptions.mjs", "--content", content, "--out", options], "node 3: story options");
@@ -176,7 +202,21 @@ try {
 
   if (!reuse("build")) {
     phase("build", () => {
-      if (tier === "lite") {
+      if (tier === "template") {
+        run([
+          "scripts/applyStoryTemplate.mjs",
+          "--template", recipe,
+          "--photos", photoPool(),
+          "--music", musicPath,
+          "--analysis-dir", analysisDir,
+          "--out", timeline,
+          "--output", videoOut,
+          "--name", project.manifest.id,
+          "--quality", project.manifest.quality || "share",
+          ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+        ], `recipe: ${path.basename(recipe)}`);
+        run(["scripts/fitTextInTimeline.mjs", timeline], "fit text");
+      } else if (tier === "lite") {
         run(["scripts/generateProjectTimeline.mjs", "--project", projectArg], "timeline");
         run(["scripts/fitTextInTimeline.mjs", timeline], "fit text");
       } else {
@@ -232,7 +272,8 @@ try {
     phase("deliver", () => run([
       "scripts/deliver.mjs",
       timeline,
-      "--tier", tier === "premium" ? survivingTier() : "lite",
+      // Premium is the only tier that can end up as something other than itself.
+      "--tier", tier === "premium" ? survivingTier() : tier,
       "--analysis-dir", analysisDir,
       "--out-dir", project.rel("output/deliver"),
     ], "node 12: deliver"));
