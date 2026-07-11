@@ -24,6 +24,7 @@ const colorGradeSchema = z.object({
   temperature: z.number().min(1000).max(40000).optional(),
   glow: z.number().min(0).max(1).optional(),
   grain: z.number().min(0).max(30).optional(),
+  flicker: z.number().min(0).max(1).optional(),
   letterbox: z.union([z.boolean(), z.number().min(1).max(4)]).optional(),
 });
 
@@ -52,6 +53,7 @@ const effectEnum = z.enum([
   "video_background",
   "collage_grid",
   "double_exposure",
+  "mask_reveal",
   "layer_scene",
 ]);
 
@@ -195,6 +197,7 @@ const timelineSchema = z.object({
         image: z.string().min(1).optional(),
         images: z.array(z.string().min(1)).optional(),
         background: z.string().min(1).optional(),
+        mask: z.string().min(1).optional(),
         layers: z.array(layerSchema).optional(),
         duration: z.number().min(2).max(30),
         effect: effectEnum,
@@ -307,6 +310,15 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
       if (!slide.background) {
         errors.push(`slide ${slide.id} video_background requires background`);
       }
+    } else if (slide.effect === "mask_reveal") {
+      if (!slide.image) {
+        errors.push(`slide ${slide.id} image is required for effect mask_reveal`);
+      }
+      if (!slide.mask) {
+        errors.push(
+          `slide ${slide.id} mask_reveal requires mask (grayscale reveal video, e.g. assets/masks/particle_gather.mp4)`
+        );
+      }
     } else if (!slide.image) {
       errors.push(`slide ${slide.id} image is required for effect ${slide.effect}`);
     }
@@ -321,6 +333,9 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
       if (!fileExists(abs)) {
         errors.push(`slide ${slide.id} image not found: ${imagePath}`);
       }
+    }
+    if (slide.mask && !fileExists(path.resolve(baseDir, slide.mask))) {
+      errors.push(`slide ${slide.id} mask not found: ${slide.mask}`);
     }
     if (slide.background && !fileExists(path.resolve(baseDir, slide.background))) {
       errors.push(`slide ${slide.id} background not found: ${slide.background}`);

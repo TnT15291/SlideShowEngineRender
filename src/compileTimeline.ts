@@ -152,6 +152,7 @@ export function compileTimeline(
       slideId: slide.id,
       input,
       inputs,
+      mask: slide.mask ? path.resolve(baseDir, slide.mask) : undefined,
       layers,
       output: path.resolve(tempDir, `${slide.id}.mp4`),
       duration: slide.duration,

@@ -109,6 +109,7 @@
         "memory_wall", "dark_feather",
         "film_roll_up", "film_roll_left", "film_roll_right",
         "video_background", "collage_grid", "double_exposure",
+        "mask_reveal",
         "layer_scene"
       ]
     },
@@ -150,6 +151,7 @@
         "temperature": { "type": "number", "minimum": 1000, "maximum": 40000, "description": "Kelvin; <6500 warmer." },
         "glow": { "type": "number", "minimum": 0, "maximum": 1, "description": "Dreamy bloom." },
         "grain": { "type": "number", "minimum": 0, "maximum": 30, "description": "Animated film grain." },
+        "flicker": { "type": "number", "minimum": 0, "maximum": 1, "description": "Analog exposure flicker (Super-8 luma pulse); subtle even at 1." },
         "letterbox": { "anyOf": [{ "type": "boolean" }, { "type": "number", "minimum": 1, "maximum": 4 }] }
       }
     },
@@ -259,6 +261,7 @@
         "image": { "type": "string", "minLength": 1, "description": "One photo for single-image effects." },
         "images": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Multiple photos for film_roll_*/collage_grid/double_exposure (>=2) or memory_wall (1-5)." },
         "background": { "type": "string", "minLength": 1, "description": "Looping video file for video_background." },
+        "mask": { "type": "string", "minLength": 1, "description": "Grayscale reveal video for mask_reveal (white = photo shows; plays once, last frame holds). Bundled: assets/masks/particle_gather.mp4." },
         "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" }, "description": "Required for layer_scene; drawn back-to-front." },
         "duration": { "type": "number", "minimum": 2, "maximum": 30, "description": "Seconds. HARD limits 2..30." },
         "effect": { "$ref": "#/$defs/effect" },
@@ -293,6 +296,10 @@
         {
           "if": { "properties": { "effect": { "const": "video_background" } } },
           "then": { "required": ["background"] }
+        },
+        {
+          "if": { "properties": { "effect": { "const": "mask_reveal" } } },
+          "then": { "required": ["image", "mask"] }
         },
         {
           "if": { "properties": { "effect": { "enum": ["still", "slow_zoom_in", "slow_zoom_out", "pan_left", "pan_right", "pan_up", "pan_down", "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br", "portrait_blur_background", "polaroid", "circle_focus", "dark_feather"] } } },

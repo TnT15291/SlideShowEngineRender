@@ -24,6 +24,7 @@ export type EffectPreset =
   | "video_background"
   | "collage_grid"
   | "double_exposure"
+  | "mask_reveal"
   | "layer_scene";
 
 // Canonical transition names (timeline-facing) -> ffmpeg xfade transition names.
@@ -168,6 +169,7 @@ export interface ColorGrade {
   temperature?: number; // color temperature in Kelvin (6500 = neutral, lower = warmer)
   glow?: number; // 0..1 -> dreamy bloom (blurred screen-blend over itself)
   grain?: number; // 0..30 -> animated film grain (noise strength)
+  flicker?: number; // 0..1 -> analog exposure flicker (Super-8 luma pulse)
   letterbox?: boolean | number; // cinematic bars; true = 2.39:1, number = target aspect
 }
 
@@ -338,6 +340,7 @@ export interface Slide {
   image?: string;
   images?: string[];
   background?: string;
+  mask?: string; // grayscale reveal video for mask_reveal (white = photo shows)
   layers?: SceneLayer[];
   duration: number;
   effect: EffectPreset;
@@ -407,6 +410,7 @@ export interface RenderSlideStep {
   slideId: string;
   input: string; // absolute path to source image
   inputs: string[]; // absolute paths; film_roll_up uses multiple images
+  mask?: string; // absolute path to the reveal-mask video (mask_reveal only)
   layers: CompiledSceneLayer[];
   output: string; // absolute path to temp slide video
   duration: number;

@@ -65,6 +65,7 @@ export function buildSlideArgs(step: RenderSlideStep): string[] {
   if (step.effect === "video_background") return buildVideoBackgroundArgs(step);
   if (step.effect === "collage_grid") return buildCollageGridArgs(step);
   if (step.effect === "double_exposure") return buildDoubleExposureArgs(step);
+  if (step.effect === "mask_reveal") return buildMaskRevealArgs(step);
   if (step.effect === "memory_wall") return buildMemoryWallArgs(step);
   if (isFilmRollEffect(step.effect)) return buildFilmRollArgs(step);
 
@@ -391,6 +392,72 @@ function buildDoubleExposureArgs(step: RenderSlideStep): string[] {
   ];
 }
 
+function buildMaskRevealArgs(step: RenderSlideStep): string[] {
+  if (!step.mask) {
+    throw new Error(`slide ${step.slideId}: mask_reveal step is missing mask`);
+  }
+  return [
+    "-y",
+    "-loop",
+    "1",
+    "-t",
+    String(step.duration),
+    "-i",
+    step.input,
+    "-i",
+    step.mask,
+    "-filter_complex",
+    buildMaskRevealFilter(step),
+    "-map",
+    "[vout]",
+    "-t",
+    String(step.duration),
+    ...videoEncodeArgs(step.quality, step.fps),
+    step.output,
+  ];
+}
+
+/**
+ * mask_reveal: the photo appears through the luma of a grayscale mask video
+ * (white = photo, black = hidden) over a black background. The mask plays
+ * once; tpad clones its final frame so a 4s reveal simply holds fully-open
+ * for the rest of a longer slide. Grade/letterbox/captions run after the
+ * composite, same as the other filter_complex effects.
+ */
+function buildMaskRevealFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps, duration } = step;
+  const filters: string[] = [];
+
+  filters.push(`color=c=black:s=${w}x${h}:r=${fps}:d=${duration}[mrbg]`);
+  filters.push(
+    `[0:v]scale=${w}:${h}:force_original_aspect_ratio=increase,` +
+      `crop=${w}:${h},setsar=1,format=rgba[mrph]`
+  );
+  filters.push(
+    `[1:v]fps=${fps},scale=${w}:${h},format=gray,setsar=1,` +
+      `tpad=stop=-1:stop_mode=clone[mrmk]`
+  );
+  filters.push(`[mrph][mrmk]alphamerge[mrrev]`);
+  filters.push(`[mrbg][mrrev]overlay=0:0[mr0]`);
+
+  let current = "mr0";
+  const post = [
+    buildColorFilter(step.color),
+    buildLetterboxFilter(step.color, w, h),
+    ...step.captions.map((c) => buildCaptionFilter(c, h)),
+  ].filter((f): f is string => Boolean(f));
+  post.forEach((filter, i) => {
+    const next = `mrpost${i}`;
+    filters.push(`[${current}]${filter}[${next}]`);
+    current = next;
+  });
+  filters.push(
+    `[${current}]trim=duration=${duration},fps=${fps},format=yuv420p[vout]`
+  );
+
+  return filters.join(";");
+}
+
 function buildFilmRollArgs(step: RenderSlideStep): string[] {
   const inputs: string[] = [];
   for (const input of step.inputs) {
@@ -495,6 +562,17 @@ export function buildColorFilter(
   if (g.sharpen !== undefined && g.sharpen > 0)
     parts.push(`unsharp=5:5:${Math.min(g.sharpen, 2)}`);
   if (g.blur !== undefined && g.blur > 0) parts.push(`gblur=sigma=${g.blur}`);
+
+  // Analog exposure flicker (Super-8 pulse): a slow sine wobble plus a small
+  // per-frame random jitter on luma. eval=frame re-evaluates the expression
+  // every frame; amplitude maps flicker 0..1 to a subtle 0..0.08 brightness
+  // swing so even full strength reads as vintage, not strobing.
+  if (g.flicker !== undefined && g.flicker > 0) {
+    const amp = (0.08 * Math.min(g.flicker, 1)).toFixed(4);
+    parts.push(
+      `eq=brightness='${amp}*(0.6*sin(2*PI*t*9)+0.4*(random(1)-0.5))':eval=frame`
+    );
+  }
 
   // Grain last so it sits on top of the whole look, like real film stock.
   if (g.grain !== undefined && g.grain > 0)

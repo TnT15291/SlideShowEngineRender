@@ -42,6 +42,10 @@ function walk(data, schema, pathStr, root, errors) {
     errors.push(`${pathStr}: ${JSON.stringify(data)} not in enum [${schema.enum.join(", ")}]`);
     return;
   }
+  if ("const" in schema && data !== schema.const) {
+    errors.push(`${pathStr}: ${JSON.stringify(data)} !== const ${JSON.stringify(schema.const)}`);
+    return;
+  }
   const t = schema.type;
   if (t === "object" || schema.properties || schema.required) {
     if (data === null || typeof data !== "object" || Array.isArray(data)) {

@@ -26,6 +26,46 @@
         "mood": "cinematic, moody, timeless",
         "colorGrade": { "contrast": 1.12, "saturation": 0.9, "grain": 8, "letterbox": 2.39, "temperature": 5200 },
         "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/Italianno-Regular.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+      },
+      "editorial_bold": {
+        "background": "#F5F2EC",
+        "palette": { "cream_bg": "#F5F2EC", "text": "#17171B", "ink_dark": "#17171B", "accent": "#8A7355", "numeral_white": "#FFFDFC" },
+        "mood": "editorial, bold, fashion-magazine, high-contrast, generous whitespace (2026 trend: cursive out, big expressive serif headlines + clean sans companions)",
+        "colorGrade": { "temperature": 6200, "saturation": 1.0, "contrast": 1.07, "brightness": 0.01, "glow": 0.05 },
+        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+      },
+      "warm_film": {
+        "background": "#F1E7D9",
+        "palette": { "cream_bg": "#F4ECE0", "text": "#4A3B2C", "ink_dark": "#3A2E22", "warm_brown": "#5A4632", "accent": "#B4643C", "numeral_white": "#FFFBF4" },
+        "mood": "warm analog 35mm film, nostalgic, sun-kissed, light leaks + grain (2026 trend: vintage film frames, editorial nostalgia)",
+        "colorGrade": { "temperature": 4600, "saturation": 1.06, "contrast": 1.03, "glow": 0.16, "grain": 6, "vignette": true },
+        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/DancingScript.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+      },
+      "modern_teal": {
+        "background": "#F3F1EC",
+        "palette": { "cream_bg": "#F3F1EC", "text": "#1C2B30", "ink_dark": "#16232A", "accent": "#2E6F6A", "numeral_white": "#FBFDFC" },
+        "mood": "modern minimal, contemporary, calm; 2026 Color-of-the-Year 'Transformative Teal' accent on lots of whitespace",
+        "colorGrade": { "temperature": 6000, "saturation": 1.06, "contrast": 1.05, "glow": 0.06 },
+        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+      },
+      "teal_orange_editorial": {
+        "background": "#F2EFE9",
+        "palette": { "cream_bg": "#F2EFE9", "text": "#182225", "ink_dark": "#12191C", "accent": "#D96F32", "numeral_white": "#FBFCFB" },
+        "mood": "editorial moody grade: teal shadows / orange highlights via bundled LUT (2026 trend), high-end fashion-film contrast",
+        "colorGrade": { "lut": "assets/luts/teal_orange_01.cube", "contrast": 1.03, "saturation": 1.02, "glow": 0.05 },
+        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+      },
+      "super8_nostalgia": {
+        "background": "#F3E9D7",
+        "palette": { "cream_bg": "#F3E9D7", "text": "#4A3A28", "ink_dark": "#3A2D1E", "accent": "#C96A2B", "numeral_white": "#FFFAF0" },
+        "mood": "8mm home-movie nostalgia: warm faded Kodak LUT + grain + vignette + exposure flicker + film_damage dust overlay (2026 authenticity trend)",
+        "colorGrade": { "lut": "assets/luts/super8_kodak_01.cube", "grain": 12, "vignette": true, "flicker": 0.35, "glow": 0.1 },
+        "recommendedOverlays": [
+          { "path": "overlays/film_damage.mp4", "position": "fullscreen", "opacity": 0.5, "blend": "screen" },
+          { "variant": "warm", "position": "fullscreen", "opacity": 0.3, "blend": "screen" }
+        ],
+        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/DancingScript.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
+        "note": "moody_earth_01.cube is also bundled in assets/luts/ for a desaturated earthy variant."
       }
     },
     "fontRegistry": {
@@ -81,10 +121,13 @@
         { "id": "strip_2", "x": 711, "y": 358, "width": 504, "height": 577, "fit": "cover", "suggestedAnimation": "fade", "role": "centre card" },
         { "id": "strip_3", "x": 1262, "y": 358, "width": 504, "height": 577, "fit": "cover", "suggestedAnimation": "fade", "role": "right card" }
       ],
-      "panels": [ { "id": "title_pill", "type": "rect", "x": 108, "y": 95, "width": 1704, "height": 175, "color": "theme.cream_bg", "opacity": 0.95 } ],
+      "panels": [
+        { "id": "title_pill", "type": "rect", "x": 108, "y": 95, "width": 1704, "height": 175, "color": "theme.cream_bg", "opacity": 0.95 },
+        { "id": "date_scrim", "type": "rect", "x": 0, "y": 580, "width": 1920, "height": 250, "color": "#000000", "opacity": 0.3, "z": "over_photos", "note": "drawn AFTER the photo strips so the big date stays legible over bright photos" }
+      ],
       "textSlots": [
         { "id": "eyebrow", "role": "eyebrow", "x": 636, "y": 150, "width": 648, "height": 151, "align": "center", "fontRole": "heading", "sizePx": 84, "note": "e.g. SAVE the DATE — split accent word into its own script-font slot if desired" },
-        { "id": "date", "role": "hero_numeral", "x": 257, "y": 610, "width": 1557, "height": 436, "align": "center", "fontRole": "heading", "sizePx": 230, "note": "big date; can be one string or three numeral slots" }
+        { "id": "date", "role": "hero_numeral", "x": 257, "y": 610, "width": 1557, "height": 240, "align": "center", "fontRole": "heading", "sizePx": 230, "note": "big date; can be one string or three numeral slots. Text words longer than short numerals should pass sizePx <= 110." }
       ],
       "durationRange": [5.0, 7.0]
     },
@@ -215,6 +258,9 @@
     { "id": "polaroid_single", "kind": "effect", "effect": "polaroid", "imageCount": [1, 1], "durationRange": [4, 6], "intent": "One tilted instant-photo card, never cropped — candid moment." },
     { "id": "circle_portrait", "kind": "effect", "effect": "circle_focus", "imageCount": [1, 1], "durationRange": [4, 6], "intent": "Circular-masked close-up — put the subject dead-centre." },
     { "id": "memory_wall_beat", "kind": "effect", "effect": "memory_wall", "imageCount": [1, 5], "durationRange": [5, 8], "intent": "Dark film-wall scene; title=name, subtitle=year, caption=line. Pair with slide_left transitions." },
-    { "id": "hero_kenburns", "kind": "effect", "effect": "slow_zoom_in", "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Single hero photo with a slow Ken-Burns push-in — emotional single beat (whole-slide effect, no text overlay unless via captions)." }
+    { "id": "hero_kenburns", "kind": "effect", "effect": "slow_zoom_in", "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Single hero photo with a slow Ken-Burns push-in — emotional single beat (whole-slide effect, no text overlay unless via captions)." },
+    { "id": "particle_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/particle_gather.mp4", "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Hero photo revealed by glowing particles gathering out of black (mask plays 4.5s then holds fully open) — magical opener or emotional turn; use at most once per video." },
+    { "id": "heart_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/heart_wand.mp4", "imageCount": [1, 1], "durationRange": [5.5, 8], "intent": "A magic wand draws a glowing heart out of black, the couple blooms inside it, then the reveal expands to the full photo (mask plays 5s then holds open) — romantic opener or first-kiss beat; use at most once per video, never alongside particle_reveal." },
+    { "id": "brush_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/brush_stroke.mp4", "imageCount": [1, 1], "durationRange": [5.5, 8], "intent": "The photo is painted onto black by five broad alternating brush swipes with ragged dry-brush edges (mask plays 5s then holds open) — artistic/scrapbook opener or chapter break; use at most one mask_reveal beat per video." }
   ]
 }

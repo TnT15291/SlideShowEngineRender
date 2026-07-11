@@ -25,13 +25,19 @@ function parseTimelineArg(argv: string[]): string {
   return "timeline/timeline.json";
 }
 
+function parseJobDirArg(argv: string[], baseDir: string): string {
+  const idx = argv.indexOf("--job-dir");
+  return idx !== -1 && argv[idx + 1] ? path.resolve(baseDir, argv[idx + 1]) : baseDir;
+}
+
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
   const dryRun = argv.includes("--dry-run");
 
   const baseDir = process.cwd();
-  const tempDir = path.join(baseDir, "temp");
-  const logsDir = path.join(baseDir, "logs");
+  const jobDir = parseJobDirArg(argv, baseDir);
+  const tempDir = path.join(jobDir, "temp");
+  const logsDir = path.join(jobDir, "logs");
 
   ensureDir(tempDir);
   ensureDir(logsDir);
