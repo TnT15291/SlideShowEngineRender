@@ -1,7 +1,8 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-10** (Phase F một
-> phần: node 12 `deliver.mjs` + `schema/project-summary.schema.json`, nối vào `renderWithRetry --deliver`).
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-11** (tier template
+> recipe-driven + 4 recipe render verified; engine thêm `flicker`, LUT bundle, `mask_reveal` +
+> 3 mask: hạt sáng / `heart_wand` / `brush_stroke` — giai đoạn 1–3 lộ trình hiệu ứng §4b XONG).
 >
 > Legend: ✅ xong · 🟡 một phần · ⬜ chưa làm
 
@@ -14,9 +15,10 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 
 | Tầng | Trạng thái | Ghi chú |
 |---|---|---|
-| **Render engine** | ✅ Feature-complete | 23 effect, 56 transition, color grade, overlay + light leak, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
+| **Render engine** | ✅ Feature-complete | **24 effect** (+`mask_reveal`), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
+| **Tier template (Rẻ)** | ✅ Recipe-driven, 4 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. 4 recipe render thật + soi mắt |
 | **Pipeline Lite** (Cơ bản/Vừa) | ✅ Chạy end-to-end | `node scripts/buildClip.mjs --fix` — rule-based, 0 AI |
-| **Pipeline v1 Premium** | 🟡 A→E xong, F một phần | Node 2 (vision) wired **OpenAI gpt-5.5**, node 3/5+6/7 (story/brief/director/plan) wired **DeepSeek**, cả hai có guardrail; timeline node (8) bám director & PASS dry-run; node 9 `renderWithRetry.mjs` validate→retry→fallback Lite; node 11 `qaProxy.mjs` + `qaLoop.mjs` (pacing/hero proxy, trần 2 revise); node 12 `deliver.mjs` đóng gói 4 deliverable. Còn node 4 (user choice) + điều phối |
+| **Pipeline v1 Premium** | 🟡 A→E xong, F một phần | Node 2 (vision) wired **OpenAI gpt-5.5**, node 3/5+6/7 (story/brief/director/plan) wired **DeepSeek**, cả hai có guardrail; timeline node (8) bám director & PASS dry-run; node 9 `renderWithRetry.mjs` validate→retry→fallback Lite; node 11 `qaProxy.mjs` + `qaLoop.mjs` (pacing/hero proxy, trần 2 revise); node 4 `selectStoryOption.mjs` (cửa sổ phản hồi cưỡng chế, exit 3 = pending); node 12 `deliver.mjs` đóng gói 4 deliverable; `runPremiumJob.mjs` gom node 2→12. Còn điều phối production (n8n/queue) |
 | **Docs** | ✅ Đã tổ chức lại (2026-07-08) | 10 file, hub tại [README.md](README.md) |
 
 ---
@@ -53,6 +55,75 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 - ✅ **Node 12 — Deliverables** `scripts/deliver.mjs` (chi tiết ở §3, Phase F). Nguyên tắc xuyên
   suốt: **không tuyên bố phán đoán mà pipeline chưa từng đưa ra** — thumbnail nói rõ luật nào đã
   chọn nó, `tier` không đoán, khối `director` chỉ đính khi được quy trách nhiệm rõ ràng.
+- ✅ **Node 4 — User Choice** `scripts/selectStoryOption.mjs` (chi tiết ở §3, Phase F). Cửa sổ phản
+  hồi được **cưỡng chế**, không phải ghi chú: `auto` khi còn hạn → exit 3 (non-blocking, không phải
+  lỗi); trả lời của khách không bị mặc định đè; kênh chưa cấu hình **từ chối gửi** thay vì nuốt tin.
+  Cùng nguyên tắc với node 12: **không tuyên bố điều pipeline chưa từng làm** — không bịa cửa sổ
+  24h cho một lần chạy chẳng hỏi ai.
+
+**Bổ sung phiên 2026-07-10→11 (tier template + hiệu ứng mới):**
+- ✅ **Chiến lược tier đã chốt**: 4 phương án (template / rules / AI-tự-sinh-timeline / Premium-AI-gợi-ý)
+  KHÔNG phải 4 sản phẩm — là **thang giá trên cùng 1 engine**. "AI tự đẻ timeline thô" là bẫy →
+  chỉ là mode auto-pick của Premium. Tier Rẻ cần **~5-8 recipe, KHÔNG phải 100-200 timeline viết tay**
+  (đa dạng = recipe × theme × ảnh × nhạc).
+- ✅ **Refactor `applyStoryTemplate.mjs` thành data-driven**: `buildLayerSceneFromLayout` đọc toàn bộ
+  geometry từ `layouts/library.json`; scene trong recipe chỉ khai `layout` id + `photoSlots` (hint
+  chọn ảnh, slot id phải khớp library) + `text` map (nhận string hoặc `{value,sizePx,color,fontRole}`).
+  Resolver: token màu theme (`theme.cream_bg`), fontRole→font, frame preset, **màu chữ theo luma**
+  (trên scrim tối → trắng), stagger, panel `z:"over_photos"` (scrim vẽ SAU ảnh), `frameOverlay`
+  (PNG 1920×1080 phủ khung). Builder cũng nhận mọi effect đơn-ảnh + `double_exposure` +
+  `video_background` + `mask_reveal` — recipe gọi được không cần code.
+- ✅ **5 theme mới** trong `layouts/library.json`: `editorial_bold`, `warm_film`, `modern_teal`
+  (trend 2026: serif đậm "cursive out", vintage film, Transformative Teal) + `teal_orange_editorial`,
+  `super8_nostalgia` (LUT-based). Layout `hero_title_card` được vá `date_scrim` (đen 0.3, z over_photos)
+  + hộp date 436→240px — hết lỗi chữ chìm trên ảnh sáng.
+- ✅ **4 recipe** trong `story-templates/` — cấu trúc cố tình KHÁC nhau (không chỉ đổi màu):
+  `editorial-bold-01` (card-heavy + portrait_blur), `cinematic-film-01` (mở lạnh không chữ →
+  double_exposure → film_roll_up; overlay particles; KHÔNG layout card), `warm-film-01` (scrapbook:
+  polaroid + video hoa calla thật + frame botanical PNG + bokeh vàng), `modern-teal-01` (tối giản
+  8 scene, circle_focus + slow_zoom gentle, 3 beat im lặng, 0 overlay). **Cả 4 render thật + soi
+  khung hình.** Job mẫu `jobs/i-do-editorial/` (ảnh lọc nét ≥0.45/28 → `analysis/photos.selected.json`,
+  nhạc "Em Đồng Ý (I Do)" đã analyze, 3 caption) → `output/i-do-editorial.mp4` 55.4s.
+- ⚠️ **`story-templates/korean-soft-romance-01.json` bị xóa khỏi working tree** — không phải phiên
+  này xóa (nghi session song song). Bản trong git là bản CŨ chưa rebind layout → `git checkout` sẽ
+  không chạy được với builder mới (thiếu field `layout`). Chưa khôi phục — chờ quyết định.
+- ✅ **`checkSchema.mjs` thêm hỗ trợ `const`** — trước đó text layer khớp cả 2 nhánh `oneOf`
+  ("matched 2") khi validate timeline. Additive, không phá contract cũ.
+- ✅ **Lộ trình hiệu ứng** (từ `Downloads/hieu-ung-slideshow-cuoi.md`, xem §4b): **Giai đoạn 1 + 2
+  + 3 XONG** (`heart_wand` + `brush_stroke` — cả nhóm mask hoàn tất).
+- ✅ **Giai đoạn 1 — LUT + Super 8**: engine thêm `color.flicker` 0..1 (eq `eval=frame`, sin 9Hz +
+  jitter, amp≤0.08; chèn trước grain). **Gotcha đảo chiều**: `normalizeTimeline` pass-through nguyên
+  khối `color` → field grade mới chỉ cần 4 điểm chạm (types/zod/build/schema), KHÔNG cần normalize.
+  `scripts/generateLuts.mjs` → `assets/luts/{teal_orange_01,moody_earth_01,super8_kodak_01}.cube`
+  (procedural 33³). `scripts/generateFilmDamage.mjs` → `overlays/film_damage.mp4` (bụi loé/frame +
+  2 vệt xước lang thang, 241KB loop). Verify A/B: 1 ảnh × 3 LUT khác biệt rõ; flicker xác nhận qua
+  `logs/commands.log` (lệnh slide ghi ở đó, `render.log` chỉ là stderr) + demo `output/demo-super8.mp4`.
+- ✅ **Giai đoạn 2 — effect `mask_reveal`** (đủ 7 điểm chạm engine): slide nhận `image` + `mask`
+  (video xám: trắng=lộ ảnh); mask chạy 1 lần rồi `tpad stop_mode=clone` giữ khung trắng cuối →
+  slide dài hơn mask vẫn đứng ảnh hoàn chỉnh; `alphamerge` trên nền đen; grade/letterbox/caption
+  chạy sau composite. KHÔNG nằm trong CROPPING_EFFECTS (không bị reroute portrait).
+  `scripts/generateMasks.mjs` → `assets/masks/particle_gather.mp4` ("hạt sáng tích tụ": 700 hạt
+  mọc từ tâm lan ra + sparkle 3-frame + fill ramp 72–96% đảm bảo lộ hết; seed cố định). Verify:
+  YAVG đơn điệu 1.3→22→70→152 + 4 khung soi mắt (`output/demo-particle-reveal.mp4`).
+  **"Đũa phép trái tim" & "bàn chải sơn" giờ chỉ là generator mask mới — 0 code engine.**
+  Library có montageBeat `particle_reveal` (khuyến cáo ≤1 lần/video).
+- ✅ **Giai đoạn 3 (một nửa) — mask `heart_wand`** ("đũa phép quơ hình trái tim"): đũa vẽ đường tim
+  parametric cổ điển (nét phát sáng + sparkle đầu đũa, ease-in-out), tim "nở" đầy từ tâm bằng
+  radial wipe **clip theo scanline-fill chính xác của hình tim** — KHÔNG scale đường cong từ tâm,
+  vì thuỳ tim thu nhỏ sẽ quét qua khe giữa 2 thuỳ làm khe bị trắng sai — rồi lan toả tròn ra toàn
+  khung + ramp bảo đảm 88–98%. 5.0s, seed cố định. Verify: YAVG đơn điệu 16.3→40.9→68.3→230
+  (yuv limited-range: đen=16, trắng=235) + 6 khung mask soi mắt (khe giữa 2 thuỳ vẫn đen khi tim
+  đầy) + demo ảnh thật `output/demo-heart-reveal.mp4` (timeline `tmp/demo-heart-reveal.json`).
+  Library beat `heart_reveal` (≤1 lần/video, không dùng chung với `particle_reveal`).
+- ✅ **Giai đoạn 3 (nửa còn lại) — mask `brush_stroke`** ("bàn chải sơn"): 5 nhát cọ ngang xen kẽ
+  chiều quét (như sơn tường), texture sống ở 3 chỗ: rìa dải 2 octave, **vệt cọ khô** mảnh-dài
+  (noise kéo dãn 160×2, ngưỡng cao → thưa), và "lông cọ" dẫn trước đầu quét (lead profile theo
+  hàng, cố định suốt nhát — như lông thật trên bàn chải). Dải đầu/cuối sơn vượt mép khung để tự
+  phủ góc, không đợi ramp. **Bài học đắt**: noise sin-cộng-dồn tuần hoàn nhìn như RÈM CỬA — mask
+  toàn khung bắt buộc dùng value-noise băm lưới (aperiodic); bản 2 (cell 85×4.5, ngưỡng 0.62)
+  thành đốm bầu dục như giấy rách — phải mảnh (cy=2) + thưa (0.78/0.08). Verify: YAVG đơn điệu
+  16→230→235 + 4 khung mask + demo ảnh thật `output/demo-brush-reveal.mp4`. Library beat
+  `brush_reveal`. **Giai đoạn 3 XONG — cả nhóm mask khép lại, đúng dự đoán 0 code engine.**
 
 **Pipeline Lite:** `buildClip.mjs` chuỗi analyze ảnh/nhạc → `generateStoryClipV2` →
 `fitTextInTimeline` → render → `qaClip` → (với `--fix`) đổi hero ảnh tối/phẳng, render lại 1 lần.
@@ -97,7 +168,26 @@ Nền tảng cho mọi quyết định "đạo diễn" phía sau.
   → có `reasoning_effort`; `gpt-4o` → `temperature` trở lại, không `reasoning_effort`.
   JSON-mode không ép schema → guardrail `validateAiResults` là lớp gánh chính, và nó chặn đủ: tag lạ
   bị drop, `emotion` ngoài enum → default, `heroScore: 7.5` → clamp về 1.
-- 🟡 **Còn lại**: chạy thật 1 lần trên 82 ảnh bằng key OpenAI để kiểm chất lượng tag/hero.
+- ✅ **Chuẩn bị cho lần chạy có key (2026-07-10)** — node này là node **duy nhất** có chi phí tỉ lệ
+  với số ảnh, nên lần chạy thật đầu tiên vừa đắt nhất vừa là lần prompt chưa từng gặp model thật.
+  - `--dry-run`: mã hóa đủ 82 preview để **đo payload thật**, in endpoint/model/nhánh body
+    (`reasoning_effort` vs `temperature`), số request, dung lượng base64, và **số ảnh không đọc
+    được** (model sẽ nhận `"(image unreadable)"` và chấm mù). Không gửi gì, không ghi gì.
+    Đo thật: 82 ảnh → 7 request, 3.9 MB base64, request lớn nhất 663 KB, 82/82 đọc được.
+  - `--limit N`: chấm N ảnh đầu rồi **in bảng tag/emotion/score ra terminal** để soi bằng mắt.
+    Bản rút gọn **không được phép giả dạng bản đầy đủ**: nó ghi ra `analysis/photo_content.sample.json`
+    và **từ chối** khi `--out` trỏ vào `photo_content.json` — 12 record ở chỗ pipeline chờ 82 sẽ
+    lệch story profile và mọi hero pick mà không để lại dấu vết (đúng loại lỗi silent-zeros 2026-07-09).
+    File sample mang `partial/limitedTo/totalPhotos` (schema đã mở rộng, optional).
+  - Lỗi provider giờ **fail sạch, không stack trace**: 401/403 → "sai KEY"; 400 → "sai BODY, không
+    phải key" kèm nhắc đúng bẫy `temperature` vs `reasoning_effort`; 429/5xx → "vẫn hỏng sau 3 lần".
+- 🐛 **Sửa bug retry 4xx (2026-07-10)** — `lib/deepseek.mjs` **và** `analyzePhotoContent.mjs` đều viết
+  `throw lastErr` **bên trong** `try` để nói "lỗi client, đừng thử lại"; chính `catch` bên dưới nuốt nó
+  và vòng lặp chạy tiếp. Key sai tốn **3 request giống hệt nhau** thay vì 1. Hai bản sao, một lỗi.
+  Policy dời về `scripts/lib/retryPolicy.mjs` (1 nguồn sự thật) + backoff tuyến tính 500ms×attempt.
+  Verify bằng mock server đếm request: 401/400 → **1 request**; 429/5xx → 3; 200 → 1. Cho cả hai client.
+- 🟡 **Còn lại**: chạy thật bằng key OpenAI. Thứ tự an toàn:
+  `--dry-run` → `--limit 12` (soi tag) → chạy đủ 82 ảnh.
 
 **Model DeepSeek đã chốt (2026-07-09)** — dùng cho các node **text** (Phase B):
 | | id | ghi chú |
@@ -253,10 +343,39 @@ Dùng: `node scripts/qaProxy.mjs <timeline.json> [--strict]` (chỉ đo, không 
     kết → vẫn né bookend; `--thumb-time` → `explicit`; watermark tiếng Việt có dấu `:` và `&` →
     **kiểm bằng mắt trên frame trích ra**, chữ vẽ đúng; `--preview-height 2000` trên nguồn 1080p →
     không upscale; `--no-copy` → summary trỏ về video gốc. Mọi summary pass schema harness.
-- ⬜ **User Choice** (node 4): gửi 4 option qua kênh khách (Zalo/Messenger), cửa sổ 24h
-  **non-blocking**; hết giờ → tự chọn phương án điểm cao nhất.
-- ⬜ **Orchestration**: n8n/queue gọi CLI (mỗi job timeline+output riêng, chạy song song).
-  Ranh giới: điều phối chỉ gọi engine, không sinh FFmpeg. Xem
+- ✅ **User Choice** (node 4) — `scripts/selectStoryOption.mjs` + `schema/selected-story.schema.json`
+  + `scripts/lib/channels.mjs`. `generateDirectorNotes` ưu tiên `analysis/selected_story.json` nếu
+  không có `--choice`. **Cửa sổ phản hồi là cổng thật, không phải ghi chú trong file:**
+  - `--send` mở cửa sổ bằng cách **gửi thật**. Kênh chưa có transport (`zalo`/`messenger`) →
+    **ném lỗi**, không trả về `send()` rỗng: một tin nhắn âm thầm đi vào hư không còn tệ hơn crash —
+    cửa sổ 24h vẫn hết hạn, luật mặc định vẫn nổ, và phim vẫn giao dưới một lựa chọn **chưa từng
+    được đưa ra cho ai**. Kênh thật hiện có: `console` (người relay tay) và `file` (outbox/inbox).
+  - **Deadline được cưỡng chế.** `--choice auto` khi cửa sổ còn mở → **exit 3** = "chưa sẵn sàng",
+    không phải lỗi; orchestrator gác job sang bên và làm việc khác. Đây là hợp đồng non-blocking.
+  - **Trả lời của khách không bao giờ bị đè** bởi mặc định timeout (idempotent), và trả lời **muộn**
+    được ghi `late: true` chứ không backdate.
+  - **Không đoán câu trả lời.** `parseReply` chỉ nhận chữ cái **đứng riêng** (`Tôi chọn C.` → C;
+    `Cảm ơn`/`Anh`/`các` → không khớp). Mơ hồ (`A hay B?`) → giữ pending cho người xem, vì đoán ở
+    đây là giao nhầm phim. `--choice X` mâu thuẫn với reply → fail cứng.
+  - ⚠️ **Cửa sổ 0 giờ.** Không ai được hỏi (chạy local một phát) → mặc định ngay, **nhưng ghi
+    `decisionWindow` dài 0h**. Bản đầu ghi `openedAt: now, deadlineAt: now+24h` rồi chốt tức thì —
+    tuyên bố một hạn chót chưa từng được trao và chưa từng được chờ. Lỗi không nằm ở việc mặc định
+    sớm, mà ở việc **bịa ra cửa sổ**.
+  - ❌ **Không** implement luật "chấm điểm 4 hướng bằng Story Importance/Emotion Score của node 2"
+    như spec §3 gợi ý: 4 option là văn xuôi (`mood`, `captionTone`), chấm chúng bằng số đòi một bảng
+    ánh xạ mood→điểm tự bịa, không ai kiểm chứng được — và khi `generatedBy: stub` thì điểm cũng
+    giả nốt. Mặc định dùng `story_options.recommended` (thứ hạng best-fit-first của node 3), và
+    `reason` luôn ghi rõ luật nào đã quyết.
+  - ✅ **Đã verify (chạy thật)**: auto khi cửa sổ mở → exit 3, không ghi file; auto khi chưa ai hỏi →
+    exit 0 + cửa sổ 0h; trả lời muộn → `late: true`; auto sau khi khách chọn → không đè; reply mơ hồ
+    → pending; reply vô nghĩa sau deadline → mặc định + giữ nguyên `reply`; `--opened-at` tương lai →
+    exit 3, quá khứ → exit 0; kênh `zalo` → từ chối; re-send khi đang mở → từ chối; và
+    `Tôi chọn C` → `selected_story` C → `director_notes.choice = C`.
+- ✅ **Orchestration CLI nền**: `scripts/runPremiumJob.mjs` gom node 2→12 thành một lệnh local:
+  analysis → story options → node 4 selection → director notes → story plan → validate/fallback →
+  render+QA → deliver tuỳ cờ. Ranh giới vẫn giữ: điều phối chỉ gọi node/engine, không sinh FFmpeg.
+- ⬜ **Orchestration production**: n8n/queue gọi CLI (mỗi job timeline+output riêng, chạy song song).
+  Xem
   [PIPELINE-V1-VA-LITE.md → Orchestration](PIPELINE-V1-VA-LITE.md#orchestration--triển-khai).
 
 Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-dir <dir>]
@@ -269,7 +388,30 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
 - ⬜ Face/subject detection thật cho crop-safe `cover` (nay chỉ theo tỉ lệ).
 - ⬜ QA bằng vision (đo chính xác chữ vừa khung, crop chủ thể, overlap nghệ thuật).
 - ⬜ Easing cho `layer_scene` `motion` (whole-slide effect đã có `gentle/snap/bounce`).
-- ⬜ Keyframe/mask reveal per-layer, photo-stack shuffle.
+- ⬜ Keyframe reveal **per-layer**, photo-stack shuffle (`mask_reveal` whole-slide đã có — §4b).
+- ⬜ Tier template: cơ chế **scale theo input** (recipe khai `repeatable` scene → nhân theo số
+  ảnh/độ dài nhạc; hiện video luôn ~1 phút dù 200 ảnh + nhạc 203s).
+- ⬜ Tier template: tiêu thụ `photo_content.json` khi có (match slot theo tag family/couple thay vì
+  chỉ orient/quality — scene "Gia đình" hiện có thể nhận ảnh couple selfie).
+- ⬜ Recipe copy: 2–3 biến thể câu chữ mỗi scene (2 khách cùng mua 1 template không nhận video
+  giống hệt câu chữ).
+
+## 4b. Lộ trình hiệu ứng (nguồn: `Downloads/hieu-ung-slideshow-cuoi.md`)
+
+Nguyên tắc đã chốt: nhóm mask (đũa phép tim / bàn chải sơn / hạt sáng) = **MỘT effect `mask_reveal`
++ nhiều asset mask**; grade look = LUT asset, không code; hiệu ứng AI = node tiền xử lý, không phải
+filter engine.
+
+| # | Hiệu ứng | Trạng thái | Ghi chú |
+|---|---|---|---|
+| 4 | Super 8 / Nostalgic film | ✅ | LUT `super8_kodak_01` + `flicker` + `film_damage.mp4` + theme `super8_nostalgia`. Demo: `output/demo-super8.mp4` |
+| 6 | Teal-orange / moody | ✅ | `assets/luts/` 3 file + theme `teal_orange_editorial`. Demo A/B: `output/test-luts.mp4` |
+| 3 | Hạt sáng tích tụ | ✅ | `mask_reveal` + `assets/masks/particle_gather.mp4`. Demo: `output/demo-particle-reveal.mp4` |
+| 1 | Đũa phép quơ hình trái tim | ✅ | `mask_reveal` + `assets/masks/heart_wand.mp4` (generator `heart_wand`, 0 code engine — đúng như dự đoán). Library beat `heart_reveal`. Demo: `output/demo-heart-reveal.mp4` |
+| 2 | Bàn chải sơn | ✅ | `mask_reveal` + `assets/masks/brush_stroke.mp4` (generator `brush_stroke`, 0 code engine). Library beat `brush_reveal`. Demo: `output/demo-brush-reveal.mp4` |
+| 7 | Tilt-shift | ⬜ | Field grade mới `tiltShift` (split→gblur→trộn gradient dọc); nhớ: color field mới chỉ cần 4 điểm chạm |
+| 5 | Speed ramping | ⬜ | ĐÍNH CHÍNH file gốc: cần **video-clip slide** trước (engine hiện render ảnh tĩnh; easing gentle/snap/bounce đã cover "nhanh chậm theo cảm xúc" cho ảnh) |
+| 8–10 | Neural relight / Gen expand / extend | ⬜ | Node tiền xử lý gọi API ngoài (ảnh vào→ảnh ra), engine core không đổi. Chờ giai đoạn Kling/Seedance |
 
 ---
 

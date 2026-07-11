@@ -1,14 +1,14 @@
 {
   "generatedBy": "stub",
-  "generatedAt": "2026-07-10T05:03:01.957Z",
-  "choice": "C",
-  "storyTitle": "Korean Romance",
+  "generatedAt": "2026-07-10T15:51:59.791Z",
+  "choice": "A",
+  "storyTitle": "Luxury Wedding Film",
   "creative_brief": {
-    "style": "Korean Romance — dreamy, soft, bright.",
-    "emotionalArc": "airy and tender throughout, blooming at the couple moments",
+    "style": "Luxury Wedding Film — elegant, refined, unhurried.",
+    "emotionalArc": "quiet awe that swells to a graceful, glowing finale",
     "colorMood": "warm, soft, filmic",
-    "captionPhilosophy": "gentle and sparse",
-    "pacing": "medium",
+    "captionPhilosophy": "minimal and poetic",
+    "pacing": "slow",
     "structure": "Opening → Love Story → Ceremony → Family & Friends → Ending.",
     "photoSelection": "Lead with hero-worthy frames; group candids into montages; keep tender portraits full and unhurried."
   },
@@ -26,7 +26,7 @@
     "easingCalm": "gentle",
     "easingEnergetic": "gentle",
     "notes": [
-      "Hold hero frames a beat longer to honour the dreamy, soft, bright tone.",
+      "Hold hero frames a beat longer to honour the elegant, refined, unhurried tone.",
       "Reserve bounce easing for at most one playful peak."
     ]
   },
@@ -36,6 +36,6 @@
     "overlayId": "ov_light_leak_soft",
     "openingBackgroundId": "bg_mixkit_blurred_bokeh_effect_720",
     "endingBackgroundId": "bg_mixkit_blurred_bokeh_effect_720",
-    "frameId": "frame_floral_corner_soft_1920x1080"
+    "frameId": "frame_wedding_frame_floral_01"
   }
 }

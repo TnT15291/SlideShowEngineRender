@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-10T04:52:18.028Z",
+  "generatedAt": "2026-07-10T15:37:15.822Z",
   "version": 1,
   "purpose": "Short asset menu for AI Director. Choose ids only; timeline generator maps ids to local paths.",
   "counts": {
     "fonts": 10,
-    "overlays": 8,
+    "overlays": 36,
     "backgrounds": 5,
-    "frames": 3
+    "frames": 20
   },
   "fonts": [
     {
@@ -263,6 +263,614 @@
       "recommendedOpacity": 0.35
     },
     {
+      "id": "ov_102436_660253854_medium",
+      "label": "102436 660253854 Medium",
+      "summary": "102436 660253854 Medium; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_219749_medium",
+      "label": "219749 Medium",
+      "summary": "219749 Medium; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_29277261_edison_bulb_7391388_1920",
+      "label": "29277261 Edison Bulb 7391388 1920",
+      "summary": "29277261 Edison Bulb 7391388 1920; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_48569_454825064_medium",
+      "label": "48569 454825064 Medium",
+      "summary": "48569 454825064 Medium; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_5192_183786490_medium",
+      "label": "5192 183786490 Medium",
+      "summary": "5192 183786490 Medium; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_bokeh_01",
+      "label": "Wedding Gold Bokeh 01",
+      "summary": "Wedding Gold Bokeh 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_bokeh_02",
+      "label": "Wedding Gold Bokeh 02",
+      "summary": "Wedding Gold Bokeh 02; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_bokeh_03",
+      "label": "Wedding Gold Bokeh 03",
+      "summary": "Wedding Gold Bokeh 03; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_bokeh_04",
+      "label": "Wedding Gold Bokeh 04",
+      "summary": "Wedding Gold Bokeh 04; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_gold_dust_01",
+      "label": "Wedding Gold Gold Dust 01",
+      "summary": "Wedding Gold Gold Dust 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_gold_dust_02",
+      "label": "Wedding Gold Gold Dust 02",
+      "summary": "Wedding Gold Gold Dust 02; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_gold_dust_03",
+      "label": "Wedding Gold Gold Dust 03",
+      "summary": "Wedding Gold Gold Dust 03; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_gold_dust_04",
+      "label": "Wedding Gold Gold Dust 04",
+      "summary": "Wedding Gold Gold Dust 04; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_lens_flare_01",
+      "label": "Wedding Gold Lens Flare 01",
+      "summary": "Wedding Gold Lens Flare 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_lens_flare_02",
+      "label": "Wedding Gold Lens Flare 02",
+      "summary": "Wedding Gold Lens Flare 02; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_lens_flare_03",
+      "label": "Wedding Gold Lens Flare 03",
+      "summary": "Wedding Gold Lens Flare 03; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_lens_flare_04",
+      "label": "Wedding Gold Lens Flare 04",
+      "summary": "Wedding Gold Lens Flare 04; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_light_leak_01",
+      "label": "Wedding Gold Light Leak 01",
+      "summary": "Wedding Gold Light Leak 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_light_leak_02",
+      "label": "Wedding Gold Light Leak 02",
+      "summary": "Wedding Gold Light Leak 02; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_light_leak_03",
+      "label": "Wedding Gold Light Leak 03",
+      "summary": "Wedding Gold Light Leak 03; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_light_leak_04",
+      "label": "Wedding Gold Light Leak 04",
+      "summary": "Wedding Gold Light Leak 04; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy",
+        "cinematic",
+        "warm"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_soft_glow_01",
+      "label": "Wedding Gold Soft Glow 01",
+      "summary": "Wedding Gold Soft Glow 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_soft_glow_02",
+      "label": "Wedding Gold Soft Glow 02",
+      "summary": "Wedding Gold Soft Glow 02; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_soft_glow_03",
+      "label": "Wedding Gold Soft Glow 03",
+      "summary": "Wedding Gold Soft Glow 03; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_wedding_gold_soft_glow_04",
+      "label": "Wedding Gold Soft Glow 04",
+      "summary": "Wedding Gold Soft Glow 04; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_custom_champagne_arc_01",
+      "label": "Custom Champagne Arc 01",
+      "summary": "Custom Champagne Arc 01; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 0.35
+    },
+    {
       "id": "ov_cutestock_golden_bokeh_overlay_hd",
       "label": "Cutestock Golden Bokeh Overlay Hd",
       "summary": "Cutestock Golden Bokeh Overlay Hd; local overlay asset.",
@@ -283,6 +891,22 @@
       "colors": [
         "gold",
         "warm"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_lines_593191_1280",
+      "label": "Lines 593191 1280",
+      "summary": "Lines 593191 1280; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
       ],
       "recommendedBlend": "screen",
       "recommendedOpacity": 0.35
@@ -346,6 +970,31 @@
       ],
       "colors": [
         "warm"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_photoshop_overlay_wedding_bokeh",
+      "label": "Photoshop Overlay Wedding Bokeh",
+      "summary": "Photoshop Overlay Wedding Bokeh; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "memory",
+        "ceremony"
+      ],
+      "colors": [
+        "white",
+        "cream"
       ],
       "recommendedBlend": "screen",
       "recommendedOpacity": 0.35
@@ -447,9 +1096,9 @@
   ],
   "frames": [
     {
-      "id": "frame_floral_corner_soft_1920x1080",
-      "label": "Floral Corner Soft 1920x1080",
-      "summary": "Floral Corner Soft 1920x1080; decorative frame overlay.",
+      "id": "frame_wedding_frame_art_deco_01",
+      "label": "Wedding Frame Art Deco 01",
+      "summary": "Wedding Frame Art Deco 01; decorative frame overlay.",
       "type": "frame",
       "mood": [
         "wedding",
@@ -460,14 +1109,18 @@
         "portrait",
         "title",
         "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
       ],
       "recommendedBlend": "alpha",
       "recommendedOpacity": 1
     },
     {
-      "id": "frame_openclipart_floral_border_frame",
-      "label": "Openclipart Floral Border Frame",
-      "summary": "Openclipart Floral Border Frame; decorative frame overlay.",
+      "id": "frame_wedding_frame_art_deco_02",
+      "label": "Wedding Frame Art Deco 02",
+      "summary": "Wedding Frame Art Deco 02; decorative frame overlay.",
       "type": "frame",
       "mood": [
         "wedding",
@@ -478,14 +1131,18 @@
         "portrait",
         "title",
         "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
       ],
       "recommendedBlend": "alpha",
       "recommendedOpacity": 1
     },
     {
-      "id": "frame_openclipart_floral_corner_frame",
-      "label": "Openclipart Floral Corner Frame",
-      "summary": "Openclipart Floral Corner Frame; decorative frame overlay.",
+      "id": "frame_wedding_frame_art_deco_03",
+      "label": "Wedding Frame Art Deco 03",
+      "summary": "Wedding Frame Art Deco 03; decorative frame overlay.",
       "type": "frame",
       "mood": [
         "wedding",
@@ -496,6 +1153,408 @@
         "portrait",
         "title",
         "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_art_deco_04",
+      "label": "Wedding Frame Art Deco 04",
+      "summary": "Wedding Frame Art Deco 04; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_botanical_01",
+      "label": "Wedding Frame Botanical 01",
+      "summary": "Wedding Frame Botanical 01; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_botanical_02",
+      "label": "Wedding Frame Botanical 02",
+      "summary": "Wedding Frame Botanical 02; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_botanical_03",
+      "label": "Wedding Frame Botanical 03",
+      "summary": "Wedding Frame Botanical 03; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_botanical_04",
+      "label": "Wedding Frame Botanical 04",
+      "summary": "Wedding Frame Botanical 04; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_floral_01",
+      "label": "Wedding Frame Floral 01",
+      "summary": "Wedding Frame Floral 01; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_floral_02",
+      "label": "Wedding Frame Floral 02",
+      "summary": "Wedding Frame Floral 02; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_floral_03",
+      "label": "Wedding Frame Floral 03",
+      "summary": "Wedding Frame Floral 03; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_floral_04",
+      "label": "Wedding Frame Floral 04",
+      "summary": "Wedding Frame Floral 04; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_gold_minimal_01",
+      "label": "Wedding Frame Gold Minimal 01",
+      "summary": "Wedding Frame Gold Minimal 01; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_gold_minimal_02",
+      "label": "Wedding Frame Gold Minimal 02",
+      "summary": "Wedding Frame Gold Minimal 02; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_gold_minimal_03",
+      "label": "Wedding Frame Gold Minimal 03",
+      "summary": "Wedding Frame Gold Minimal 03; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_gold_minimal_04",
+      "label": "Wedding Frame Gold Minimal 04",
+      "summary": "Wedding Frame Gold Minimal 04; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "portrait",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "white",
+        "cream",
+        "warm"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_particle_01",
+      "label": "Wedding Frame Particle 01",
+      "summary": "Wedding Frame Particle 01; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_particle_02",
+      "label": "Wedding Frame Particle 02",
+      "summary": "Wedding Frame Particle 02; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_particle_03",
+      "label": "Wedding Frame Particle 03",
+      "summary": "Wedding Frame Particle 03; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "colors": [
+        "white",
+        "cream"
+      ],
+      "recommendedBlend": "alpha",
+      "recommendedOpacity": 1
+    },
+    {
+      "id": "frame_wedding_frame_particle_04",
+      "label": "Wedding Frame Particle 04",
+      "summary": "Wedding Frame Particle 04; decorative frame overlay.",
+      "type": "frame",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft",
+        "sparkle",
+        "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "colors": [
+        "white",
+        "cream"
       ],
       "recommendedBlend": "alpha",
       "recommendedOpacity": 1
