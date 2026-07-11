@@ -1,0 +1,13 @@
+{
+  "timeline": "timeline/tinh-yeu-giua-long-quang-tri.json",
+  "video": "output/quoc-nhi-full-v2.mp4",
+  "revisions": 0,
+  "maxRevisions": 1,
+  "journal": [
+    "preflight: s07_lovegrows: duration 7.39s -> 5.9s (too_slow_for_music)"
+  ],
+  "manualReview": [
+    "s99_closing[too_bright]"
+  ],
+  "status": "delivered_with_flags"
+}

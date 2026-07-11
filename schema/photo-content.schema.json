@@ -15,6 +15,20 @@
     "model": { "type": "string", "description": "Vision model id when generatedBy != stub." },
     "generatedAt": { "type": "string", "description": "ISO timestamp." },
     "count": { "type": "integer", "minimum": 0 },
+    "partial": {
+      "type": "boolean",
+      "description": "Present and true only for a `--limit N` sample: this file judges a PREFIX of the photo set, not all of it. The pipeline's own photo_content.json never carries it. Read this before trusting `count` as coverage."
+    },
+    "limitedTo": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The N of `--limit N`. Only present alongside `partial`."
+    },
+    "totalPhotos": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many photos the source photos.json held. Only present alongside `partial`."
+    },
     "photos": {
       "type": "array",
       "items": { "$ref": "#/$defs/photoRecord" }

@@ -1,0 +1,24 @@
+{
+  "generatedBy": "node4:user-choice",
+  "generatedAt": "2026-07-10T05:53:28.470Z",
+  "optionsPath": "analysis/story_options.json",
+  "choice": "A",
+  "source": "auto",
+  "reason": "no response window was opened (nobody was asked); defaulted to story_options.recommended=A",
+  "channel": "console",
+  "selected": {
+    "id": "A",
+    "title": "Luxury Wedding Film",
+    "mood": "elegant, refined, unhurried",
+    "pacing": "slow",
+    "emotionalArc": "quiet awe that swells to a graceful, glowing finale",
+    "summary": "A minimal, cinematic edit that lets the strongest images breathe with sparse, tasteful text.",
+    "captionTone": "minimal and poetic",
+    "fitReason": "suits sets with several strong hero-worthy frames."
+  },
+  "decisionWindow": {
+    "openedAt": "2026-07-10T05:53:28.470Z",
+    "deadlineAt": "2026-07-10T05:53:28.470Z",
+    "timeoutHours": 0
+  }
+}

@@ -39,21 +39,45 @@
 //   VISION_REASONING_EFFORT (low|medium|high; unset = the model's own default).
 // Also FFMPEG_PATH (for the previews).
 //
+// This is the ONLY node whose cost scales with the photo set: every photo is
+// downscaled and base64'd into a request. `--dry-run` prices the run (requests,
+// payload, unreadable images) without sending anything, and `--limit N` judges a
+// sample so the prompt can be checked by eye before the whole set is paid for.
+//
 // Usage: node scripts/analyzePhotoContent.mjs [--photos analysis/photos.json]
 //        [--out analysis/photo_content.json] [--model <id>] [--require-vision]
+//        [--dry-run] [--limit N]
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { isRetryableStatus, MAX_ATTEMPTS, RETRY_BASE_MS, sleep } from "./lib/retryPolicy.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const die = (msg) => {
+  console.error(`[analyzePhotoContent] FAILED: ${msg}`);
+  process.exit(1);
+};
+
+const DEFAULT_OUT = "analysis/photo_content.json";
+const SAMPLE_OUT = "analysis/photo_content.sample.json";
+
 const photosPath = arg("--photos", "analysis/photos.json");
-const outPath = arg("--out", "analysis/photo_content.json");
+const outPath = arg("--out", DEFAULT_OUT);
+const outExplicit = process.argv.includes("--out");
 const model = arg("--model", null);
 const requireVision = process.argv.includes("--require-vision");
+const dryRun = process.argv.includes("--dry-run");
+
+const limitRaw = arg("--limit", null);
+let limit = null;
+if (limitRaw !== null) {
+  limit = Number(limitRaw);
+  if (!Number.isInteger(limit) || limit < 1) die(`--limit must be a positive integer, got "${limitRaw}"`);
+}
 
 // --- Vision provider config (OpenAI-compatible chat/completions with images) ---
 const ffmpeg = process.env.FFMPEG_PATH || "ffmpeg";
@@ -104,8 +128,27 @@ if (!Array.isArray(photos) || photos.length === 0) {
   process.exit(1);
 }
 
+// A partial run must never be able to pass for a complete one. Downstream reads
+// photo_content.json as "every photo, judged": 12 records where 82 are expected
+// would skew the story profile and every hero pick, and nothing in the file would
+// say so. Same failure as the silent-zeros bug of 2026-07-09 — structurally valid,
+// semantically a lie. So a limited run lands in its own file, and refuses to be
+// aimed at the real one.
+const partial = limit !== null && limit < photos.length;
+let effectiveOut = outPath;
+if (partial) {
+  if (!outExplicit) effectiveOut = SAMPLE_OUT;
+  else if (path.resolve(root, outPath) === path.resolve(root, DEFAULT_OUT)) {
+    die(
+      `--limit ${limit} judges only ${limit} of ${photos.length} photos, but --out points at ${DEFAULT_OUT},\n` +
+        `  the file the pipeline reads as the complete set. Drop --out (the sample lands in ${SAMPLE_OUT})\n` +
+        `  or name a different path.`
+    );
+  }
+}
+
 // Ordered batch the model will judge. The scaffold, not the model, owns `file`.
-const batch = photos.map((p, index) => ({
+const batch = (partial ? photos.slice(0, limit) : photos).map((p, index) => ({
   index,
   file: p.file,
   orient: p.orient,
@@ -181,27 +224,30 @@ async function callVisionChunk(chunk) {
   };
 
   let lastErr;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       const resp = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
         body: JSON.stringify(body),
       });
-      if (!resp.ok) {
-        lastErr = new Error(`vision HTTP ${resp.status}: ${(await resp.text()).slice(0, 300)}`);
-        if (resp.status >= 400 && resp.status < 500 && resp.status !== 429) throw lastErr; // client error: don't retry
-        continue;
+      if (resp.ok) {
+        const data = await resp.json();
+        const text = data?.choices?.[0]?.message?.content ?? "";
+        const parsed = JSON.parse(text);
+        const arr = Array.isArray(parsed) ? parsed : parsed.results ?? parsed.photos ?? [];
+        if (!Array.isArray(arr)) throw new Error("vision model returned no results array");
+        return arr;
       }
-      const data = await resp.json();
-      const text = data?.choices?.[0]?.message?.content ?? "";
-      const parsed = JSON.parse(text);
-      const arr = Array.isArray(parsed) ? parsed : parsed.results ?? parsed.photos ?? [];
-      if (!Array.isArray(arr)) throw new Error("vision model returned no results array");
-      return arr;
+      lastErr = new Error(`vision HTTP ${resp.status}: ${(await resp.text()).slice(0, 300)}`);
+      // `break`, not `throw`: a throw here lands in the catch below, which records
+      // it and lets the loop run again — three identical bad requests, three bills'
+      // worth of latency, for a key or a body that will never become correct.
+      if (!isRetryableStatus(resp.status)) break;
     } catch (e) {
-      lastErr = e;
+      lastErr = e; // network failure or an unparseable body — worth another attempt
     }
+    if (attempt < MAX_ATTEMPTS) await sleep(RETRY_BASE_MS * attempt);
   }
   throw lastErr ?? new Error("vision call failed");
 }
@@ -304,9 +350,83 @@ if (blocked && requireVision) {
   process.exit(1);
 }
 
+/** Price the run without buying it: encode every preview the real call would
+ *  send, then report the request count, the payload, and how many photos the
+ *  model would receive as "(image unreadable)". Sends nothing, writes nothing. */
+function reportDryRun() {
+  const fmt = (n) => (n >= 1 << 20 ? `${(n / (1 << 20)).toFixed(1)} MB` : `${Math.round(n / 1024)} KB`);
+  const steer = IS_REASONING_MODEL
+    ? reasoningEffort
+      ? `reasoning_effort=${reasoningEffort}`
+      : "reasoning_effort omitted (model default)"
+    : "temperature=0.2";
+
+  console.log(`[analyzePhotoContent] DRY RUN — nothing is sent, nothing is written.\n`);
+  console.log(`  endpoint    ${baseUrl}/chat/completions`);
+  console.log(`  model       ${modelId}${IS_REASONING_MODEL ? "  (reasoning family)" : ""}`);
+  console.log(`  steers by   ${steer}`);
+  console.log(`  api key     ${apiKey ? "present" : "ABSENT"}`);
+  console.log(`  would call  ${blocked ? `NO — would fall back to STUB (${blocked})` : "YES — real vision request"}`);
+
+  process.stdout.write(`\n  encoding ${batch.length} preview(s) at ${PREVIEW_EDGE}px to measure the payload... `);
+  const sizes = batch.map((it) => encodeImagePreview(it.file)?.length ?? null);
+  console.log("done");
+
+  const unreadable = batch.filter((_, i) => sizes[i] === null);
+  const b64Total = sizes.reduce((s, n) => s + (n ?? 0), 0);
+  const chunks = [];
+  for (let i = 0; i < batch.length; i += BATCH_SIZE) {
+    chunks.push(sizes.slice(i, i + BATCH_SIZE).reduce((s, n) => s + (n ?? 0), 0));
+  }
+
+  console.log(`\n  photos      ${batch.length}${partial ? ` of ${photos.length}  (--limit ${limit})` : ""}`);
+  console.log(`  requests    ${chunks.length}  (BATCH_SIZE=${BATCH_SIZE})`);
+  console.log(`  payload     ${fmt(b64Total)} of base64 across all requests; largest request ${fmt(Math.max(...chunks))}`);
+  console.log(`  readable    ${batch.length - unreadable.length}/${batch.length}`);
+  if (unreadable.length) {
+    console.log(`  UNREADABLE  ${unreadable.length} — the model would be told "(image unreadable)" and score them blind:`);
+    for (const it of unreadable.slice(0, 10)) console.log(`                ${it.file}`);
+    if (unreadable.length > 10) console.log(`                ... and ${unreadable.length - 10} more`);
+  }
+  console.log(`\n  would write ${partial ? effectiveOut + "  (sample; not the file the pipeline reads)" : effectiveOut}`);
+  console.log(`\n  Re-run without --dry-run to execute.`);
+}
+
+if (dryRun) {
+  reportDryRun();
+  process.exit(0);
+}
+
+/** Turn the provider's refusal into the thing to go change. The first real run of
+ *  this node is where a wrong key or a wrong model id shows up, and a stack trace
+ *  names the line that threw rather than the setting that was wrong. */
+function failureHint(msg) {
+  if (/HTTP 40[13]/.test(msg)) return `The endpoint rejected the KEY. Check VISION_API_KEY / OPENAI_API_KEY.`;
+  if (/HTTP 400/.test(msg))
+    return (
+      `The endpoint rejected the BODY, not the key. Reasoning models (gpt-5*, o1/o3/o4) refuse ` +
+      `\`temperature\`; others refuse \`reasoning_effort\`. This run sent ` +
+      `${IS_REASONING_MODEL ? "reasoning-style" : "temperature-style"} params for VISION_MODEL=${modelId}.`
+    );
+  if (/HTTP 429/.test(msg)) return `Rate limited, still after ${MAX_ATTEMPTS} attempts. Retry later, or lower BATCH_SIZE (${BATCH_SIZE}).`;
+  if (/HTTP 5\d\d/.test(msg)) return `Provider-side error, still after ${MAX_ATTEMPTS} attempts.`;
+  return `Could not reach ${baseUrl}. Check VISION_BASE_URL and the network.`;
+}
+
 const useReal = !blocked;
 const generatedBy = useReal ? `vision:${visionHost}/${modelId}` : "stub";
-const raw = useReal ? await callVisionModel(batch) : stubResults(batch);
+
+let raw;
+try {
+  raw = useReal ? await callVisionModel(batch) : stubResults(batch);
+} catch (e) {
+  const msg = e instanceof Error ? e.message : String(e);
+  die(
+    `${msg}\n  ${failureHint(msg)}\n` +
+      `  Nothing was written. Use --dry-run to inspect the request without sending it,\n` +
+      `  and --limit N to judge a sample before paying for all ${photos.length} photos.`
+  );
+}
 const results = validateAiResults(raw, batch.length, generatedBy);
 
 // Merge technical (scaffold-owned) + semantic (validated model) per photo.
@@ -336,12 +456,34 @@ const out = {
   ...(useReal ? { model: `${visionHost}/${modelId}` } : {}),
   generatedAt: new Date().toISOString(),
   count: merged.length,
+  // Coverage, stated in the file rather than inferred from its length. A reader
+  // that trusts `count` alone cannot tell a sample from the whole set.
+  ...(partial ? { partial: true, limitedTo: limit, totalPhotos: photos.length } : {}),
   photos: merged,
 };
 
-const absOut = path.resolve(root, outPath);
+const absOut = path.resolve(root, effectiveOut);
 fs.mkdirSync(path.dirname(absOut), { recursive: true });
 fs.writeFileSync(absOut, JSON.stringify(out, null, 2));
 
-console.log(`[analyzePhotoContent] ${merged.length} photos -> ${outPath}${useReal ? ` (vision: ${visionHost}/${modelId})` : " (STUB)"}`);
+console.log(`[analyzePhotoContent] ${merged.length} photos -> ${effectiveOut}${useReal ? ` (vision: ${visionHost}/${modelId})` : " (STUB)"}`);
 if (blocked) console.warn(`  semantic fields are PLACEHOLDERS — ${blocked}`);
+
+// A sample exists to be read by a human before the full set is paid for, so print
+// it rather than making them open the JSON.
+if (partial) {
+  console.log(`\n  Sample of ${limit}/${photos.length} — check the tags before spending on the rest:\n`);
+  const pad = (s, n) => String(s).padEnd(n).slice(0, n);
+  console.log(`    ${pad("file", 26)} ${pad("emotion", 12)} ${pad("hero", 6)} ${pad("emo", 6)} ${pad("story", 6)} tags`);
+  for (const p of merged) {
+    console.log(
+      `    ${pad(path.basename(p.file), 26)} ${pad(p.emotion, 12)} ` +
+        `${pad(p.heroScore.toFixed(2), 6)} ${pad(p.emotionScore.toFixed(2), 6)} ${pad(p.storyImportance.toFixed(2), 6)} ` +
+        (p.tags.length ? p.tags.join(",") : "-")
+    );
+  }
+  console.log(
+    `\n  ${effectiveOut} is a SAMPLE — the pipeline reads ${DEFAULT_OUT}.\n` +
+      `  When the tags look right, run without --limit to judge all ${photos.length}.`
+  );
+}

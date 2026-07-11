@@ -8,7 +8,9 @@
 //   6. if a story scene came out too dark/flat, swap its hero photo for the next
 //      best-quality one and re-render ONCE (only with --fix)
 //
-// Usage: node scripts/buildClip.mjs [--music "music/a thousand years.mp3"] [--fix]
+// Usage: node scripts/buildClip.mjs [--music "music/a thousand years.mp3"]
+//   [--template story-templates/warm-film-01.json] [--brief jobs/demo/brief.json]
+//   [--out timeline/warm-film-01.json] [--fix]
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -16,8 +18,15 @@ import { spawnSync } from "node:child_process";
 const root = process.cwd();
 const musicIdx = process.argv.indexOf("--music");
 const music = musicIdx >= 0 ? process.argv[musicIdx + 1] : "music/a thousand years.mp3";
+const arg = (flag, fallback) => {
+  const i = process.argv.indexOf(flag);
+  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
+};
+const template = arg("--template", "story-templates/warm-film-01.json");
+const templateId = path.basename(template, path.extname(template));
+const brief = arg("--brief", "");
 const doFix = process.argv.includes("--fix");
-const TL = "timeline/quoc-nhi-full-v2.json";
+const TL = arg("--out", `timeline/${templateId}.json`);
 
 function run(cmd, args) {
   const r = spawnSync(cmd, args, { stdio: "inherit", cwd: root });
@@ -36,7 +45,9 @@ if (!fs.existsSync(path.join(root, `analysis/music/${musicName}.json`))) run(nod
 // to exist in analysis/, Lite must stay deterministic and rule-based. The
 // director-aware path is the v1 Premium flow (run the Phase B nodes, then let
 // generateStoryClipV2 auto-load their outputs).
-run(node, ["scripts/generateStoryClipV2.mjs", "--music", music, "--out", TL, "--director", "none", "--plan", "none"]);
+const templateArgs = ["scripts/applyStoryTemplate.mjs", "--music", music, "--template", template, "--out", TL];
+if (brief) templateArgs.push("--brief", brief);
+run(node, templateArgs);
 run(node, ["scripts/fitTextInTimeline.mjs", TL]);
 
 // 4. render
@@ -44,7 +55,8 @@ run(node, ["--import", "tsx", "src/index.ts", "--timeline", TL]);
 
 // 5. QA
 run(node, ["scripts/qaClip.mjs", TL]);
-const qa = JSON.parse(fs.readFileSync(path.join(root, "analysis/qa/quoc-nhi-full-v2.json"), "utf8"));
+const qaPath = path.join(root, "analysis/qa", `${path.basename(TL, path.extname(TL))}.json`);
+const qa = JSON.parse(fs.readFileSync(qaPath, "utf8"));
 
 // 6. optional auto-fix: swap dark/flat story heroes and re-render once
 if (doFix) {

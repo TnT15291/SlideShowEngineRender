@@ -33,6 +33,8 @@
 //   DEEPSEEK_MODEL (default "deepseek-v4-flash"), DEEPSEEK_BASE_URL
 //   (default https://api.deepseek.com).
 
+import { isRetryableStatus, MAX_ATTEMPTS, RETRY_BASE_MS, sleep } from "./retryPolicy.mjs";
+
 export const apiKey = process.env.DEEPSEEK_API_KEY || "";
 export const baseUrl = (process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com").replace(/\/+$/, "");
 export const defaultModel = process.env.DEEPSEEK_MODEL || "deepseek-v4-flash";
@@ -50,8 +52,8 @@ export function provenance(model = defaultModel) {
 /**
  * One DeepSeek chat/completions call in JSON mode. Returns the PARSED top-level
  * JSON object exactly as the model produced it — no coercion; the caller owns
- * validation. Retries transient failures (network / 5xx / 429) up to 3x; a 4xx
- * client error (bad key, bad request) throws immediately.
+ * validation. Retries transient failures (network / 5xx / 429) up to 3x with a
+ * linear backoff; a 4xx client error (bad key, bad request) throws immediately.
  *
  * @param {object}   opts
  * @param {string}   opts.system       System prompt (rubric + whitelist + JSON instruction).
@@ -74,27 +76,29 @@ export async function callDeepSeekJSON({ system, user, model = defaultModel, tem
   };
 
   let lastErr;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       const resp = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
         body: JSON.stringify(body),
       });
-      if (!resp.ok) {
-        const detail = (await resp.text()).slice(0, 300);
-        lastErr = new Error(`DeepSeek HTTP ${resp.status}: ${detail}`);
-        if (resp.status >= 400 && resp.status < 500 && resp.status !== 429) throw lastErr; // client error: don't retry
-        continue;
+      if (resp.ok) {
+        const data = await resp.json();
+        const text = data?.choices?.[0]?.message?.content ?? "";
+        const parsed = JSON.parse(text);
+        if (!parsed || typeof parsed !== "object") throw new Error("DeepSeek returned a non-object JSON payload");
+        return parsed;
       }
-      const data = await resp.json();
-      const text = data?.choices?.[0]?.message?.content ?? "";
-      const parsed = JSON.parse(text);
-      if (!parsed || typeof parsed !== "object") throw new Error("DeepSeek returned a non-object JSON payload");
-      return parsed;
+      const detail = (await resp.text()).slice(0, 300);
+      lastErr = new Error(`DeepSeek HTTP ${resp.status}: ${detail}`);
+      // `break`, not `throw`: a throw here lands in the catch below, which records
+      // it and lets the loop run again — the retry this branch exists to prevent.
+      if (!isRetryableStatus(resp.status)) break;
     } catch (e) {
-      lastErr = e;
+      lastErr = e; // network failure or an unparseable body — worth another attempt
     }
+    if (attempt < MAX_ATTEMPTS) await sleep(RETRY_BASE_MS * attempt);
   }
   throw lastErr ?? new Error("DeepSeek call failed");
 }

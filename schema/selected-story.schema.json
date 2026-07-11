@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slideshow-render-engine/selected-story.schema.json",
+  "title": "Selected Story Direction (Phase F / node 4)",
+  "description": "Contract for analysis/selected_story.json. Node 4 records which one of the four story options the production pipeline will realise. A real customer choice wins; if the response window closes with no valid answer, the node chooses story_options.recommended and marks the source as auto.",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "optionsPath", "choice", "source", "selected", "decisionWindow"],
+  "additionalProperties": false,
+  "properties": {
+    "generatedBy": { "enum": ["node4:user-choice"] },
+    "generatedAt": { "type": "string" },
+    "optionsPath": { "type": "string", "minLength": 1 },
+    "choice": { "enum": ["A", "B", "C", "D"] },
+    "source": { "enum": ["user", "auto"] },
+    "reason": { "type": "string", "maxLength": 240 },
+    "late": {
+      "description": "True when a customer answer arrived AFTER the window closed. The choice still stands — but a film delivered on a late answer is a different fact from one delivered on time, and the record must not blur them.",
+      "type": "boolean"
+    },
+    "reply": {
+      "description": "Raw customer reply, verbatim, when the choice came from parsing free text rather than an operator's --choice flag.",
+      "type": "string",
+      "maxLength": 500
+    },
+    "channel": { "type": "string", "maxLength": 80 },
+    "sentVia": { "type": "string", "maxLength": 200 },
+    "customerId": { "type": "string", "maxLength": 120 },
+    "selected": { "$ref": "#/$defs/option" },
+    "decisionWindow": {
+      "type": "object",
+      "required": ["openedAt", "deadlineAt", "timeoutHours"],
+      "additionalProperties": false,
+      "properties": {
+        "openedAt": { "type": "string" },
+        "deadlineAt": { "type": "string" },
+        "timeoutHours": { "type": "number", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "option": {
+      "type": "object",
+      "required": ["id", "title", "mood", "pacing", "emotionalArc", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["A", "B", "C", "D"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "mood": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "pacing": { "enum": ["slow", "medium", "fast", "dynamic"] },
+        "emotionalArc": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "captionTone": { "type": "string", "maxLength": 120 },
+        "fitReason": { "type": "string", "maxLength": 240 }
+      }
+    }
+  }
+}

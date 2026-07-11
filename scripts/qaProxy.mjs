@@ -28,7 +28,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { makeEnergy, sceneDur, sceneTimes, barLength } from "./lib/pacing.mjs";
-import { hasKey } from "./lib/deepseek.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -245,7 +244,7 @@ if (!videoAbs || !fs.existsSync(videoAbs)) {
     at: { opening: first.mid, ending: last.mid },
   };
   if (!okOpen || !okEnd) bookend.reason = "could not sample opening/ending frames from the video";
-  else if (!hasKey()) bookend.reason = "no DEEPSEEK_API_KEY — frames sampled, scoring skipped (this check is the one that genuinely needs AI vision)";
+  else if (!(process.env.VISION_API_KEY || process.env.OPENAI_API_KEY)) bookend.reason = "no VISION_API_KEY / OPENAI_API_KEY — frames sampled, scoring skipped (this check genuinely needs AI vision)";
   else bookend.reason = "vision scoring not yet wired (frames are ready at bookend.frames)";
 }
 

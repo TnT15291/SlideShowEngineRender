@@ -1,0 +1,180 @@
+{
+  "video": "output/quoc-nhi-full-v2.mp4",
+  "scenes": 16,
+  "passed": 15,
+  "flagged": 1,
+  "problems": [
+    {
+      "id": "s99_closing",
+      "flags": [
+        "too_bright"
+      ],
+      "yavg": 246.052,
+      "range": 180
+    }
+  ],
+  "results": [
+    {
+      "id": "s01_hero",
+      "effect": "layer_scene",
+      "at": 3.45,
+      "yavg": 173.859,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_japan",
+      "effect": "layer_scene",
+      "at": 9.54,
+      "yavg": 217.397,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_cungque",
+      "effect": "layer_scene",
+      "at": 16.04,
+      "yavg": 192.332,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "m1",
+      "effect": "film_roll_up",
+      "at": 25.16,
+      "yavg": 101.003,
+      "range": 239,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s04_firstmeeting",
+      "effect": "layer_scene",
+      "at": 34.41,
+      "yavg": 214.727,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_ourstory",
+      "effect": "layer_scene",
+      "at": 40.73,
+      "yavg": 208.95,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_injapan",
+      "effect": "layer_scene",
+      "at": 46.84,
+      "yavg": 133.271,
+      "range": 253,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "m2",
+      "effect": "film_roll_up",
+      "at": 55.73,
+      "yavg": 102.421,
+      "range": 238,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_lovegrows",
+      "effect": "layer_scene",
+      "at": 64.35,
+      "yavg": 214.428,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_fouryears",
+      "effect": "layer_scene",
+      "at": 69.6,
+      "yavg": 200.796,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s09_promise",
+      "effect": "layer_scene",
+      "at": 75.3,
+      "yavg": 204.096,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "m3",
+      "effect": "film_roll_up",
+      "at": 84.07,
+      "yavg": 120.035,
+      "range": 241,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s10_cominghome",
+      "effect": "layer_scene",
+      "at": 92.93,
+      "yavg": 207.682,
+      "range": 252,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s11_quangtri",
+      "effect": "layer_scene",
+      "at": 98.4,
+      "yavg": 205.819,
+      "range": 255,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s12_thebigday",
+      "effect": "layer_scene",
+      "at": 103.49,
+      "yavg": 123.629,
+      "range": 255,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s99_closing",
+      "effect": "layer_scene",
+      "at": 109.67,
+      "yavg": 246.052,
+      "range": 180,
+      "lenient": false,
+      "verdict": "review",
+      "flags": [
+        "too_bright"
+      ]
+    }
+  ]
+}

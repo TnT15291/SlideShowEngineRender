@@ -12,6 +12,8 @@ const dirIdx = process.argv.indexOf("--dir");
 const inputDir = path.resolve(root, dirIdx >= 0 ? process.argv[dirIdx + 1] : "input");
 const outIdx = process.argv.indexOf("--out");
 const outPath = outIdx >= 0 ? process.argv[outIdx + 1] : "analysis/photos.json";
+const prefixIdx = process.argv.indexOf("--file-prefix");
+const filePrefix = prefixIdx >= 0 ? process.argv[prefixIdx + 1] : path.basename(inputDir);
 const ffmpeg = process.env.FFMPEG_PATH || "ffmpeg";
 const ffprobe = ffmpeg.replace(/ffmpeg(\.exe)?$/i, (_, e) => "ffprobe" + (e || ""));
 
@@ -90,7 +92,7 @@ for (const name of files) {
   const exposurePenalty = Math.abs(meanLuma - 128) / 128; // 0 good, 1 bad
   const quality = +(sharpness * (1 - 0.5 * exposurePenalty)).toFixed(3);
   photos.push({
-    file: `${path.basename(inputDir)}/${name}`,
+    file: `${filePrefix.replace(/\\/g, "/").replace(/\/$/, "")}/${name}`,
     w, h, orient: w >= h ? "landscape" : "portrait",
     sharpness: +sharpness.toFixed(3), meanLuma: +meanLuma.toFixed(1),
     skinFrac: +skinFrac.toFixed(3), focusX, focusY, quality,

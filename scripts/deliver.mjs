@@ -30,7 +30,7 @@
 // actually rendered, transition overlap included.
 //
 // Usage: node scripts/deliver.mjs <timeline.json> [--out-dir output/deliver/<name>]
-//   [--tier director|lite|unknown] [--content analysis/photo_content.json]
+//   [--tier director|lite|unknown] [--analysis-dir analysis]
 //   [--preview-height 720] [--preview-seconds 0] [--watermark "text"]
 //   [--font fonts/BeVietnamPro-Regular.ttf] [--thumb-time <sec>] [--no-copy]
 // Exit: 0 ok · 1 error.
@@ -67,7 +67,8 @@ const base = path.basename(tlPath).replace(/\.[^.]+$/, "");
 const outDir = arg("--out-dir", `output/deliver/${base}`);
 const tier = arg("--tier", "unknown");
 if (!["director", "lite", "unknown"].includes(tier)) die(`--tier must be director|lite|unknown, got "${tier}"`);
-const contentPath = arg("--content", "analysis/photo_content.json");
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const previewHeight = Number(arg("--preview-height", "720"));
 const previewSeconds = Number(arg("--preview-seconds", "0"));
 const watermark = arg("--watermark", "");
@@ -265,9 +266,9 @@ if (!noCopy) {
 }
 
 // --- summary -----------------------------------------------------------------
-const directorDoc = readJson("analysis/director_notes.json");
-const planDoc = readJson("analysis/story_plan.json");
-const optionsDoc = readJson("analysis/story_options.json");
+const directorDoc = readJson(`${analysisDir}/director_notes.json`);
+const planDoc = readJson(`${analysisDir}/story_plan.json`);
+const optionsDoc = readJson(`${analysisDir}/story_options.json`);
 
 // These files live in analysis/ for the whole project, not per-render. Their mere
 // existence says nothing about whether THIS timeline was built from them — a Lite
@@ -277,9 +278,9 @@ const optionsDoc = readJson("analysis/story_options.json");
 // summary can never imply a directorial decision that never touched the render.
 const directorApplied = tier === "director";
 const found = [];
-if (directorDoc) found.push("analysis/director_notes.json");
-if (planDoc) found.push("analysis/story_plan.json");
-if (optionsDoc) found.push("analysis/story_options.json");
+if (directorDoc) found.push(`${analysisDir}/director_notes.json`);
+if (planDoc) found.push(`${analysisDir}/story_plan.json`);
+if (optionsDoc) found.push(`${analysisDir}/story_options.json`);
 const artifacts = directorApplied ? found : [];
 
 const usedPhotos = [];
@@ -292,7 +293,7 @@ const captions = tl.slides.reduce((n, s) => n + (s.captions?.length || 0), 0);
 const music = (tl.music || []).map((m) => {
   const row = { path: m.path };
   if (typeof m.volume === "number") row.volume = m.volume;
-  const mj = readJson(`analysis/music/${path.basename(m.path).replace(/\.[^.]+$/, "")}.json`);
+  const mj = readJson(`${analysisDir}/music/${path.basename(m.path).replace(/\.[^.]+$/, "")}.json`);
   if (mj?.bpmEstimate) row.bpmEstimate = mj.bpmEstimate;
   if (mj?.duration) row.durationSec = +Number(mj.duration).toFixed(3);
   return row;
@@ -311,9 +312,9 @@ const staleAgainstTimeline = (doc) => {
   return !Number.isFinite(gen) || gen < tlMtime;
 };
 
-const proxyRel = `analysis/qa/${base}.proxy.json`;
+const proxyRel = `${analysisDir}/qa/${base}.proxy.json`;
 const proxy = readJson(proxyRel);
-const loop = readJson(`analysis/qa/${base}.loop.json`);
+const loop = readJson(`${analysisDir}/qa/${base}.loop.json`);
 let qa;
 if (!proxy) {
   qa = { verdict: "unknown", reason: `no ${proxyRel} — run: node scripts/qaProxy.mjs ${tlPath}` };

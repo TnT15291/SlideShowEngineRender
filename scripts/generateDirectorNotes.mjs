@@ -20,7 +20,8 @@
 // the rest of the pipeline runs. See schema/director-notes.schema.json.
 //
 // Usage: node scripts/generateDirectorNotes.mjs [--options analysis/story_options.json]
-//        [--choice A] [--music "music/a thousand years.mp3"] [--assets analysis/assets_catalog.ai.json]
+//        [--selection analysis/selected_story.json] [--choice A]
+//        [--music "music/a thousand years.mp3"] [--assets analysis/assets_catalog.ai.json]
 //        [--out analysis/director_notes.json]
 import fs from "node:fs";
 import path from "node:path";
@@ -33,6 +34,7 @@ const arg = (flag, def) => {
 };
 const optionsPath = arg("--options", "analysis/story_options.json");
 const choiceArg = (arg("--choice", "") || "").toUpperCase();
+const selectionPath = arg("--selection", "analysis/selected_story.json");
 const musicPath = arg("--music", "");
 const assetsPath = arg("--assets", "analysis/assets_catalog.ai.json");
 const outPath = arg("--out", "analysis/director_notes.json");
@@ -58,7 +60,14 @@ if (!fs.existsSync(absOptions)) {
   process.exit(1);
 }
 const optionsDoc = JSON.parse(fs.readFileSync(absOptions, "utf8"));
-const choice = /^[ABCD]$/.test(choiceArg) ? choiceArg : (optionsDoc.recommended || "A");
+let selectionDoc = null;
+const absSelection = path.resolve(root, selectionPath);
+if (!choiceArg && fs.existsSync(absSelection)) {
+  selectionDoc = JSON.parse(fs.readFileSync(absSelection, "utf8"));
+}
+const choice = /^[ABCD]$/.test(choiceArg)
+  ? choiceArg
+  : (/^[ABCD]$/.test(selectionDoc?.choice) ? selectionDoc.choice : (optionsDoc.recommended || "A"));
 const chosen = (optionsDoc.options || []).find((o) => o.id === choice);
 if (!chosen) {
   console.error(`[generateDirectorNotes] option ${choice} not found in ${optionsPath}.`);
