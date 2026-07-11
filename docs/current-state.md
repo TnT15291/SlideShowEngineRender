@@ -76,8 +76,31 @@ thành `"unknown"`.
 `status: "paused"` (KHÔNG phải `failed`). Job không hỏng, nó **đang đợi một con người**. Gọi nó là
 `failed` là bảo người vận hành đi sửa thứ không hề gãy.
 
-⬜ **Còn hở**: recipe chưa giãn theo nhạc (nhạc 203s → video ~73s). Cơ chế scene `repeatable` đang được
-một phiên song song xây (`test/template-scaling.test.mjs`).
+### 1c. Hai node AI cho đường recipe (2026-07-11) — opt-in, chưa bật mặc định
+
+```
+npm run template -- --project projects/x --auto-recipe --ai-copy
+```
+
+- **Node A `pickRecipe.mjs`** (`--auto-recipe`) — chọn recipe nào hợp đôi này, đọc **chính câu khách
+  viết** + hình dạng nhạc + số ảnh. **Không cần vision**: "một đám cưới ấm áp, mộc mạc" là lời tuyên bố
+  ý định — AI phục vụ ý định đó, không cãi lại (đúng `token-saving-plan.md`). Thực đơn nạp sống từ
+  `story-templates/` + theme trong library → không drift, không bịa được recipe.
+- **Node B `writeRecipeCopy.mjs`** (`--ai-copy`) — viết lại lời recipe cho đôi này.
+  **Bán kính sát thương chính là thiết kế**: chỉ trả **chuỗi**, chỉ vào cặp `(sceneId, slotId)` mà recipe
+  **đã khai**, có giới hạn độ dài; `fitTextInTimeline` wrap/thu chữ ở hạ nguồn. Response hỏng nhất cũng
+  chỉ ra được **lời văn vụng**, không ra được render lỗi.
+- `--ai-copy` chấm vision trên **mẫu 24 ảnh** (2 request thay vì 7) — node copy cần *chân dung* tag/cảm
+  xúc, không cần điểm từng ảnh.
+- **Đã chứng minh, không phải tuyên bố**: `test/recipe-nodes.test.mjs` bắn JSON thù địch từ mock DeepSeek —
+  recipe id bịa → rơi về luật **và ghi rõ là đã rơi**; theme bịa → về theme của recipe; scene/slot bịa →
+  bỏ; object nhét font path + toạ độ → bỏ; câu 1400 ký tự → cắt.
+
+⬜ **CHỐT CHẶN — vì sao chưa xoá `generateProjectTimeline` + `generateProjectStory`**: recipe mới phủ
+**~45% nhạc** (track 203s → 16 scene, 91s). Cơ chế `repeatable`/`expandScenes` của phiên song song đang
+land nhưng chưa xong, và mới chỉ `warm-film-01` khai `repeatable`. Chừng nào scaling chưa phủ hết recipe
+thì bộ sinh rule **vẫn là thứ duy nhất co giãn theo mọi bản nhạc** — xoá bây giờ là ship regression.
+**Khi scaling xong: tier 2 = `template --auto-recipe --ai-copy`, và hai script kia chết.**
 
 ⚠️ **`desktop/main.cjs` vẫn gọi node KHÔNG kèm `--project`** → app Electron vẫn chạy ở root, không
 isolation. Đây là lối vào root cuối cùng còn sót. Chưa sửa.
