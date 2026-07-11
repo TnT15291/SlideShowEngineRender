@@ -331,11 +331,13 @@ Ngoài generator theo orientation, có pipeline sinh timeline giàu cảm xúc, 
 - `scripts/generateStoryClipV2.mjs` — Director v2: chọn ảnh hero theo chất lượng, gắn focal point, pace theo năng lượng bài hát.
 - `scripts/fitTextInTimeline.mjs` — đo bề rộng glyph thật để wrap/thu chữ vừa khung (chống tràn deterministically).
 - `scripts/qaClip.mjs` → `analysis/qa/<name>.json` — QA sau render: lấy 1 frame/scene, cờ too_dark/too_bright/flat.
-- `scripts/buildClip.mjs` — driver một lệnh: analyze → generate v2 → fit text → render → QA → (với `--fix`) đổi ảnh tối/phẳng rồi render lại.
+- `scripts/runProject.mjs` — orchestrator DUY NHẤT: analyze → plan → build → render → QA → deliver,
+  cho cả 3 tier, mỗi job một thư mục riêng. (`buildClip.mjs` — driver cũ chạy ở root — **đã xoá 2026-07-11**.)
 - `scripts/generateLightLeaks.mjs` — tái tạo 3 asset light-leak procedural trong `overlays/` (chạy lại khi cần đổi màu/độ mạnh).
 
 ```bash
-node scripts/buildClip.mjs --fix
+npm run project:create -- --id my-video --input input --music "music/track.mp3"
+npm run lite -- --project projects/my-video     # hoặc: template | premium
 ```
 
 Pipeline này là **tier Lite** trong [PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md) — rule-based,

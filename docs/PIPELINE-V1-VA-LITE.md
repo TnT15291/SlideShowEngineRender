@@ -15,7 +15,8 @@ Nguyên tắc chọn tier: nếu khách trả premium cho trải nghiệm cá nh
 > **Trạng thái triển khai (2026-07-08)**:
 > - **Lite** — chạy được **end-to-end hôm nay** bằng các script rule-based đã có:
 >   `analyzePhotos.mjs` + `analyzeMusic.mjs` → `generateStoryClipV2.mjs` → `fitTextInTimeline.mjs`
->   → render → `qaClip.mjs`, gói trong một lệnh `node scripts/buildClip.mjs --fix`.
+>   → render → `qaClip.mjs`. **(2026-07-11: nay chạy qua `npm run lite -- --project <p>`;
+>   driver cũ `buildClip.mjs` đã bị xoá — xem [PROJECTS.md](PROJECTS.md).)**
 >   Gói "Cơ bản" bỏ node Interpret Brief; gói "Vừa" thêm 1 lần gọi AI.
 > - **v1 Premium** — **đã thiết kế đầy đủ** (tài liệu này) nhưng các node gọi AI (Story
 >   Options, Creative Brief, Director Notes, QA thẩm mỹ) **chưa triển khai**. Node kỹ thuật
@@ -341,7 +342,7 @@ tự sinh lệnh FFmpeg và **không** chứa Timeline Engine. Ranh giới trác
 ```text
 Trigger (thủ công / lịch / webhook)
 → Quét thư mục ảnh + nhạc
-→ [tier Lite]  buildClip.mjs   HOẶC  [tier v1] các node AI → timeline.json
+→ [tier template/lite/premium] runProject.mjs → timeline.json
 → Execute:  npm run render -- --timeline timeline/<job>.json
 → Thu output/final.mp4 + logs
 ```

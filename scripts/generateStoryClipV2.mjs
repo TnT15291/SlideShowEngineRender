@@ -17,8 +17,8 @@
 //   • story_plan[].emphasis (low/med/high) → a per-SEGMENT duration multiplier.
 //     The AI only picks the enum; THIS code turns it into seconds (Phụ lục A #3).
 // All inputs are optional; with none present the output is byte-for-byte the old
-// behaviour, so the Lite pipeline (buildClip.mjs) is unaffected. Pass
-// `--director none` / `--plan none` to force the defaults even if the files exist.
+// behaviour. Pass `--director none` / `--plan none` to force the defaults even if
+// the files exist — that is how renderWithRetry falls back from director to lite.
 //
 // Usage: node scripts/generateStoryClipV2.mjs [--music "music/a thousand years.mp3"]
 //        [--out timeline/quoc-nhi-full-v2.json] [--director analysis/director_notes.json] [--plan analysis/story_plan.json]

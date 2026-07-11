@@ -64,8 +64,9 @@ SlideshowRenderEngine/
 | `generateTimeline.ts` | `npm run gen` — generator theo orientation ảnh (xem NANG-LUC-ENGINE.md §14) |
 
 Scripts pipeline (`scripts/`): `analyzePhotos.mjs`, `analyzeMusic.mjs`,
-`generateStoryClipV2.mjs`, `fitTextInTimeline.mjs`, `qaClip.mjs`, `buildClip.mjs` (driver),
-`generateLightLeaks.mjs` (tái tạo asset light-leak). Chi tiết: NANG-LUC-ENGINE.md §15.
+`generateStoryClipV2.mjs`, `applyStoryTemplate.mjs`, `fitTextInTimeline.mjs`, `qaClip.mjs`,
+`runProject.mjs` (orchestrator duy nhất, 3 tier), `generateLightLeaks.mjs` (tái tạo asset
+light-leak). Chi tiết: NANG-LUC-ENGINE.md §15 và [PROJECTS.md](PROJECTS.md).
 
 ## CLI & exit code
 

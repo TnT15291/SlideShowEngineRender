@@ -13,8 +13,9 @@ Dự án AI Wedding Slideshow gồm 2 tầng:
   overlay (kèm 3 light-leak đóng gói sẵn), audio graph (playlist/automation/ducking),
   easing chuyển động (`gentle`/`snap`/`bounce`), validate → preflight → face-safe →
   image-cache → render → QA.
-- **Lite pipeline**: chạy end-to-end bằng `node scripts/buildClip.mjs --fix`
-  (analyze ảnh/nhạc → sinh timeline → fit chữ → render → QA → tự sửa).
+- **Pipeline**: một orchestrator, ba tier — `npm run template|lite|premium -- --project <p>`
+  (analyze → plan → build → render → QA → deliver, mỗi job một thư mục riêng).
+  Xem [PROJECTS.md](PROJECTS.md).
 - **v1 Premium**: thiết kế hoàn chỉnh trong `PIPELINE-V1-VA-LITE.md`; các node gọi AI
   (story options, creative brief, director notes) chưa triển khai.
 
@@ -56,8 +57,9 @@ npm install
 # Sinh timeline tự động từ input/ (generator theo orientation ảnh)
 npm run gen -- --title "Tân & Hằng" --look cinematic
 
-# Pipeline Lite đầy đủ: analyze → generate v2 → fit text → render → QA → fix
-node scripts/buildClip.mjs --fix
+# Pipeline đầy đủ (một job = một thư mục projects/<id>/)
+npm run project:create -- --id my-video --input input --music "music/track.mp3"
+npm run lite -- --project projects/my-video        # hoặc: template | premium
 
 # Render một timeline có sẵn (--dry-run: chỉ validate + in lệnh, không render)
 npm run render -- --timeline timeline/timeline.json
