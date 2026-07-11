@@ -19,6 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON, str, oneOf, filterVocab } from "./lib/deepseek.mjs";
+import { TAG_VOCAB, EMOTION_VOCAB } from "./lib/vocab.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -30,14 +31,10 @@ const contentPath = arg("--content", "analysis/photo_content.json");
 const outPath = arg("--out", "analysis/story_plan.json");
 
 const SEGMENTS = ["opening", "love_story", "ceremony", "family_friends", "ending"];
-const EMOTIONS = new Set(["joyful", "tender", "romantic", "celebratory", "calm", "solemn", "playful"]);
 const PACING = new Set(["slow", "medium", "fast", "dynamic"]);
 const EMPHASIS = new Set(["low", "medium", "high"]);
-const TAG_VOCAB = new Set([
-  "couple", "bride", "groom", "solo", "group", "family", "friends",
-  "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance",
-  "reception", "party", "portrait", "candid", "detail", "decor", "venue", "scenery", "food",
-]);
+// Tag + emotion vocabularies come from the schema, same as the effect whitelist below.
+const EMOTIONS = EMOTION_VOCAB;
 
 // engine effect whitelist (single source of truth)
 const tlSchema = JSON.parse(fs.readFileSync(path.resolve(root, "schema/timeline.schema.json"), "utf8"));

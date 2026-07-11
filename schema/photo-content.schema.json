@@ -37,12 +37,14 @@
 
   "$defs": {
     "tag": {
-      "description": "Controlled wedding vocabulary (whitelist — like the effect enum). The model must pick from this list; unknown tags are dropped by the scaffold.",
+      "description": "Controlled vocabulary (whitelist — like the effect enum). The model must pick from this list; unknown tags are dropped by the scaffold. THIS FILE IS THE ONLY DEFINITION: scripts/lib/vocab.mjs loads it, and test/vocab.test.mjs fails if story-plan.schema.json drifts from it. The second group exists because the first was wedding-DAY only, so a couple's life before the wedding — met abroad, everyday dates, trains between two cities — collapsed to `couple, candid, portrait` and the story that mattered became invisible to the director.",
       "enum": [
         "couple", "bride", "groom", "solo", "group", "family", "friends",
         "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance",
         "reception", "party", "portrait", "candid",
-        "detail", "decor", "venue", "scenery", "food"
+        "detail", "decor", "venue", "scenery", "food",
+
+        "everyday", "travel", "transit", "city", "selfie", "traditional_dress", "landmark"
       ]
     },
     "emotion": {

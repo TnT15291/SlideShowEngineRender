@@ -51,6 +51,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { isRetryableStatus, MAX_ATTEMPTS, RETRY_BASE_MS, sleep } from "./lib/retryPolicy.mjs";
+import { TAG_VOCAB, EMOTION_VOCAB } from "./lib/vocab.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -104,16 +105,8 @@ const TEXT_ONLY_HOST = /(^|\.)deepseek\.com$/i.test(new URL(baseUrl).hostname);
 const IS_REASONING_MODEL = /^(gpt-5|o[134])/i.test(modelId);
 const reasoningEffort = process.env.VISION_REASONING_EFFORT || ""; // "" = model default (medium)
 
-// --- Controlled vocabulary (mirror of schema/photo-content.schema.json $defs) ---
-const TAG_VOCAB = new Set([
-  "couple", "bride", "groom", "solo", "group", "family", "friends",
-  "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance",
-  "reception", "party", "portrait", "candid",
-  "detail", "decor", "venue", "scenery", "food",
-]);
-const EMOTIONS = new Set([
-  "joyful", "tender", "romantic", "celebratory", "calm", "solemn", "playful",
-]);
+// Controlled vocabulary — loaded from the schema, never restated here (see lib/vocab.mjs).
+const EMOTIONS = EMOTION_VOCAB;
 const DEFAULT_EMOTION = "calm";
 
 // --- Load the rule-based layer ---------------------------------------------

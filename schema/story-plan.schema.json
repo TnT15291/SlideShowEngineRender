@@ -29,7 +29,7 @@
         "emotion": { "enum": ["joyful", "tender", "romantic", "celebratory", "calm", "solemn", "playful"], "description": "Target feeling (photo-content emotion vocabulary)." },
         "pacing": { "enum": ["slow", "medium", "fast", "dynamic"] },
         "emphasis": { "enum": ["low", "medium", "high"], "description": "Relative screen-time weight — a creative dial, NOT a duration." },
-        "photoTags": { "type": "array", "items": { "enum": ["couple", "bride", "groom", "solo", "group", "family", "friends", "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance", "reception", "party", "portrait", "candid", "detail", "decor", "venue", "scenery", "food"] }, "description": "Which content tags this act draws from (controlled vocabulary)." },
+        "photoTags": { "type": "array", "items": { "enum": ["couple", "bride", "groom", "solo", "group", "family", "friends", "getting_ready", "ceremony", "vows", "rings", "kiss", "first_dance", "reception", "party", "portrait", "candid", "detail", "decor", "venue", "scenery", "food", "everyday", "travel", "transit", "city", "selfie", "traditional_dress", "landmark"] }, "description": "Which content tags this act draws from. MUST stay identical to photo-content.schema.json $defs/aiResult/tags — a JSON Schema cannot import another, so test/vocab.test.mjs fails on drift." },
         "priorityEffect": { "type": "string", "description": "One effect enum to lean on in this act (see timeline.schema.json $defs/effect); runtime guardrail enforces validity." },
         "captionIdea": { "type": "string", "minLength": 1, "maxLength": 200, "description": "A caption direction (theme, not final copy)." }
       }
