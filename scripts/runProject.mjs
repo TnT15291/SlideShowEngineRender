@@ -43,13 +43,24 @@ if (!["template", "lite", "premium"].includes(tier)) throw new Error(`--tier mus
 if (!["A", "B", "C", "D", "AUTO"].includes(choice)) throw new Error(`--choice must be A|B|C|D|auto, got "${choice}"`);
 if (dryRun && deliver) throw new Error("--deliver cannot be used with --dry-run");
 
-// The recipe IS the product in the template tier, so a missing one is a hard error,
-// not a silent fall back to some default recipe the customer never chose.
-const recipe = arg("--recipe") || project.manifest.recipe || "";
-if (tier === "template" && !recipe) {
-  throw new Error(`tier "template" needs a recipe: set "recipe" in project.json or pass --recipe story-templates/<id>.json`);
+// Two opt-in AI nodes for the recipe path. Off by default, so `--tier template`
+// stays a zero-AI tier. Together they are what the middle tier will be once
+// recipes stretch to the music: the same art-directed engine output as the cheap
+// tier, but with the recipe CHOSEN for this couple and the words WRITTEN for them.
+const autoRecipe = process.argv.includes("--auto-recipe"); // node A: pickRecipe
+const aiCopy = process.argv.includes("--ai-copy");         // node B: writeRecipeCopy
+if ((autoRecipe || aiCopy) && tier !== "template") {
+  throw new Error(`--auto-recipe/--ai-copy apply to --tier template (got "${tier}")`);
 }
-if (tier === "template" && !fs.existsSync(path.resolve(root, recipe))) {
+
+// The recipe IS the product in the template tier, so a missing one is a hard error,
+// not a silent fall back to some default recipe the customer never chose. Unless
+// --auto-recipe, in which case node A picks it and says why.
+let recipe = arg("--recipe") || project.manifest.recipe || "";
+if (tier === "template" && !recipe && !autoRecipe) {
+  throw new Error(`tier "template" needs a recipe: set "recipe" in project.json, pass --recipe story-templates/<id>.json, or pass --auto-recipe`);
+}
+if (tier === "template" && recipe && !fs.existsSync(path.resolve(root, recipe))) {
   throw new Error(`recipe not found: ${recipe}`);
 }
 
@@ -64,6 +75,10 @@ const selection = `${analysisDir}/selected_story.json`;
 const director = `${analysisDir}/director_notes.json`;
 const plan = `${analysisDir}/story_plan.json`;
 const tierFile = `${analysisDir}/tier.json`;
+const recipeChoice = `${analysisDir}/recipe_choice.json`;
+const recipeCopy = `${analysisDir}/recipe_copy.json`;
+const contentSample = `${analysisDir}/photo_content.sample.json`;
+const visionSample = arg("--vision-sample", "24");
 const qaDir = `${analysisDir}/qa`;
 const base = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
 const music = project.manifest.music[0];
@@ -171,6 +186,19 @@ try {
       const args = ["scripts/analyzeProject.mjs", "--project", projectArg];
       if (tier === "template") args.push("--skip-vision"); // recipes never read it — see header
       run(args, "analyze");
+
+      // --ai-copy needs to know what the photos are OF, but only as a profile
+      // (which tags, which emotions dominate) — not a score for all 82. So it
+      // judges a SAMPLE, which costs 2 requests instead of 7 and lands in its own
+      // file precisely so it can never be mistaken for the complete set.
+      if (aiCopy) {
+        run([
+          "scripts/analyzePhotoContent.mjs",
+          "--photos", photoPool(),
+          "--limit", visionSample,
+          "--out", contentSample,
+        ], `vision sample (${visionSample} photos, for the copy node)`);
+      }
     });
   }
 
@@ -180,8 +208,33 @@ try {
       run(["scripts/selectProjectPhotos.mjs", "--project", projectArg], "photo selection");
 
       if (tier === "template") {
-        // Nothing to plan: the recipe already carries the structure and the words.
-        console.log(`[runProject] story: ${recipe} (recipe copy, no AI)`);
+        // Node A: let the model choose which recipe suits this couple, from the
+        // recipes that actually exist. It reads the customer's own sentence.
+        if (autoRecipe) {
+          run([
+            "scripts/pickRecipe.mjs",
+            "--prompt", project.rel(project.manifest.promptFile || "prompt.txt"),
+            "--photos", photoPool(),
+            ...(musicAnalysis ? ["--music", musicAnalysis] : []),
+            "--out", recipeChoice,
+          ], "node A: pick recipe");
+          const chosen = JSON.parse(fs.readFileSync(path.resolve(root, recipeChoice), "utf8"));
+          recipe = chosen.recipe;
+        }
+        // Node B: rewrite the recipe's canned words for THIS couple. Nothing but
+        // strings, and only into slots the recipe already declares.
+        if (aiCopy) {
+          run([
+            "scripts/writeRecipeCopy.mjs",
+            "--recipe", recipe,
+            "--prompt", project.rel(project.manifest.promptFile || "prompt.txt"),
+            "--content", contentSample,
+            ...(musicAnalysis ? ["--music", musicAnalysis] : []),
+            "--out", recipeCopy,
+          ], "node B: write recipe copy");
+        } else {
+          console.log(`[runProject] story: ${recipe} (recipe copy, no AI)`);
+        }
       } else if (tier === "lite") {
         run(["scripts/generateProjectStory.mjs", "--project", projectArg], "story");
       } else {
@@ -200,6 +253,17 @@ try {
     });
   }
 
+  // --resume can skip the plan phase, and node A's choice lives in that phase. The
+  // decision is on disk, so recover it there rather than re-deciding (a second
+  // model call could pick a DIFFERENT recipe than the one already rendered).
+  if (tier === "template" && autoRecipe && !recipe) {
+    if (!fs.existsSync(path.resolve(root, recipeChoice))) {
+      throw new Error(`--auto-recipe --resume, but ${recipeChoice} is missing; re-run without --resume`);
+    }
+    recipe = JSON.parse(fs.readFileSync(path.resolve(root, recipeChoice), "utf8")).recipe;
+    console.log(`[runProject] resume: recipe ${recipe} (from ${recipeChoice})`);
+  }
+
   if (!reuse("build")) {
     phase("build", () => {
       if (tier === "template") {
@@ -214,6 +278,7 @@ try {
           "--name", project.manifest.id,
           "--quality", project.manifest.quality || "share",
           ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+          ...(aiCopy ? ["--copy", recipeCopy] : []),
         ], `recipe: ${path.basename(recipe)}`);
         run(["scripts/fitTextInTimeline.mjs", timeline], "fit text");
       } else if (tier === "lite") {

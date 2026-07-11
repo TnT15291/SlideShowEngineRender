@@ -138,11 +138,15 @@ const partial = limit !== null && limit < photos.length;
 let effectiveOut = outPath;
 if (partial) {
   if (!outExplicit) effectiveOut = SAMPLE_OUT;
-  else if (path.resolve(root, outPath) === path.resolve(root, DEFAULT_OUT)) {
+  // Match on the FILENAME, not the root path: every project has its own
+  // <project>/analysis/photo_content.json, and the pipeline reads each of them as
+  // the complete set. Comparing against the root default only would let a sample
+  // land in a project under the real name — the exact lie this guard exists for.
+  else if (path.basename(outPath) === path.basename(DEFAULT_OUT)) {
     die(
-      `--limit ${limit} judges only ${limit} of ${photos.length} photos, but --out points at ${DEFAULT_OUT},\n` +
-        `  the file the pipeline reads as the complete set. Drop --out (the sample lands in ${SAMPLE_OUT})\n` +
-        `  or name a different path.`
+      `--limit ${limit} judges only ${limit} of ${photos.length} photos, but --out points at ${outPath},\n` +
+        `  which the pipeline reads as the complete set. Name a sample path instead\n` +
+        `  (e.g. ${path.posix.join(path.dirname(outPath.replace(/\\/g, "/")), path.basename(SAMPLE_OUT))}).`
     );
   }
 }

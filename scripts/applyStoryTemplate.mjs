@@ -44,6 +44,12 @@ const qualityOverride = arg("--quality", "");
 const brief = briefPath && fs.existsSync(path.resolve(root, briefPath))
   ? JSON.parse(fs.readFileSync(path.resolve(root, briefPath), "utf8"))
   : {};
+// Optional AI-written copy (scripts/writeRecipeCopy.mjs). Absent → the recipe's
+// own words, byte for byte, so the template tier stays a zero-AI tier.
+const copyPath = arg("--copy", "");
+const copyMap = copyPath && fs.existsSync(path.resolve(root, copyPath))
+  ? JSON.parse(fs.readFileSync(path.resolve(root, copyPath), "utf8")).scenes ?? {}
+  : {};
 
 const outPath = arg("--out", `timeline/${template.id}.json`);
 
@@ -180,11 +186,16 @@ function expandScenes() {
   while (duration < targetDuration && photoCount < photos.length) {
     let added = false;
     for (const scene of repeatable) {
+      const config = typeof scene.repeatable === "object" ? scene.repeatable : {};
+      const maxRepeats = config.maxRepeats ?? Infinity;
+      if (round > maxRepeats) continue;
       const photoNeed = scenePhotoCount(scene);
       if (photoNeed > 0 && photoCount + photoNeed > photos.length) continue;
       const copyDuration = durationFor(scene.durationRole, duration);
       if (duration + copyDuration / 2 > targetDuration) continue;
-      extra.push({ ...scene, id: `${scene.id}_r${round}` });
+      const variants = config.variants || [];
+      const variant = variants.length ? variants[(round - 1) % variants.length] : {};
+      extra.push({ ...scene, ...variant, repeatable: undefined, id: `${scene.id}_r${round}` });
       duration += copyDuration;
       photoCount += photoNeed;
       added = true;
@@ -332,7 +343,13 @@ function buildLayerSceneFromLayout(scene) {
 
   // 6) text slots: only render the ones this scene supplies copy for.
   for (const slot of layout.textSlots || []) {
-    const raw = scene.text ? scene.text[slot.id] : undefined;
+    // An AI-written copy map (node B) may override the recipe's canned line, but
+    // ONLY for a slot the layout already has. Keys it does not have are never
+    // looked up, so an invented scene or slot cannot conjure a text layer.
+    const override = copyMap[scene.id]?.[slot.id];
+    const raw = typeof override === "string" && override
+      ? override
+      : scene.text ? scene.text[slot.id] : undefined;
     const obj = raw && typeof raw === "object" ? raw : null;
     const value = fill(obj ? obj.value : raw);
     if (!value) continue;

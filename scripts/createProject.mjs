@@ -51,8 +51,10 @@ const manifest = {
 if (!["template", "lite", "premium"].includes(manifest.tier)) {
   throw new Error(`--tier must be template|lite|premium, got "${manifest.tier}"`);
 }
+// A template project must know its recipe before it renders — but it may be chosen
+// later by `runProject --auto-recipe` rather than pinned here.
 if (manifest.tier === "template" && !manifest.recipe) {
-  throw new Error(`tier "template" needs --recipe story-templates/<id>.json — the recipe IS the product`);
+  console.log(`  note: no --recipe pinned; run with --auto-recipe, or add "recipe" to project.json.`);
 }
 fs.writeFileSync(path.join(dir, "project.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(`Created ${path.relative(root, dir)} (${music.length} music track(s)).`);
