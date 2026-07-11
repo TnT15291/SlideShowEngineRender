@@ -43,8 +43,11 @@ if (!tlPath || tlPath.startsWith("--")) {
 const TOLERANCE = Number(arg("--tolerance", "0.25"));
 const HERO_MARGIN = Number(arg("--hero-margin", "0.15"));
 const strict = process.argv.includes("--strict");
-// Project-local redirection; the defaults are the pre-project paths.
-const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+// Same rule as qaLoop: the report belongs to the job that owns the timeline, so
+// derive `<job>/analysis` from `<job>/timeline/x.json`. A root timeline still
+// resolves to plain "analysis".
+const siblingAnalysis = path.posix.join(path.dirname(path.dirname(tlPath.replace(/\\/g, "/"))), "analysis");
+const analysisDir = arg("--analysis-dir", siblingAnalysis).replace(/\\/g, "/").replace(/\/$/, "");
 
 const tl = JSON.parse(fs.readFileSync(path.resolve(root, tlPath), "utf8"));
 const base = path.basename(tlPath).replace(/\.[^.]+$/, "");

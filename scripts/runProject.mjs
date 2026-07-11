@@ -166,6 +166,7 @@ try {
           "--options", options,
           "--selection", selection,
           "--music", musicPath,
+          "--analysis-dir", analysisDir,
           "--out", director,
         ], "nodes 5+6: director notes");
         run(["scripts/generateStoryPlan.mjs", "--notes", director, "--content", content, "--out", plan], "node 7: story plan");

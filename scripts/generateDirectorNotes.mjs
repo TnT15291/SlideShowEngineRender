@@ -36,8 +36,12 @@ const optionsPath = arg("--options", "analysis/story_options.json");
 const choiceArg = (arg("--choice", "") || "").toUpperCase();
 const selectionPath = arg("--selection", "analysis/selected_story.json");
 const musicPath = arg("--music", "");
-const assetsPath = arg("--assets", "analysis/assets_catalog.ai.json");
+const assetsPath = arg("--assets", "analysis/assets_catalog.ai.json"); // shared engine assets, not per-job
 const outPath = arg("--out", "analysis/director_notes.json");
+// Music ANALYSIS lives beside the job that produced it. Resolving it from a fixed
+// root path meant a project silently read another job's analysis whenever the two
+// tracks happened to share a filename — and it "worked", which is worse.
+const analysisDir = arg("--analysis-dir", path.dirname(outPath)).replace(/\\/g, "/").replace(/\/$/, "");
 
 const PACING = new Set(["slow", "medium", "fast", "dynamic"]);
 const EASING = new Set(["gentle", "snap", "bounce"]);
@@ -78,7 +82,7 @@ if (!chosen) {
 let musicSummary = null;
 if (musicPath) {
   const name = path.basename(musicPath).replace(/\.[^.]+$/, "");
-  const abs = path.resolve(root, `analysis/music/${name}.json`);
+  const abs = path.resolve(root, `${analysisDir}/music/${name}.json`);
   if (fs.existsSync(abs)) {
     const m = JSON.parse(fs.readFileSync(abs, "utf8"));
     musicSummary = { bpm: m.bpmEstimate, energy: m.energy?.mean };

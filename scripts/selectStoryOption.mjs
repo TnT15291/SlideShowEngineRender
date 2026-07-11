@@ -67,7 +67,11 @@ const inboxRel = arg("--inbox", INBOX);
 const send = has("--send");
 const force = has("--force");
 
-const WINDOW = "analysis/story_choice_window.json";
+// The response window is per-JOB state, so it lives beside the decision it gates.
+// A fixed root path would let two customers awaiting a choice share one window:
+// project B's deadline would fire on project A's clock, defaulting a film nobody
+// was asked about. Derived from --out so the root default is unchanged.
+const WINDOW = `${path.dirname(outPath).replace(/\\/g, "/")}/story_choice_window.json`;
 const windowAbs = path.resolve(root, WINDOW);
 
 if (!Number.isFinite(timeoutHours) || timeoutHours < 0) {

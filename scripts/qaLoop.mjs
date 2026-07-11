@@ -40,8 +40,12 @@ const arg = (flag, def) => {
 };
 
 const TL = arg("--timeline", "timeline/quoc-nhi-full-v2.json");
-// Project-local redirection; the defaults are the pre-project paths.
-const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+// Reports belong to whoever owns the timeline. Derive that from the timeline's own
+// location (`<job>/timeline/x.json` -> `<job>/analysis`) instead of a fixed root
+// path, or a project run drops its QA report into the shared root — where the next
+// job picks it up as its own. A root timeline still resolves to plain "analysis".
+const siblingAnalysis = path.posix.join(path.dirname(path.dirname(TL.replace(/\\/g, "/"))), "analysis");
+const analysisDir = arg("--analysis-dir", siblingAnalysis).replace(/\\/g, "/").replace(/\/$/, "");
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const jobDir = arg("--job-dir", "");
 const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
@@ -154,6 +158,26 @@ console.log(`[qaLoop] ${TL} — max ${MAX_REVISIONS} revision(s) after the first
 let revisions = 0;
 const journal = [];
 
+function writeSummary(manualReview = []) {
+  const tl = readJson(TL);
+  const summary = {
+    timeline: TL,
+    video: tl.output?.path ?? null,
+    revisions,
+    maxRevisions: MAX_REVISIONS,
+    journal,
+    manualReview,
+    status: manualReview.length ? "delivered_with_flags" : "clean",
+  };
+  const loopOut = `${analysisDir}/qa/${base}.loop.json`;
+  fs.mkdirSync(path.dirname(path.resolve(root, loopOut)), { recursive: true });
+  fs.writeFileSync(path.resolve(root, loopOut), JSON.stringify(summary, null, 2));
+  console.log(
+    `\n[qaLoop] ${summary.status} — ${revisions} revision(s), ${manualReview.length} open issue(s). ` +
+      `Output: ${summary.video}. Report: ${loopOut}`
+  );
+}
+
 // PRE-FLIGHT — proxy repairs are free (no video), so they don't spend the budget.
 console.log("\n— pre-flight (no render): pacing + hero —");
 for (let pass = 1; pass <= PREFLIGHT_PASSES; pass++) {
@@ -168,6 +192,7 @@ if (skipRender) {
   console.log("\n[qaLoop] --skip-render: stopping after pre-flight.");
   const rep = runProxy();
   console.log(`[qaLoop] final proxy verdict: ${rep.verdict} (${rep.problems.length} problem(s) remain).`);
+  writeSummary(rep.problems.map((p) => `${p.id}[${p.flags.join(",")}]`));
   process.exit(0);
 }
 
@@ -205,18 +230,4 @@ while (true) {
   console.log(`  re-rendered (revision ${revisions}/${MAX_REVISIONS}).`);
 }
 
-const tl = readJson(TL);
-const summary = {
-  timeline: TL,
-  video: tl.output?.path ?? null,
-  revisions,
-  maxRevisions: MAX_REVISIONS,
-  journal,
-  manualReview,
-  status: manualReview.length ? "delivered_with_flags" : "clean",
-};
-fs.writeFileSync(path.resolve(root, `analysis/qa/${base}.loop.json`), JSON.stringify(summary, null, 2));
-console.log(
-  `\n[qaLoop] ${summary.status} — ${revisions} revision(s), ${manualReview.length} open issue(s). ` +
-    `Output: ${summary.video}. Report: analysis/qa/${base}.loop.json`
-);
+writeSummary(manualReview);
