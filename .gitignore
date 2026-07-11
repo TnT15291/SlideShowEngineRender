@@ -48,6 +48,11 @@ projects/
 analysis/qa/frames/
 analysis/photos.pruned.json
 
+# The vision node's answers, keyed by image content + model + prompt + vocabulary.
+# Derived, and it holds one customer's photo judgements — it is not source. Deleting
+# it is safe and costs one re-analysis; committing it would ship a customer's data.
+analysis/photo_content.cache.json
+
 # `analyzePhotoContent --limit N` probe: a SAMPLE of the photo set, kept in its own
 # file so it can never be mistaken for analysis/photo_content.json (which the
 # pipeline reads as the complete set). Cheap to regenerate; a stale sample misleads.

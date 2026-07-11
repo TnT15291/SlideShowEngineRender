@@ -49,6 +49,7 @@
 //        [--dry-run] [--limit N]
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { isRetryableStatus, MAX_ATTEMPTS, RETRY_BASE_MS, sleep } from "./lib/retryPolicy.mjs";
 import { TAG_VOCAB, EMOTION_VOCAB } from "./lib/vocab.mjs";
@@ -355,7 +356,7 @@ if (blocked && requireVision) {
 /** Price the run without buying it: encode every preview the real call would
  *  send, then report the request count, the payload, and how many photos the
  *  model would receive as "(image unreadable)". Sends nothing, writes nothing. */
-function reportDryRun() {
+function reportDryRun(toSend, cached = 0) {
   const fmt = (n) => (n >= 1 << 20 ? `${(n / (1 << 20)).toFixed(1)} MB` : `${Math.round(n / 1024)} KB`);
   const steer = IS_REASONING_MODEL
     ? reasoningEffort
@@ -370,21 +371,31 @@ function reportDryRun() {
   console.log(`  api key     ${apiKey ? "present" : "ABSENT"}`);
   console.log(`  would call  ${blocked ? `NO — would fall back to STUB (${blocked})` : "YES — real vision request"}`);
 
-  process.stdout.write(`\n  encoding ${batch.length} preview(s) at ${PREVIEW_EDGE}px to measure the payload... `);
-  const sizes = batch.map((it) => encodeImagePreview(it.file)?.length ?? null);
+  if (cached) console.log(`  cache       ${cached} photo(s) already judged — not sent, not billed`);
+
+  if (!toSend.length) {
+    console.log(`\n  photos      0 to send (all ${batch.length} answered from cache)`);
+    console.log(`  requests    0`);
+    console.log(`\n  would write ${partial ? effectiveOut + "  (sample; not the file the pipeline reads)" : effectiveOut}`);
+    console.log(`\n  Re-run without --dry-run to execute (it will cost nothing).`);
+    return;
+  }
+
+  process.stdout.write(`\n  encoding ${toSend.length} preview(s) at ${PREVIEW_EDGE}px to measure the payload... `);
+  const sizes = toSend.map((it) => encodeImagePreview(it.file)?.length ?? null);
   console.log("done");
 
-  const unreadable = batch.filter((_, i) => sizes[i] === null);
+  const unreadable = toSend.filter((_, i) => sizes[i] === null);
   const b64Total = sizes.reduce((s, n) => s + (n ?? 0), 0);
   const chunks = [];
-  for (let i = 0; i < batch.length; i += BATCH_SIZE) {
+  for (let i = 0; i < toSend.length; i += BATCH_SIZE) {
     chunks.push(sizes.slice(i, i + BATCH_SIZE).reduce((s, n) => s + (n ?? 0), 0));
   }
 
-  console.log(`\n  photos      ${batch.length}${partial ? ` of ${photos.length}  (--limit ${limit})` : ""}`);
+  console.log(`\n  photos      ${toSend.length} to send${cached ? ` (of ${batch.length})` : ""}${partial ? `  (--limit ${limit} of ${photos.length})` : ""}`);
   console.log(`  requests    ${chunks.length}  (BATCH_SIZE=${BATCH_SIZE})`);
   console.log(`  payload     ${fmt(b64Total)} of base64 across all requests; largest request ${fmt(Math.max(...chunks))}`);
-  console.log(`  readable    ${batch.length - unreadable.length}/${batch.length}`);
+  console.log(`  readable    ${toSend.length - unreadable.length}/${toSend.length}`);
   if (unreadable.length) {
     console.log(`  UNREADABLE  ${unreadable.length} — the model would be told "(image unreadable)" and score them blind:`);
     for (const it of unreadable.slice(0, 10)) console.log(`                ${it.file}`);
@@ -392,11 +403,6 @@ function reportDryRun() {
   }
   console.log(`\n  would write ${partial ? effectiveOut + "  (sample; not the file the pipeline reads)" : effectiveOut}`);
   console.log(`\n  Re-run without --dry-run to execute.`);
-}
-
-if (dryRun) {
-  reportDryRun();
-  process.exit(0);
 }
 
 /** Turn the provider's refusal into the thing to go change. The first real run of
@@ -418,9 +424,83 @@ function failureHint(msg) {
 const useReal = !blocked;
 const generatedBy = useReal ? `vision:${visionHost}/${modelId}` : "stub";
 
+// --- content cache ---------------------------------------------------------
+// This is the only node whose cost scales with the photo set, and it is
+// deterministic: the same image, judged by the same model with the same prompt and
+// the same vocabulary, yields the same answer. So do not ask twice.
+//
+// The provider cannot help here — the API is stateless and will happily re-bill a
+// photo it saw a minute ago. Recognition has to happen on THIS side, before the
+// request is built. (Measured: one 23-photo project was analysed 7 times in a
+// single session — 14 requests where 2 would have done.)
+//
+// The key is not the photo. It is the photo AS JUDGED BY a particular model,
+// prompt and vocabulary — because when the tag vocabulary went from 22 words to 29,
+// the same photo's answer changed completely (couple,candid -> couple,selfie,
+// transit,travel,everyday). A cache keyed on the image alone would have served the
+// old, poorer answer and silently undone the fix. Change the model, the prompt or
+// the vocabulary and every entry is invalidated, exactly as it should be.
+const PROMPT_VERSION = 1; // bump when the system prompt changes materially
+const fingerprint = crypto
+  .createHash("sha256")
+  .update([modelId, PROMPT_VERSION, [...TAG_VOCAB].sort().join(","), [...EMOTIONS].sort().join(",")].join("|"))
+  .digest("hex")
+  .slice(0, 16);
+const cachePath = `${analysisDir}/photo_content.cache.json`;
+const noCache = process.argv.includes("--no-cache");
+
+function loadCache() {
+  const abs = path.resolve(root, cachePath);
+  if (noCache || !fs.existsSync(abs)) return { fingerprint, entries: {} };
+  try {
+    const doc = JSON.parse(fs.readFileSync(abs, "utf8"));
+    // A different fingerprint is not a stale entry to refresh — it is a different
+    // question. Drop the lot rather than mix two vocabularies in one file.
+    if (doc.fingerprint !== fingerprint) return { fingerprint, entries: {}, invalidated: true };
+    return { fingerprint, entries: doc.entries ?? {} };
+  } catch {
+    return { fingerprint, entries: {} };
+  }
+}
+
+/** Identity is the file's BYTES, never its name: two customers both have a 002.jpg,
+ *  and a re-exported photo with the same name is a different photograph. */
+function contentHash(file) {
+  try {
+    return crypto.createHash("sha256").update(fs.readFileSync(path.resolve(root, file))).digest("hex");
+  } catch {
+    return null; // unreadable → never cached, always re-asked
+  }
+}
+
+const cache = loadCache();
+for (const b of batch) b.hash = contentHash(b.file);
+const fromCache = new Map();
+const fresh = [];
+for (const b of batch) {
+  const hit = b.hash ? cache.entries[b.hash] : null;
+  if (hit && useReal) fromCache.set(b.index, hit);
+  else fresh.push(b);
+}
+if (useReal && !dryRun) {
+  const saved = fromCache.size;
+  console.log(
+    `[analyzePhotoContent] cache: ${saved} already judged by ${modelId} (fingerprint ${fingerprint}), ` +
+      `${fresh.length} to send${cache.invalidated ? " — cache invalidated: model/prompt/vocabulary changed" : ""}`
+  );
+}
+
+// The dry run measures what will ACTUALLY be sent. Reporting the whole photo set
+// after the cache has already answered for most of it would be a cost estimate
+// that is wrong in the one direction that matters.
+if (dryRun) {
+  reportDryRun(useReal ? fresh : batch, fromCache.size);
+  process.exit(0);
+}
+
 let raw;
 try {
-  raw = useReal ? await callVisionModel(batch) : stubResults(batch);
+  raw = useReal ? (fresh.length ? await callVisionModel(fresh) : []) : stubResults(batch);
 } catch (e) {
   const msg = e instanceof Error ? e.message : String(e);
   die(
@@ -430,6 +510,26 @@ try {
   );
 }
 const results = validateAiResults(raw, batch.length, generatedBy);
+
+// Cached answers overwrite the neutral defaults validateAiResults filled in for the
+// photos we never sent.
+for (const [index, rec] of fromCache) results[index] = { ...rec, index };
+
+// Remember what we just learned. Only the model's own fields are stored — no paths,
+// no technical measurements, nothing the scaffold owns.
+if (useReal && !dryRun && !noCache) {
+  const entries = { ...cache.entries };
+  for (const b of fresh) {
+    if (!b.hash) continue;
+    const { index, ...rec } = results[b.index];
+    entries[b.hash] = rec;
+  }
+  fs.mkdirSync(path.dirname(path.resolve(root, cachePath)), { recursive: true });
+  fs.writeFileSync(
+    path.resolve(root, cachePath),
+    JSON.stringify({ version: 1, fingerprint, model: modelId, updatedAt: new Date().toISOString(), entries }, null, 2) + "\n"
+  );
+}
 
 // Merge technical (scaffold-owned) + semantic (validated model) per photo.
 const merged = batch.map((b) => {
