@@ -29,12 +29,18 @@ const photosPath = arg("--photos", "analysis/photos.json");
 const musicPath = arg("--music", "music/a thousand years.mp3");
 const libraryPath = arg("--library", "layouts/library.json");
 const briefPath = arg("--brief", "");
+// A project run redirects these so two customers on the same recipe never share a
+// music analysis, an output file or a project name. Defaults are the old root paths.
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 
 const template = JSON.parse(fs.readFileSync(path.resolve(root, templatePath), "utf8"));
 const library = JSON.parse(fs.readFileSync(path.resolve(root, libraryPath), "utf8"));
 const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "utf8"));
 const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
-const music = JSON.parse(fs.readFileSync(path.resolve(root, `analysis/music/${musicName}.json`), "utf8"));
+const music = JSON.parse(fs.readFileSync(path.resolve(root, `${analysisDir}/music/${musicName}.json`), "utf8"));
+const videoOut = arg("--output", `output/${template.id}.mp4`);
+const projectName = arg("--name", template.id);
+const qualityOverride = arg("--quality", "");
 const brief = briefPath && fs.existsSync(path.resolve(root, briefPath))
   ? JSON.parse(fs.readFileSync(path.resolve(root, briefPath), "utf8"))
   : {};
@@ -145,6 +151,49 @@ function transitionFor(role, isLast) {
   const t = template.timelineRules.transitionStrategy;
   if (isLast) return t.final;
   return t[role] || t.default;
+}
+
+function scenePhotoCount(scene) {
+  if (scene.effect === "video_background") return 0;
+  if (scene.effect === "layer_scene") {
+    const layout = (library.layouts || []).find((l) => l.id === scene.layout);
+    return layout?.photoSlots?.length || 0;
+  }
+  return (scene.photoSlots || []).reduce((sum, slot) => sum + (slot.count || 1), 0);
+}
+
+function expandScenes() {
+  const base = template.scenes.map((scene) => ({ ...scene }));
+  const repeatable = base.filter((scene) => scene.repeatable);
+  if (repeatable.length === 0) return base;
+
+  const closingIndex = base.findIndex((scene) => scene.durationRole === "closing");
+  const insertAt = closingIndex >= 0 ? closingIndex : base.length;
+  const fixedDuration = base.reduce((sum, scene) => sum + durationFor(scene.durationRole, sum), 0);
+  const fixedPhotos = base.reduce((sum, scene) => sum + scenePhotoCount(scene), 0);
+  const targetDuration = Number(music.duration) || fixedDuration;
+  let duration = fixedDuration;
+  let photoCount = fixedPhotos;
+  let round = 1;
+  const extra = [];
+
+  while (duration < targetDuration && photoCount < photos.length) {
+    let added = false;
+    for (const scene of repeatable) {
+      const photoNeed = scenePhotoCount(scene);
+      if (photoNeed > 0 && photoCount + photoNeed > photos.length) continue;
+      const copyDuration = durationFor(scene.durationRole, duration);
+      if (duration + copyDuration / 2 > targetDuration) continue;
+      extra.push({ ...scene, id: `${scene.id}_r${round}` });
+      duration += copyDuration;
+      photoCount += photoNeed;
+      added = true;
+    }
+    if (!added) break;
+    round++;
+  }
+
+  return [...base.slice(0, insertAt), ...extra, ...base.slice(insertAt)];
 }
 
 // ---------- library-driven layer_scene builder ----------
@@ -363,8 +412,9 @@ function buildScene(scene) {
 }
 
 let t = 0;
-const slides = template.scenes.map((scene, i) => {
-  const isLast = i === template.scenes.length - 1;
+const expandedScenes = expandScenes();
+const slides = expandedScenes.map((scene, i) => {
+  const isLast = i === expandedScenes.length - 1;
   const duration = durationFor(scene.durationRole, t);
   const transition = transitionFor(scene.transitionRole, isLast);
   const slide = {
@@ -379,14 +429,15 @@ const slides = template.scenes.map((scene, i) => {
 
 const timeline = {
   project: {
-    name: template.id,
+    name: projectName,
     ...template.defaults.project,
+    ...(qualityOverride ? { quality: qualityOverride } : {}),
   },
   music: [{ path: musicPath, volume: 0.82 }],
   audio: template.defaults.audio,
   color: template.defaults.color,
   overlays: template.defaults.overlays,
-  output: { path: `output/${template.id}.mp4` },
+  output: { path: videoOut },
   slides,
 };
 
