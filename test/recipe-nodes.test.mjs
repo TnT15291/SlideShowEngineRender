@@ -300,9 +300,11 @@ test("a music-paced tier refuses a project with no music, instead of borrowing a
   assert.match(r.stderr + r.stdout, /music/i);
 
   // And the generators themselves refuse rather than reaching for a default.
-  const g = spawnSync(node, ["scripts/generateStoryClipV2.mjs", "--music", ""], { cwd: root, encoding: "utf8" });
-  assert.notEqual(g.status, 0, "generateStoryClipV2 accepted an empty --music");
-  assert.match(g.stderr, /--music is required/);
+  for (const script of ["scripts/composeStoryboard.mjs", "scripts/applyStoryTemplate.mjs"]) {
+    const g = spawnSync(node, [script, "--music", ""], { cwd: root, encoding: "utf8" });
+    assert.notEqual(g.status, 0, `${script} accepted an empty --music`);
+    assert.match(g.stderr, /--music is required/);
+  }
 
   fs.rmSync(dir, { recursive: true, force: true });
 });

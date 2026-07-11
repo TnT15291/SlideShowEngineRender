@@ -89,9 +89,10 @@ function textSlotsFor(scene) {
   const out = {};
   for (const slot of layout?.textSlots ?? []) out[slot.id] = "";
   // The closing card is the one place with a sane default: tokens the brief fills,
-  // never a name borrowed from another couple.
+  // never a name borrowed from another couple. Groom first, as Vietnamese wedding
+  // films conventionally read.
   if (scene.id === "s99_closing") {
-    if ("names" in out) out.names = "{{bride}} & {{groom}}";
+    if ("names" in out) out.names = "{{groom}} & {{bride}}";
     if ("date" in out) out.date = "{{date}}";
   }
   return out;

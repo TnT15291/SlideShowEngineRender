@@ -164,6 +164,77 @@ async function chooseMusicFile() {
   return { ok: true, path: path.relative(currentProjectPath, dest).replace(/\\/g, "/"), copied: true };
 }
 
+/**
+ * Build a timeline: solve the shot list, optionally have the AI write its words,
+ * then render it through the recipe engine.
+ *
+ * This replaces generateStoryClipV2, which carried 16 fixed scenes and 12 fixed
+ * lines of text written for one wedding — so every project opened in this app got
+ * that couple's names on screen, and a shot list that asked for 42 photo slots
+ * whether you had 23 photos or 200. The scene count now follows the music and the
+ * photo budget (scripts/lib/storyboard.mjs).
+ */
+async function buildTimeline({ musicPath, timelinePath, director, plan, withCopy = false }) {
+  fs.mkdirSync(path.dirname(path.join(currentProjectPath, timelinePath)), { recursive: true });
+  const name = path.basename(timelinePath).replace(/\.[^.]+$/, "");
+  const storyboard = "analysis/storyboard.json";
+  const copy = "analysis/recipe_copy.json";
+  const briefPath = path.join(currentProjectPath, "brief.json");
+  let out = "";
+  let err = "";
+
+  const compose = await runNode(currentProjectPath, [
+    "scripts/composeStoryboard.mjs",
+    "--photos", "analysis/photos.json",
+    "--music", musicPath,
+    "--director", director,
+    "--plan", plan,
+    "--name", name,
+    "--out", storyboard,
+  ]);
+  out += compose.stdout; err += compose.stderr;
+  if (!compose.ok) return { ...compose, step: "composeStoryboard", timelinePath, project: projectSummary(currentProjectPath) };
+
+  if (withCopy) {
+    const words = await runNode(currentProjectPath, [
+      "scripts/writeRecipeCopy.mjs",
+      "--recipe", storyboard,
+      "--content", "analysis/photo_content.json",
+      "--out", copy,
+    ]);
+    out += words.stdout; err += words.stderr;
+    if (!words.ok) return { ...words, step: "writeRecipeCopy", timelinePath, project: projectSummary(currentProjectPath) };
+  }
+
+  const render = await runNode(currentProjectPath, [
+    "scripts/applyStoryTemplate.mjs",
+    "--template", storyboard,
+    "--photos", "analysis/photos.json",
+    "--music", musicPath,
+    "--out", timelinePath,
+    "--output", `output/${name}.mp4`,
+    "--name", name,
+    ...(withCopy ? ["--copy", copy] : []),
+    // The couple's names and their date. Never written by the model — it invented
+    // "Linh & Nam" once, and a fabricated name on a wedding film's last frame is
+    // not a wording problem, it is the wrong film.
+    ...(fs.existsSync(briefPath) ? ["--brief", "brief.json"] : []),
+  ]);
+  out += render.stdout; err += render.stderr;
+  if (!render.ok) return { ...render, step: "applyStoryTemplate", timelinePath, project: projectSummary(currentProjectPath) };
+
+  const fit = await runNode(currentProjectPath, ["scripts/fitTextInTimeline.mjs", timelinePath]);
+  return {
+    ok: fit.ok,
+    code: fit.code,
+    step: "fitTextInTimeline",
+    stdout: `${out}${fit.stdout}`,
+    stderr: `${err}${fit.stderr}`,
+    timelinePath,
+    project: projectSummary(currentProjectPath),
+  };
+}
+
 async function runPipelineStep(step, payload = {}) {
   const musicPath = cleanProjectRelative(payload.musicPath || "music/a thousand years.mp3");
   const timelinePath = cleanProjectRelative(payload.timelinePath || "timeline/desktop-lite.json");
@@ -185,25 +256,7 @@ async function runPipelineStep(step, payload = {}) {
   }
 
   if (step === "generate") {
-    fs.mkdirSync(path.dirname(path.join(currentProjectPath, timelinePath)), { recursive: true });
-    const generate = await runNode(currentProjectPath, [
-      "scripts/generateStoryClipV2.mjs",
-      "--music", musicPath,
-      "--out", timelinePath,
-      "--director", "none",
-      "--plan", "none",
-    ]);
-    if (!generate.ok) return { ...generate, step: "generateStoryClipV2", project: projectSummary(currentProjectPath) };
-    const fit = await runNode(currentProjectPath, ["scripts/fitTextInTimeline.mjs", timelinePath]);
-    return {
-      ok: fit.ok,
-      code: fit.code,
-      step: "fitTextInTimeline",
-      stdout: `${generate.stdout}${fit.stdout}`,
-      stderr: `${generate.stderr}${fit.stderr}`,
-      timelinePath,
-      project: projectSummary(currentProjectPath),
-    };
+    return buildTimeline({ musicPath, timelinePath, director: "none", plan: "none" });
   }
 
   if (step === "dryRun") {
@@ -257,28 +310,14 @@ async function runDirectorStep(step, payload = {}) {
   }
 
   if (step === "timeline") {
-    fs.mkdirSync(path.dirname(path.join(currentProjectPath, timelinePath)), { recursive: true });
-    const generate = await runNode(currentProjectPath, [
-      "scripts/generateStoryClipV2.mjs",
-      "--music", musicPath,
-      "--out", timelinePath,
-      "--director", "analysis/director_notes.json",
-      "--plan", "analysis/story_plan.json",
-    ]);
-    if (!generate.ok) {
-      return { ...generate, step, state: readDirectorState(currentProjectPath), project: projectSummary(currentProjectPath) };
-    }
-    const fit = await runNode(currentProjectPath, ["scripts/fitTextInTimeline.mjs", timelinePath]);
-    return {
-      ok: fit.ok,
-      code: fit.code,
-      step,
-      stdout: `${generate.stdout}${fit.stdout}`,
-      stderr: `${generate.stderr}${fit.stderr}`,
+    const built = await buildTimeline({
+      musicPath,
       timelinePath,
-      state: readDirectorState(currentProjectPath),
-      project: projectSummary(currentProjectPath),
-    };
+      director: "analysis/director_notes.json",
+      plan: "analysis/story_plan.json",
+      withCopy: true,
+    });
+    return { ...built, step, state: readDirectorState(currentProjectPath) };
   }
 
   return { ok: false, code: -1, stdout: "", stderr: `Unknown director step: ${step}` };
