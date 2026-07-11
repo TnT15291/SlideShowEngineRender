@@ -21,11 +21,29 @@ const outPath = outIdx >= 0 ? process.argv[outIdx + 1] : `analysis/qa/${base}.js
 const ffmpeg = process.env.FFMPEG_PATH || "ffmpeg";
 
 // scene start times, accounting for xfade overlap with the NEXT slide
+/** Does this slide actually show a photograph? A closing card is cream by design;
+ *  measuring its exposure and calling it "too bright" grades the art director, not
+ *  the photo. (The old rule asked whether the scene id matched /injapan|bigday/ —
+ *  the names of scenes in one couple's film. Once the shot list stopped being
+ *  hardcoded, that regex matched nothing and the closing card was flagged on every
+ *  single run.) */
+const showsPhoto = (s) =>
+  Boolean(s.image) ||
+  (s.images || []).length > 0 ||
+  (s.layers || []).some((l) => l.type === "image");
+
 const scenes = [];
 let t = 0;
 for (const s of tl.slides) {
   const trans = s.transition?.duration || 0;
-  scenes.push({ id: s.id, effect: s.effect, start: t, dur: s.duration, mid: t + s.duration / 2 });
+  scenes.push({
+    id: s.id,
+    effect: s.effect,
+    photo: showsPhoto(s),
+    start: t,
+    dur: s.duration,
+    mid: t + s.duration / 2,
+  });
   t += s.duration - trans;
 }
 
@@ -42,12 +60,21 @@ const DARK = 42, BRIGHT = 224, FLAT = 38;
 const results = scenes.map((sc) => {
   const st = statsAt(sc.mid);
   const range = st.ymax != null && st.ymin != null ? st.ymax - st.ymin : null;
-  const lenient = sc.effect !== "layer_scene" || /injapan|bigday|quote/i.test(sc.id); // montages + full-bleed quote scenes
+
+  // A card with no photograph on it has nothing to expose badly. Skip it rather
+  // than flag a design decision as a defect — and say so, so a reader of the
+  // report can see the check was declined on purpose and not quietly passed.
+  if (!sc.photo) {
+    return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, photo: false, verdict: "ok", skipped: "card, not a photograph", flags: [] };
+  }
+
+  // Montages and full-bleed frames run darker by design (grain, letterbox, scrim).
+  const lenient = sc.effect !== "layer_scene";
   const flags = [];
   if (st.yavg != null && st.yavg < (lenient ? 20 : DARK)) flags.push("too_dark");
   if (st.yavg != null && st.yavg > BRIGHT) flags.push("too_bright");
   if (range != null && range < FLAT) flags.push("flat_or_empty");
-  return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, lenient, verdict: flags.length ? "review" : "ok", flags };
+  return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, photo: true, lenient, verdict: flags.length ? "review" : "ok", flags };
 });
 
 const problems = results.filter((r) => r.verdict !== "ok");

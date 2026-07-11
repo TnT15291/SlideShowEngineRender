@@ -55,7 +55,15 @@ const projectName = arg("--name", "quoc-nhi-full-v2");
 const quality = arg("--quality", "share");
 const jobDir = arg("--job-dir", "");
 const tierOut = arg("--tier-out", "");
+const maxReuse = arg("--max-reuse", "1");
 const PRUNED_PHOTOS = `${analysisDir}/photos.pruned.json`;
+const storyboardPath = `${analysisDir}/storyboard.json`;
+const copyPath = `${analysisDir}/recipe_copy.json`;
+const promptPath = arg("--prompt", jobDir ? `${jobDir}/prompt.txt` : "prompt.txt");
+
+/** The couple's names and their date. The copywriter is never shown these — it
+ *  invented "Linh & Nam" once — so the brief is the only thing that can fill them. */
+const project_brief = () => path.resolve(root, jobDir ? `${jobDir}/brief.json` : "brief.json");
 
 // --- helpers ---------------------------------------------------------------
 function sh(cmd, args) {
@@ -79,25 +87,64 @@ function runEngine(dryRun) {
   return { code: r.status ?? 99, out: (r.stdout || "") + (r.stderr || "") };
 }
 
-/** Generate the timeline in the given mode, then auto-fit text. */
+/** Generate the timeline in the given mode, then auto-fit text.
+ *
+ * Three steps, and the split matters: CODE solves the shot list against the photo
+ * budget and the track, the AI writes what the scenes SAY, and the recipe engine
+ * renders it. `lite` is the same pipeline with the director and the copywriter
+ * withheld — so the fallback is a wordless film built from the customer's own
+ * photos, rather than a film wearing another couple's names, which is what the old
+ * hardcoded generator delivered.
+ */
 function generate(mode, photosFile) {
-  const dirFlags =
-    mode === "lite"
-      ? ["--director", "none", "--plan", "none"]
-      : ["--director", directorArg, "--plan", planArg];
+  const director = mode === "lite" ? "none" : directorArg;
+  const plan = mode === "lite" ? "none" : planArg;
+
   step(
     [
-      "scripts/generateStoryClipV2.mjs",
-      "--music", music,
-      "--out", TL,
+      "scripts/composeStoryboard.mjs",
       "--photos", photosFile,
+      "--music", music,
       "--analysis-dir", analysisDir,
+      "--plan", plan,
+      "--director", director,
+      "--name", projectName,
+      "--quality", quality,
+      "--max-reuse", maxReuse,
+      "--out", storyboardPath,
+    ],
+    "node 8a: compose storyboard"
+  );
+
+  if (mode !== "lite") {
+    step(
+      [
+        "scripts/writeRecipeCopy.mjs",
+        "--recipe", storyboardPath,
+        ...(fs.existsSync(path.resolve(root, promptPath)) ? ["--prompt", promptPath] : []),
+        "--content", `${analysisDir}/photo_content.json`,
+        "--music", `${analysisDir}/music/${path.basename(music).replace(/\.[^.]+$/, "")}.json`,
+        "--out", copyPath,
+      ],
+      "node 8b: write the words"
+    );
+  }
+
+  step(
+    [
+      "scripts/applyStoryTemplate.mjs",
+      "--template", storyboardPath,
+      "--photos", photosFile,
+      "--music", music,
+      "--analysis-dir", analysisDir,
+      "--out", TL,
       "--output", videoOut,
       "--name", projectName,
       "--quality", quality,
-      ...dirFlags,
+      ...(mode !== "lite" ? ["--copy", copyPath] : []),
+      ...(fs.existsSync(project_brief()) ? ["--brief", path.relative(root, project_brief()).replace(/\\/g, "/")] : []),
     ],
-    "generate"
+    "node 8c: render the storyboard"
   );
   step(["scripts/fitTextInTimeline.mjs", TL], "fit-text");
 }

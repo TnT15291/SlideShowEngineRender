@@ -27,7 +27,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { makeEnergy, sceneDur, sceneTimes, barLength } from "./lib/pacing.mjs";
+import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pacing.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -98,6 +98,31 @@ if (musicMissing) {
   pacing.status = "ran";
   const energy = makeEnergy(music);
   const bar = barLength(music);
+
+  // QA computes the scale ITSELF, from the rendered timeline and the track — it
+  // does not read a number the generator wrote down, which would make the check
+  // agree with the generator by construction. Montages (bar-locked) and the
+  // closing card (a fixed full stop) are excluded, exactly as they are from the
+  // per-scene check below.
+  const storyScenes = scenes.filter((sc, i) => {
+    const k = kindOf(tl.slides[i], i);
+    return k !== "montage" && k !== "closing";
+  });
+  const fixed = scenes
+    .filter((sc, i) => {
+      const k = kindOf(tl.slides[i], i);
+      return k === "montage" || k === "closing";
+    })
+    .reduce((n, sc) => n + sc.dur, 0);
+  const pacingScale = storyScenes.length
+    ? fitScale({
+        baseDurations: storyScenes.map((sc) => sceneDur(energy.meanOver(sc.start, sc.end))),
+        transitions: storyScenes.map((sc, i) => tl.slides[i]?.transition?.duration ?? 0),
+        targetDuration: Math.max(1, (music.duration ?? 0) - fixed),
+      })
+    : 1;
+  pacing.scale = +pacingScale.toFixed(3);
+
   pacing.scenes = scenes.map((sc, i) => {
     const slide = tl.slides[i];
     const kind = kindOf(slide, i);
@@ -124,7 +149,17 @@ if (musicMissing) {
     }
     if (kind === "closing") return row; // fixed-length card by design
 
-    const expected = sceneDur(eMean);
+    // The energy curve gives a scene its RHYTHM; the photo budget gives the film
+    // its SCALE (see lib/pacing fitScale). QA has to apply both, or it "corrects"
+    // every stretched scene back to its unstretched length and quietly undoes the
+    // one thing that made the film cover the song — which is exactly what happened:
+    // a 200s cut came back out of the QA loop as 124s.
+    //
+    // The check stays independent all the same. The generator scaled durations it
+    // derived from energy at each scene's START; QA re-derives them from the MEAN
+    // energy over the span each scene actually occupies, and computes its own k
+    // from those. Hand edits, emphasis multipliers and energy drift still show up.
+    const expected = +(sceneDur(eMean) * pacingScale).toFixed(2);
     const deviation = (sc.dur - expected) / expected;
     row.expected = expected;
     row.deviation = +deviation.toFixed(3);
