@@ -1,13 +1,17 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-11** (tier template
-> recipe-driven + 4 recipe render verified; engine thêm `flicker`, LUT bundle, `mask_reveal` +
-> 3 mask: hạt sáng / `heart_wand` / `brush_stroke` — giai đoạn 1–3 lộ trình hiệu ứng §4b XONG).
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-11**
+> (**hợp nhất hai stack điều phối**: `runProject.mjs` giờ là orchestrator DUY NHẤT, chạy cả
+> tier `lite` lẫn `premium` trên cùng project isolation + job manifest + resume).
 >
 > Legend: ✅ xong · 🟡 một phần · ⬜ chưa làm
 
 Bảng này theo dõi khoảng cách giữa **thiết kế** ([PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md))
 và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài liệu pipeline đó.
+
+> ⚠️ **Repo này có nhiều phiên Claude làm việc song song.** Trước khi sửa file, chạy `git status` —
+> đừng giả định bạn sở hữu file bạn không viết. Tài liệu này đã từng lệch hẳn với code vì một phiên
+> xây cả một tầng kiến trúc mà phiên kia không biết (xem §2b).
 
 ---
 
@@ -16,10 +20,84 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 | Tầng | Trạng thái | Ghi chú |
 |---|---|---|
 | **Render engine** | ✅ Feature-complete | **24 effect** (+`mask_reveal`), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
-| **Tier template (Rẻ)** | ✅ Recipe-driven, 4 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. 4 recipe render thật + soi mắt |
-| **Pipeline Lite** (Cơ bản/Vừa) | ✅ Chạy end-to-end | `node scripts/buildClip.mjs --fix` — rule-based, 0 AI |
-| **Pipeline v1 Premium** | 🟡 A→E xong, F một phần | Node 2 (vision) wired **OpenAI gpt-5.5**, node 3/5+6/7 (story/brief/director/plan) wired **DeepSeek**, cả hai có guardrail; timeline node (8) bám director & PASS dry-run; node 9 `renderWithRetry.mjs` validate→retry→fallback Lite; node 11 `qaProxy.mjs` + `qaLoop.mjs` (pacing/hero proxy, trần 2 revise); node 4 `selectStoryOption.mjs` (cửa sổ phản hồi cưỡng chế, exit 3 = pending); node 12 `deliver.mjs` đóng gói 4 deliverable; `runPremiumJob.mjs` gom node 2→12. Còn điều phối production (n8n/queue) |
-| **Docs** | ✅ Đã tổ chức lại (2026-07-08) | 10 file, hub tại [README.md](README.md) |
+| **Project isolation** | ✅ Xong + có test | Mỗi video sống trong `projects/<id>/` (ảnh/nhạc/analysis/timeline/logs/output riêng). `analysis/job-manifest.json` ghi phase state; `--resume` chỉ tái dùng phase còn tươi. Xem [PROJECTS.md](PROJECTS.md) |
+| **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier lite\|premium`. Hai tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
+| **Tier template (Rẻ)** | ✅ Recipe-driven, 4 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code** |
+| **Tier Lite** | ✅ Chạy end-to-end | Rule-based + (tuỳ chọn) AI viết lời. `npm run lite:ai -- --project <p>` |
+| **Tier Premium** | 🟡 Chạy đủ node, chờ key thật | Node 2 vision (OpenAI gpt-5.5) · 3/5+6/7 (DeepSeek) · 4 user choice · 8+9 validate→retry→fallback Lite · 10+11 QA loop · 12 deliver. **Chạy thật end-to-end trong project** (STUB, không key). Còn: key thật + điều phối production |
+| **Test** | 🟡 9 unit + 1 integration | Phủ project/manifest/resume + 1 vòng lite đầu-cuối. **Engine (~11k LOC) vẫn 0 test** |
+| **Docs** | ✅ Đã tổ chức lại | Hub tại [README.md](README.md) |
+
+---
+
+## 1b. Hai tier, một orchestrator
+
+```
+npm run lite:ai  -- --project projects/x        (= runProject --tier lite)
+npm run premium  -- --project projects/x        (= runProject --tier premium)
+```
+
+Chung: `analyze` → `plan` → `build` → `render` → `qa` → `deliver`, chung job manifest + `--resume`.
+
+| Phase | `--tier lite` | `--tier premium` |
+|---|---|---|
+| plan | selection policy → chọn ảnh → `generateProjectStory` (AI viết lời) | selection policy → chọn ảnh → **node 3** story options → **node 4** user choice → **node 5+6** director notes → **node 7** story plan |
+| build | `generateProjectTimeline` (6 effect, 4 transition, duration đều) | **node 8+9** `renderWithRetry` — sinh timeline bám director, validate bằng engine thật, sửa/`fallback` về Lite |
+| render | engine | *(QA loop tự render — xem dưới)* |
+| qa | `qaProxy` + `qaClip` — **chỉ đo** | **node 10+11** `qaLoop` — đo → sửa tất định → render lại, trần 2 revise |
+| deliver | `--tier lite` | `--tier` = **tier sống sót thật**, đọc từ `analysis/tier.json` |
+
+**`tier` không bao giờ bị đoán.** Nó nằm trong `project.json` (`"tier"`) hoặc cờ `--tier`. Premium có thể
+**tụt xuống Lite giữa chừng** (node 9 fallback) — chỉ vòng chạy mới biết điều đó, nên `renderWithRetry`
+**ghi ra `analysis/tier.json`**. Trước đây orchestrator moi tier bằng cách regex stdout, đổi câu log là
+âm thầm thành `"unknown"`.
+
+**Node 4 có kết cục thứ ba.** Khách chưa trả lời mà cửa sổ còn hạn → `exit 3` và job manifest ghi
+`status: "paused"` (KHÔNG phải `failed`). Job không hỏng, nó **đang đợi một con người**. Gọi nó là
+`failed` là bảo người vận hành đi sửa thứ không hề gãy.
+
+---
+
+## 2b. Hợp nhất hai stack (2026-07-11) — và bài học
+
+Trong lúc phiên này xây `runPremiumJob.mjs` (node 2→12), **một phiên song song đã xây cả một stack
+`projects/` riêng** (isolation + job manifest + resume + selection policy) và trỏ `npm run premium`
+sang nó. Tài liệu này **không hề biết chuyện đó** suốt nhiều ngày. Đọc doc thì thấy một pipeline;
+đọc code thì thấy hai.
+
+**Kế hoạch ban đầu là "khai tử `runPremiumJob.mjs`" — và nó SAI.** Đối chiếu code cho thấy
+`runProject.mjs` khi đó **không phải superset**: nó thiếu node 3, 4, 5+6, 7, thiếu vòng
+validate→retry→fallback (9), và QA chỉ **đo rồi bỏ đó** (không có `qaLoop`). Xoá đi là mất sạch tầng
+AI-director. **Bài học: đừng bao giờ quyết định xoá dựa trên tài liệu — đối chiếu code trước.**
+
+Đã làm thay vì xoá: **gộp**. `runProject.mjs` nhận `--tier`, tầng Premium chạy trong project isolation.
+Ba lỗi được lôi ra ánh sáng đúng lúc Premium lần đầu chạy *bên trong* một project:
+
+- **`npm run premium` nói dối.** `runProject` gọi `deliver.mjs --tier "lite"` **ghim cứng** → mọi
+  `project_summary.json` tự khai là tier lite, kể cả khi AI-director dựng nó. Đúng cái lỗi "không tuyên
+  bố điều pipeline chưa từng làm" mà node 12 đã cất công chống. Nay tier đọc từ `analysis/tier.json`.
+- **`generateStoryClipV2` ghim cứng `output/quoc-nhi-full-v2.mp4`** — mọi timeline Premium ghi đè cùng
+  một file, bất kể `--out`. Chính là va chạm mà `projects/` sinh ra để diệt.
+- **Ba node đọc/ghi state per-job từ đường dẫn root**: `generateDirectorNotes` lấy phân tích nhạc từ
+  root (job này âm thầm dùng số liệu của job khác **khi trùng tên file — và vẫn báo SUCCESS**, nên nó
+  sống sót qua cả một lần chạy Premium xanh lè trước khi bị bắt); `selectStoryOption` để cửa sổ phản hồi
+  ở root (hai khách cùng chờ → **deadline của project B nổ trên đồng hồ của project A**); `qaLoop` ghi
+  báo cáo + đọc pool ảnh từ root.
+
+`qaLoop`/`qaProxy` nay **tự suy** `<job>/analysis` từ vị trí timeline (`<job>/timeline/x.json`) thay vì
+nhận cờ — phiên song song đã độc lập viết đúng một assertion integration cho lỗ rò này và hợp đồng của
+họ gọn hơn, nên theo họ.
+
+**Đã verify bằng chạy thật** (không key → STUB): Premium đầu-cuối trong project → 16 slide, `layer_scene`,
+overlay, `qaLoop` làm chủ khâu render, deliver báo `tier=director`; nhạc + cửa sổ + báo cáo QA +
+deliverable **đều project-local, root không bị chạm**. Node 4 exit 3 → manifest `paused`; khách trả lời
+"Tôi chọn C" → không bị auto đè, director bám đúng C.
+
+**⚠️ Đính chính một tuyên bố cũ của chính tài liệu này.** §3 Phase E mô tả pacing proxy mạnh hơn thực tế.
+Đường cong `sceneDur` chỉ chạy **4.7s–6.9s**, tức biên độ hẹp hơn chính dung sai ±25% của nó. Hệ quả:
+check này **không phân biệt được "pacing bám nhạc" với "pacing đều tăm tắp"** — đo thử trên nhạc thật,
+một timeline duration đồng đều vượt qua **0/51 cảnh** bị flag. Nó chỉ bắt được sai lệch thô (12s vs 5.8s).
+Đó là một smoke test hữu ích, **không phải** một thước đo thẩm mỹ.
 
 ---
 
@@ -270,12 +348,17 @@ analyzePhotos nếu thiếu (không crash giữa chừng).
   `generateStoryClipV2` để generator **chọn** và QA **kiểm** trên đúng một đường cong (không drift,
   giống cách whitelist nạp từ `timeline.schema.json`). Refactor đã chứng minh giữ nguyên hành vi:
   5703 mẫu, 0 sai lệch; timeline Lite bất biến.
-- ✅ **Pacing proxy — phép đo *độc lập*, không tự kiểm chính nó.** Generator lấy năng lượng tại
-  **thời điểm bắt đầu** slide (`energy.at(t)`); QA lấy **trung bình năng lượng trên toàn khoảng**
-  slide chiếm (`energy.meanOver`). Hai số lệch nhau khi nhạc đổi *dưới chân* slide, khi `emphasis`
-  của story plan cãi nhạc, hoặc khi timeline bị sửa tay. Ngưỡng ±25% (hấp thụ được `emphasis`
+- 🟡 **Pacing proxy — phép đo *độc lập*, nhưng YẾU hơn tài liệu này từng khẳng định.** Generator lấy
+  năng lượng tại **thời điểm bắt đầu** slide (`energy.at(t)`); QA lấy **trung bình năng lượng trên toàn
+  khoảng** slide chiếm (`energy.meanOver`). Hai số lệch nhau khi nhạc đổi *dưới chân* slide, khi
+  `emphasis` của story plan cãi nhạc, hoặc khi timeline bị sửa tay. Ngưỡng ±25% (hấp thụ được `emphasis`
   0.9–1.12 = ±12%). Montage (khóa theo nhịp) và slide kết (dài cố định) được miễn — montage lệch
   bar chỉ ghi *advisory*, không kích hoạt revise.
+  ⚠️ **Giới hạn đo được (2026-07-11)**: `sceneDur` chỉ trải **4.7s–6.9s**, biên độ hẹp hơn chính dung sai
+  ±25%. Nên check này **không phân biệt được "pacing bám nhạc" với "duration đều tăm tắp"** — thử trên
+  nhạc thật, timeline duration đồng đều bị flag **0/51 cảnh**. Nó bắt được sai lệch thô (12s vs 5.8s =
+  +107%, đúng loại dùng để verify bên dưới) nhưng **không phải thước đo thẩm mỹ**. Muốn nó có răng thì
+  phải nới biên độ `DUR_CALM`/`DUR_LOUD` hoặc siết dung sai — cả hai đều là quyết định thẩm mỹ, chưa làm.
 - ✅ **Hero-check** — dùng lại Hero Score node 2, **không chấm lại**. Gate theo
   `photo_content.generatedBy`: `stub` → **skip có lý do** (chỉnh ngưỡng trên điểm giả là vô nghĩa;
   schema để sẵn field này đúng cho quyết định đó). Chỉ flag khi **đề xuất được ảnh thay thế** cùng
@@ -371,11 +454,13 @@ Dùng: `node scripts/qaProxy.mjs <timeline.json> [--strict]` (chỉ đo, không 
     → pending; reply vô nghĩa sau deadline → mặc định + giữ nguyên `reply`; `--opened-at` tương lai →
     exit 3, quá khứ → exit 0; kênh `zalo` → từ chối; re-send khi đang mở → từ chối; và
     `Tôi chọn C` → `selected_story` C → `director_notes.choice = C`.
-- ✅ **Orchestration CLI nền**: `scripts/runPremiumJob.mjs` gom node 2→12 thành một lệnh local:
-  analysis → story options → node 4 selection → director notes → story plan → validate/fallback →
-  render+QA → deliver tuỳ cờ. Ranh giới vẫn giữ: điều phối chỉ gọi node/engine, không sinh FFmpeg.
-- ⬜ **Orchestration production**: n8n/queue gọi CLI (mỗi job timeline+output riêng, chạy song song).
-  Xem
+- ✅ **Orchestration CLI — ĐÃ HỢP NHẤT (2026-07-11)**: `scripts/runProject.mjs --tier lite|premium` là
+  orchestrator **duy nhất** — node 2→12 chạy bên trong project isolation + job manifest + resume
+  (xem §1b và §2b). Ranh giới vẫn giữ: điều phối chỉ gọi node/engine, không sinh FFmpeg.
+  ⚠️ `scripts/runPremiumJob.mjs` (`npm run premium:legacy`) là **bản cũ chạy ở root, không isolation** —
+  giữ tạm để đối chiếu, **không dùng cho job thật**, và nên xoá khi không còn ai cần.
+- ⬜ **Orchestration production**: n8n/queue gọi CLI (mỗi job đã có thư mục riêng → chạy song song
+  được rồi). Xem
   [PIPELINE-V1-VA-LITE.md → Orchestration](PIPELINE-V1-VA-LITE.md#orchestration--triển-khai).
 
 Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-dir <dir>]
