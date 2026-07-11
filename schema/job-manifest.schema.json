@@ -8,7 +8,7 @@
   "properties": {
     "schemaVersion": { "const": 1 },
     "projectId": { "type": "string", "minLength": 1 },
-    "status": { "enum": ["running", "completed", "failed"] },
+    "status": { "enum": ["running", "completed", "failed", "paused"] },
     "startedAt": { "type": "string", "minLength": 1 },
     "updatedAt": { "type": "string", "minLength": 1 },
     "currentPhase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },

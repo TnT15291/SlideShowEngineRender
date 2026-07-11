@@ -42,7 +42,15 @@ const basePhotos = arg("--photos", "analysis/photos.json");
 const maxRetries = Number(arg("--max-retries", "2")) || 2;
 const dryRunOnly = process.argv.includes("--dry-run-only");
 const deliver = process.argv.includes("--deliver");
-const PRUNED_PHOTOS = "analysis/photos.pruned.json";
+// Project-local redirection. Defaults reproduce the pre-project behaviour, so a
+// bare `node scripts/renderWithRetry.mjs` still writes exactly where it used to.
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+const videoOut = arg("--output", "output/quoc-nhi-full-v2.mp4");
+const projectName = arg("--name", "quoc-nhi-full-v2");
+const quality = arg("--quality", "share");
+const jobDir = arg("--job-dir", "");
+const tierOut = arg("--tier-out", "");
+const PRUNED_PHOTOS = `${analysisDir}/photos.pruned.json`;
 
 // --- helpers ---------------------------------------------------------------
 function sh(cmd, args) {
@@ -60,6 +68,7 @@ function step(args, label) {
 /** Run the engine on TL; return {code, out} with stdout+stderr combined for parsing. */
 function runEngine(dryRun) {
   const args = ["--import", "tsx", "src/index.ts", "--timeline", TL];
+  if (jobDir) args.push("--job-dir", jobDir);
   if (dryRun) args.push("--dry-run");
   const r = sh(node, args);
   return { code: r.status ?? 99, out: (r.stdout || "") + (r.stderr || "") };
@@ -72,7 +81,17 @@ function generate(mode, photosFile) {
       ? ["--director", "none", "--plan", "none"]
       : ["--director", directorArg, "--plan", planArg];
   step(
-    ["scripts/generateStoryClipV2.mjs", "--music", music, "--out", TL, "--photos", photosFile, ...dirFlags],
+    [
+      "scripts/generateStoryClipV2.mjs",
+      "--music", music,
+      "--out", TL,
+      "--photos", photosFile,
+      "--analysis-dir", analysisDir,
+      "--output", videoOut,
+      "--name", projectName,
+      "--quality", quality,
+      ...dirFlags,
+    ],
     "generate"
   );
   step(["scripts/fitTextInTimeline.mjs", TL], "fit-text");
@@ -118,10 +137,10 @@ function prunePhotos(photosFile, missing) {
  *  not crash the generator mid-loop. Clean exit (not a stack trace) if it can't. */
 function ensurePrereqs() {
   const musicName = path.basename(music).replace(/\.[^.]+$/, "");
-  const musicJson = path.resolve(root, `analysis/music/${musicName}.json`);
+  const musicJson = path.resolve(root, `${analysisDir}/music/${musicName}.json`);
   if (!fs.existsSync(musicJson)) {
     console.log(`[renderWithRetry] music analysis missing → analyzeMusic "${music}"`);
-    const r = sh(node, ["scripts/analyzeMusic.mjs", music]);
+    const r = sh(node, ["scripts/analyzeMusic.mjs", music, "--out", `${analysisDir}/music/${musicName}.json`]);
     if (r.status !== 0 || !fs.existsSync(musicJson)) {
       console.error(`[renderWithRetry] FAILED: cannot analyze music "${music}" (does the file exist?).`);
       process.exit(1);
@@ -129,9 +148,9 @@ function ensurePrereqs() {
   }
   const photosJson = path.resolve(root, basePhotos);
   if (!fs.existsSync(photosJson)) {
-    if (basePhotos === "analysis/photos.json") {
+    if (basePhotos === `${analysisDir}/photos.json`) {
       console.log("[renderWithRetry] photos analysis missing → analyzePhotos");
-      const r = sh(node, ["scripts/analyzePhotos.mjs"]);
+      const r = sh(node, ["scripts/analyzePhotos.mjs", "--out", basePhotos]);
       if (r.status !== 0 || !fs.existsSync(photosJson)) {
         console.error("[renderWithRetry] FAILED: cannot analyze photos (is input/ populated?).");
         process.exit(1);
@@ -228,13 +247,21 @@ if (outcome.code !== 0) {
 // from the timeline, so the loop that lived through it hands the tier over.
 if (deliver && !dryRunOnly) {
   console.log(`\n[renderWithRetry] delivering (tier=${mode})…`);
-  const r = sh(node, ["scripts/deliver.mjs", TL, "--tier", mode]);
+  const r = sh(node, ["scripts/deliver.mjs", TL, "--tier", mode, "--analysis-dir", analysisDir]);
   process.stdout.write(r.stdout || "");
   if (r.status !== 0) {
     process.stderr.write(r.stderr || "");
     console.error("[renderWithRetry] FAILED: the render succeeded but delivery did not.");
     process.exit(1);
   }
+}
+
+// The tier of the attempt that actually survived. An orchestrator used to recover
+// this by regex-scraping the line below, which silently degraded to "unknown" the
+// day the log wording changed. State it as data instead of as prose.
+if (tierOut) {
+  fs.mkdirSync(path.dirname(path.resolve(root, tierOut)), { recursive: true });
+  fs.writeFileSync(path.resolve(root, tierOut), JSON.stringify({ tier: mode, decidedAt: new Date().toISOString() }, null, 2) + "\n");
 }
 
 const outPath = dryRunOnly ? TL : (JSON.parse(fs.readFileSync(path.resolve(root, TL), "utf8")).output?.path ?? TL);

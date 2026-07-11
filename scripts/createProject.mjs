@@ -45,6 +45,8 @@ const manifest = {
   timeline: "timeline/timeline.json",
   output: "output/final.mp4",
   quality: arg("--quality", "share"),
+  tier: arg("--tier", "lite"),
 };
+if (!["lite", "premium"].includes(manifest.tier)) throw new Error(`--tier must be lite|premium, got "${manifest.tier}"`);
 fs.writeFileSync(path.join(dir, "project.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(`Created ${path.relative(root, dir)} (${music.length} music track(s)).`);

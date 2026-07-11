@@ -40,7 +40,10 @@ const arg = (flag, def) => {
 };
 
 const TL = arg("--timeline", "timeline/quoc-nhi-full-v2.json");
-const contentPath = arg("--content", "analysis/photo_content.json");
+// Project-local redirection; the defaults are the pre-project paths.
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
+const jobDir = arg("--job-dir", "");
 const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
 const PREFLIGHT_PASSES = 3; // free passes; the fix-once rule usually converges in 1
 const skipRender = process.argv.includes("--skip-render");
@@ -48,8 +51,8 @@ const skipRender = process.argv.includes("--skip-render");
 const tlAbs = path.resolve(root, TL);
 if (!fs.existsSync(tlAbs)) { console.error(`[qaLoop] FAILED: timeline not found: ${TL}`); process.exit(1); }
 const base = path.basename(TL).replace(/\.[^.]+$/, "");
-const proxyOut = `analysis/qa/${base}.proxy.json`;
-const clipOut = `analysis/qa/${base}.json`;
+const proxyOut = `${analysisDir}/qa/${base}.proxy.json`;
+const clipOut = `${analysisDir}/qa/${base}.json`;
 
 const readJson = (p) => JSON.parse(fs.readFileSync(path.resolve(root, p), "utf8"));
 const writeTl = (tl) => fs.writeFileSync(tlAbs, JSON.stringify(tl, null, 2));
@@ -64,7 +67,7 @@ function sh(args, label) {
 }
 
 const runProxy = () => {
-  sh(["scripts/qaProxy.mjs", TL, "--content", contentPath, "--out", proxyOut], "qaProxy");
+  sh(["scripts/qaProxy.mjs", TL, "--content", contentPath, "--out", proxyOut, "--analysis-dir", analysisDir], "qaProxy");
   return readJson(proxyOut);
 };
 const runClip = () => {
@@ -72,7 +75,9 @@ const runClip = () => {
   return readJson(clipOut);
 };
 const render = () => {
-  const r = spawnSync(node, ["--import", "tsx", "src/index.ts", "--timeline", TL], { cwd: root, encoding: "utf8", maxBuffer: 1 << 26 });
+  const args = ["--import", "tsx", "src/index.ts", "--timeline", TL];
+  if (jobDir) args.push("--job-dir", jobDir);
+  const r = spawnSync(node, args, { cwd: root, encoding: "utf8", maxBuffer: 1 << 26 });
   if (r.status !== 0) {
     console.error((r.stdout || "").split("\n").slice(-8).join("\n") + (r.stderr || ""));
     throw new Error(`render failed (exit ${r.status})`);
@@ -116,7 +121,7 @@ function applyProxyFixes(report) {
 function applyClipFixes(qa) {
   const fixable = qa.problems.filter((p) => /_dark|_bright|flat/.test(p.flags.join(",")));
   if (!fixable.length) return [];
-  const photos = readJson("analysis/photos.json").photos;
+  const photos = readJson(`${analysisDir}/photos.json`).photos;
   const byQual = [...photos].sort((a, b) => b.qualityNorm - a.qualityNorm);
   const tl = readJson(TL);
   const used = new Set(tl.slides.flatMap((s) => [

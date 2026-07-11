@@ -36,10 +36,16 @@ const outPath = arg("--out", "timeline/quoc-nhi-full-v2.json");
 const directorArg = arg("--director", "analysis/director_notes.json");
 const planArg = arg("--plan", "analysis/story_plan.json");
 const photosPath = arg("--photos", "analysis/photos.json"); // Phase D can point this at a pruned copy
+// A project run redirects these so two jobs never share an output file, a music
+// analysis or a project name. The defaults reproduce the pre-project behaviour.
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
+const videoOut = arg("--output", "output/quoc-nhi-full-v2.mp4");
+const projectName = arg("--name", "quoc-nhi-full-v2");
+const quality = arg("--quality", "share");
 
 const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "utf8"));
 const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
-const music = JSON.parse(fs.readFileSync(path.resolve(root, `analysis/music/${musicName}.json`), "utf8"));
+const music = JSON.parse(fs.readFileSync(path.resolve(root, `${analysisDir}/music/${musicName}.json`), "utf8"));
 
 // ---- optional director inputs (Phase C) ----
 function loadOptional(p) {
@@ -297,12 +303,12 @@ if (!overlays && OVERLAY_VARIANT) {
 }
 
 const timeline = {
-  project: { name: "quoc-nhi-full-v2", width: 1920, height: 1080, fps: 30, quality: "share" },
+  project: { name: projectName, width: 1920, height: 1080, fps: 30, quality },
   music: [{ path: musicPath, volume: 0.8 }],
   audio: { fade_in: 1.5, fade_out: 3.5, crossfade: 0 },
   color,
   ...(overlays ? { overlays } : {}),
-  output: { path: "output/quoc-nhi-full-v2.mp4" },
+  output: { path: videoOut },
   slides,
 };
 

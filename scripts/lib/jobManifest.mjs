@@ -68,6 +68,15 @@ export function createJobTracker(project) {
       if (Number.isInteger(error.exitCode) && error.exitCode > 0) document.error.exitCode = error.exitCode;
       write();
     },
+    /** The customer's story-choice window is still open (node 4, exit 3). The job is
+     *  not failed and not finished — it is waiting on a person. Recording it as
+     *  "failed" would tell an operator to go fix something that is not broken. */
+    pause(phase, reason) {
+      document.status = "paused";
+      document.currentPhase = phase;
+      document.phases[phase] = { ...document.phases[phase], status: "pending", reason };
+      write();
+    },
     finish() {
       document.status = "completed";
       delete document.currentPhase;

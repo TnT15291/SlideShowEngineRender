@@ -43,10 +43,12 @@ if (!tlPath || tlPath.startsWith("--")) {
 const TOLERANCE = Number(arg("--tolerance", "0.25"));
 const HERO_MARGIN = Number(arg("--hero-margin", "0.15"));
 const strict = process.argv.includes("--strict");
+// Project-local redirection; the defaults are the pre-project paths.
+const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 
 const tl = JSON.parse(fs.readFileSync(path.resolve(root, tlPath), "utf8"));
 const base = path.basename(tlPath).replace(/\.[^.]+$/, "");
-const outPath = arg("--out", `analysis/qa/${base}.proxy.json`);
+const outPath = arg("--out", `${analysisDir}/qa/${base}.proxy.json`);
 
 // --- inputs ----------------------------------------------------------------
 // The pacing proxy is defined against the song's energy curve, so with no music
@@ -56,7 +58,7 @@ const outPath = arg("--out", `analysis/qa/${base}.proxy.json`);
 const musicTrack = tl.music?.[0]?.path;
 const musicJson = arg(
   "--music",
-  musicTrack ? `analysis/music/${path.basename(musicTrack).replace(/\.[^.]+$/, "")}.json` : ""
+  musicTrack ? `${analysisDir}/music/${path.basename(musicTrack).replace(/\.[^.]+$/, "")}.json` : ""
 );
 const musicAbs = musicJson ? path.resolve(root, musicJson) : null;
 const musicMissing = !musicAbs || !fs.existsSync(musicAbs)
@@ -66,7 +68,7 @@ const musicMissing = !musicAbs || !fs.existsSync(musicAbs)
   : null;
 const music = musicMissing ? null : JSON.parse(fs.readFileSync(musicAbs, "utf8"));
 
-const contentPath = arg("--content", "analysis/photo_content.json");
+const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const contentAbs = path.resolve(root, contentPath);
 const content = fs.existsSync(contentAbs) ? JSON.parse(fs.readFileSync(contentAbs, "utf8")) : null;
 
@@ -231,7 +233,7 @@ function grabFrame(sec, dest) {
 if (!videoAbs || !fs.existsSync(videoAbs)) {
   bookend.reason = `rendered video not found (${videoRel || "no output.path"}) — bookend needs frames; render first`;
 } else {
-  const dir = path.resolve(root, "analysis/qa/frames");
+  const dir = path.resolve(root, `${analysisDir}/qa/frames`);
   fs.mkdirSync(dir, { recursive: true });
   const first = scenes[0], last = scenes[scenes.length - 1];
   const openPng = path.join(dir, `${base}.opening.jpg`);
