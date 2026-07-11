@@ -2,18 +2,30 @@
   "meta": {
     "title": "Slideshow Layout Library + Design Tokens",
     "purpose": "Safe, well-composed building blocks the AI director fills instead of computing pixel coordinates by hand. Each layout defines slots (photo / text / decor) on a 1920x1080 canvas. The director picks a layout per story beat, drops photos+copy into its slots, sets a scene duration from music/emotion, and the result is always valid geometry — variety comes from layout choice + sequencing + copy + pacing, never from ad-hoc coordinate math.",
-    "canvas": { "width": 1920, "height": 1080 },
+    "canvas": {
+      "width": 1920,
+      "height": 1080
+    },
     "safeMargin": 70,
     "coordinateNote": "Slot x/y/width/height are pixels on 1920x1080. Photo slots use fit=cover to fill the frame (crop, no letterbox). Negative x/y intentionally bleed a photo off-frame."
   },
-
   "designTokens": {
     "themes": {
       "white_weddings": {
         "background": "#FBF6ED",
-        "palette": { "cream_bg": "#FBF6ED", "ink_dark": "#2D2D33", "warm_brown": "#634C31", "numeral_white": "#FFFDFC" },
+        "palette": {
+          "cream_bg": "#FBF6ED",
+          "ink_dark": "#2D2D33",
+          "warm_brown": "#634C31",
+          "numeral_white": "#FFFDFC"
+        },
         "mood": "soft, elegant, warm, editorial",
-        "colorGrade": { "temperature": 5600, "saturation": 1.05, "glow": 0.12, "contrast": 1.03 },
+        "colorGrade": {
+          "temperature": 5600,
+          "saturation": 1.05,
+          "glow": 0.12,
+          "contrast": 1.03
+        },
         "fonts": {
           "heading": "fonts/PlayfairDisplay.ttf",
           "script_accent": "fonts/GreatVibes-Regular.ttf",
@@ -22,245 +34,983 @@
       },
       "dark_film": {
         "background": "#101010",
-        "palette": { "bg": "#101010", "text": "#EDE6D8", "accent": "#C9A86A" },
+        "palette": {
+          "bg": "#101010",
+          "text": "#EDE6D8",
+          "accent": "#C9A86A"
+        },
         "mood": "cinematic, moody, timeless",
-        "colorGrade": { "contrast": 1.12, "saturation": 0.9, "grain": 8, "letterbox": 2.39, "temperature": 5200 },
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/Italianno-Regular.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+        "colorGrade": {
+          "contrast": 1.12,
+          "saturation": 0.9,
+          "grain": 8,
+          "letterbox": 2.39,
+          "temperature": 5200
+        },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/Italianno-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        }
       },
       "editorial_bold": {
         "background": "#F5F2EC",
-        "palette": { "cream_bg": "#F5F2EC", "text": "#17171B", "ink_dark": "#17171B", "accent": "#8A7355", "numeral_white": "#FFFDFC" },
+        "palette": {
+          "cream_bg": "#F5F2EC",
+          "text": "#17171B",
+          "ink_dark": "#17171B",
+          "accent": "#8A7355",
+          "numeral_white": "#FFFDFC"
+        },
         "mood": "editorial, bold, fashion-magazine, high-contrast, generous whitespace (2026 trend: cursive out, big expressive serif headlines + clean sans companions)",
-        "colorGrade": { "temperature": 6200, "saturation": 1.0, "contrast": 1.07, "brightness": 0.01, "glow": 0.05 },
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+        "colorGrade": {
+          "temperature": 6200,
+          "saturation": 1.0,
+          "contrast": 1.07,
+          "brightness": 0.01,
+          "glow": 0.05
+        },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        }
       },
       "warm_film": {
         "background": "#F1E7D9",
-        "palette": { "cream_bg": "#F4ECE0", "text": "#4A3B2C", "ink_dark": "#3A2E22", "warm_brown": "#5A4632", "accent": "#B4643C", "numeral_white": "#FFFBF4" },
+        "palette": {
+          "cream_bg": "#F4ECE0",
+          "text": "#4A3B2C",
+          "ink_dark": "#3A2E22",
+          "warm_brown": "#5A4632",
+          "accent": "#B4643C",
+          "numeral_white": "#FFFBF4"
+        },
         "mood": "warm analog 35mm film, nostalgic, sun-kissed, light leaks + grain (2026 trend: vintage film frames, editorial nostalgia)",
-        "colorGrade": { "temperature": 4600, "saturation": 1.06, "contrast": 1.03, "glow": 0.16, "grain": 6, "vignette": true },
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/DancingScript.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+        "colorGrade": {
+          "temperature": 4600,
+          "saturation": 1.06,
+          "contrast": 1.03,
+          "glow": 0.16,
+          "grain": 6,
+          "vignette": true
+        },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/DancingScript.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        }
       },
       "modern_teal": {
         "background": "#F3F1EC",
-        "palette": { "cream_bg": "#F3F1EC", "text": "#1C2B30", "ink_dark": "#16232A", "accent": "#2E6F6A", "numeral_white": "#FBFDFC" },
+        "palette": {
+          "cream_bg": "#F3F1EC",
+          "text": "#1C2B30",
+          "ink_dark": "#16232A",
+          "accent": "#2E6F6A",
+          "numeral_white": "#FBFDFC"
+        },
         "mood": "modern minimal, contemporary, calm; 2026 Color-of-the-Year 'Transformative Teal' accent on lots of whitespace",
-        "colorGrade": { "temperature": 6000, "saturation": 1.06, "contrast": 1.05, "glow": 0.06 },
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+        "colorGrade": {
+          "temperature": 6000,
+          "saturation": 1.06,
+          "contrast": 1.05,
+          "glow": 0.06
+        },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        }
       },
       "teal_orange_editorial": {
         "background": "#F2EFE9",
-        "palette": { "cream_bg": "#F2EFE9", "text": "#182225", "ink_dark": "#12191C", "accent": "#D96F32", "numeral_white": "#FBFCFB" },
+        "palette": {
+          "cream_bg": "#F2EFE9",
+          "text": "#182225",
+          "ink_dark": "#12191C",
+          "accent": "#D96F32",
+          "numeral_white": "#FBFCFB"
+        },
         "mood": "editorial moody grade: teal shadows / orange highlights via bundled LUT (2026 trend), high-end fashion-film contrast",
-        "colorGrade": { "lut": "assets/luts/teal_orange_01.cube", "contrast": 1.03, "saturation": 1.02, "glow": 0.05 },
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" }
+        "colorGrade": {
+          "lut": "assets/luts/teal_orange_01.cube",
+          "contrast": 1.03,
+          "saturation": 1.02,
+          "glow": 0.05
+        },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        }
       },
       "super8_nostalgia": {
         "background": "#F3E9D7",
-        "palette": { "cream_bg": "#F3E9D7", "text": "#4A3A28", "ink_dark": "#3A2D1E", "accent": "#C96A2B", "numeral_white": "#FFFAF0" },
+        "palette": {
+          "cream_bg": "#F3E9D7",
+          "text": "#4A3A28",
+          "ink_dark": "#3A2D1E",
+          "accent": "#C96A2B",
+          "numeral_white": "#FFFAF0"
+        },
         "mood": "8mm home-movie nostalgia: warm faded Kodak LUT + grain + vignette + exposure flicker + film_damage dust overlay (2026 authenticity trend)",
-        "colorGrade": { "lut": "assets/luts/super8_kodak_01.cube", "grain": 12, "vignette": true, "flicker": 0.35, "glow": 0.1 },
+        "colorGrade": {
+          "lut": "assets/luts/super8_kodak_01.cube",
+          "grain": 12,
+          "vignette": true,
+          "flicker": 0.35,
+          "glow": 0.1
+        },
         "recommendedOverlays": [
-          { "path": "overlays/film_damage.mp4", "position": "fullscreen", "opacity": 0.5, "blend": "screen" },
-          { "variant": "warm", "position": "fullscreen", "opacity": 0.3, "blend": "screen" }
+          {
+            "path": "overlays/film_damage.mp4",
+            "position": "fullscreen",
+            "opacity": 0.5,
+            "blend": "screen"
+          },
+          {
+            "variant": "warm",
+            "position": "fullscreen",
+            "opacity": 0.3,
+            "blend": "screen"
+          }
         ],
-        "fonts": { "heading": "fonts/PlayfairDisplay.ttf", "script_accent": "fonts/DancingScript.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
+        "fonts": {
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/DancingScript.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
         "note": "moody_earth_01.cube is also bundled in assets/luts/ for a desaturated earthy variant."
       }
     },
     "fontRegistry": {
       "note": "VIETNAMESE RULE: any text with Vietnamese diacritics MUST use body (BeVietnamPro) or heading (PlayfairDisplay) — both carry full VN marks. Script/decorative fonts are Latin-only; use them for English words like 'the', 'save', or the couple's romanized names, never for Vietnamese sentences.",
-      "vietnamese_safe": ["fonts/BeVietnamPro-Regular.ttf", "fonts/PlayfairDisplay.ttf"],
-      "latin_decorative": ["fonts/GreatVibes-Regular.ttf", "fonts/DancingScript.ttf", "fonts/Italianno-Regular.ttf", "fonts/WindSong-Medium.ttf", "fonts/Pacifico-Regular.ttf", "fonts/Lobster-Regular.ttf", "fonts/Charm-Regular.ttf", "fonts/MeaCulpa-Regular.ttf"]
+      "vietnamese_safe": [
+        "fonts/BeVietnamPro-Regular.ttf",
+        "fonts/PlayfairDisplay.ttf"
+      ],
+      "latin_decorative": [
+        "fonts/GreatVibes-Regular.ttf",
+        "fonts/DancingScript.ttf",
+        "fonts/Italianno-Regular.ttf",
+        "fonts/WindSong-Medium.ttf",
+        "fonts/Pacifico-Regular.ttf",
+        "fonts/Lobster-Regular.ttf",
+        "fonts/Charm-Regular.ttf",
+        "fonts/MeaCulpa-Regular.ttf"
+      ]
     },
     "typeScale": {
       "note": "Pixel em sizes tuned for PlayfairDisplay/BeVietnamPro on 1920x1080. Numerals are display-only.",
-      "hero_numeral": [200, 260],
-      "display": [96, 120],
-      "heading": [78, 100],
-      "subheading": [48, 64],
-      "body": [30, 40],
-      "eyebrow": [64, 88]
+      "hero_numeral": [
+        200,
+        260
+      ],
+      "display": [
+        96,
+        120
+      ],
+      "heading": [
+        78,
+        100
+      ],
+      "subheading": [
+        48,
+        64
+      ],
+      "body": [
+        30,
+        40
+      ],
+      "eyebrow": [
+        64,
+        88
+      ]
     },
     "motionPresets": {
       "note": "Entrance animation: none | fade | slide_up | slide_down | slide_left | slide_right (directional = drift in from that edge, already smoothstep-eased). Continuous Ken-Burns is a separate image-layer field `motion`: zoom_in | zoom_out | pan_left | pan_right | pan_up | pan_down.",
-      "gentle": { "text": "fade", "photo": "fade" },
-      "rise": { "text": "fade", "photo": "slide_up" },
-      "drift_in": { "text": "fade", "photoFromEdge": true },
-      "kenburns_bg": { "photoMotion": "zoom_in", "use": "full-bleed backgrounds and emotional hero photos" },
-      "staggerSeconds": { "heading": 0.2, "body": 0.6, "photoBase": 0.15, "photoStep": 0.1 }
+      "gentle": {
+        "text": "fade",
+        "photo": "fade"
+      },
+      "rise": {
+        "text": "fade",
+        "photo": "slide_up"
+      },
+      "drift_in": {
+        "text": "fade",
+        "photoFromEdge": true
+      },
+      "kenburns_bg": {
+        "photoMotion": "zoom_in",
+        "use": "full-bleed backgrounds and emotional hero photos"
+      },
+      "staggerSeconds": {
+        "heading": 0.2,
+        "body": 0.6,
+        "photoBase": 0.15,
+        "photoStep": 0.1
+      }
     },
     "framePreset": {
       "note": "Give photo layers a `frame` for the Canva card look (rounded + white matte + soft shadow).",
-      "card": { "radius": 28, "border": 12, "borderColor": "#FFFFFF", "shadow": true },
-      "softCard": { "radius": 20, "border": 8, "borderColor": "#FFFFFF", "shadow": true }
+      "card": {
+        "radius": 28,
+        "border": 12,
+        "borderColor": "#FFFFFF",
+        "shadow": true
+      },
+      "softCard": {
+        "radius": 20,
+        "border": 8,
+        "borderColor": "#FFFFFF",
+        "shadow": true
+      }
     },
     "textWrap": {
       "note": "Set `wrap: true` on body text layers so the engine wraps to the slot width automatically (no manual \\n)."
     },
     "pacing": {
       "note": "Scene duration by emotional weight; keep within engine hard limits 2..30s.",
-      "quick_montage_beat": [2.5, 3.5],
-      "standard_scene": [4.5, 6.0],
-      "hero_or_emotional": [6.0, 8.0],
-      "closing_hold": [7.0, 10.0],
-      "transitionByMood": { "calm": [0.7, 1.2], "upbeat": [0.35, 0.6], "hard_cut": [0.0, 0.0] }
+      "quick_montage_beat": [
+        2.5,
+        3.5
+      ],
+      "standard_scene": [
+        4.5,
+        6.0
+      ],
+      "hero_or_emotional": [
+        6.0,
+        8.0
+      ],
+      "closing_hold": [
+        7.0,
+        10.0
+      ],
+      "transitionByMood": {
+        "calm": [
+          0.7,
+          1.2
+        ],
+        "upbeat": [
+          0.35,
+          0.6
+        ],
+        "hard_cut": [
+          0.0,
+          0.0
+        ]
+      }
     }
   },
-
   "layouts": [
     {
       "id": "hero_title_card",
       "kind": "layer_scene",
       "intent": "Opening 'Save the Date' / title beat over a hero photo.",
       "bestFor": "video opener, chapter title with a strong establishing photo",
-      "background": { "type": "photo_full_bleed", "slot": "bg" },
+      "background": {
+        "type": "photo_full_bleed",
+        "slot": "bg"
+      },
       "photoSlots": [
-        { "id": "bg", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover", "suggestedAnimation": "none", "role": "establishing background" },
-        { "id": "strip_1", "x": 160, "y": 358, "width": 504, "height": 577, "fit": "cover", "suggestedAnimation": "fade", "role": "left card" },
-        { "id": "strip_2", "x": 711, "y": 358, "width": 504, "height": 577, "fit": "cover", "suggestedAnimation": "fade", "role": "centre card" },
-        { "id": "strip_3", "x": 1262, "y": 358, "width": 504, "height": 577, "fit": "cover", "suggestedAnimation": "fade", "role": "right card" }
+        {
+          "id": "bg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "suggestedAnimation": "none",
+          "role": "establishing background"
+        },
+        {
+          "id": "strip_1",
+          "x": 160,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "suggestedAnimation": "fade",
+          "role": "left card"
+        },
+        {
+          "id": "strip_2",
+          "x": 711,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "suggestedAnimation": "fade",
+          "role": "centre card"
+        },
+        {
+          "id": "strip_3",
+          "x": 1262,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "suggestedAnimation": "fade",
+          "role": "right card"
+        }
       ],
       "panels": [
-        { "id": "title_pill", "type": "rect", "x": 108, "y": 95, "width": 1704, "height": 175, "color": "theme.cream_bg", "opacity": 0.95 },
-        { "id": "date_scrim", "type": "rect", "x": 0, "y": 580, "width": 1920, "height": 250, "color": "#000000", "opacity": 0.3, "z": "over_photos", "note": "drawn AFTER the photo strips so the big date stays legible over bright photos" }
+        {
+          "id": "title_pill",
+          "type": "rect",
+          "x": 108,
+          "y": 95,
+          "width": 1704,
+          "height": 175,
+          "color": "theme.cream_bg",
+          "opacity": 0.95
+        },
+        {
+          "id": "date_scrim",
+          "type": "rect",
+          "x": 0,
+          "y": 580,
+          "width": 1920,
+          "height": 250,
+          "color": "#000000",
+          "opacity": 0.3,
+          "z": "over_photos",
+          "note": "drawn AFTER the photo strips so the big date stays legible over bright photos"
+        }
       ],
       "textSlots": [
-        { "id": "eyebrow", "role": "eyebrow", "x": 636, "y": 150, "width": 648, "height": 151, "align": "center", "fontRole": "heading", "sizePx": 84, "note": "e.g. SAVE the DATE — split accent word into its own script-font slot if desired" },
-        { "id": "date", "role": "hero_numeral", "x": 257, "y": 610, "width": 1557, "height": 240, "align": "center", "fontRole": "heading", "sizePx": 230, "note": "big date; can be one string or three numeral slots. Text words longer than short numerals should pass sizePx <= 110." }
+        {
+          "id": "eyebrow",
+          "role": "eyebrow",
+          "x": 636,
+          "y": 150,
+          "width": 648,
+          "height": 151,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 84,
+          "note": "e.g. SAVE the DATE — split accent word into its own script-font slot if desired"
+        },
+        {
+          "id": "date",
+          "role": "hero_numeral",
+          "x": 257,
+          "y": 610,
+          "width": 1557,
+          "height": 240,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 230,
+          "note": "big date; can be one string or three numeral slots. Text words longer than short numerals should pass sizePx <= 110."
+        }
       ],
-      "durationRange": [5.0, 7.0]
+      "durationRange": [
+        5.0,
+        7.0
+      ]
     },
     {
       "id": "text_left_photo_right",
       "kind": "layer_scene",
       "intent": "Chapter intro: title + paragraph on the left, one tall photo bleeding off the right edge.",
       "bestFor": "invitation, 'how we met', reflective narration",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "hero", "x": 960, "y": -66, "width": 960, "height": 1175, "fit": "cover", "suggestedAnimation": "slide_left", "role": "tall bleed photo" }
+        {
+          "id": "hero",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left",
+          "role": "tall bleed photo"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 60, "y": 210, "width": 820, "height": 180, "align": "left", "fontRole": "heading", "sizePx": 100 },
-        { "id": "body", "role": "body", "x": 60, "y": 470, "width": 800, "height": 400, "align": "left", "fontRole": "body", "sizePx": 32, "lineSpacing": 18 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 60,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 100
+        },
+        {
+          "id": "body",
+          "role": "body",
+          "x": 60,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "align": "left",
+          "fontRole": "body",
+          "sizePx": 32,
+          "lineSpacing": 18
+        }
       ],
-      "decorSlots": [ { "id": "motif", "x": 872, "y": 486, "width": 176, "height": 171, "fit": "contain", "opacity": 0.7, "optional": true } ],
-      "durationRange": [5.0, 6.5]
+      "decorSlots": [
+        {
+          "id": "motif",
+          "x": 872,
+          "y": 486,
+          "width": 176,
+          "height": 171,
+          "fit": "contain",
+          "opacity": 0.7,
+          "optional": true
+        }
+      ],
+      "durationRange": [
+        5.0,
+        6.5
+      ]
     },
     {
       "id": "photo_left_text_right",
       "kind": "layer_scene",
       "intent": "Mirror of text_left_photo_right for variety across chapters.",
       "bestFor": "alternate every other chapter to avoid repetition",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "hero", "x": 0, "y": -66, "width": 960, "height": 1175, "fit": "cover", "suggestedAnimation": "slide_right", "role": "tall bleed photo" }
+        {
+          "id": "hero",
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right",
+          "role": "tall bleed photo"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 1040, "y": 210, "width": 820, "height": 180, "align": "left", "fontRole": "heading", "sizePx": 100 },
-        { "id": "body", "role": "body", "x": 1040, "y": 470, "width": 800, "height": 400, "align": "left", "fontRole": "body", "sizePx": 32, "lineSpacing": 18 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 1040,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 100
+        },
+        {
+          "id": "body",
+          "role": "body",
+          "x": 1040,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "align": "left",
+          "fontRole": "body",
+          "sizePx": 32,
+          "lineSpacing": 18
+        }
       ],
-      "durationRange": [5.0, 6.5]
+      "durationRange": [
+        5.0,
+        6.5
+      ]
     },
     {
       "id": "three_photo_row",
       "kind": "layer_scene",
       "intent": "Heading top-left, three framed photos across the middle, one caption line along the bottom.",
       "bestFor": "milestone recap, 'special day', trio of moments",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "left", "x": 108, "y": 265, "width": 551, "height": 551, "fit": "cover", "suggestedAnimation": "slide_right" },
-        { "id": "centre", "x": 709, "y": 106, "width": 500, "height": 760, "fit": "cover", "suggestedAnimation": "slide_up", "role": "tall centre" },
-        { "id": "right", "x": 1262, "y": 434, "width": 551, "height": 551, "fit": "cover", "suggestedAnimation": "slide_left" }
+        {
+          "id": "left",
+          "x": 108,
+          "y": 265,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "centre",
+          "x": 709,
+          "y": 106,
+          "width": 500,
+          "height": 760,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up",
+          "role": "tall centre"
+        },
+        {
+          "id": "right",
+          "x": 1262,
+          "y": 434,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 40, "y": 91, "width": 700, "height": 160, "align": "left", "fontRole": "heading", "sizePx": 90 },
-        { "id": "caption", "role": "body", "x": 60, "y": 880, "width": 1800, "height": 140, "align": "center", "fontRole": "body", "sizePx": 36, "lineSpacing": 16 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 40,
+          "y": 91,
+          "width": 700,
+          "height": 160,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 90
+        },
+        {
+          "id": "caption",
+          "role": "body",
+          "x": 60,
+          "y": 880,
+          "width": 1800,
+          "height": 140,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 36,
+          "lineSpacing": 16
+        }
       ],
-      "durationRange": [4.5, 6.0]
+      "durationRange": [
+        4.5,
+        6.0
+      ]
     },
     {
       "id": "two_photo_story",
       "kind": "layer_scene",
       "intent": "Left portrait + wide right photo, a small motif between, and a centred story paragraph across the bottom.",
       "bestFor": "narration beat pairing a portrait with a scene",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "portrait", "x": 71, "y": 130, "width": 620, "height": 660, "fit": "cover", "suggestedAnimation": "slide_up" },
-        { "id": "wide", "x": 906, "y": 120, "width": 940, "height": 620, "fit": "cover", "suggestedAnimation": "slide_left" }
+        {
+          "id": "portrait",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "wide",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
       ],
       "textSlots": [
-        { "id": "body", "role": "body", "x": 116, "y": 860, "width": 1688, "height": 200, "align": "center", "fontRole": "body", "sizePx": 33, "lineSpacing": 16 }
+        {
+          "id": "body",
+          "role": "body",
+          "x": 116,
+          "y": 860,
+          "width": 1688,
+          "height": 200,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 33,
+          "lineSpacing": 16
+        }
       ],
-      "decorSlots": [ { "id": "motif", "x": 720, "y": 380, "width": 176, "height": 171, "fit": "contain", "opacity": 0.6, "optional": true } ],
-      "durationRange": [4.5, 6.0]
+      "decorSlots": [
+        {
+          "id": "motif",
+          "x": 720,
+          "y": 380,
+          "width": 176,
+          "height": 171,
+          "fit": "contain",
+          "opacity": 0.6,
+          "optional": true
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6.0
+      ]
     },
     {
       "id": "collage_cluster_text",
       "kind": "layer_scene",
       "intent": "Two-to-three photo cluster on one side, heading + longer paragraph on the other.",
       "bestFor": "the big day, closing chapter with a message",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "tl", "x": 36, "y": 150, "width": 500, "height": 396, "fit": "cover", "suggestedAnimation": "slide_right" },
-        { "id": "bl", "x": 36, "y": 565, "width": 500, "height": 396, "fit": "cover", "suggestedAnimation": "slide_right" },
-        { "id": "hero", "x": 560, "y": 110, "width": 590, "height": 860, "fit": "cover", "suggestedAnimation": "slide_up", "role": "centre hero" }
+        {
+          "id": "tl",
+          "x": 36,
+          "y": 150,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "bl",
+          "x": 36,
+          "y": 565,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "hero",
+          "x": 560,
+          "y": 110,
+          "width": 590,
+          "height": 860,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up",
+          "role": "centre hero"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 1194, "y": 150, "width": 640, "height": 160, "align": "center", "fontRole": "heading", "sizePx": 82 },
-        { "id": "body", "role": "body", "x": 1200, "y": 400, "width": 640, "height": 620, "align": "center", "fontRole": "body", "sizePx": 32, "lineSpacing": 18 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 1194,
+          "y": 150,
+          "width": 640,
+          "height": 160,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 82
+        },
+        {
+          "id": "body",
+          "role": "body",
+          "x": 1200,
+          "y": 400,
+          "width": 640,
+          "height": 620,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 32,
+          "lineSpacing": 18
+        }
       ],
-      "durationRange": [4.5, 6.5]
+      "durationRange": [
+        4.5,
+        6.5
+      ]
     },
     {
       "id": "full_bleed_quote",
       "kind": "layer_scene",
       "intent": "One full-bleed photo under a soft scrim with a short centred quote — the emotional 'breath' beat.",
       "bestFor": "a single powerful photo + one line of feeling; use sparingly",
-      "background": { "type": "photo_full_bleed", "slot": "bg" },
-      "photoSlots": [ { "id": "bg", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover", "suggestedAnimation": "none" } ],
-      "panels": [ { "id": "scrim", "type": "rect", "x": 0, "y": 640, "width": 1920, "height": 440, "color": "#000000", "opacity": 0.35 } ],
-      "textSlots": [ { "id": "quote", "role": "subheading", "x": 260, "y": 820, "width": 1400, "height": 180, "align": "center", "fontRole": "heading", "color": "#FFFFFF", "sizePx": 56, "lineSpacing": 16 } ],
-      "durationRange": [5.0, 8.0]
+      "background": {
+        "type": "photo_full_bleed",
+        "slot": "bg"
+      },
+      "photoSlots": [
+        {
+          "id": "bg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "suggestedAnimation": "none"
+        }
+      ],
+      "panels": [
+        {
+          "id": "scrim",
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        }
+      ],
+      "textSlots": [
+        {
+          "id": "quote",
+          "role": "subheading",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "align": "center",
+          "fontRole": "heading",
+          "color": "#FFFFFF",
+          "sizePx": 56,
+          "lineSpacing": 16
+        }
+      ],
+      "durationRange": [
+        5.0,
+        8.0
+      ]
     },
     {
       "id": "polaroid_scatter",
       "kind": "layer_scene",
       "intent": "Three-to-four gently tilted photo prints scattered on cream with a heading — candid/scrapbook feel.",
       "bestFor": "candid montage, nostalgic memories (uses per-photo rotation)",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "p1", "x": 150, "y": 200, "width": 520, "height": 520, "fit": "cover", "rotation": -5, "suggestedAnimation": "fade" },
-        { "id": "p2", "x": 720, "y": 130, "width": 520, "height": 520, "fit": "cover", "rotation": 4, "suggestedAnimation": "fade" },
-        { "id": "p3", "x": 1250, "y": 240, "width": 520, "height": 520, "fit": "cover", "rotation": -3, "suggestedAnimation": "fade" }
+        {
+          "id": "p1",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "rotation": -5,
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p2",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "rotation": 4,
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p3",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "rotation": -3,
+          "suggestedAnimation": "fade"
+        }
       ],
-      "textSlots": [ { "id": "heading", "role": "heading", "x": 60, "y": 840, "width": 1800, "height": 160, "align": "center", "fontRole": "heading", "sizePx": 84 } ],
-      "durationRange": [4.5, 6.0]
+      "textSlots": [
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 84
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6.0
+      ]
     },
     {
       "id": "closing_names",
       "kind": "layer_scene",
       "intent": "Final card: couple names + date, centred, long slow fade to close the film.",
       "bestFor": "ending / thank-you card",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "textSlots": [
-        { "id": "names", "role": "display", "x": 260, "y": 380, "width": 1400, "height": 220, "align": "center", "fontRole": "script_accent", "sizePx": 140, "note": "romanized names OK in script font; Vietnamese → heading/body font" },
-        { "id": "date", "role": "subheading", "x": 260, "y": 640, "width": 1400, "height": 90, "align": "center", "fontRole": "body", "sizePx": 40 }
+        {
+          "id": "names",
+          "role": "display",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "align": "center",
+          "fontRole": "script_accent",
+          "sizePx": 140,
+          "note": "romanized names OK in script font; Vietnamese → heading/body font"
+        },
+        {
+          "id": "date",
+          "role": "subheading",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 40
+        }
       ],
-      "durationRange": [7.0, 10.0]
+      "durationRange": [
+        7.0,
+        10.0
+      ]
     }
   ],
-
   "montageBeats": [
-    { "id": "film_strip_up", "kind": "effect", "effect": "film_roll_up", "imageCount": [6, 12], "durationRange": [10, 16], "intent": "Vertical Fujifilm strip — high-energy chapter break set to a musical build." },
-    { "id": "film_strip_left", "kind": "effect", "effect": "film_roll_left", "imageCount": [6, 12], "durationRange": [10, 16], "intent": "Horizontal strip drifting right→left." },
-    { "id": "collage_grid_beat", "kind": "effect", "effect": "collage_grid", "imageCount": [2, 6], "durationRange": [4, 6], "intent": "Framed multi-photo grid over a blurred background." },
-    { "id": "polaroid_single", "kind": "effect", "effect": "polaroid", "imageCount": [1, 1], "durationRange": [4, 6], "intent": "One tilted instant-photo card, never cropped — candid moment." },
-    { "id": "circle_portrait", "kind": "effect", "effect": "circle_focus", "imageCount": [1, 1], "durationRange": [4, 6], "intent": "Circular-masked close-up — put the subject dead-centre." },
-    { "id": "memory_wall_beat", "kind": "effect", "effect": "memory_wall", "imageCount": [1, 5], "durationRange": [5, 8], "intent": "Dark film-wall scene; title=name, subtitle=year, caption=line. Pair with slide_left transitions." },
-    { "id": "hero_kenburns", "kind": "effect", "effect": "slow_zoom_in", "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Single hero photo with a slow Ken-Burns push-in — emotional single beat (whole-slide effect, no text overlay unless via captions)." },
-    { "id": "particle_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/particle_gather.mp4", "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Hero photo revealed by glowing particles gathering out of black (mask plays 4.5s then holds fully open) — magical opener or emotional turn; use at most once per video." },
-    { "id": "heart_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/heart_wand.mp4", "imageCount": [1, 1], "durationRange": [5.5, 8], "intent": "A magic wand draws a glowing heart out of black, the couple blooms inside it, then the reveal expands to the full photo (mask plays 5s then holds open) — romantic opener or first-kiss beat; use at most once per video, never alongside particle_reveal." },
-    { "id": "brush_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/brush_stroke.mp4", "imageCount": [1, 1], "durationRange": [5.5, 8], "intent": "The photo is painted onto black by five broad alternating brush swipes with ragged dry-brush edges (mask plays 5s then holds open) — artistic/scrapbook opener or chapter break; use at most one mask_reveal beat per video." }
+    {
+      "id": "film_strip_up",
+      "kind": "effect",
+      "effect": "film_roll_up",
+      "imageCount": [
+        6,
+        12
+      ],
+      "durationRange": [
+        10,
+        16
+      ],
+      "intent": "Vertical Fujifilm strip — high-energy chapter break set to a musical build."
+    },
+    {
+      "id": "film_strip_left",
+      "kind": "effect",
+      "effect": "film_roll_left",
+      "imageCount": [
+        6,
+        12
+      ],
+      "durationRange": [
+        10,
+        16
+      ],
+      "intent": "Horizontal strip drifting right→left."
+    },
+    {
+      "id": "collage_grid_beat",
+      "kind": "effect",
+      "effect": "collage_grid",
+      "imageCount": [
+        2,
+        6
+      ],
+      "durationRange": [
+        4,
+        6
+      ],
+      "intent": "Framed multi-photo grid over a blurred background."
+    },
+    {
+      "id": "polaroid_single",
+      "kind": "effect",
+      "effect": "polaroid",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        4,
+        6
+      ],
+      "intent": "One tilted instant-photo card, never cropped — candid moment."
+    },
+    {
+      "id": "circle_portrait",
+      "kind": "effect",
+      "effect": "circle_focus",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        4,
+        6
+      ],
+      "intent": "Circular-masked close-up — put the subject dead-centre."
+    },
+    {
+      "id": "memory_wall_beat",
+      "kind": "effect",
+      "effect": "memory_wall",
+      "imageCount": [
+        1,
+        5
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Dark film-wall scene; title=name, subtitle=year, caption=line. Pair with slide_left transitions."
+    },
+    {
+      "id": "hero_kenburns",
+      "kind": "effect",
+      "effect": "slow_zoom_in",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Single hero photo with a slow Ken-Burns push-in — emotional single beat (whole-slide effect, no text overlay unless via captions)."
+    },
+    {
+      "id": "particle_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/particle_gather.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Hero photo revealed by glowing particles gathering out of black (mask plays 4.5s then holds fully open) — magical opener or emotional turn; use at most once per video."
+    },
+    {
+      "id": "heart_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/heart_wand.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5.5,
+        8
+      ],
+      "intent": "A magic wand draws a glowing heart out of black, the couple blooms inside it, then the reveal expands to the full photo (mask plays 5s then holds open) — romantic opener or first-kiss beat; use at most once per video, never alongside particle_reveal."
+    },
+    {
+      "id": "brush_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/brush_stroke.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5.5,
+        8
+      ],
+      "intent": "The photo is painted onto black by five broad alternating brush swipes with ragged dry-brush edges (mask plays 5s then holds open) — artistic/scrapbook opener or chapter break; use at most one mask_reveal beat per video."
+    }
   ]
 }

@@ -108,9 +108,12 @@ test("writeRecipeCopy accepts only declared slots, and only strings", async () =
   const prompt = path.join(dir, "prompt.txt");
   fs.writeFileSync(prompt, "Đám cưới ở quê.");
 
+  // A scene whose copy is prose, not a {{token}} — token slots are FACTS the brief
+  // owns and the model is never offered (see the fabricated-names test below).
   const recipe = JSON.parse(fs.readFileSync("story-templates/warm-film-01.json", "utf8"));
-  const realScene = recipe.scenes.find((s) => s.text && Object.keys(s.text).length);
-  const realSlot = Object.keys(realScene.text)[0];
+  const isProse = (v) => !/\{\{\s*\w+\s*\}\}/.test(typeof v === "object" ? String(v?.value ?? "") : String(v ?? ""));
+  const realScene = recipe.scenes.find((s) => s.text && Object.values(s.text).some(isProse));
+  const realSlot = Object.entries(realScene.text).find(([, v]) => isProse(v))[0];
 
   await withMock(
     {
@@ -161,6 +164,52 @@ test("writeRecipeCopy accepts only declared slots, and only strings", async () =
   for (const slotMap of Object.values(doc.scenes)) {
     for (const value of Object.values(slotMap)) assert.equal(typeof value, "string");
   }
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("writeRecipeCopy will not invent the couple's names or their wedding date", async () => {
+  // Observed on a real run: asked to write a closing card, the model produced
+  // "Linh & Nam · 15.03.2025" for a couple whose names it had never been told. A
+  // fabricated name on the last frame of a wedding film is not a wording problem,
+  // it is the wrong film. Slots whose value is a {{token}} are FACTS the brief
+  // fills, and are withheld from the model entirely.
+  const dir = tmp();
+  const out = path.join(dir, "copy.json");
+  const recipePath = path.join(dir, "recipe.json");
+  fs.writeFileSync(
+    recipePath,
+    JSON.stringify({
+      id: "fact-test",
+      scenes: [
+        { id: "s01", layout: "full_bleed_quote", text: { quote: "" } },
+        { id: "s99_closing", layout: "closing_names", text: { names: "{{bride}} & {{groom}}", date: "{{date}}" } },
+      ],
+    })
+  );
+
+  await withMock(
+    {
+      scenes: {
+        s01: { quote: "Một câu chuyện có thật." },
+        s99_closing: { names: "Linh & Nam", date: "15.03.2025" }, // the hallucination
+      },
+    },
+    async (url) => {
+      const r = await run(["scripts/writeRecipeCopy.mjs", "--recipe", recipePath, "--out", out], url);
+      assert.equal(r.status, 0, r.stderr);
+    }
+  );
+
+  const doc = JSON.parse(fs.readFileSync(out, "utf8"));
+  assert.equal(doc.scenes.s01.quote, "Một câu chuyện có thật.", "real copy must still be written");
+  assert.equal(doc.scenes.s99_closing.names, "{{bride}} & {{groom}}", "the model overwrote the couple's names");
+  assert.equal(doc.scenes.s99_closing.date, "{{date}}", "the model overwrote the wedding date");
+  assert.equal(doc.factSlotsWithheld, 2, "the withheld slots must be reported, not silently dropped");
+
+  const text = JSON.stringify(doc);
+  assert.ok(!text.includes("Linh"), "an invented name leaked through");
+  assert.ok(!text.includes("15.03.2025"), "an invented date leaked through");
+
   fs.rmSync(dir, { recursive: true, force: true });
 });
 

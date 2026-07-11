@@ -439,7 +439,10 @@ let t = 0;
 const expandedScenes = expandScenes();
 const slides = expandedScenes.map((scene, i) => {
   const isLast = i === expandedScenes.length - 1;
-  const duration = durationFor(scene.durationRole, t);
+  // A composed storyboard (scripts/composeStoryboard.mjs) has already solved the
+  // durations against the photo budget and the track's length — a hand-written
+  // recipe has not, and keeps the role-based table below.
+  const duration = typeof scene.durationSec === "number" ? scene.durationSec : durationFor(scene.durationRole, t);
   const transition = transitionFor(scene.transitionRole, isLast);
   const slide = {
     id: scene.id,

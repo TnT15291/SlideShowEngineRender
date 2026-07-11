@@ -54,22 +54,50 @@ const prompt = exists(promptPath) ? fs.readFileSync(path.resolve(root, promptPat
 // --- what the recipe will actually accept -----------------------------------
 // The contract is the recipe's own text map: these scene ids and these slot ids,
 // nothing else. Build it once and use it both to prompt and to police.
-const slots = {};
-for (const scene of recipe.scenes ?? []) {
-  const ids = Object.keys(scene.text ?? {});
-  if (ids.length) slots[scene.id] = ids;
-}
-if (!Object.keys(slots).length) die(`recipe ${recipe.id} declares no text slots — nothing to write`);
+//
+// A slot whose value is a {{token}} is a FACT, not copy: the couple's names, their
+// wedding date. The brief fills those. A language model asked to write a closing
+// card will cheerfully invent "Linh & Nam · 15.03.2025" — observed, on a real run —
+// and a fabricated name on the last frame of a wedding film is not a wording
+// problem, it is the wrong film. So token slots are withheld from the model
+// entirely: they are never offered, and never accepted back.
+const TOKEN = /\{\{\s*\w+\s*\}\}/;
+const rawValue = (v) => (v && typeof v === "object" ? String(v.value ?? "") : String(v ?? ""));
 
-/** The canned copy, which is also the STUB: with no key the recipe ships as-is. */
+const slots = {};
+const factSlots = {};
+for (const scene of recipe.scenes ?? []) {
+  const writable = [];
+  const facts = [];
+  for (const [id, value] of Object.entries(scene.text ?? {})) {
+    (TOKEN.test(rawValue(value)) ? facts : writable).push(id);
+  }
+  if (writable.length) slots[scene.id] = writable;
+  if (facts.length) factSlots[scene.id] = facts;
+}
+if (!Object.keys(slots).length) die(`recipe ${recipe.id} declares no writable text slots — nothing to write`);
+
+/** The canned copy, which is also the STUB: with no key the recipe ships as-is.
+ *  Token slots pass through untouched so applyStoryTemplate can fill them from
+ *  the brief. */
 function cannedCopy() {
   const out = {};
   for (const scene of recipe.scenes ?? []) {
     if (!scene.text) continue;
     out[scene.id] = {};
     for (const [slotId, raw] of Object.entries(scene.text)) {
-      out[scene.id][slotId] = typeof raw === "object" ? String(raw.value ?? "") : String(raw ?? "");
+      out[scene.id][slotId] = rawValue(raw);
     }
+  }
+  return out;
+}
+
+/** What the model is shown: the writable slots only. It is never even told what
+ *  the closing card says, so it cannot be tempted to "improve" a name. */
+function writableCopy() {
+  const out = {};
+  for (const [sceneId, ids] of Object.entries(slots)) {
+    out[sceneId] = Object.fromEntries(ids.map((id) => [id, cannedCopy()[sceneId]?.[id] ?? ""]));
   }
   return out;
 }
@@ -113,9 +141,10 @@ if (hasKey()) {
       `Use ONLY the sceneIds and slotIds given in "slots" — you may not add scenes or slots. ` +
       `Return text and nothing else: no file paths, no effects, no durations, no fonts, no numbers of seconds. ` +
       `Keep each line under ${MAX_CHARS} characters; short is better than clever, and an eyebrow or a date is a few words, not a sentence. ` +
-      `Write in the language the customer used. Ground every line in what their photos actually show and in what they asked for — ` +
-      `this couple should not receive sentences that would fit any other couple.`,
-    user: JSON.stringify({ slots, currentCopy: cannedCopy(), ...grounding }),
+      `NEVER invent a fact. You do not know the couple's names, their wedding date, or the name of their town — ` +
+      `if it was not in the customer's own words, you may not put it on screen. Those slots are filled from the ` +
+      `brief and are not offered to you. Write about what is THERE: the places, the moments, the feeling.`,
+    user: JSON.stringify({ slots, currentCopy: writableCopy(), ...grounding }),
   });
 
   const scenes = raw?.scenes && typeof raw.scenes === "object" ? raw.scenes : {};
@@ -141,6 +170,7 @@ if (hasKey()) {
 }
 
 const totalSlots = Object.values(slots).reduce((n, ids) => n + ids.length, 0);
+const withheld = Object.values(factSlots).reduce((n, ids) => n + ids.length, 0);
 const doc = {
   version: 1,
   generatedAt: new Date().toISOString(),
@@ -148,6 +178,9 @@ const doc = {
   recipeId: recipe.id,
   rewritten,
   totalSlots,
+  // Named, not silent: whoever reads this file should be able to see that the
+  // names and the date came from the brief and not from a model.
+  factSlotsWithheld: withheld,
   scenes: copy,
 };
 fs.mkdirSync(path.dirname(path.resolve(root, outPath)), { recursive: true });
