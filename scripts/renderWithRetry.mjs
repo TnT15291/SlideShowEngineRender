@@ -34,7 +34,12 @@ const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
-const music = arg("--music", "music/a thousand years.mp3");
+// No default track — see applyStoryTemplate.
+const music = arg("--music", "");
+if (!music) {
+  console.error(`[renderWithRetry] FAILED: --music is required.`);
+  process.exit(1);
+}
 const directorArg = arg("--director", "analysis/director_notes.json");
 const planArg = arg("--plan", "analysis/story_plan.json");
 const TL = arg("--out", "timeline/quoc-nhi-full-v2.json");

@@ -62,10 +62,15 @@ const die = (msg) => {
   process.exit(1);
 };
 
-const DEFAULT_OUT = "analysis/photo_content.json";
-const SAMPLE_OUT = "analysis/photo_content.sample.json";
-
 const photosPath = arg("--photos", "analysis/photos.json");
+// Content belongs beside the photos it describes. Deriving the output from
+// --photos means `--photos projects/x/analysis/photos.json` can no longer write
+// its answer into the ROOT analysis/ — which a fixed default did, silently, and
+// which is how one job's semantic data ends up being read as another's.
+const analysisDir = path.dirname(photosPath.replace(/\\/g, "/")) || "analysis";
+const DEFAULT_OUT = `${analysisDir}/photo_content.json`;
+const SAMPLE_OUT = `${analysisDir}/photo_content.sample.json`;
+
 const outPath = arg("--out", DEFAULT_OUT);
 const outExplicit = process.argv.includes("--out");
 const model = arg("--model", null);

@@ -84,6 +84,16 @@ const base = path.basename(project.manifest.timeline, path.extname(project.manif
 const music = project.manifest.music[0];
 const musicPath = music ? project.rel(music) : "";
 const musicAnalysis = music ? `${analysisDir}/music/${path.parse(music).name}.json` : "";
+// template and premium pace every scene to the track, so a project with no music
+// is not a silent-video project — it is a misconfigured one. Say so here, rather
+// than letting an empty --music reach a generator that would treat it as "unset"
+// and reach for some other customer's song. (lite genuinely works without music.)
+if (!music && tier !== "lite") {
+  throw new Error(
+    `tier "${tier}" times its scenes to the music, but ${projectArg}/project.json has none.\n` +
+      `  Add one to "music": [ "music/<track>.mp3" ] — or run --tier lite, which does not need it.`
+  );
+}
 // Premium's generator needs a photo pool; prefer the policy-filtered one when the
 // plan phase produced it, exactly as the lite generator does.
 const photoPool = () => (fs.existsSync(path.resolve(root, selected)) ? selected : photos);

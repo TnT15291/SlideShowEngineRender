@@ -26,7 +26,14 @@ const arg = (flag, def) => {
 
 const templatePath = arg("--template", "story-templates/warm-film-01.json");
 const photosPath = arg("--photos", "analysis/photos.json");
-const musicPath = arg("--music", "music/a thousand years.mp3");
+// No default track. A hardcoded one meant that a caller passing --music "" (a
+// project with no music configured) silently scored ANOTHER customer's song and
+// read the root analysis for it — the wrong film, delivered without a warning.
+const musicPath = arg("--music", "");
+if (!musicPath) {
+  console.error(`[applyStoryTemplate] FAILED: --music is required (this recipe times its scenes to the track).`);
+  process.exit(1);
+}
 const libraryPath = arg("--library", "layouts/library.json");
 const briefPath = arg("--brief", "");
 // A project run redirects these so two customers on the same recipe never share a

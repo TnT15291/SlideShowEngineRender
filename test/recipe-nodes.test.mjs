@@ -201,3 +201,59 @@ test("a limited vision run may not masquerade as the complete set, in any projec
   assert.notEqual(r.status, 0, "a partial run was allowed to write the complete-set filename");
   assert.match(r.stderr, /complete set/);
 });
+
+test("vision writes its answer beside the photos it judged, not into the root", async () => {
+  // `--photos projects/x/analysis/photos.json` with no --out used to write the
+  // ROOT analysis/photo_content.json: one job's semantic data landing where every
+  // other job reads its own.
+  const dir = tmp();
+  const analysis = path.join(dir, "analysis");
+  fs.mkdirSync(analysis);
+  const photos = path.join(analysis, "photos.json");
+  fs.writeFileSync(
+    photos,
+    JSON.stringify({ photos: [{ file: "input/001.jpg", orient: "landscape", w: 100, h: 60, qualityNorm: 0.5 }] })
+  );
+
+  const r = await run(["scripts/analyzePhotoContent.mjs", "--photos", photos, "--dry-run"], "http://127.0.0.1:1");
+  assert.equal(r.status, 0, r.stderr);
+  // The dry run states where it WOULD write. That path must be inside this job.
+  const target = r.stdout.match(/would write\s+(.+)/)?.[1]?.trim();
+  assert.ok(target, `no "would write" line in output:\n${r.stdout}`);
+  assert.ok(
+    target.replace(/\\/g, "/").includes(path.basename(dir)),
+    `vision would write to "${target}" — outside the job that owns the photos`
+  );
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("a music-paced tier refuses a project with no music, instead of borrowing a track", () => {
+  // applyStoryTemplate/generateStoryClipV2/renderWithRetry each defaulted --music
+  // to one specific customer's song. runProject passes `--music ""` when a project
+  // has none, and an empty string reads as "flag absent" — so the run silently
+  // scored that other customer's track and read the ROOT analysis for it.
+  const dir = tmp();
+  fs.mkdirSync(path.join(dir, "input"));
+  fs.writeFileSync(path.join(dir, "input", "a.jpg"), "x");
+  fs.writeFileSync(path.join(dir, "prompt.txt"), "test");
+  fs.writeFileSync(
+    path.join(dir, "project.json"),
+    JSON.stringify({
+      version: 1, id: "no-music", name: "No music", promptFile: "prompt.txt",
+      inputDir: "input", music: [], analysisDir: "analysis",
+      timeline: "timeline/timeline.json", output: "output/final.mp4",
+      quality: "draft", tier: "premium",
+    })
+  );
+
+  const r = spawnSync(node, ["scripts/runProject.mjs", "--project", dir], { cwd: root, encoding: "utf8" });
+  assert.notEqual(r.status, 0, "a premium run with no music was allowed to proceed");
+  assert.match(r.stderr + r.stdout, /music/i);
+
+  // And the generators themselves refuse rather than reaching for a default.
+  const g = spawnSync(node, ["scripts/generateStoryClipV2.mjs", "--music", ""], { cwd: root, encoding: "utf8" });
+  assert.notEqual(g.status, 0, "generateStoryClipV2 accepted an empty --music");
+  assert.match(g.stderr, /--music is required/);
+
+  fs.rmSync(dir, { recursive: true, force: true });
+});

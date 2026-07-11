@@ -31,7 +31,13 @@ const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
-const musicPath = arg("--music", "music/a thousand years.mp3");
+// No default track — see applyStoryTemplate. A hardcoded default let an empty
+// --music silently fall back to one specific customer's song.
+const musicPath = arg("--music", "");
+if (!musicPath) {
+  console.error(`[generateStoryClipV2] FAILED: --music is required (durations are paced to the track's energy).`);
+  process.exit(1);
+}
 const outPath = arg("--out", "timeline/quoc-nhi-full-v2.json");
 const directorArg = arg("--director", "analysis/director_notes.json");
 const planArg = arg("--plan", "analysis/story_plan.json");
