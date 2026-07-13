@@ -60,6 +60,12 @@ const PRUNED_PHOTOS = `${analysisDir}/photos.pruned.json`;
 const storyboardPath = `${analysisDir}/storyboard.json`;
 const copyPath = `${analysisDir}/recipe_copy.json`;
 const promptPath = arg("--prompt", jobDir ? `${jobDir}/prompt.txt` : "prompt.txt");
+const directivesPath = arg("--directives", jobDir ? `${jobDir}/directives.json` : "directives.json");
+// The music-window decision (premium gate 4b). "auto" reproduces the tier-1 rule; a
+// customer's explicit full_song rides in here together with --accept-misfit, because a
+// full song they chose after being told the cost is a decision, not a misfit.
+const musicMode = arg("--music-mode", "");
+const acceptMisfit = process.argv.includes("--accept-misfit");
 
 /** The couple's names and their date. The copywriter is never shown these — it
  *  invented "Linh & Nam" once — so the brief is the only thing that can fill them. */
@@ -111,6 +117,13 @@ function generate(mode, photosFile) {
       "--name", projectName,
       "--quality", quality,
       "--max-reuse", maxReuse,
+      // The composer solves the shot list against the photo pool and the music WINDOW —
+      // and both of those depend on the brief (excluded photos) and the ledger (an ordered
+      // length, a forced full_song). Without them it solves a different job than the one
+      // applyStoryTemplate is about to render, and the build dies on the misfit check.
+      ...(fs.existsSync(project_brief()) ? ["--brief", path.relative(root, project_brief()).replace(/\\/g, "/")] : []),
+      ...(fs.existsSync(path.resolve(root, directivesPath)) ? ["--directives", directivesPath] : []),
+      ...(musicMode ? ["--music-mode", musicMode] : []),
       "--out", storyboardPath,
     ],
     "node 8a: compose storyboard"
@@ -142,7 +155,18 @@ function generate(mode, photosFile) {
       "--name", projectName,
       "--quality", quality,
       ...(mode !== "lite" ? ["--copy", copyPath] : []),
+      // The ledger travels into the LITE fallback too. Falling back is us failing to
+      // build the film we designed — it is not the customer withdrawing what they
+      // asked for. A fallback that quietly drops their orders would be a second,
+      // invisible failure stacked on the first.
+      ...(fs.existsSync(path.resolve(root, directivesPath)) ? ["--directives", directivesPath] : []),
       ...(fs.existsSync(project_brief()) ? ["--brief", path.relative(root, project_brief()).replace(/\\/g, "/")] : []),
+      // The same window the composer solved against — gate 4b's decision, or "auto"
+      // (the tier-1 rule) when no gate ran. And the misfit escape travels WITH a
+      // customer-chosen full song: they were told each photo would hold ~Ns and chose
+      // it anyway, which is exactly the human-in-writing that flag exists to record.
+      ...(musicMode ? ["--music-mode", musicMode] : []),
+      ...(acceptMisfit ? ["--accept-misfit"] : []),
     ],
     "node 8c: render the storyboard"
   );

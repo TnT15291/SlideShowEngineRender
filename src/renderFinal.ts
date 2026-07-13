@@ -82,15 +82,23 @@ export async function renderFinal(
   if (hasMusic && plan.audio) {
     const a = plan.audio;
 
-    // Track lengths drive playlist looping; dry-run skips the probe.
+    // Track lengths drive playlist looping; dry-run skips the probe. The stand-in
+    // length must cover the track's own edit window: a flat 60 failed every timeline
+    // whose highlight starts after 1:00 (end = min(60, edit.end) landed before the
+    // start), so a valid edit died in dry-run and — in the premium loop — silently
+    // cost the customer the director layer. Trusting `end` here still catches a
+    // start >= end edit; the probe still guards the real render.
     const trackDurations = dryRun
-      ? a.tracks.map(() => 60)
+      ? a.tracks.map((t) => Math.max(60, t.end ?? 0))
       : await Promise.all(a.tracks.map((t) => probeDurationSeconds(t.path)));
     const resolved = trackDurations.map((d, i) => {
       if (d === undefined) {
         throw new FfmpegError(`Cannot read duration of music: ${a.tracks[i].path}`);
       }
-      return d;
+      const start = a.tracks[i].start ?? 0;
+      const end = Math.min(d, a.tracks[i].end ?? d);
+      if (end <= start) throw new FfmpegError(`Invalid music edit: ${start}s–${end}s`);
+      return end - start;
     });
 
     // acrossfade needs each segment to outlast the crossfade.

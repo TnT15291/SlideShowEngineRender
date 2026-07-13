@@ -26,12 +26,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON, str, oneOf } from "./lib/deepseek.mjs";
+import { loadLedger, active, applyToDirectorNotes } from "./lib/directives.mjs";
+import {
+  describeCapabilities, SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS,
+} from "./lib/engineCapabilities.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const directivesPath = arg("--directives", "");
 const optionsPath = arg("--options", "analysis/story_options.json");
 const choiceArg = (arg("--choice", "") || "").toUpperCase();
 const selectionPath = arg("--selection", "analysis/selected_story.json");
@@ -53,6 +58,7 @@ const tlSchema = JSON.parse(fs.readFileSync(path.resolve(root, "schema/timeline.
 const EFFECTS = new Set(tlSchema.$defs.effect.enum);
 const TRANSITIONS = new Set(tlSchema.$defs.transitionType.enum);
 const CURVES = new Set(tlSchema.$defs.curvesPreset.enum);
+const library = JSON.parse(fs.readFileSync(path.resolve(root, arg("--library", "layouts/library.json")), "utf8"));
 
 // --- load the chosen story option ------------------------------------------
 const absOptions = path.resolve(root, optionsPath);
@@ -85,9 +91,17 @@ if (musicPath) {
   const abs = path.resolve(root, `${analysisDir}/music/${name}.json`);
   if (fs.existsSync(abs)) {
     const m = JSON.parse(fs.readFileSync(abs, "utf8"));
-    musicSummary = { bpm: m.bpmEstimate, energy: m.energy?.mean };
+    musicSummary = { bpm: m.bpmEstimate, energy: m.energy?.mean, seconds: Math.round(m.duration ?? 0) };
   }
 }
+
+/** SECONDS OF FILM EACH PHOTOGRAPH MUST CARRY — the one number that should govern the
+ *  director's choices, and the one it was never shown. At 8s/photo a static card is dead
+ *  air and every scene needs motion; at 2s/photo single-photo scenes waste the set and the
+ *  film wants montages. The director was picking effects blind to which job it was on. */
+const photoBudget = musicSummary?.seconds && optionsDoc.profile?.count
+  ? +(musicSummary.seconds / optionsDoc.profile.count).toFixed(1)
+  : null;
 
 function loadAssetMenu() {
   const abs = path.resolve(root, assetsPath);
@@ -130,16 +144,27 @@ function buildSystem() {
     "You are the director of a wedding film. You are given ONE chosen story direction and must turn it into (1) a creative brief and (2) concrete direction for a fixed render engine.",
     "You DECIDE FEELING AND WHICH TOOLS TO USE. You do NOT decide numbers: never output durations, timings, coordinates, cut points, file paths, or quality settings — other stages compute those.",
     "",
-    "Choose effects/transitions ONLY from these engine vocabularies (exact strings):",
-    `EFFECTS: ${[...EFFECTS].join(", ")}`,
-    `TRANSITIONS: ${[...TRANSITIONS].join(", ")}`,
-    `COLOR CURVES: ${[...CURVES].join(", ")} (or null)`,
-    "MONTAGE EFFECT must be one of: film_roll_up, film_roll_left, film_roll_right.",
+    // THE ENGINE, DESCRIBED. This used to be three flat lists of enum strings, and the
+    // director had no way to know that `still` is dead air on a long hold, that layer_scene
+    // is the only effect that can carry text, or that a montage spends photographs six
+    // times faster than a single frame does. It picked plausible names and the composer
+    // ignored all but one of them. A director that cannot see the instrument cannot score
+    // for it.
+    "THE ENGINE YOU ARE DIRECTING. Everything it can do is below. Use exact id strings; never invent one.",
+    JSON.stringify(describeCapabilities({ library }), null, 1),
+    "",
+    "The shot list is COMPOSED BY CODE against the photo budget — you do not choose how many scenes there are or how long they run. What you choose is the VOCABULARY the film is built from:",
+    "- singlePhotoEffects: 4-7 effects for scenes that hold ONE photograph full-frame. This is most of the film. Pick effects that MOVE unless you want a deliberately still beat, and pick enough of them that no two neighbouring scenes look alike.",
+    "- montageEffects: 2-3 effects for scenes that spend MANY photographs at once.",
+    "- transitionPalette: 3-4 transitions, ordered [everyday, act-change, energy-peak]. Variety here is what stops the film feeling mechanical.",
+    "- layoutMix: 0.15-0.5 — the fraction of scenes that are designed CARDS (layer_scene: photo + text). Cards are punctuation. A film made mostly of cards looks like a slideshow, not a film.",
+    "",
     "EASING must be one of: gentle, snap, bounce. OVERLAY must be one of: warm, soft, sunset, or null.",
     "",
     "Return ONE JSON object of exactly this shape:",
     '{"creative_brief":{"style":str,"emotionalArc":str,"colorMood":str,"captionPhilosophy":str,"pacing":"slow|medium|fast|dynamic","structure":str,"photoSelection":str},',
-    '"director_notes":{"openingEffect":effect,"defaultTransition":transition,"endingTransition":transition,"montageEffect":montage,"heroEffect":effect,"portraitEffect":effect,"groupEffect":effect,"detailEffect":effect,"colorCurves":curves_or_null,"overlayVariant":overlay_or_null,"easingCalm":easing,"easingEnergetic":easing,"notes":[str,...]},',
+    '"director_notes":{"singlePhotoEffects":[effect,...],"montageEffects":[effect,...],"transitionPalette":[transition,...],"layoutMix":number,',
+    '"openingEffect":effect,"defaultTransition":transition,"endingTransition":transition,"montageEffect":montage,"heroEffect":effect,"portraitEffect":effect,"groupEffect":effect,"detailEffect":effect,"colorCurves":curves_or_null,"overlayVariant":overlay_or_null,"easingCalm":easing,"easingEnergetic":easing,"notes":[str,...]},',
     '"asset_choices":{"titleFontId":font_id_or_null,"bodyFontId":font_id_or_null,"overlayId":overlay_id_or_null,"openingBackgroundId":background_id_or_null,"endingBackgroundId":background_id_or_null,"frameId":frame_id_or_null}}',
   ].join("\n");
 }
@@ -157,7 +182,25 @@ function buildUser() {
     lines.push("", `Photo set: ${p.count} photos, ${p.heroCount} hero-worthy, dominant emotion ${p.topEmotion || "n/a"}.`);
     if (p.tags) lines.push(`Content tags present: ${Object.keys(p.tags).join(", ") || "none"}.`);
   }
-  if (musicSummary) lines.push("", `Music: ~${musicSummary.bpm} BPM, energy ${Number(musicSummary.energy ?? 0).toFixed(2)} (context for pacing only).`);
+  if (musicSummary) lines.push("", `Music: ~${musicSummary.bpm} BPM, energy ${Number(musicSummary.energy ?? 0).toFixed(2)}, ${musicSummary.seconds}s (context for pacing only).`);
+  if (photoBudget) {
+    lines.push(
+      "",
+      `PHOTO BUDGET: ${photoBudget}s of film per photograph.`,
+      photoBudget >= 6
+        ? `That is a LONG hold. Every photograph is on screen for about ${photoBudget} seconds, so choose single-photo effects that MOVE — a static frame held that long is dead air. Keep montages few; this couple does not have the photographs to spend on them.`
+        : photoBudget <= 3
+          ? `That is a SHORT hold. There are more photographs than the song has room for, so lean on montages, which spend many at once, and keep single-photo scenes for the beats that matter.`
+          : `That is a comfortable hold. Mix single-photo scenes with montages freely.`
+    );
+  }
+  if (orders.length) {
+    lines.push("", "THE CUSTOMER'S OWN ORDERS. These are not suggestions — build your notes around them:");
+    for (const d of orders) {
+      const where = d.scope.act ? ` for the ${d.scope.act} act` : d.scope.role ? ` for ${d.scope.role} shots` : "";
+      lines.push(`- ${d.op} ${d.kind} ${JSON.stringify(d.target)}${where} — they wrote: "${d.quote}"`);
+    }
+  }
   if (assetMenu) {
     lines.push(
       "",
@@ -183,6 +226,15 @@ function stubDoc() {
       photoSelection: "Lead with hero-worthy frames; group candids into montages; keep tender portraits full and unhurried.",
     },
     director_notes: {
+      // The STUB is a real film too. It used to name one montage effect and leave the
+      // composer to build everything else out of layer_scene — so a no-key run produced
+      // the same A-B-C rotation the paid run did.
+      singlePhotoEffects: energetic
+        ? ["slow_zoom_in", "kenburns_tr", "pan_left", "slow_zoom_out", "kenburns_bl", "circle_focus"]
+        : ["slow_zoom_in", "kenburns_tl", "pan_right", "slow_zoom_out", "dark_feather", "portrait_blur_background"],
+      montageEffects: energetic ? ["collage_grid", "film_roll_left", "memory_wall"] : ["film_roll_up", "memory_wall", "collage_grid"],
+      transitionPalette: energetic ? ["crossfade", "dissolve", "whip_left"] : ["crossfade", "dissolve", "fade_slow"],
+      layoutMix: energetic ? 0.25 : 0.35,
       openingEffect: "slow_zoom_in",
       defaultTransition: "crossfade",
       endingTransition: energetic ? "fade_to_white" : "fade_slow",
@@ -229,6 +281,19 @@ function validateBrief(raw) {
     photoSelection: str(b.photoSelection, 240) || "Lead with hero frames; montage the candids.",
   };
 }
+/** Keep only the ids the engine really has, de-duplicated, in the director's order.
+ *
+ *  A palette is a LIST, so the guardrail has to work on lists: `oneOf` clamps a single
+ *  value and would have quietly turned a six-effect palette into one effect. Anything not
+ *  on the menu is dropped rather than substituted — a director who names three real
+ *  effects and one imaginary one meant the three, and inventing a fourth on their behalf
+ *  is how a guardrail starts making artistic decisions of its own. */
+function palette(raw, allowed, { min = 1, max = 8 } = {}) {
+  if (!Array.isArray(raw)) return [];
+  const out = [...new Set(raw.map((v) => str(v, 40)).filter((v) => allowed.has(v)))].slice(0, max);
+  return out.length >= min ? out : [];
+}
+
 function validateNotes(raw) {
   const d = raw && typeof raw === "object" ? raw : {};
   const curves = d.colorCurves == null ? null : oneOf(d.colorCurves, CURVES, null);
@@ -236,7 +301,15 @@ function validateNotes(raw) {
   const notes = Array.isArray(d.notes)
     ? d.notes.map((n) => str(n, 200)).filter(Boolean).slice(0, 6)
     : [];
+  const mix = Number(d.layoutMix);
   return {
+    // The vocabulary the composer builds the film out of. Empty means "the model said
+    // nothing usable" — composeStoryboard then falls back to the house grammar, which is
+    // varied on purpose. It never falls back to ONE effect, which is what it used to do.
+    singlePhotoEffects: palette(d.singlePhotoEffects, SINGLE_PHOTO_EFFECTS, { min: 2, max: 7 }),
+    montageEffects: palette(d.montageEffects, MONTAGE_EFFECTS, { min: 1, max: 4 }),
+    transitionPalette: palette(d.transitionPalette, TRANSITIONS, { min: 2, max: 5 }),
+    layoutMix: Number.isFinite(mix) ? Math.min(0.5, Math.max(0.15, mix)) : 0.35,
     openingEffect: effect(d.openingEffect, "slow_zoom_in"),
     defaultTransition: transition(d.defaultTransition, "crossfade"),
     endingTransition: transition(d.endingTransition, "fade_slow"),
@@ -268,6 +341,10 @@ function validateAssetChoices(raw) {
   };
 }
 
+// --- the customer's orders -------------------------------------------------
+const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
+const orders = active(ledger);
+
 // --- run -------------------------------------------------------------------
 const model = defaultModel;
 let raw;
@@ -289,6 +366,12 @@ const out = {
   director_notes: validateNotes(raw.director_notes),
   asset_choices: validateAssetChoices(raw.asset_choices),
 };
+
+// THE MODEL WAS ASKED; THIS IS WHAT MAKES IT SO. The orders are in the prompt above,
+// but a model that is asked nicely still drifts — and a drifted note is indistinguish-
+// able from a note the customer chose. Enforcement must not depend on compliance.
+const enforced = applyToDirectorNotes(out, orders);
+if (enforced.length) out.enforcedDirectives = enforced;
 
 const absOut = path.resolve(root, outPath);
 fs.mkdirSync(path.dirname(absOut), { recursive: true });

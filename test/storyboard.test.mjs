@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { composeStoryboard, planSceneCount } from "../scripts/lib/storyboard.mjs";
 import { makeEnergy } from "../scripts/lib/pacing.mjs";
+import { MOTION_EFFECTS } from "../scripts/lib/engineCapabilities.mjs";
 
 const library = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
 
@@ -64,8 +65,8 @@ test("scene count follows music length, not a constant", () => {
 
 test("layouts rotate — a 23-scene film is not 23 copies of one frame", () => {
   const sb = composeStoryboard({ photoCount: 23, musicDuration: 203, energy: track(203), library });
-  const used = new Set(sb.scenes.map((s) => s.layout).filter(Boolean));
-  assert.ok(used.size >= 3, `only ${used.size} distinct layout(s) across ${sb.scenes.length} scenes`);
+  const used = new Set(sb.scenes.map((s) => s.layout || s.effect).filter(Boolean));
+  assert.ok(used.size >= 3, `only ${used.size} distinct visual treatment(s) across ${sb.scenes.length} scenes`);
 });
 
 test("the film always ends on a closing card, and the closing card never stretches", () => {
@@ -76,6 +77,86 @@ test("the film always ends on a closing card, and the closing card never stretch
     assert.equal(last.photos, 0);
     assert.equal(last.duration, 8, "a full stop does not get longer because the song did");
   }
+});
+
+// ---------------------------------------------------------------------------
+// MONOTONY IS A BUG, AND THESE ARE THE ASSERTIONS THAT SAY SO.
+//
+// The composer passed every test above while emitting 23 scenes that were all layer_scene,
+// on a three-layout rotation, each holding one photo for ten seconds: A-B-C-A-B-C. Every
+// property the suite checked — photo budget, film length, scene count — was correct. The
+// film was still unwatchable, and it looked cheaper than the template tier.
+//
+// "Distinct treatments >= 3" was the only variety check there was, and three layouts on
+// endless rotation passes it. So the bar moves here: an effect vocabulary, a mix of scene
+// shapes, and a duration curve that is not flat.
+
+test("the engine has 24 effects — a premium film may not be built from one", () => {
+  const sb = composeStoryboard({ photoCount: 23, musicDuration: 203, energy: track(203), library });
+  const effects = new Set(sb.scenes.map((s) => s.effect));
+
+  assert.ok(
+    effects.size >= 4,
+    `the whole film is made of ${[...effects].join(", ")} — ${effects.size} effect(s) across ${sb.scenes.length} scenes`
+  );
+
+  // The specific failure: layer_scene is the only effect that can carry text, and it is the
+  // only one that cannot move. A film made mostly of it is a slideshow of captioned cards.
+  const cards = sb.scenes.filter((s) => s.effect === "layer_scene").length;
+  assert.ok(
+    cards / sb.scenes.length < 0.65,
+    `${cards} of ${sb.scenes.length} scenes are text cards — that is a slideshow, not a film`
+  );
+
+  // A photo-poor job holds each frame for many seconds. A frame that does not move over an
+  // eight-second hold is dead air, so most single-photo scenes must be motion effects.
+  const singles = sb.scenes.filter((s) => s.effect !== "layer_scene" && s.photos === 1);
+  const moving = singles.filter((s) => MOTION_EFFECTS.includes(s.effect));
+  assert.ok(
+    singles.length === 0 || moving.length >= singles.length / 2,
+    `${singles.length - moving.length} of ${singles.length} held frames are static on a ${sb.fit.budgetSecondsPerPhoto}s/photo budget`
+  );
+});
+
+test("no two neighbouring scenes are the same frame", () => {
+  const sb = composeStoryboard({ photoCount: 60, musicDuration: 180, energy: track(180), library });
+  for (let i = 1; i < sb.scenes.length; i++) {
+    const a = sb.scenes[i - 1], b = sb.scenes[i];
+    assert.ok(
+      !(a.effect === b.effect && a.layout === b.layout && a.effect !== "layer_scene"),
+      `scenes ${a.id} and ${b.id} are both ${b.effect}${b.layout ? ` / ${b.layout}` : ""}`
+    );
+  }
+});
+
+test("the rhythm is bimodal: frames that breathe, montages that sweep", () => {
+  // 120 photos over 200s is 1.7s/photo. Spending them one per scene would leave most of
+  // the set on the floor; spending them evenly makes every scene identical. Neither is a
+  // film. The surplus belongs in a few montage beats.
+  const sb = composeStoryboard({ photoCount: 120, musicDuration: 200, energy: track(200), library });
+
+  const montages = sb.scenes.filter((s) => s.photos >= 4);
+  assert.ok(montages.length >= 2, `only ${montages.length} montage beat(s) for 120 photos in 200s`);
+
+  const singles = sb.scenes.filter((s) => s.photos === 1);
+  assert.ok(singles.length >= 2, "a film of nothing but montages has no place to breathe");
+
+  // And the surplus must actually be SPENT — the point of concentrating it is to use it.
+  assert.ok(
+    photosIn(sb) >= 120 * 0.9,
+    `${photosIn(sb)} of 120 photos placed — the couple's photographs are being left on the floor`
+  );
+});
+
+test("scene durations follow the shape, not a constant", () => {
+  const sb = composeStoryboard({ photoCount: 120, musicDuration: 200, energy: track(200), library });
+  const body = sb.scenes.filter((s) => s.id !== "s99_closing");
+  const spread = Math.max(...body.map((s) => s.duration)) - Math.min(...body.map((s) => s.duration));
+
+  // Every premium scene used to come out within a tenth of a second of every other, because
+  // the durations were re-derived downstream from a flat table. A montage of eight photos
+  // cannot land in the same five seconds as a single held portrait.
+  assert.ok(spread > 1.5, `every scene runs within ${spread.toFixed(2)}s of every other — the film has no rhythm`);
 });
 
 test("planSceneCount: the binding constraint is named, not guessed", () => {
