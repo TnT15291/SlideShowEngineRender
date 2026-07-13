@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "selected-music.schema.json",
+  "title": "Premium gate 4b — the customer's decision about the music window",
+  "description": "Written by scripts/selectMusicEdit.mjs. `mode` is what the build must do with the track; `source` says WHO decided (user > ledger/brief > natural > auto-timeout). A zero-length decisionWindow means nobody was asked — a legitimate state that must never be dressed up as a deadline the customer was given.",
+  "type": "object",
+  "required": [
+    "generatedBy",
+    "generatedAt",
+    "mode",
+    "source",
+    "reason",
+    "sourceDuration",
+    "photoCount",
+    "decisionWindow"
+  ],
+  "properties": {
+    "generatedBy": { "const": "node4b:music-choice" },
+    "generatedAt": { "type": "string" },
+    "mode": { "enum": ["highlight", "full_song", "auto"] },
+    "source": { "enum": ["user", "ledger", "brief", "natural", "auto"] },
+    "reason": { "type": "string", "maxLength": 300 },
+    "late": { "type": "boolean" },
+    "reply": { "type": "string", "maxLength": 500 },
+    "channel": { "type": "string" },
+    "customerId": { "type": "string" },
+    "sourceDuration": { "type": "number", "minimum": 0 },
+    "photoCount": { "type": "integer", "minimum": 1 },
+    "secondsPerPhotoFullSong": { "type": "number", "minimum": 0 },
+    "threshold": { "type": "number" },
+    "preview": {
+      "type": "object",
+      "description": "The highlight window this gate offered — chooseMusicEdit's answer at decision time, kept so the message, the record and the cut describe the same excerpt.",
+      "required": ["mode", "start", "end", "duration"],
+      "properties": {
+        "mode": { "enum": ["highlight", "full_song"] },
+        "start": { "type": "number", "minimum": 0 },
+        "end": { "type": "number", "minimum": 0 },
+        "duration": { "type": "number", "minimum": 0 }
+      }
+    },
+    "decisionWindow": {
+      "type": "object",
+      "required": ["openedAt", "deadlineAt", "timeoutHours"],
+      "properties": {
+        "openedAt": { "type": "string" },
+        "deadlineAt": { "type": "string" },
+        "timeoutHours": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

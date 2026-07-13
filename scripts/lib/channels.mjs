@@ -34,11 +34,44 @@ export function renderOptionsMessage(optionsDoc, { deadlineAt }) {
   return lines.join("\n");
 }
 
+/** The music-window question (premium gate 4b). Two options, concrete numbers — the
+ *  customer is deciding about THEIR song and THEIR photos, so the message says exactly
+ *  what each answer costs. Same reply contract as the story message: one letter. */
+export function renderMusicChoiceMessage({ sourceDuration, photoCount, preview, deadlineAt, defaultMode }) {
+  const mins = Math.floor(sourceDuration / 60);
+  const secs = Math.round(sourceDuration % 60);
+  const perPhoto = (sourceDuration / photoCount).toFixed(1);
+  const hl = Math.round(preview.duration);
+  const lines = [
+    `Chào bạn! Bài hát bạn chọn dài ${mins}:${String(secs).padStart(2, "0")}, và bộ ảnh có ${photoCount} tấm.`,
+    `Nếu chạy trọn bài, mỗi tấm ảnh sẽ đứng trên màn hình ~${perPhoto} giây. Bạn muốn dựng theo cách nào?`,
+    "",
+    `A. Cắt đoạn hay nhất của bài (~${hl} giây, từ ${fmt(preview.start)} đến ${fmt(preview.end)})`,
+    `   — phim gọn và đầy, không khoảnh khắc nào phải kéo dài.`,
+    `B. Giữ trọn bài hát — phim dài hơn, mỗi tấm ảnh xuất hiện lâu hơn trên màn hình.`,
+    "",
+    `Chỉ cần nhắn lại một chữ cái (A hoặc B).`,
+    `Nếu sau ${new Date(deadlineAt).toLocaleString("vi-VN")} mình chưa nhận được trả lời,`,
+    `mình sẽ dựng theo ${defaultMode === "full_song" ? "B (trọn bài)" : "A (đoạn hay nhất)"} để kịp giao đúng hẹn.`,
+  ];
+  return lines.join("\n");
+}
+
+function fmt(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 /**
  * Resolve a transport. Returns `{ name, send(text) -> { via } }`.
  * Throws for any channel that cannot actually deliver.
+ *
+ * `outbox` exists because two gates can be open on one job (story choice + music
+ * window): each names its own file, or the second question overwrites the first
+ * before anyone relays it.
  */
-export function getChannel(name, { root = process.cwd() } = {}) {
+export function getChannel(name, { root = process.cwd(), outbox = OUTBOX } = {}) {
   if (!CHANNELS.includes(name)) {
     throw new Error(`unknown channel "${name}" — expected one of: ${CHANNELS.join(", ")}`);
   }
@@ -59,10 +92,10 @@ export function getChannel(name, { root = process.cwd() } = {}) {
     return {
       name,
       send(text) {
-        const abs = path.resolve(root, OUTBOX);
+        const abs = path.resolve(root, outbox);
         fs.mkdirSync(path.dirname(abs), { recursive: true });
         fs.writeFileSync(abs, text, "utf8");
-        return { via: OUTBOX };
+        return { via: outbox };
       },
     };
   }

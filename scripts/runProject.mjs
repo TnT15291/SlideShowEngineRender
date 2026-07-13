@@ -33,14 +33,22 @@ const skipAnalysis = process.argv.includes("--skip-analysis");
 const skipQa = process.argv.includes("--skip-qa");
 const deliver = process.argv.includes("--deliver");
 const resume = process.argv.includes("--resume");
+const acceptBriefGaps = process.argv.includes("--accept-brief-gaps");
 const maxRetries = arg("--max-retries", "2");
 const maxRevisions = arg("--max-revisions", "2");
 const choice = (arg("--choice", "auto") || "auto").toUpperCase();
+// Gate 4b (premium only): what happens to the song when the photos cannot carry all of
+// it. "auto" lets the gate run its window contract; highlight|full record an answer.
+const musicChoice = (arg("--music-choice", "auto") || "auto").toLowerCase();
 const node = process.execPath;
 
 const tier = (arg("--tier") || project.manifest.tier || "lite").toLowerCase();
 if (!["template", "lite", "premium"].includes(tier)) throw new Error(`--tier must be template|lite|premium, got "${tier}"`);
 if (!["A", "B", "C", "D", "AUTO"].includes(choice)) throw new Error(`--choice must be A|B|C|D|auto, got "${choice}"`);
+if (!["highlight", "full", "full_song", "auto"].includes(musicChoice)) {
+  throw new Error(`--music-choice must be highlight|full|auto, got "${musicChoice}"`);
+}
+if (musicChoice !== "auto" && tier !== "premium") throw new Error("--music-choice applies to --tier premium (the other tiers keep the automatic rule)");
 if (dryRun && deliver) throw new Error("--deliver cannot be used with --dry-run");
 
 // Two opt-in AI nodes for the recipe path. Off by default, so `--tier template`
@@ -72,12 +80,23 @@ const content = `${analysisDir}/photo_content.json`;
 const selected = project.manifest.selectedPhotos ? project.rel(project.manifest.selectedPhotos) : `${analysisDir}/photos.selected.json`;
 const options = `${analysisDir}/story_options.json`;
 const selection = `${analysisDir}/selected_story.json`;
+const selectedMusic = `${analysisDir}/selected_music.json`;
 const director = `${analysisDir}/director_notes.json`;
 const plan = `${analysisDir}/story_plan.json`;
 const tierFile = `${analysisDir}/tier.json`;
 const recipeChoice = `${analysisDir}/recipe_choice.json`;
 const recipeCopy = `${analysisDir}/recipe_copy.json`;
+const suppliedDirection = arg("--direction", "");
+if (suppliedDirection && tier !== "template") throw new Error("--direction applies only to --tier template");
+if (suppliedDirection && !fs.existsSync(path.resolve(root, suppliedDirection))) throw new Error(`direction not found: ${suppliedDirection}`);
+const tier1Direction = suppliedDirection || `${analysisDir}/tier1_direction.json`;
 const contentSample = `${analysisDir}/photo_content.sample.json`;
+// The directive ledger sits with the customer's OWN files (prompt.txt, brief.json),
+// not in analysis/: it is not something we derived about them, it is what they said —
+// plus everything they have said since seeing a preview (see reviseProject.mjs).
+const promptFile = project.rel(project.manifest.promptFile || "prompt.txt");
+const directives = project.rel("directives.json");
+const compliance = `${analysisDir}/compliance.json`;
 const visionSample = arg("--vision-sample", "24");
 const qaDir = `${analysisDir}/qa`;
 const base = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
@@ -154,6 +173,53 @@ function selectStoryChoice() {
   }
 }
 
+/** Gate 4b — the music window. Auto-cutting a long song to a highlight is the TIER-1
+ *  rule; premium is the tier with the customer in the loop, so when their photos cannot
+ *  carry their full song, the run pauses and asks THEM (same exit-3 contract as node 4).
+ *  The gate itself decides whether a question even exists — a ledger order, a brief
+ *  musicMode, or a photo set that carries the song naturally all settle it silently. */
+function selectMusicWindow() {
+  console.log(`\n[runProject] node 4b: music window`);
+  const r = spawnSync(node, [
+    "scripts/selectMusicEdit.mjs",
+    "--music-analysis", musicAnalysis,
+    "--photos", photoPool(),
+    ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+    "--directives", directives,
+    "--choice", musicChoice,
+    "--send-if-needed",
+    "--out", selectedMusic,
+  ], { cwd: root, stdio: "inherit" });
+
+  if (r.status === 3) {
+    tracker.pause("plan", "node 4b: the customer's music-window choice is still open");
+    console.log(
+      `\n[runProject] PAUSED — the customer has not chosen highlight vs full song yet; nothing was rendered.\n` +
+        `  Re-run when they reply, pass --music-choice highlight|full, or wait for the deadline.`
+    );
+    process.exit(3);
+  }
+  if (r.status !== 0) {
+    const error = new Error(`node 4b: music window failed (exit ${r.status})`);
+    error.exitCode = r.status || 1;
+    throw error;
+  }
+}
+
+/** Gate 4b's decision, read back at build time (the gate ran in the plan phase, and
+ *  --resume can skip that phase entirely). Absent file = no gate ran (an old project,
+ *  or another tier): "auto" — the tier-1 rule — which is also what the gate's own
+ *  timeout default writes, so both paths mean the same thing. */
+function musicDecision() {
+  const abs = path.resolve(root, selectedMusic);
+  if (!fs.existsSync(abs)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(abs, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
 /** Premium build: generate the director-aware timeline, validate it against the real
  *  engine, repair or fall back to Lite. Returns the tier that survived. */
 function premiumBuild() {
@@ -170,9 +236,19 @@ function premiumBuild() {
     "--quality", project.manifest.quality || "share",
     "--job-dir", project.relDir,
     "--tier-out", tierFile,
+    "--directives", directives,
     "--max-retries", maxRetries,
     "--dry-run-only",
   ];
+  // Gate 4b's decision rides into the build. A customer who chose the full song was
+  // told what it costs (each photo holding ~Ns) and chose it anyway — that recorded
+  // choice IS the human-in-writing the misfit gate's --accept-misfit escape exists
+  // for, so the flag travels with the decision instead of someone editing a command.
+  const md = musicDecision();
+  if (md?.mode && md.mode !== "auto") args.push("--music-mode", md.mode);
+  if (md?.mode === "full_song" && (md.source === "user" || md.source === "ledger" || md.source === "brief")) {
+    args.push("--accept-misfit");
+  }
   run(args, "nodes 8+9: generate + validate/fallback");
 }
 
@@ -214,6 +290,16 @@ try {
 
   if (!reuse("plan")) {
     phase("plan", () => {
+      // Node 0: compile the customer's prompt into a directive ledger. EVERY tier —
+      // an instruction is an instruction whether they paid for a template or for a
+      // director. It writes round 0 only, so revision rounds added after a preview
+      // survive a re-plan untouched.
+      run([
+        "scripts/parseBrief.mjs",
+        "--prompt", promptFile,
+        "--out", directives,
+      ], "node 0: compile the brief");
+
       run(["scripts/generateSelectionPolicy.mjs", "--project", projectArg], "selection policy");
       run(["scripts/selectProjectPhotos.mjs", "--project", projectArg], "photo selection");
 
@@ -231,6 +317,15 @@ try {
           const chosen = JSON.parse(fs.readFileSync(path.resolve(root, recipeChoice), "utf8"));
           recipe = chosen.recipe;
         }
+        if (suppliedDirection) console.log(`[runProject] Tier 1 direction: ${suppliedDirection} (customer-selected preview)`);
+        else run([
+            "scripts/chooseTier1Direction.mjs",
+            "--recipe", recipe,
+            "--prompt", project.rel(project.manifest.promptFile || "prompt.txt"),
+            "--photos", photoPool(),
+            "--music", musicAnalysis,
+            "--out", tier1Direction,
+          ], "Tier 1: choose style + pacing");
         // Node B: rewrite the recipe's canned words for THIS couple. Nothing but
         // strings, and only into slots the recipe already declares.
         if (aiCopy) {
@@ -248,7 +343,19 @@ try {
       } else if (tier === "lite") {
         run(["scripts/generateProjectStory.mjs", "--project", projectArg], "story");
       } else {
-        run(["scripts/generateStoryOptions.mjs", "--content", content, "--out", options], "node 3: story options");
+        // Gate 4b FIRST — before a single AI call is spent. If the job is going to
+        // pause on the customer anyway, it should pause having cost nothing.
+        selectMusicWindow();
+        // The ledger rides every premium node. It used to ride none of them: node 3
+        // has accepted a brief since the day it was written and the orchestrator never
+        // handed it one, so every premium film was pitched, directed and planned by a
+        // chain that had not read a word the couple wrote.
+        run([
+          "scripts/generateStoryOptions.mjs",
+          "--content", content,
+          "--directives", directives,
+          "--out", options,
+        ], "node 3: story options");
         selectStoryChoice();
         run([
           "scripts/generateDirectorNotes.mjs",
@@ -256,9 +363,16 @@ try {
           "--selection", selection,
           "--music", musicPath,
           "--analysis-dir", analysisDir,
+          "--directives", directives,
           "--out", director,
         ], "nodes 5+6: director notes");
-        run(["scripts/generateStoryPlan.mjs", "--notes", director, "--content", content, "--out", plan], "node 7: story plan");
+        run([
+          "scripts/generateStoryPlan.mjs",
+          "--notes", director,
+          "--content", content,
+          "--directives", directives,
+          "--out", plan,
+        ], "node 7: story plan");
       }
     });
   }
@@ -287,6 +401,10 @@ try {
           "--output", videoOut,
           "--name", project.manifest.id,
           "--quality", project.manifest.quality || "share",
+          "--prompt", promptFile,
+          "--direction", tier1Direction,
+          "--directives", directives,
+          ...(project.manifest.musicMode ? ["--music-mode", project.manifest.musicMode] : []),
           ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
           ...(aiCopy ? ["--copy", recipeCopy] : []),
         ], `recipe: ${path.basename(recipe)}`);
@@ -297,6 +415,18 @@ try {
       } else {
         premiumBuild(); // generates AND fits text AND validates
       }
+
+      // The receipt, written as soon as there is a film to hold to it — so a --dry-run
+      // still tells the customer what their words did. It only REPORTS here; the gate
+      // is after QA, because QA's own repairs can break a directive too.
+      run([
+        "scripts/auditCompliance.mjs",
+        "--timeline", timeline,
+        "--directives", directives,
+        ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
+        "--out", compliance,
+        "--report-only",
+      ], "node 0b: brief compliance (report)");
     });
   }
 
@@ -309,7 +439,7 @@ try {
   if (!dryRun && reuse("render")) {
     // resume already recorded the skip
   } else if (qaOwnsRender) {
-    tracker.skip("render", "premium: the QA loop renders (see the qa phase)");
+    tracker.skip("render", "premium: the QA loop renders and owns the bounded repair pass");
   } else {
     tracker.start("render");
     const renderArgs = ["--import", "tsx", "src/index.ts", "--timeline", timeline, "--job-dir", project.relDir];
@@ -323,21 +453,37 @@ try {
     tracker.skip("qa", dryRun ? "--dry-run" : "--skip-qa");
   } else if (!reuse("qa")) {
     phase("qa", () => {
-      if (qaOwnsRender) {
-        run([
+      run([
           "scripts/qaLoop.mjs",
           "--timeline", timeline,
           "--content", content,
           "--analysis-dir", analysisDir,
           "--job-dir", project.relDir,
-          "--max-revisions", maxRevisions,
-        ], "nodes 10+11: render + QA revise loop");
-      } else {
-        const proxyArgs = ["scripts/qaProxy.mjs", timeline, "--content", content, "--analysis-dir", analysisDir, "--out", `${qaDir}/${base}.proxy.json`];
-        if (musicAnalysis) proxyArgs.push("--music", musicAnalysis);
-        run(proxyArgs, "QA proxy");
-        run(["scripts/qaClip.mjs", timeline, "--out", `${qaDir}/${base}.json`], "QA clip");
-      }
+          "--max-revisions", tier === "premium" ? maxRevisions : "1",
+          "--strict",
+          ...(tier === "premium" ? [] : ["--skip-initial-render"]),
+        ], "nodes 10+11: bounded deterministic QA gate");
+
+      // The gate. QA repairs the timeline in place, so this runs AFTER it: a fix that
+      // silently undid one of the customer's instructions must not be allowed to ship
+      // just because it arrived last. A broken `must` exits 2 here and stops the run —
+      // the film is rendered and can be previewed, but it does not get DELIVERED while
+      // it breaks an order the customer gave.
+      //
+      // --accept-brief-gaps is the way out, and it is a flag rather than a fallback on
+      // purpose. Some orders genuinely cannot be met (an act with no room for the
+      // montage they want); without an escape the job would fail forever and someone
+      // would "fix" it by editing the ledger, which is the customer's file. So shipping
+      // a film that breaks an order stays possible — but only as a decision a person
+      // makes, in writing, and never as a thing that quietly happens.
+      run([
+        "scripts/auditCompliance.mjs",
+        "--timeline", timeline,
+        "--directives", directives,
+        ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
+        "--out", compliance,
+        ...(acceptBriefGaps ? ["--report-only"] : []),
+      ], `node 0b: brief compliance (${acceptBriefGaps ? "report, gaps accepted" : "gate"})`);
     });
   }
 
