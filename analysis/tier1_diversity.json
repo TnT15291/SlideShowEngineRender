@@ -1,0 +1,296 @@
+{
+  "version": 1,
+  "policy": "multi_signal_scene_repetition",
+  "states": [
+    {
+      "id": "s01_open",
+      "layout": "hero_title_card",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+portrait+portrait",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "hook",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s02_candid",
+      "layout": "polaroid_scatter",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+portrait+portrait",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "hook",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s03_chapter",
+      "layout": "collage_cluster_text",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "establish",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s04_flowers",
+      "layout": "video_background",
+      "effect": "video_background",
+      "photoCount": 0,
+      "orientationPattern": "",
+      "peoplePattern": "",
+      "arcBeat": "establish",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s05_breath",
+      "layout": "full_bleed_quote",
+      "effect": "layer_scene",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "establish",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s06_family",
+      "layout": "three_photo_row",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "connection",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s07_montage",
+      "layout": "film_roll_left",
+      "effect": "film_roll_left",
+      "photoCount": 12,
+      "orientationPattern": "landscape+landscape+portrait+portrait+portrait+portrait+portrait+portrait+landscape+portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown",
+      "arcBeat": "connection",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s08_instant",
+      "layout": "polaroid",
+      "effect": "polaroid",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "connection",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s02_candid_r1",
+      "layout": "polaroid_scatter",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+portrait+portrait",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "build",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s03_chapter_r1",
+      "layout": "collage_cluster_text",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "build",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s05_breath_r1",
+      "layout": "full_bleed_quote",
+      "effect": "layer_scene",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "build",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s05_breath_r1_2",
+      "layout": "full_bleed_quote",
+      "effect": "layer_scene",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "family",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s06_family_r1",
+      "layout": "three_photo_row",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+portrait+portrait",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "family",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s07_montage_r1",
+      "layout": "film_roll_left",
+      "effect": "film_roll_left",
+      "photoCount": 10,
+      "orientationPattern": "landscape+landscape+landscape+portrait+landscape+landscape+portrait+portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown",
+      "arcBeat": "family",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s08_instant_r1",
+      "layout": "polaroid",
+      "effect": "polaroid",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "peak",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s02_candid_r2",
+      "layout": "polaroid_scatter",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+portrait+landscape",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "peak",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s03_chapter_r2",
+      "layout": "collage_cluster_text",
+      "effect": "layer_scene",
+      "photoCount": 3,
+      "orientationPattern": "portrait+landscape+landscape",
+      "peoplePattern": "unknown+unknown+unknown",
+      "arcBeat": "peak",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s08_instant_r2",
+      "layout": "polaroid",
+      "effect": "polaroid",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "breathe",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s05_breath_r2",
+      "layout": "full_bleed_quote",
+      "effect": "layer_scene",
+      "photoCount": 1,
+      "orientationPattern": "landscape",
+      "peoplePattern": "unknown",
+      "arcBeat": "breathe",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s08_instant_r2_2",
+      "layout": "polaroid",
+      "effect": "polaroid",
+      "photoCount": 1,
+      "orientationPattern": "portrait",
+      "peoplePattern": "unknown",
+      "arcBeat": "breathe",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s07_montage_r2",
+      "layout": "film_roll_left",
+      "effect": "film_roll_left",
+      "photoCount": 2,
+      "orientationPattern": "landscape+landscape",
+      "peoplePattern": "unknown+unknown",
+      "arcBeat": "closing",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    },
+    {
+      "id": "s09_closing",
+      "layout": "closing_names",
+      "effect": "layer_scene",
+      "photoCount": 0,
+      "orientationPattern": "",
+      "peoplePattern": "",
+      "arcBeat": "closing",
+      "cohesionMode": "auto",
+      "allowSequence": false
+    }
+  ],
+  "warnings": [
+    {
+      "sceneIds": [
+        "s01_open",
+        "s02_candid",
+        "s03_chapter"
+      ],
+      "repeatedSignals": [
+        "effect",
+        "photoCount",
+        "peoplePattern"
+      ],
+      "risk": 0.6
+    }
+  ],
+  "coverage": {
+    "orientations": {
+      "portrait+portrait+portrait": 4,
+      "portrait+landscape+landscape": 4,
+      "": 2,
+      "landscape": 7,
+      "landscape+landscape+portrait+portrait+portrait+portrait+portrait+portrait+landscape+portrait+landscape+landscape": 1,
+      "landscape+landscape+landscape+portrait+landscape+landscape+portrait+portrait+landscape+landscape": 1,
+      "portrait+portrait+landscape": 1,
+      "portrait": 1,
+      "landscape+landscape": 1
+    },
+    "people": {
+      "unknown+unknown+unknown": 9,
+      "": 2,
+      "unknown": 8,
+      "unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown": 1,
+      "unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown+unknown": 1,
+      "unknown+unknown": 1
+    },
+    "layouts": {
+      "hero_title_card": 1,
+      "polaroid_scatter": 3,
+      "collage_cluster_text": 3,
+      "video_background": 1,
+      "full_bleed_quote": 4,
+      "three_photo_row": 2,
+      "film_roll_left": 3,
+      "polaroid": 4,
+      "closing_names": 1
+    }
+  },
+  "verdict": "review"
+}

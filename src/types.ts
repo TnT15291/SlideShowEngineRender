@@ -176,6 +176,8 @@ export interface ColorGrade {
 export interface MusicTrack {
   path: string;
   volume: number; // per-track gain 0..1
+  start?: number; // optional source offset in seconds
+  end?: number; // optional source end in seconds
 }
 
 export interface AudioAutomationPoint {
@@ -271,10 +273,15 @@ export interface ImageSceneLayer extends BaseSceneLayer {
   path: string;
   fit: LayerFit;
   motion?: LayerMotion; // continuous Ken-Burns zoom/pan
+  motionStrength?: number; // 0.01..0.12 travel/zoom amount
+  easing?: MotionEasing;
+  technicalColor?: TechnicalColor;
   frame?: LayerFrame; // rounded/bordered/shadowed card
   focusX?: number; // 0..1 cover-crop focal point (default 0.5 = center)
   focusY?: number; // 0..1
 }
+
+export interface TechnicalColor { brightness: number; saturation: number; redBalance: number; blueBalance: number; }
 
 export interface RectSceneLayer extends BaseSceneLayer {
   type: "rect";
@@ -348,6 +355,7 @@ export interface Slide {
   transition: Transition;
   captions: Caption[]; // normalize folds a legacy single `caption` into this
   color?: ColorGrade; // per-slide grade, merged over the timeline-level one
+  technicalColor?: TechnicalColor;
 }
 
 export interface Timeline {
@@ -378,6 +386,9 @@ export interface CompiledImageSceneLayer extends CompiledBaseSceneLayer {
   absPath: string;
   fit: LayerFit;
   motion?: LayerMotion;
+  motionStrength?: number;
+  easing?: MotionEasing;
+  technicalColor?: TechnicalColor;
   frame?: LayerFrame;
   focusX?: number;
   focusY?: number;
@@ -421,6 +432,7 @@ export interface RenderSlideStep {
   transition: Transition; // how this slide transitions INTO the next one
   captions: CompiledCaption[]; // baked into the slide video via drawtext
   color?: ColorGrade; // merged global+slide grade; lut resolved to absolute path
+  technicalColor?: TechnicalColor;
   srcWidth?: number; // intrinsic image width (undefined if unreadable)
   srcHeight?: number; // intrinsic image height
   width: number; // output frame width

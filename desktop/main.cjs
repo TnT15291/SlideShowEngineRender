@@ -2,6 +2,11 @@ const { app, BrowserWindow, dialog, ipcMain, shell } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
+const crypto = require("node:crypto");
+const { validateFingerprint } = require("../scripts/lib/approvalFingerprint.cjs");
+const { currentSelection, validateApprovedSelection } = require("../scripts/lib/previewApproval.cjs");
+const ENGINE_ROOT = path.resolve(__dirname, "..");
 
 let mainWindow;
 let currentProjectPath = process.cwd();
@@ -107,6 +112,76 @@ function readDirectorState(projectPath) {
   };
 }
 
+function previewState(projectPath) {
+  const manifest = readJsonSafe(projectPath, "output/previews/directions.json");
+  const selection = readJsonSafe(projectPath, "analysis/previews/selection.json");
+  const activeSelection = currentSelection(manifest, selection);
+  const variants = (manifest?.variants || []).map((v) => {
+    const absVideo = v.video ? path.resolve(ENGINE_ROOT, v.video) : null;
+    return { ...v, videoUrl: absVideo && fs.existsSync(absVideo) ? pathToFileURL(absVideo).href : null,
+      selected: activeSelection?.id === v.id };
+  });
+  return { available: variants.length > 0, generatedAt: manifest?.generatedAt || null, dryRun: manifest?.dryRun || false,
+    variants, selection: activeSelection, approved: activeSelection?.status === "approved",
+    projectManifest: readJsonSafe(projectPath, "project.json") };
+}
+
+function projectArg(projectPath) {
+  const rel = path.relative(ENGINE_ROOT, projectPath).replace(/\\/g, "/");
+  if (rel.startsWith("../") || path.isAbsolute(rel)) throw new Error("Selected project must be inside the engine workspace");
+  return rel;
+}
+
+function runEngine(args) { return runNode(ENGINE_ROOT, args); }
+
+async function generatePreviews(payload = {}) {
+  const manifest = readJsonSafe(currentProjectPath, "project.json");
+  if (!manifest?.recipe) return { ok: false, stderr: "project.json must pin a Tier 1 recipe before generating previews." };
+  const result = await runEngine(["scripts/generateTier1Previews.mjs", "--project", projectArg(currentProjectPath),
+    "--recipe", manifest.recipe, "--duration", String(payload.duration || 20)]);
+  return { ...result, state: previewState(currentProjectPath) };
+}
+
+function selectPreview(id) {
+  const state = previewState(currentProjectPath), chosen = state.variants.find((v) => v.id === id);
+  if (!chosen) return { ok: false, message: `Unknown preview direction: ${id}` };
+  const selection = { version: 2, status: "selected", id, selectedAt: new Date().toISOString(), previewGeneratedAt: state.generatedAt,
+    direction: chosen.direction, timeline: chosen.timeline, video: chosen.video, recipeId: chosen.recipeId, fingerprint: chosen.fingerprint };
+  const dest = path.join(currentProjectPath, "analysis", "previews", "selection.json");
+  fs.mkdirSync(path.dirname(dest), { recursive: true }); fs.writeFileSync(dest, JSON.stringify(selection, null, 2) + "\n");
+  const ledger = path.join(currentProjectPath, "analysis", "feedback.jsonl");
+  const projectId = crypto.createHash("sha256").update(String(state.projectManifest?.id || path.basename(currentProjectPath))).digest("hex").slice(0, 16);
+  fs.appendFileSync(ledger, JSON.stringify({ version: 1, at: new Date().toISOString(), project: projectId, type: "preview_selected",
+    recipeId: chosen.recipeId, pacing: chosen.id, data: { capacityLimited: Boolean(chosen.pacing?.capacityLimited) } }) + "\n");
+  return { ok: true, state: previewState(currentProjectPath) };
+}
+
+function approvePreview() {
+  const state = previewState(currentProjectPath), selection = state.selection;
+  if (!selection) return { ok: false, message: "Choose a preview direction first." };
+  const validity = validateFingerprint(ENGINE_ROOT, selection.fingerprint);
+  if (!validity.ok) return { ok: false, message: validity.reason };
+  selection.status = "approved"; selection.approvedAt = new Date().toISOString();
+  const dest = path.join(currentProjectPath, "analysis", "previews", "selection.json");
+  fs.writeFileSync(dest, JSON.stringify(selection, null, 2) + "\n");
+  const ledger = path.join(currentProjectPath, "analysis", "feedback.jsonl");
+  const projectId = crypto.createHash("sha256").update(String(state.projectManifest?.id || path.basename(currentProjectPath))).digest("hex").slice(0, 16);
+  fs.appendFileSync(ledger, JSON.stringify({ version: 1, at: selection.approvedAt, project: projectId,
+    type: "preview_approved", recipeId: selection.recipeId, pacing: selection.id, data: { source: "user" } }) + "\n");
+  return { ok: true, state: previewState(currentProjectPath) };
+}
+
+async function renderSelectedPreview() {
+  const state = previewState(currentProjectPath), selected = state.selection;
+  const manifest = state.projectManifest;
+  const previewManifest = readJsonSafe(currentProjectPath, "output/previews/directions.json");
+  const validity = validateApprovedSelection(ENGINE_ROOT, previewManifest, selected, manifest);
+  if (!validity.ok) return { ok: false, stderr: validity.reason };
+  const result = await runEngine(["scripts/runProject.mjs", "--project", projectArg(currentProjectPath), "--tier", "template",
+    "--recipe", selected.recipeId, "--direction", selected.direction, "--deliver"]);
+  return { ...result, state: previewState(currentProjectPath), project: projectSummary(currentProjectPath) };
+}
+
 function runAnalyzeAssets(projectPath) {
   return runNode(projectPath, ["scripts/analyzeAssets.mjs"]);
 }
@@ -174,7 +249,7 @@ async function chooseMusicFile() {
  * whether you had 23 photos or 200. The scene count now follows the music and the
  * photo budget (scripts/lib/storyboard.mjs).
  */
-async function buildTimeline({ musicPath, timelinePath, director, plan, withCopy = false }) {
+async function buildTimeline({ musicPath, timelinePath, director, plan, withCopy = false, musicMode = "auto" }) {
   fs.mkdirSync(path.dirname(path.join(currentProjectPath, timelinePath)), { recursive: true });
   const name = path.basename(timelinePath).replace(/\.[^.]+$/, "");
   const storyboard = "analysis/storyboard.json";
@@ -190,6 +265,7 @@ async function buildTimeline({ musicPath, timelinePath, director, plan, withCopy
     "--director", director,
     "--plan", plan,
     "--name", name,
+    "--music-mode", musicMode,
     "--out", storyboard,
   ]);
   out += compose.stdout; err += compose.stderr;
@@ -256,7 +332,7 @@ async function runPipelineStep(step, payload = {}) {
   }
 
   if (step === "generate") {
-    return buildTimeline({ musicPath, timelinePath, director: "none", plan: "none" });
+    return buildTimeline({ musicPath, timelinePath, director: "none", plan: "none", musicMode: payload.musicMode });
   }
 
   if (step === "dryRun") {
@@ -528,6 +604,11 @@ app.whenReady().then(() => {
   ipcMain.handle("pipeline:run", (_event, step, payload) => runPipelineStep(step, payload));
   ipcMain.handle("director:state", () => readDirectorState(currentProjectPath));
   ipcMain.handle("director:run", (_event, step, payload) => runDirectorStep(step, payload));
+  ipcMain.handle("preview:state", () => previewState(currentProjectPath));
+  ipcMain.handle("preview:generate", (_event, payload) => generatePreviews(payload));
+  ipcMain.handle("preview:select", (_event, id) => selectPreview(id));
+  ipcMain.handle("preview:approve", () => approvePreview());
+  ipcMain.handle("preview:renderFull", () => renderSelectedPreview());
   ipcMain.handle("timeline:read", (_event, payload) => readTimeline(payload));
   ipcMain.handle("timeline:write", (_event, payload) => writeTimeline(payload));
   ipcMain.handle("timeline:chooseImage", chooseTimelineImage);

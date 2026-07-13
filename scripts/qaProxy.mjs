@@ -28,6 +28,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pacing.mjs";
+import { createTextMeasurer } from "./lib/textMeasure.mjs";
+import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
+import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -69,15 +72,151 @@ const musicMissing = !musicAbs || !fs.existsSync(musicAbs)
     ? `music analysis not found: ${musicJson} — run: node scripts/analyzeMusic.mjs "${musicTrack}"`
     : "timeline has no music track"
   : null;
-const music = musicMissing ? null : JSON.parse(fs.readFileSync(musicAbs, "utf8"));
+const sourceMusic = musicMissing ? null : JSON.parse(fs.readFileSync(musicAbs, "utf8"));
+const music = sourceMusic ? sliceMusicAnalysis(sourceMusic, tl.recipeDecisions?.musicEdit || { mode: "full_song" }) : null;
 
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const contentAbs = path.resolve(root, contentPath);
 const content = fs.existsSync(contentAbs) ? JSON.parse(fs.readFileSync(contentAbs, "utf8")) : null;
+const photosPath = arg("--photos", `${analysisDir}/photos.json`);
+const photosAbs = path.resolve(root, photosPath);
+const technicalPhotos = fs.existsSync(photosAbs) ? JSON.parse(fs.readFileSync(photosAbs, "utf8")) : null;
+const technicalByFile = new Map((technicalPhotos?.photos || []).map((p) => [p.file, p]));
 
 const scenes = sceneTimes(tl.slides);
 const problems = [];
 const advisories = [];
+
+const photoPaths = (slide) => [
+  ...(slide.image ? [slide.image] : []),
+  ...(slide.images || []),
+  ...(slide.layers || []).filter((l) => l.type === "image" && l.path).map((l) => l.path),
+];
+
+// --- deterministic integrity checks ---------------------------------------
+const textMeasurer = createTextMeasurer({ root });
+const textOverflow = { status: "ran", flagged: 0, unmeasurable: 0, slots: [] };
+for (const [slideIndex, slide] of tl.slides.entries()) {
+  for (const [index, layer] of (slide.layers || []).entries()) {
+    if (layer.type !== "text") continue;
+    const measured = textMeasurer.inspect(layer);
+    const row = { id: slide.id, layer: index, lines: measured.lines.length,
+      widest: measured.widest, blockHeight: measured.blockHeight, error: measured.error, flags: [] };
+    if (measured.error) {
+      row.flags.push("text_unmeasurable"); textOverflow.unmeasurable++; textOverflow.flagged++;
+      problems.push({ id: slide.id, check: "text_overflow", flags: row.flags,
+        detail: `text layer ${index} could not be measured: ${measured.error}` });
+    } else if (!measured.fits) {
+      row.flags.push("text_overflow"); textOverflow.flagged++;
+      problems.push({ id: slide.id, check: "text_overflow", flags: row.flags,
+        detail: `text layer ${index} measures ${measured.widest.toFixed(0)}x${measured.blockHeight.toFixed(0)} inside ${layer.width}x${layer.height}`,
+        fix: { kind: "fit_text", layer: index } });
+    }
+    textOverflow.slots.push(row);
+  }
+}
+textMeasurer.close();
+
+const captionIntegrity = { status: "ran", flagged: 0, items: [] };
+const seenCopy = new Map();
+const decorativeFont = /GreatVibes|DancingScript|Italianno|WindSong|Pacifico|Lobster|Charm|MeaCulpa/i;
+const vietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;
+for (const [slideIndex, slide] of tl.slides.entries()) {
+  const items = [
+    ...(slide.layers || []).filter((l) => l.type === "text").map((l, index) => ({ text: l.text, font: l.font, where: `layer:${index}` })),
+    ...(slide.captions || []).map((c, index) => ({ text: c.text, font: c.font, where: `caption:${index}` })),
+  ];
+  for (const item of items) {
+    const flags = [];
+    const value = String(item.text || "").trim();
+    if (/\{\{[^}]+\}\}/.test(value)) flags.push("unresolved_token");
+    if (/[ÃÄ]|áº|á»|Æ°|Ä‘/.test(value)) flags.push("mojibake");
+    if (vietnamese.test(value) && decorativeFont.test(item.font || "") && value.split(/\s+/).length > 3) flags.push("vietnamese_in_decorative_font");
+    const normalized = value.toLowerCase().replace(/\s+/g, " ");
+    const firstSeen = normalized ? seenCopy.get(normalized) : null;
+    const intentionalBookendEcho = slideIndex === tl.slides.length - 1 && firstSeen?.slideIndex === 0;
+    if (normalized && firstSeen && !intentionalBookendEcho) flags.push("duplicate_caption");
+    else if (normalized) seenCopy.set(normalized, { slideIndex, location: `${slide.id}:${item.where}` });
+    const row = { id: slide.id, where: item.where, flags };
+    captionIntegrity.items.push(row);
+    if (flags.length) {
+      captionIntegrity.flagged++;
+      problems.push({ id: slide.id, check: "caption_integrity", flags,
+        detail: `${item.where} failed caption integrity: ${flags.join(", ")}` });
+    }
+  }
+}
+
+const duplicates = { status: "ran", flagged: 0, pairs: [] };
+for (let i = 1; i < tl.slides.length; i++) {
+  const previous = new Set(photoPaths(tl.slides[i - 1]));
+  const groupOf = (file) => technicalByFile.get(file)?.duplicateGroup;
+  const previousGroups = new Set([...previous].map(groupOf).filter(Boolean));
+  const repeated = [...new Set(photoPaths(tl.slides[i]).filter((f) =>
+    previous.has(f) || (groupOf(f) && previousGroups.has(groupOf(f)))
+  ))];
+  // The selected hero is deliberately echoed at the two bookends, never in
+  // adjacent slides; all adjacent reuse remains a defect.
+  if (repeated.length) {
+    duplicates.flagged += repeated.length;
+    const row = { previous: tl.slides[i - 1].id, current: tl.slides[i].id, files: repeated };
+    duplicates.pairs.push(row);
+    problems.push({ id: tl.slides[i].id, check: "duplicate_photo", flags: ["adjacent_duplicate"],
+      detail: `${repeated.join(", ")} repeats a file or perceptual duplicate from ${tl.slides[i - 1].id}` });
+  }
+}
+
+const crop = { status: technicalPhotos ? "ran" : "partial", flagged: 0, unscored: 0, layers: [] };
+if (!technicalPhotos) crop.reason = `${photosPath} not found; focus bounds checked, face containment skipped`;
+for (const slide of tl.slides) {
+  for (const [index, layer] of (slide.layers || []).entries()) {
+    if (layer.type !== "image" || layer.fit !== "cover") continue;
+    const flags = [];
+    if ((layer.focusX ?? 0.5) < 0.08 || (layer.focusX ?? 0.5) > 0.92 ||
+        (layer.focusY ?? 0.5) < 0.08 || (layer.focusY ?? 0.5) > 0.92) flags.push("unsafe_focus");
+    if (!(layer.width > 0 && layer.height > 0)) flags.push("invalid_crop_box");
+    const photo = technicalByFile.get(layer.path);
+    let visible = null;
+    if (photo?.w > 0 && photo?.h > 0 && layer.width > 0 && layer.height > 0) {
+      const sourceAspect = photo.w / photo.h, targetAspect = layer.width / layer.height;
+      if (sourceAspect > targetAspect) {
+        const width = targetAspect / sourceAspect;
+        visible = { x: (1 - width) * (layer.focusX ?? 0.5), y: 0, width, height: 1 };
+      } else {
+        const height = sourceAspect / targetAspect;
+        visible = { x: 0, y: (1 - height) * (layer.focusY ?? 0.5), width: 1, height };
+      }
+      const faces = photo.faces?.length ? photo.faces.map((f) => f.box) : (photo.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
+      const face = faces[0];
+      if (faces.length) {
+        const margin = 0.015;
+        const contained = faces.every((box) => box.x >= visible.x - margin && box.y >= visible.y - margin &&
+          box.x + box.width <= visible.x + visible.width + margin &&
+          box.y + box.height <= visible.y + visible.height + margin);
+        if (!contained) flags.push("face_cropped");
+      } else crop.unscored++;
+    } else crop.unscored++;
+    const row = { id: slide.id, layer: index, path: layer.path, visible, faceBoxEstimate: photo?.faceBoxEstimate || null, flags };
+    crop.layers.push(row);
+    if (flags.length) {
+      crop.flagged++;
+      const face = photo?.faceBoxEstimate;
+      const clamp = (v) => Math.max(0, Math.min(1, v));
+      const focusX = face && visible?.width < 1
+        ? clamp((face.x + face.width / 2 - visible.width / 2) / (1 - visible.width)) : 0.5;
+      const focusY = face && visible?.height < 1
+        ? clamp((face.y + face.height / 2 - visible.height / 2) / (1 - visible.height)) : 0.5;
+      problems.push({ id: slide.id, check: "crop", flags,
+        detail: `${layer.path} has an unsafe cover crop/focus or cuts the estimated face region`,
+        fix: { kind: "set_focus", layer: index, focusX, focusY } });
+    }
+  }
+}
+
+const tier1Gate = evaluateTier1Quality(tl);
+problems.push(...tier1Gate.errors);
+advisories.push(...tier1Gate.warnings.map((f) => `[${f.check}] ${f.detail}`));
+advisories.push(...tier1Gate.manualReview.map((f) => `[manual-review:${f.check}] ${f.detail}`));
 
 // A slide is a montage when it carries an `images` array (montageScene); the
 // last slide is the closing card. Both are paced by rules other than the energy
@@ -268,6 +407,73 @@ function grabFrame(sec, dest) {
   return r.status === 0 && fs.existsSync(dest);
 }
 
+const blackFrames = { status: "skipped", flagged: 0, samples: [] };
+const audioDrift = { status: "skipped", flagged: 0 };
+const musicEdit = { status: "ran", flagged: 0 };
+{
+  const edit = tl.recipeDecisions?.musicEdit;
+  const track = tl.music?.[0];
+  if (!edit) {
+    musicEdit.status = "skipped";
+    musicEdit.reason = "timeline has no musicEdit decision";
+  } else {
+    Object.assign(musicEdit, { mode: edit.mode, start: edit.start, end: edit.end, duration: edit.duration });
+    const invalidRange = !(edit.start >= 0 && edit.end > edit.start && edit.end <= edit.sourceDuration + 0.01);
+    const invalidHighlightLength = edit.mode === "highlight" && (edit.duration < 60 || edit.duration > 105);
+    const contractMismatch = edit.mode === "highlight" && (track?.start !== edit.start || track?.end !== edit.end);
+    const phraseTimes = sourceMusic?.phrases?.map((p) => p.time) || [];
+    const nearest = (value) => phraseTimes.length ? Math.min(...phraseTimes.map((t) => Math.abs(t - value))) : null;
+    musicEdit.startPhraseDrift = nearest(edit.start);
+    musicEdit.endPhraseDrift = nearest(edit.end);
+    const endsAtTrackEnd = Math.abs(edit.end - edit.sourceDuration) <= 0.05;
+    const offPhrase = edit.mode === "highlight" && phraseTimes.length > 0 &&
+      (musicEdit.startPhraseDrift > 0.05 || (!endsAtTrackEnd && musicEdit.endPhraseDrift > 0.05));
+    const flags = [invalidRange && "invalid_music_edit_range", invalidHighlightLength && "invalid_highlight_length",
+      contractMismatch && "music_trim_contract_mismatch", offPhrase && "music_edit_off_phrase"].filter(Boolean);
+    musicEdit.flagged = flags.length;
+    if (flags.length) problems.push({ id: "music_edit", check: "music_edit", flags,
+      detail: `music edit ${edit.mode} ${edit.start}s–${edit.end}s against ${edit.sourceDuration}s source` });
+  }
+}
+if (videoAbs && fs.existsSync(videoAbs)) {
+  blackFrames.status = "ran";
+  for (const sc of scenes) {
+    const r = spawnSync(ffmpeg, ["-v", "error", "-ss", sc.mid.toFixed(2), "-i", videoAbs,
+      "-frames:v", "1", "-vf", "signalstats,metadata=print:file=-", "-f", "null", "-"],
+      { encoding: "utf8", maxBuffer: 1 << 20 });
+    const text = `${r.stdout || ""}${r.stderr || ""}`;
+    const yavg = Number(text.match(/lavfi\.signalstats\.YAVG=([0-9.]+)/)?.[1]);
+    const row = { id: sc.id, at: +sc.mid.toFixed(2), yavg: Number.isFinite(yavg) ? yavg : null, flags: [] };
+    if (Number.isFinite(yavg) && yavg < 4) {
+      row.flags.push("black_frame"); blackFrames.flagged++;
+      problems.push({ id: sc.id, check: "black_frame", flags: row.flags,
+        detail: `sample at ${sc.mid.toFixed(2)}s has YAVG ${yavg.toFixed(2)}` });
+    }
+    blackFrames.samples.push(row);
+  }
+
+  audioDrift.status = "ran";
+  const probe = process.env.FFPROBE_PATH || "ffprobe";
+  const durationOf = (selector) => {
+    const r = spawnSync(probe, ["-v", "error", "-select_streams", selector,
+      "-show_entries", "stream=duration", "-of", "default=nw=1:nk=1", videoAbs], { encoding: "utf8" });
+    return Number((r.stdout || "").trim().split(/\s+/)[0]);
+  };
+  const videoDuration = durationOf("v:0"), audioDuration = durationOf("a:0");
+  audioDrift.videoDuration = Number.isFinite(videoDuration) ? videoDuration : null;
+  audioDrift.audioDuration = Number.isFinite(audioDuration) ? audioDuration : null;
+  audioDrift.drift = Number.isFinite(videoDuration) && Number.isFinite(audioDuration)
+    ? +Math.abs(videoDuration - audioDuration).toFixed(3) : null;
+  if (audioDrift.drift != null && audioDrift.drift > 0.25) {
+    audioDrift.flagged = 1;
+    problems.push({ id: "audio", check: "audio_drift", flags: ["audio_video_duration_mismatch"],
+      detail: `audio/video duration differs by ${audioDrift.drift}s` });
+  }
+} else {
+  blackFrames.reason = "rendered video not found";
+  audioDrift.reason = "rendered video not found";
+}
+
 if (!videoAbs || !fs.existsSync(videoAbs)) {
   bookend.reason = `rendered video not found (${videoRel || "no output.path"}) — bookend needs frames; render first`;
 } else {
@@ -298,7 +504,7 @@ const report = {
     music: musicJson ? musicJson.replace(/\\/g, "/") : null,
     photoContent: content ? { path: contentPath.replace(/\\/g, "/"), generatedBy: content.generatedBy } : null,
   },
-  checks: { pacing, hero, bookend },
+  checks: { pacing, hero, textOverflow, captionIntegrity, duplicates, crop, tier1Gate, blackFrames, audioDrift, musicEdit, bookend },
   advisories,
   problems,
   verdict,

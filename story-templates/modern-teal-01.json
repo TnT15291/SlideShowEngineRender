@@ -4,6 +4,8 @@
   "name": "Modern Teal",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["crossfade", "smooth_up", "dissolve", "smooth_left", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 2 } },
   "source": {
     "origin": "original",
     "notes": "Modern minimal, contemporary, lots of whitespace with a 2026 Color-of-the-Year 'Transformative Teal' accent. Clean crisp grade, no overlays. Original recipe."
@@ -14,6 +16,11 @@
     "idealPhotos": 60
   },
   "musicProfile": { "moods": ["calm", "modern", "piano"], "energy": "low" },
+  "pacingVariants": [
+    { "id": "spacious", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
+    { "id": "balanced", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
+    { "id": "crisp", "maxEnergy": 1.0, "durationMultiplier": 0.86 }
+  ],
   "briefFields": {
     "required": ["bride", "groom"],
     "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]

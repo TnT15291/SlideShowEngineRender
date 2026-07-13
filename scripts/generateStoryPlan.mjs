@@ -20,12 +20,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON, str, oneOf, filterVocab } from "./lib/deepseek.mjs";
 import { TAG_VOCAB, EMOTION_VOCAB } from "./lib/vocab.mjs";
+import { loadLedger, active, applyToStoryPlan } from "./lib/directives.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const directivesPath = arg("--directives", "");
 const notesPath = arg("--notes", "analysis/director_notes.json");
 const contentPath = arg("--content", "analysis/photo_content.json");
 const outPath = arg("--out", "analysis/story_plan.json");
@@ -157,6 +159,13 @@ const out = {
   choice,
   segments,
 };
+
+// Act-scoped orders land here, and only here: "đoạn bạn bè nhanh hơn" is a fact about
+// one act of the plan, not about the film. Applied after the guardrail so a clamped
+// enum can never overwrite what the customer actually asked for.
+const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
+const enforced = applyToStoryPlan(out, active(ledger));
+if (enforced.length) out.enforcedDirectives = enforced;
 
 const absOut = path.resolve(root, outPath);
 fs.mkdirSync(path.dirname(absOut), { recursive: true });

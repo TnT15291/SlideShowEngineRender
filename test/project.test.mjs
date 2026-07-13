@@ -47,6 +47,7 @@ function completedFixture() {
     "analysis/selection_policy.json",
     "analysis/photos.selected.json",
     "analysis/story.json",
+    "directives.json",
     "timeline/timeline.json",
     "output/final.mp4",
     "analysis/qa/timeline.proxy.json",
@@ -56,7 +57,14 @@ function completedFixture() {
     "output/deliver/thumbnail.jpg",
     "output/deliver/project_summary.json"
   ];
-  for (const output of outputs) writeFixtureFile(f.dir, output);
+  for (const output of outputs) {
+    if (output === "analysis/music/track.json") {
+      const target = path.join(f.dir, output);
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, JSON.stringify({ analysisVersion: 2, duration: 60,
+        beatGrid: { beatSeconds: 0.5 }, phrases: [{ time: 0 }, { time: 8 }] }));
+    } else writeFixtureFile(f.dir, output);
+  }
   const project = loadProject(f.rel);
   const tracker = createJobTracker(project);
   tracker.initialize();
@@ -141,6 +149,30 @@ test("resume invalidates plan and downstream phases after prompt changes", (t) =
   const future = new Date(Date.now() + 2000);
   fs.utimesSync(path.join(f.dir, "prompt.txt"), future, future);
   const state = inspectResume(f.project);
+  assert.equal(state.invalidatedAt, "plan");
+  assert.deepEqual([...state.reusable], ["analyze"]);
+});
+
+test("resume invalidates stale music analysis instead of silently losing phrase snapping", (t) => {
+  const f = completedFixture();
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(f.dir, "analysis/music/track.json"), JSON.stringify({ duration: 60 }));
+  const future = new Date(Date.now() + 2000);
+  fs.utimesSync(path.join(f.dir, "analysis/music/track.json"), future, future);
+  const state = inspectResume(f.project);
+  assert.equal(state.invalidatedAt, "analyze");
+  assert.match(state.reason, /music analysis is stale/);
+});
+
+test("changing musicMode invalidates the old plan and rendered film", (t) => {
+  const f = completedFixture();
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  const manifestPath = path.join(f.dir, "project.json");
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  fs.writeFileSync(manifestPath, JSON.stringify({ ...manifest, musicMode: "highlight" }));
+  const future = new Date(Date.now() + 2000);
+  fs.utimesSync(manifestPath, future, future);
+  const state = inspectResume(loadProject(f.rel));
   assert.equal(state.invalidatedAt, "plan");
   assert.deepEqual([...state.reusable], ["analyze"]);
 });

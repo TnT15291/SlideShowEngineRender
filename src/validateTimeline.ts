@@ -27,6 +27,7 @@ const colorGradeSchema = z.object({
   flicker: z.number().min(0).max(1).optional(),
   letterbox: z.union([z.boolean(), z.number().min(1).max(4)]).optional(),
 });
+const technicalColorSchema = z.object({ brightness: z.number().min(-0.12).max(0.12), saturation: z.number().min(0.9).max(1.1), redBalance: z.number().min(-0.08).max(0.08), blueBalance: z.number().min(-0.08).max(0.08) });
 
 // ---- Structural schema (Zod). Runs on the already-normalized timeline. ----
 
@@ -100,6 +101,9 @@ const layerSchema = z.discriminatedUnion("type", [
     motion: z
       .enum(["none", "zoom_in", "zoom_out", "pan_left", "pan_right", "pan_up", "pan_down"])
       .optional(),
+    motionStrength: z.number().min(0.01).max(0.12).optional(),
+    easing: z.enum(MOTION_EASINGS).optional(),
+    technicalColor: technicalColorSchema.optional(),
     frame: z
       .object({
         radius: z.number().min(0).max(400).optional(),
@@ -143,6 +147,8 @@ const timelineSchema = z.object({
     z.object({
       path: z.string().min(1),
       volume: z.number().min(0).max(1),
+      start: z.number().min(0).optional(),
+      end: z.number().positive().optional(),
     })
   ),
   audio: z.object({
@@ -208,6 +214,7 @@ const timelineSchema = z.object({
         }),
         captions: z.array(captionSchema),
         color: colorGradeSchema.optional(),
+        technicalColor: technicalColorSchema.optional(),
       })
     )
     .min(1, "timeline must contain at least one slide"),

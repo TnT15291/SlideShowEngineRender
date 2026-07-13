@@ -4,7 +4,7 @@ import { arg, root, slug } from "./lib/project.mjs";
 
 const name = arg("--name", arg("--id", ""));
 const id = slug(arg("--id", name));
-if (!id) throw new Error("Usage: node scripts/createProject.mjs --id <id> [--name <title>] [--prompt <text>] [--input <dir>] [--music <file>]");
+if (!id) throw new Error("Usage: node scripts/createProject.mjs --id <id> [--name <title>] [--prompt <text>] [--input <dir>] [--music <file>] [--music-mode auto|highlight|full_song]");
 
 const dir = path.join(root, "projects", id);
 if (fs.existsSync(dir)) throw new Error(`Project already exists: ${dir}`);
@@ -46,10 +46,14 @@ const manifest = {
   output: "output/final.mp4",
   quality: arg("--quality", "share"),
   tier: arg("--tier", "lite"),
+  musicMode: arg("--music-mode", "auto"),
   ...(arg("--recipe") ? { recipe: arg("--recipe") } : {}),
 };
 if (!["template", "lite", "premium"].includes(manifest.tier)) {
   throw new Error(`--tier must be template|lite|premium, got "${manifest.tier}"`);
+}
+if (!["auto", "highlight", "full_song"].includes(manifest.musicMode)) {
+  throw new Error(`--music-mode must be auto|highlight|full_song, got "${manifest.musicMode}"`);
 }
 // A template project must know its recipe before it renders — but it may be chosen
 // later by `runProject --auto-recipe` rather than pinned here.

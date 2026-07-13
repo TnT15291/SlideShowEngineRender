@@ -33,6 +33,8 @@ assets/*
 # Same nature as overlays/ (procedural, tracked) and small enough to carry: 4 MB.
 !assets/luts/
 !assets/masks/
+!assets/models/
+!assets/models/**
 
 # The couple's photographs. Irreplaceable, but binary and private: back these up
 # somewhere real, not in git. The pipeline reads them from input/ on disk.
@@ -52,6 +54,10 @@ analysis/photos.pruned.json
 # Derived, and it holds one customer's photo judgements — it is not source. Deleting
 # it is safe and costs one re-analysis; committing it would ship a customer's data.
 analysis/photo_content.cache.json
+analysis/face_detection.cache.json
+analysis/regression-gallery/
+analysis/recipe-ranking.json
+analysis/feedback.jsonl
 
 # `analyzePhotoContent --limit N` probe: a SAMPLE of the photo set, kept in its own
 # file so it can never be mistaken for analysis/photo_content.json (which the

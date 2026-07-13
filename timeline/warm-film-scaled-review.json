@@ -1,0 +1,1236 @@
+{
+  "project": {
+    "name": "warm-film-01",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "music/a thousand years.mp3",
+      "volume": 0.82
+    }
+  ],
+  "audio": {
+    "fade_in": 1.5,
+    "fade_out": 3,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 4600,
+    "saturation": 1.06,
+    "contrast": 1.03,
+    "glow": 0.16,
+    "grain": 6,
+    "vignette": true
+  },
+  "overlays": [
+    {
+      "variant": "warm",
+      "position": "fullscreen",
+      "opacity": 0.35,
+      "blend": "screen",
+      "start": 0
+    },
+    {
+      "path": "assets/overlays/cutestock_golden_bokeh_overlay_hd.mp4",
+      "position": "fullscreen",
+      "opacity": 0.2,
+      "blend": "screen",
+      "start": 0
+    }
+  ],
+  "output": {
+    "path": "output/warm-film-01.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_open",
+      "duration": 7,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/008.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.499,
+          "motion": "zoom_in"
+        },
+        {
+          "type": "rect",
+          "x": 108,
+          "y": 95,
+          "width": 1704,
+          "height": 175,
+          "color": "#F4ECE0",
+          "opacity": 0.95
+        },
+        {
+          "type": "image",
+          "path": "input/001.jpg",
+          "x": 160,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.519,
+          "frame": {
+            "radius": 28,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/057.jpg",
+          "x": 711,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.577,
+          "frame": {
+            "radius": 28,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/064.jpg",
+          "x": 1262,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.511,
+          "frame": {
+            "radius": 28,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 580,
+          "width": 1920,
+          "height": 250,
+          "color": "#000000",
+          "opacity": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 636,
+          "y": 150,
+          "width": 648,
+          "height": 151,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Our Wedding Day",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 257,
+          "y": 610,
+          "width": 1557,
+          "height": 240,
+          "size": 110,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s02_candid",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/068.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.502,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/010.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.547,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/030.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.574,
+          "focusY": 0.477,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_chapter",
+      "duration": 7,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/029.jpg",
+          "x": 36,
+          "y": 150,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "focusX": 0.616,
+          "focusY": 0.463,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/004.jpg",
+          "x": 36,
+          "y": 565,
+          "width": 500,
+          "height": 396,
+          "fit": "cover",
+          "focusX": 0.404,
+          "focusY": 0.459,
+          "animation": "slide_right",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/062.jpg",
+          "x": 560,
+          "y": 110,
+          "width": 590,
+          "height": 860,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.525,
+          "motion": "zoom_in",
+          "animation": "slide_up",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Ngày đầu",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1194,
+          "y": 150,
+          "width": 640,
+          "height": 160,
+          "size": 82,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Mình gặp nhau thật tình cờ, rồi thương nhau lúc nào chẳng hay.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1200,
+          "y": 400,
+          "width": 640,
+          "height": 620,
+          "size": 32,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s04_flowers",
+      "duration": 5.5,
+      "effect": "video_background",
+      "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4",
+      "captions": [
+        {
+          "text": "Ngày mình nói lời đồng ý.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s05_breath",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/034.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.517,
+          "focusY": 0.517,
+          "motion": "zoom_out"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Nắng của mình, là nhau.",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "size": 56,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s06_family",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/063.jpg",
+          "x": 108,
+          "y": 265,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "focusX": 0.543,
+          "focusY": 0.377,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/039.jpg",
+          "x": 709,
+          "y": 106,
+          "width": 500,
+          "height": 760,
+          "fit": "cover",
+          "focusX": 0.462,
+          "focusY": 0.575,
+          "motion": "zoom_in",
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/012.jpg",
+          "x": 1262,
+          "y": 434,
+          "width": 551,
+          "height": 551,
+          "fit": "cover",
+          "focusX": 0.377,
+          "focusY": 0.599,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Gia đình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 40,
+          "y": 91,
+          "width": 700,
+          "height": 160,
+          "size": 90,
+          "color": "#4A3B2C",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Tình yêu hôm nay có thêm lời chúc phúc của những người thương.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 60,
+          "y": 880,
+          "width": 1800,
+          "height": 140,
+          "size": 36,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.7
+      }
+    },
+    {
+      "id": "s07_montage",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/056.jpg",
+        "input/061.jpg",
+        "input/043.jpg",
+        "input/033.jpg",
+        "input/037.jpg",
+        "input/002.jpg",
+        "input/015.jpg",
+        "input/018.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s08_instant",
+      "duration": 5.5,
+      "effect": "polaroid",
+      "image": "input/035.jpg",
+      "captions": [],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s02_candid_r1",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/059.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.567,
+          "focusY": 0.407,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/049.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.454,
+          "focusY": 0.546,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/005.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.428,
+          "focusY": 0.704,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s07_montage_r1",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/022.jpg",
+        "input/060.jpg",
+        "input/036.jpg",
+        "input/031.jpg",
+        "input/013.jpg",
+        "input/003.jpg",
+        "input/078.jpg",
+        "input/071.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s02_candid_r2",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/042.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.519,
+          "focusY": 0.381,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/007.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.474,
+          "focusY": 0.556,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/072.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.55,
+          "focusY": 0.584,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s07_montage_r2",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/083.jpg",
+        "input/028.jpg",
+        "input/069.jpg",
+        "input/006.jpg",
+        "input/051.jpg",
+        "input/088.jpg",
+        "input/089.jpg",
+        "input/070.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s02_candid_r3",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/054.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.579,
+          "focusY": 0.565,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/086.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.49,
+          "focusY": 0.432,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/058.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.49,
+          "focusY": 0.549,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s07_montage_r3",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/020.jpg",
+        "input/066.jpg",
+        "input/087.jpg",
+        "input/077.jpg",
+        "input/067.jpg",
+        "input/048.jpg",
+        "input/032.jpg",
+        "input/052.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s02_candid_r4",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/065.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.446,
+          "focusY": 0.397,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/038.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.61,
+          "focusY": 0.455,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/023.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.479,
+          "focusY": 0.545,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s07_montage_r4",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/024.jpg",
+        "input/025.jpg",
+        "input/027.jpg",
+        "input/041.jpg",
+        "input/021.jpg",
+        "input/019.jpg",
+        "input/050.jpg",
+        "input/047.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s02_candid_r5",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/055.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.35,
+          "focusY": 0.624,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/044.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.411,
+          "focusY": 0.573,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/009.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.256,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s07_montage_r5",
+      "duration": 12,
+      "effect": "film_roll_left",
+      "images": [
+        "input/026.jpg",
+        "input/046.jpg",
+        "input/040.jpg",
+        "input/016.jpg",
+        "input/053.jpg",
+        "input/076.jpg",
+        "input/014.jpg",
+        "input/074.jpg"
+      ],
+      "captions": [
+        {
+          "text": "Và hôm nay, mình chính thức về chung một nhà.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "s02_candid_r6",
+      "duration": 5.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/017.jpg",
+          "x": 150,
+          "y": 200,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.387,
+          "focusY": 0.689,
+          "rotation": -5,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/084.jpg",
+          "x": 720,
+          "y": 130,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.436,
+          "focusY": 0.596,
+          "rotation": 4,
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/082.jpg",
+          "x": 1250,
+          "y": 240,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "focusX": 0.6,
+          "focusY": 0.323,
+          "rotation": -3,
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Chuyện mình",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 60,
+          "y": 840,
+          "width": 1800,
+          "height": 160,
+          "size": 84,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s09_closing",
+      "duration": 8,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F1E7D9",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "stretch"
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/DancingScript.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Together · Our Wedding Day",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "size": 40,
+          "color": "#4A3B2C",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ]
+}

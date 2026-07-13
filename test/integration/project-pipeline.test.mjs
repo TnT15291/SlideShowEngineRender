@@ -41,6 +41,8 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   assert.ok(available(ffprobe), "ffprobe is required for the integration test and delivery");
 
   const id = `pipeline-integration-${process.pid}-${Date.now()}`;
+  const rootLoopPath = path.join(root, "analysis", "qa", "timeline.loop.json");
+  const rootLoopExisted = fs.existsSync(rootLoopPath);
   const projectRel = `projects/${id}`;
   const projectDir = path.join(root, projectRel);
   t.after(() => fs.rmSync(projectDir, { recursive: true, force: true }));
@@ -137,11 +139,33 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
 
   run(node, ["scripts/runProject.mjs", "--project", projectRel, "--resume", "--deliver"], { env });
   const deliveryDir = path.join(projectDir, "output", "deliver");
-  for (const file of ["final.mp4", "preview.mp4", "thumbnail.jpg", "project_summary.json"]) {
+  for (const file of ["final.mp4", "preview.mp4", "thumbnail.jpg", "project_summary.json", "approval-receipt.json"]) {
     assert.ok(fs.statSync(path.join(deliveryDir, file)).size > 0, `${file} is missing or empty`);
   }
   const summary = readJson(path.join(deliveryDir, "project_summary.json"));
   assert.equal(summary.tier, "lite");
   assert.equal(summary.qa.verdict, "ok");
   assert.equal(summary.provenance.photoContent, "stub");
+
+  const proxyPath = path.join(qaDir, "timeline.proxy.json");
+  fs.rmSync(proxyPath);
+  const exceptionDelivery = path.join(projectDir, "output", "deliver-without-qa");
+  run(node, [
+    "scripts/deliver.mjs", path.relative(root, timelinePath),
+    "--analysis-dir", path.relative(root, path.join(projectDir, "analysis")),
+    "--out-dir", path.relative(root, exceptionDelivery),
+    "--tier", "lite", "--preview-height", "16", "--allow-qa-flags",
+  ], { env });
+  const exceptionQa = readJson(path.join(exceptionDelivery, "qa-report.json"));
+  assert.equal(exceptionQa.verdict, "unknown");
+  assert.match(exceptionQa.reason, /no .*timeline\.proxy\.json/);
+
+  run(node, [
+    "scripts/qaLoop.mjs",
+    "--timeline", path.relative(root, timelinePath),
+    "--analysis-dir", path.relative(root, path.join(projectDir, "analysis")),
+    "--skip-render",
+  ], { env });
+  assert.ok(fs.existsSync(path.join(qaDir, "timeline.loop.json")));
+  assert.equal(fs.existsSync(rootLoopPath), rootLoopExisted);
 });

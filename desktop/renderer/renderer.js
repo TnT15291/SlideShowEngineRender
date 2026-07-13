@@ -27,6 +27,7 @@ let currentCatalog = null;
 let currentDirectorState = null;
 let currentTimeline = null;
 let selectedSlideId = null;
+let currentPreviewState = null;
 let renderProgress = { slide: 0, total: 0, phase: "Waiting to render", percent: 0 };
 
 function checkRow(label, ok) {
@@ -171,14 +172,16 @@ function setView(view) {
   const isRender = view === "render";
   const isDirector = view === "director";
   const isTimeline = view === "timeline";
+  const isPreviews = view === "previews";
   $("projectView").classList.toggle("hidden", view !== "project");
   $("assetsView").classList.toggle("hidden", !isAssets);
   $("pipelineView").classList.toggle("hidden", !isPipeline);
   $("directorView").classList.toggle("hidden", !isDirector);
   $("timelineView").classList.toggle("hidden", !isTimeline);
+  $("previewsView").classList.toggle("hidden", !isPreviews);
   $("renderView").classList.toggle("hidden", !isRender);
-  $("viewEyebrow").textContent = isAssets ? "Step 2" : isPipeline ? "Step 3" : isRender ? "Step 4" : isDirector ? "Step 5" : isTimeline ? "Step 6" : "Step 1";
-  $("viewTitle").textContent = isAssets ? "Asset Manager" : isPipeline ? "Lite Pipeline" : isRender ? "Render Queue" : isDirector ? "AI Director" : isTimeline ? "Timeline Editor" : "Project Workspace";
+  $("viewEyebrow").textContent = isAssets ? "Step 2" : isPipeline ? "Step 3" : isDirector ? "Step 4" : isPreviews ? "Step 5" : isTimeline ? "Step 6" : isRender ? "Step 7" : "Step 1";
+  $("viewTitle").textContent = isAssets ? "Asset Manager" : isPipeline ? "Lite Pipeline" : isRender ? "Render Queue" : isDirector ? "AI Director" : isPreviews ? "Preview Approval" : isTimeline ? "Timeline Editor" : "Project Workspace";
   document.querySelectorAll(".nav-item[data-view]").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.view === view);
   });
@@ -186,12 +189,35 @@ function setView(view) {
   if (isRender) $("renderTimelinePath").value = $("timelinePath").value;
   if (isDirector) refreshDirectorState();
   if (isTimeline) $("timelineEditorPath").value = $("timelinePath").value || $("directorTimelinePath").value;
+  if (isPreviews) refreshPreviews();
 }
+
+function appendPreviewLog(text) { const log = $("previewLog"); log.textContent += `${log.textContent.endsWith("\n") ? "" : "\n"}${text}`; log.scrollTop = log.scrollHeight; }
+function renderPreviews(state) {
+  currentPreviewState = state; const grid = $("previewGrid"); grid.replaceChildren();
+  $("approveSelectedPreview").disabled = !state?.selection || state?.approved;
+  $("renderSelectedPreview").disabled = !state?.approved;
+  if (!state?.available) { const p = document.createElement("p"); p.className = "empty-note"; p.textContent = "No previews yet. Generate three directions for this Tier 1 project."; grid.append(p); return; }
+  for (const variant of state.variants) {
+    const card = document.createElement("article"); card.className = `preview-card ${variant.selected ? "selected" : ""}`;
+    const video = document.createElement("video"); video.controls = true; video.preload = "metadata"; if (variant.videoUrl) video.src = variant.videoUrl;
+    const title = document.createElement("h4"); title.textContent = variant.id[0].toUpperCase() + variant.id.slice(1);
+    const desc = document.createElement("p"); desc.className = "muted-line"; desc.textContent = variant.description;
+    const meta = document.createElement("p"); meta.className = "preview-meta"; const limit = variant.pacing?.capacityLimited;
+    meta.textContent = `${variant.themeId} · ${variant.duration}s${limit ? ` · capacity-limited ${limit.availablePhotos}/${limit.recipeMinPhotos} photos` : ""}`;
+    const button = document.createElement("button"); button.type = "button"; button.className = variant.selected ? "primary-button" : "secondary-button"; button.textContent = variant.selected ? (state.approved ? "Approved" : "Selected") : "Choose Direction";
+    button.disabled = Boolean(variant.selected && state.approved);
+    button.addEventListener("click", async () => { const result = await window.studio.selectPreview(variant.id); if (result.ok) renderPreviews(result.state); });
+    card.append(video, title, desc, meta, button); grid.append(card);
+  }
+}
+async function refreshPreviews() { renderPreviews(await window.studio.previewState()); }
 
 function pipelinePayload() {
   return {
     musicPath: $("musicPath").value,
     timelinePath: $("timelinePath").value,
+    musicMode: $("musicMode").value,
   };
 }
 
@@ -640,6 +666,22 @@ async function init() {
   $("clearDirectorLog").addEventListener("click", () => {
     $("directorLog").textContent = "Ready.";
   });
+  $("generatePreviews").addEventListener("click", async () => {
+    $("generatePreviews").disabled = true; appendPreviewLog("Generating Gentle, Balanced and Lively previews...");
+    try { const result = await window.studio.generatePreviews({ duration: Number($("previewDuration").value) }); appendPreviewLog([result.stdout, result.stderr].filter(Boolean).join("\n") || (result.ok ? "Done." : "Failed.")); if (result.state) renderPreviews(result.state); }
+    finally { $("generatePreviews").disabled = false; }
+  });
+  $("approveSelectedPreview").addEventListener("click", async () => {
+    const result = await window.studio.approvePreview();
+    appendPreviewLog(result.ok ? "Selected direction approved." : result.message || "Approval failed.");
+    if (result.state) renderPreviews(result.state);
+  });
+  $("renderSelectedPreview").addEventListener("click", async () => {
+    $("renderSelectedPreview").disabled = true; appendPreviewLog(`Rendering selected direction: ${currentPreviewState?.selection?.id || "none"}`);
+    try { const result = await window.studio.renderSelectedPreview(); appendPreviewLog([result.stdout, result.stderr].filter(Boolean).join("\n") || (result.ok ? "Full render complete." : "Render failed.")); if (result.state) renderPreviews(result.state); }
+    finally { $("renderSelectedPreview").disabled = !currentPreviewState?.approved; }
+  });
+  $("clearPreviewLog").addEventListener("click", () => { $("previewLog").textContent = "Ready."; });
   $("loadTimeline").addEventListener("click", loadTimelineEditor);
   $("saveSlide").addEventListener("click", saveSelectedSlide);
   $("startRender").addEventListener("click", async () => {

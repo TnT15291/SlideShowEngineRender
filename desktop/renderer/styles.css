@@ -576,6 +576,15 @@ button {
   background: #fff7ec;
 }
 
+.preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 20px 0; }
+.preview-card { border: 1px solid #ded8cf; border-radius: 16px; background: #fff; padding: 14px; box-shadow: 0 8px 28px rgba(35, 27, 20, 0.06); }
+.preview-card.selected { border: 2px solid #7c5c3e; padding: 13px; background: #fffaf3; }
+.preview-card video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #171513; border-radius: 10px; margin-bottom: 12px; }
+.preview-card h4 { margin: 0 0 8px; }
+.preview-meta { min-height: 38px; color: #725f4e; font-size: 12px; }
+.compact-field { width: 130px; }
+@media (max-width: 1100px) { .preview-grid { grid-template-columns: 1fr; } }
+
 .slide-button strong,
 .slide-button span {
   display: block;

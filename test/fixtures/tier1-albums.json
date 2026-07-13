@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "cases": [
+    { "id": "balanced-clean", "photos": 60, "orientations": ["landscape", "portrait"], "musicSeconds": 150, "expected": "pass" },
+    { "id": "portrait-heavy", "photos": 45, "orientations": ["portrait"], "musicSeconds": 120, "expected": "pass" },
+    { "id": "photo-poor-long-song", "photos": 23, "orientations": ["landscape", "portrait"], "musicSeconds": 203, "expected": "pass" },
+    { "id": "must-use-missing", "photos": 40, "orientations": ["landscape"], "musicSeconds": 100, "mustUse": ["input/must.jpg"], "expected": "error", "flag": "missing_must_use" },
+    { "id": "unsafe-caption", "photos": 40, "orientations": ["landscape"], "musicSeconds": 100, "unsafeText": true, "expected": "error", "flag": "text_outside_safe_area" },
+    { "id": "short-closing", "photos": 40, "orientations": ["portrait"], "musicSeconds": 100, "closingSeconds": 1.5, "expected": "error", "flag": "closing_too_short" },
+    { "id": "layout-heavy", "photos": 80, "orientations": ["landscape", "portrait"], "musicSeconds": 160, "repeatLayout": true, "expected": "warning", "flag": "layout_run_exceeded" },
+    { "id": "full-film-overlay", "photos": 50, "orientations": ["landscape", "portrait"], "musicSeconds": 130, "fullOverlay": true, "expected": "manual-review", "flag": "full_film_overlay" }
+  ]
+}

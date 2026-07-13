@@ -4,6 +4,8 @@
   "name": "Editorial Bold",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["crossfade", "fade_slow", "dissolve", "smooth_left", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 2 } },
   "source": {
     "origin": "original",
     "notes": "Fashion-magazine editorial look (2026 trend: cursive out, big expressive serif headlines, clean sans companion, generous whitespace, high contrast). Original recipe, not copied from any marketplace timeline."
@@ -14,6 +16,11 @@
     "idealPhotos": 60
   },
   "musicProfile": { "moods": ["cinematic", "elegant", "modern"], "energy": "low_to_medium" },
+  "pacingVariants": [
+    { "id": "gallery", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
+    { "id": "editorial", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
+    { "id": "runway", "maxEnergy": 1.0, "durationMultiplier": 0.86 }
+  ],
   "briefFields": {
     "required": ["bride", "groom"],
     "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]

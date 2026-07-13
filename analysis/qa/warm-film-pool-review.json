@@ -1,0 +1,279 @@
+{
+  "video": "output/warm-film-01.mp4",
+  "scenes": 27,
+  "passed": 27,
+  "flagged": 0,
+  "problems": [],
+  "results": [
+    {
+      "id": "s01_open",
+      "effect": "layer_scene",
+      "at": 3.5,
+      "yavg": 155.3,
+      "range": 206,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_candid",
+      "effect": "layer_scene",
+      "at": 8.75,
+      "yavg": 190.913,
+      "range": 196,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_chapter",
+      "effect": "layer_scene",
+      "at": 14.2,
+      "yavg": 182.048,
+      "range": 208,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s04_flowers",
+      "effect": "video_background",
+      "at": 19.65,
+      "yavg": 117.687,
+      "range": 187,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_breath",
+      "effect": "layer_scene",
+      "at": 24.35,
+      "yavg": 137.461,
+      "range": 220,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_family",
+      "effect": "layer_scene",
+      "at": 29.05,
+      "yavg": 185.34,
+      "range": 205,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_montage",
+      "effect": "film_roll_left",
+      "at": 37.1,
+      "yavg": 112.938,
+      "range": 171,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_instant",
+      "effect": "polaroid",
+      "at": 45.25,
+      "yavg": 130.53,
+      "range": 175,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_candid_r1",
+      "effect": "layer_scene",
+      "at": 49.95,
+      "yavg": 186.305,
+      "range": 196,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_chapter_r1",
+      "effect": "layer_scene",
+      "at": 55.4,
+      "yavg": 180.005,
+      "range": 198,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_breath_r1",
+      "effect": "layer_scene",
+      "at": 60.85,
+      "yavg": 116.628,
+      "range": 206,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_family_r1",
+      "effect": "layer_scene",
+      "at": 65.55,
+      "yavg": 183.419,
+      "range": 200,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_montage_r1",
+      "effect": "film_roll_left",
+      "at": 73.6,
+      "yavg": 95.3464,
+      "range": 167,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_instant_r1",
+      "effect": "polaroid",
+      "at": 81.75,
+      "yavg": 121.952,
+      "range": 191,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_candid_r2",
+      "effect": "layer_scene",
+      "at": 86.45,
+      "yavg": 189.504,
+      "range": 193,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_chapter_r2",
+      "effect": "layer_scene",
+      "at": 91.9,
+      "yavg": 178.025,
+      "range": 202,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_breath_r2",
+      "effect": "layer_scene",
+      "at": 97.35,
+      "yavg": 119.921,
+      "range": 198,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_family_r2",
+      "effect": "layer_scene",
+      "at": 102.05,
+      "yavg": 179.953,
+      "range": 204,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_montage_r2",
+      "effect": "film_roll_left",
+      "at": 110.1,
+      "yavg": 85.552,
+      "range": 182,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_instant_r2",
+      "effect": "polaroid",
+      "at": 118.25,
+      "yavg": 140.087,
+      "range": 195,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s02_candid_r3",
+      "effect": "layer_scene",
+      "at": 122.95,
+      "yavg": 190.979,
+      "range": 193,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s03_chapter_r3",
+      "effect": "layer_scene",
+      "at": 128.4,
+      "yavg": 184.319,
+      "range": 218,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s05_breath_r3",
+      "effect": "layer_scene",
+      "at": 133.85,
+      "yavg": 106.621,
+      "range": 172,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s06_family_r3",
+      "effect": "layer_scene",
+      "at": 138.55,
+      "yavg": 183.405,
+      "range": 200,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s07_montage_r3",
+      "effect": "film_roll_left",
+      "at": 146.6,
+      "yavg": 95.2933,
+      "range": 172,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s08_instant_r3",
+      "effect": "polaroid",
+      "at": 154.75,
+      "yavg": 99.3559,
+      "range": 173,
+      "lenient": true,
+      "verdict": "ok",
+      "flags": []
+    },
+    {
+      "id": "s09_closing",
+      "effect": "layer_scene",
+      "at": 160.7,
+      "yavg": 216.208,
+      "range": 146,
+      "lenient": false,
+      "verdict": "ok",
+      "flags": []
+    }
+  ]
+}

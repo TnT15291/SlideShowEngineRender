@@ -22,6 +22,7 @@
           <button class="nav-item" data-view="assets" type="button">Assets</button>
           <button class="nav-item" data-view="pipeline" type="button">Pipeline</button>
           <button class="nav-item" data-view="director" type="button">Director</button>
+          <button class="nav-item" data-view="previews" type="button">Previews</button>
           <button class="nav-item" data-view="timeline" type="button">Timeline</button>
           <button class="nav-item" data-view="render" type="button">Render</button>
         </nav>
@@ -122,6 +123,15 @@
             <label class="field-label">
               Timeline output
               <input id="timelinePath" class="text-input" value="timeline/desktop-lite.json" />
+            </label>
+
+            <label class="field-label">
+              Music length
+              <select id="musicMode" class="text-input">
+                <option value="auto">Automatic — recommended</option>
+                <option value="highlight">Highlight — 60–105 seconds</option>
+                <option value="full_song">Full song</option>
+              </select>
             </label>
 
             <div class="pipeline-actions">
@@ -233,6 +243,25 @@
               <div id="slideEditor" class="slide-editor"></div>
             </article>
           </div>
+        </section>
+
+        <section id="previewsView" class="view-panel hidden" aria-live="polite">
+          <div class="asset-toolbar">
+            <div>
+              <p class="label">Tier 1 approval</p>
+              <h3>Choose the visual direction</h3>
+              <p class="muted-line">Compare real 15–25 second cuts. The selected artifact is reused unchanged for the full render.</p>
+            </div>
+            <div class="toolbar-actions">
+              <label class="field-label compact-field">Preview seconds<input id="previewDuration" class="text-input" type="number" min="15" max="25" value="20" /></label>
+              <button id="generatePreviews" class="secondary-button" type="button">Generate Three</button>
+              <button id="approveSelectedPreview" class="secondary-button" type="button" disabled>Approve Selected</button>
+              <button id="renderSelectedPreview" class="primary-button" type="button" disabled>Render Approved</button>
+            </div>
+          </div>
+          <div id="previewMessage" class="message-line"></div>
+          <div id="previewGrid" class="preview-grid"></div>
+          <article class="card log-card"><div class="log-heading"><h4>Preview Log</h4><button id="clearPreviewLog" class="secondary-button small-button" type="button">Clear</button></div><pre id="previewLog" class="log-output">Ready.</pre></article>
         </section>
 
         <section id="renderView" class="view-panel hidden" aria-live="polite">

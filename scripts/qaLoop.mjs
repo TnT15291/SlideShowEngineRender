@@ -31,6 +31,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { appendFeedback } from "./lib/feedbackLedger.mjs";
 
 const root = process.cwd();
 const node = process.execPath;
@@ -51,6 +52,8 @@ const jobDir = arg("--job-dir", "");
 const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
 const PREFLIGHT_PASSES = 3; // free passes; the fix-once rule usually converges in 1
 const skipRender = process.argv.includes("--skip-render");
+const skipInitialRender = process.argv.includes("--skip-initial-render");
+const strict = process.argv.includes("--strict");
 
 const tlAbs = path.resolve(root, TL);
 if (!fs.existsSync(tlAbs)) { console.error(`[qaLoop] FAILED: timeline not found: ${TL}`); process.exit(1); }
@@ -114,10 +117,24 @@ function applyProxyFixes(report) {
       l.focusX = p.fix.focusX;
       l.focusY = p.fix.focusY;
       applied.push(`${p.id}: hero ${from} -> ${p.fix.to} (${p.flags.join(",")})`);
+    } else if (p.fix.kind === "set_focus") {
+      const l = slide.layers?.[p.fix.layer];
+      if (!l || l.type !== "image") continue;
+      l.focusX = p.fix.focusX; l.focusY = p.fix.focusY;
+      applied.push(`${p.id}: focus -> ${p.fix.focusX.toFixed(3)},${p.fix.focusY.toFixed(3)} (${p.flags.join(",")})`);
+    } else if (p.fix.kind === "fit_text") {
+      // The shared glyph fitter owns the actual rewrite; mark this pair so the
+      // anti-oscillation guard still applies, then run it after writing.
+      applied.push(`${p.id}: glyph-fit text layer ${p.fix.layer} (${p.flags.join(",")})`);
     } else continue;
     repaired.add(key);
   }
-  if (applied.length) writeTl(tl);
+  if (applied.length) {
+    writeTl(tl);
+    if (report.problems.some((p) => p.fix?.kind === "fit_text")) {
+      sh(["scripts/fitTextInTimeline.mjs", TL], "fitText");
+    }
+  }
   return applied;
 }
 
@@ -172,6 +189,9 @@ function writeSummary(manualReview = []) {
   const loopOut = `${analysisDir}/qa/${base}.loop.json`;
   fs.mkdirSync(path.dirname(path.resolve(root, loopOut)), { recursive: true });
   fs.writeFileSync(path.resolve(root, loopOut), JSON.stringify(summary, null, 2));
+  appendFeedback({ root, analysisDir, projectId: tl.project?.name || TL, type: "qa_completed",
+    recipeId: tl.recipeDecisions?.recipeId || tl.recipeDecisions?.recipe || null, pacing: tl.recipeDecisions?.pacingVariant,
+    data: { revisions, openIssues: manualReview.length, clean: !manualReview.length } });
   console.log(
     `\n[qaLoop] ${summary.status} — ${revisions} revision(s), ${manualReview.length} open issue(s). ` +
       `Output: ${summary.video}. Report: ${loopOut}`
@@ -197,8 +217,8 @@ if (skipRender) {
 }
 
 // RENDER + REVISE
-render();
-console.log("  rendered.");
+if (skipInitialRender) console.log("  using the render already produced by the render phase.");
+else { render(); console.log("  rendered."); }
 
 let manualReview = [];
 while (true) {
@@ -231,3 +251,8 @@ while (true) {
 }
 
 writeSummary(manualReview);
+sh(["scripts/generateContactSheet.mjs", TL, "--analysis-dir", analysisDir], "contactSheet");
+if (strict && manualReview.length) {
+  console.error(`[qaLoop] QUALITY GATE FAILED: ${manualReview.length} issue(s) remain after ${revisions} revision(s).`);
+  process.exit(1);
+}

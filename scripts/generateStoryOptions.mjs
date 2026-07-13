@@ -19,6 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON, str, oneOf } from "./lib/deepseek.mjs";
+import { loadLedger, active } from "./lib/directives.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -26,8 +27,19 @@ const arg = (flag, def) => {
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
 const contentPath = arg("--content", "analysis/photo_content.json");
-const briefText = arg("--brief", "");
+const directivesPath = arg("--directives", "");
 const outPath = arg("--out", "analysis/story_options.json");
+
+// The customer's own words. This node ACCEPTED a brief for its whole life and the
+// orchestrator never passed one — so every premium film was pitched by a director who
+// had not read what the couple wrote. The four story directions are the first thing
+// the customer sees; proposing four that ignore their brief guarantees the first
+// revision round is spent watching them retype it.
+const ledger = directivesPath ? loadLedger(directivesPath) : { story: "", directives: [] };
+const briefText = arg("--brief", "") || ledger.story || "";
+// Node 3 reasons about narrative only — effects and transitions are node 5/6's job —
+// but pacing and length ARE narrative shape, so those orders belong in the pitch.
+const shapeOrders = active(ledger).filter((d) => (d.kind === "pacing" || d.kind === "duration") && d.op === "set");
 
 const IDS = ["A", "B", "C", "D"];
 const PACING = new Set(["slow", "medium", "fast", "dynamic"]);
@@ -85,7 +97,15 @@ function buildUser() {
     `- strong hero-worthy photos: ${profile.heroCount}`,
     profile.topEmotion ? `- dominant emotion: ${profile.topEmotion}` : "",
   ];
-  if (briefText) lines.push("", `Client brief / preference: ${briefText}`);
+  if (briefText) lines.push("", `The couple's own brief — every option must be a way of telling THIS story:`, briefText);
+  if (shapeOrders.length) {
+    lines.push("", "They also asked for, and you must not contradict:");
+    for (const d of shapeOrders) {
+      lines.push(d.kind === "duration"
+        ? `- a film of about ${d.target} seconds ("${d.quote}")`
+        : `- ${d.target} pacing ("${d.quote}")`);
+    }
+  }
   lines.push("", "Propose the four story directions now.");
   return lines.filter(Boolean).join("\n");
 }
@@ -151,6 +171,12 @@ if (hasKey()) {
   rawOptions = stubOptions();
 }
 const options = validateStoryOptions(rawOptions);
+
+// Persuading the model is not the same as obeying the customer. If they ordered a
+// pacing, all four options are that pacing — the choice they were offered is WHICH
+// STORY, not whether we listened.
+const pacingOrder = shapeOrders.find((d) => d.kind === "pacing" && d.strength === "must");
+if (pacingOrder) for (const o of options) o.pacing = pacingOrder.target;
 
 const out = {
   generatedBy: provenance(model),

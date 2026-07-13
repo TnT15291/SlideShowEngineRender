@@ -34,6 +34,10 @@ const photosPath = arg("--photos", "analysis/photos.json");
 const recipesDir = arg("--recipes", "story-templates");
 const libraryPath = arg("--library", "layouts/library.json");
 const outPath = arg("--out", "analysis/recipe_choice.json");
+const rankingPath = arg("--ranking", "analysis/recipe-ranking.json");
+let ranking = null; try { ranking = JSON.parse(fs.readFileSync(path.resolve(root, rankingPath), "utf8")); } catch {}
+const priorByRecipe = new Map();
+for (const row of ranking?.ranking || []) priorByRecipe.set(row.recipeId, Math.max(priorByRecipe.get(row.recipeId) || -Infinity, row.adjustedScore || 0));
 
 const readJson = (p) => JSON.parse(fs.readFileSync(path.resolve(root, p), "utf8"));
 
@@ -96,7 +100,8 @@ function ruleBased() {
     if (/tối giản|minimal|hiện đại|modern/.test(words) && m.bestFor.includes("modern_minimal")) score += 3;
     if (/tạp chí|editorial|thời trang|fashion/.test(words) && m.bestFor.includes("editorial")) score += 3;
     score += hint("prewedding") && m.bestFor.includes("prewedding") ? 1 : 0;
-    return { m, score };
+    const prior = Math.max(-0.75, Math.min(0.75, (priorByRecipe.get(m.id) || 0) * 0.75));
+    return { m, score: score + prior, prior };
   });
   scored.sort((a, b) => b.score - a.score || a.m.id.localeCompare(b.m.id));
   const top = scored[0];
@@ -153,6 +158,7 @@ const doc = {
   themeId: choice.themeId,
   reason: choice.reason,
   consideredIds: menu.map((m) => m.id),
+  rankingPrior: priorByRecipe.has(choice.recipeId) ? priorByRecipe.get(choice.recipeId) : null,
 };
 fs.mkdirSync(path.dirname(path.resolve(root, outPath)), { recursive: true });
 fs.writeFileSync(path.resolve(root, outPath), JSON.stringify(doc, null, 2) + "\n");

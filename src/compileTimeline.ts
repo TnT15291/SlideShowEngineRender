@@ -163,6 +163,7 @@ export function compileTimeline(
       transition: slide.transition,
       captions,
       color,
+      technicalColor: slide.technicalColor,
       srcWidth: size?.width,
       srcHeight: size?.height,
       width: timeline.project.width,
@@ -191,6 +192,8 @@ export function compileTimeline(
             tracks: timeline.music.map((t) => ({
               path: path.resolve(baseDir, t.path),
               volume: t.volume,
+              start: t.start,
+              end: t.end,
             })),
             fadeIn: timeline.audio.fade_in,
             fadeOut: timeline.audio.fade_out,

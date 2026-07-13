@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { MUSIC_ANALYSIS_VERSION } from "./lib/musicAnalysis.mjs";
 
 const root = process.cwd();
 const inPath = process.argv[2];
@@ -77,11 +78,35 @@ for (let bpm = 60; bpm <= 180; bpm += 1) {
   if (acc > bestScore) { bestScore = acc; bestBpm = bpm; }
 }
 
+// Pick the strongest onset as a beat-grid phase, then expose auditable beat,
+// downbeat (4 beats) and phrase (16 beats) boundaries for deterministic edits.
+const beatSeconds = 60 / (bestBpm || 120);
+const phaseBins = Math.max(1, Math.round(beatSeconds / HOP));
+let phase = 0, phaseScore = -1;
+for (let p = 0; p < phaseBins; p++) {
+  let score = 0;
+  for (let i = p; i < onset.length; i += phaseBins) score += onset[i];
+  if (score > phaseScore) { phaseScore = score; phase = p * HOP; }
+}
+const grid = (every, kind) => {
+  const rows = [];
+  for (let index = 0, time = phase; time < duration; index++, time = phase + index * beatSeconds * every) {
+    rows.push({ index, time: +time.toFixed(3), kind });
+  }
+  return rows;
+};
+const beats = grid(1, "beat");
+const downbeats = grid(4, "downbeat");
+const phrases = grid(16, "phrase");
+
 const out = {
+  analysisVersion: MUSIC_ANALYSIS_VERSION,
   file: inPath,
   duration: +duration.toFixed(2),
   hop: HOP,
   bpmEstimate: bestBpm,
+  beatGrid: { source: "onset_phase", confidence: +Math.min(1, phaseScore / Math.max(0.001, onset.reduce((a, b) => a + b, 0))).toFixed(3), beatSeconds: +beatSeconds.toFixed(4), phase: +phase.toFixed(3) },
+  beats, downbeats, phrases,
   energy: { mean: +(env.reduce((a, b) => a + b, 0) / env.length).toFixed(3), windows: env.length },
   sections,
   // convenience picks for the Director

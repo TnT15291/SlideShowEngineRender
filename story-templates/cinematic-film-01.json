@@ -4,6 +4,8 @@
   "name": "Cinematic Film",
   "tier": "smart_lite",
   "libraryTheme": "dark_film",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["fade_slow", "dissolve", "smooth_left", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 2, "peak": 1 } },
   "source": {
     "origin": "original",
     "notes": "Moody cinematic documentary / fashion-film look (2026 trend: editorial pacing, intentional color grade, the line between wedding video and fashion film fading). Letterbox + grain + dark scenes. Original recipe."
@@ -14,6 +16,11 @@
     "idealPhotos": 70
   },
   "musicProfile": { "moods": ["cinematic", "emotional", "slow"], "energy": "low" },
+  "pacingVariants": [
+    { "id": "restrained", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
+    { "id": "cinematic", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
+    { "id": "trailer", "maxEnergy": 1.0, "durationMultiplier": 0.86 }
+  ],
   "briefFields": {
     "required": ["bride", "groom"],
     "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]

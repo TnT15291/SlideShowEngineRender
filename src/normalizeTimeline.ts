@@ -139,6 +139,8 @@ export function normalizeTimeline(raw: any): any {
   const music = musicList.map((m: any) => ({
     path: m?.path,
     volume: m?.volume ?? DEFAULTS.volume,
+    ...(m?.start != null ? { start: m.start } : {}),
+    ...(m?.end != null ? { end: m.end } : {}),
   }));
 
   const slides = Array.isArray(raw?.slides)
@@ -250,6 +252,7 @@ function normalizeSlide(s: any): any {
   };
   if (s?.easing != null) out.easing = canonicalKey(s.easing);
   if (s?.color != null) out.color = s.color;
+  if (s?.technicalColor != null) out.technicalColor = s.technicalColor;
   return out;
 }
 
@@ -275,6 +278,9 @@ function normalizeLayer(l: any): any {
       path: l?.path,
       fit: canonicalKey(l?.fit) || "cover",
       motion: l?.motion,
+      motionStrength: l?.motionStrength,
+      easing: l?.easing,
+      technicalColor: l?.technicalColor,
       frame: l?.frame,
       focusX: l?.focusX,
       focusY: l?.focusY,

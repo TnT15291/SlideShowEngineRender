@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { validateMusicAnalysis } from "./musicAnalysis.mjs";
 
 const PHASES = ["analyze", "plan", "build", "render", "qa", "deliver"];
 
@@ -44,12 +45,23 @@ export function inspectResume(project) {
       inputs: [project.manifest.inputDir, ...project.manifest.music],
       outputs: [`${analysis}/photos.json`, `${analysis}/photo_content.json`, ...musicAnalysis]
     },
+    // directives.json is an OUTPUT of plan (node 0 compiles it) and an INPUT to build.
+    // That asymmetry is load-bearing. A revision appends to the ledger and re-runs;
+    // if the ledger were a plan INPUT, touching it would make plan stale, node 3 would
+    // re-roll the four story options at temperature 0.7, and the customer who asked to
+    // "bỏ chữ ở cảnh 12" would be handed a DIFFERENT FILM than the one they approved.
+    // As an output, plan stays fresh and only build downwards re-runs — which is the
+    // blast-radius rule (see lib/directives.mjs) expressed as a freshness rule.
     plan: {
       inputs: ["project.json", ...(project.manifest.promptFile ? [project.manifest.promptFile] : []), `${analysis}/photos.json`, `${analysis}/photo_content.json`, ...musicAnalysis],
-      outputs: [project.manifest.selectionPolicy || `${analysis}/selection_policy.json`, project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`]
+      outputs: [project.manifest.selectionPolicy || `${analysis}/selection_policy.json`, project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`,
+        "directives.json",
+        ...(project.manifest.tier === "template" ? [`${analysis}/tier1_direction.json`] : [])]
     },
     build: {
-      inputs: [project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`, ...musicAnalysis],
+      inputs: [project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`,
+        "directives.json",
+        ...(project.manifest.tier === "template" ? [`${analysis}/tier1_direction.json`] : []), ...musicAnalysis],
       outputs: [project.manifest.timeline]
     },
     render: { inputs: [project.manifest.timeline], outputs: [project.manifest.output] },
@@ -71,6 +83,16 @@ export function inspectResume(project) {
     if (!tracked) return { reusable, invalidatedAt: phase, reason: `previous ${phase} status is ${old?.status || "missing"}` };
     if (!fresh(rule.inputs.map(project.abs), rule.outputs.map(project.abs))) {
       return { reusable, invalidatedAt: phase, reason: `${phase} artifacts are missing or stale` };
+    }
+    if (phase === "analyze") {
+      for (const rel of musicAnalysis) {
+        try {
+          const checked = validateMusicAnalysis(JSON.parse(fs.readFileSync(project.abs(rel), "utf8")));
+          if (!checked.ok) return { reusable, invalidatedAt: "analyze", reason: `music analysis is stale or incomplete: ${checked.missing.join(", ")}` };
+        } catch {
+          return { reusable, invalidatedAt: "analyze", reason: "music analysis is invalid JSON" };
+        }
+      }
     }
     reusable.add(phase);
   }

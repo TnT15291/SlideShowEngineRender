@@ -39,6 +39,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { sceneTimes } from "./lib/pacing.mjs";
 import { validate } from "./lib/checkSchema.mjs";
+import { appendFeedback } from "./lib/feedbackLedger.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -75,6 +76,7 @@ const watermark = arg("--watermark", "");
 const fontRel = arg("--font", "fonts/BeVietnamPro-Regular.ttf");
 const thumbTimeArg = arg("--thumb-time", "");
 const noCopy = process.argv.includes("--no-copy");
+const allowQaFlags = process.argv.includes("--allow-qa-flags");
 
 if (!Number.isFinite(previewHeight) || previewHeight < 16) die(`--preview-height must be a number >= 16`);
 if (!Number.isFinite(previewSeconds) || previewSeconds < 0) die(`--preview-seconds must be a number >= 0`);
@@ -335,12 +337,92 @@ if (!proxy) {
   if (loop?.manualReview && !staleAgainstTimeline(loop)) qa.manualReview = true;
 }
 
+if (!allowQaFlags && qa.verdict !== "ok") {
+  die(`quality gate: QA verdict is ${qa.verdict}. ${qa.reason || `${qa.problems || 0} problem(s) remain`} ` +
+    `(use --allow-qa-flags only for an explicitly approved manual exception)`);
+}
+const approval = readJson(`${analysisDir}/previews/selection.json`);
+if (tier === "template" && approval && approval.status !== "approved") {
+  die(`preview approval is ${approval.status || "missing"}; generate and approve a new Tier 1 preview before delivery`);
+}
+
+// --- operational artifacts -------------------------------------------------
+const sceneRows = times.map((time, i) => {
+  const slide = tl.slides[i];
+  return {
+    id: slide.id, start: +time.start.toFixed(3), end: +time.end.toFixed(3), duration: slide.duration,
+    photos: [
+      ...(slide.image ? [slide.image] : []), ...(slide.images || []),
+      ...(slide.layers || []).filter((l) => l.type === "image" && l.path).map((l) => l.path),
+    ],
+    copy: [
+      ...(slide.captions || []).map((c) => c.text),
+      ...(slide.layers || []).filter((l) => l.type === "text").map((l) => l.text),
+    ].filter(Boolean),
+  };
+});
+const storyboardRel = rel(outDir, "storyboard.json");
+fs.writeFileSync(path.resolve(root, storyboardRel), JSON.stringify({ timeline: rel(tlPath), scenes: sceneRows }, null, 2));
+
+const contactRel = rel(outDir, "storyboard-contact-sheet.jpg");
+const cols = 4, rows = Math.ceil(tl.slides.length / cols);
+run(ffmpeg, ["-v", "error", "-y", "-i", finalRel,
+  "-vf", `fps=${Math.max(0.01, tl.slides.length / video.durationSec)},scale=320:180:force_original_aspect_ratio=decrease,pad=320:180:(ow-iw)/2:(oh-ih)/2:black,tile=${cols}x${rows}`,
+  "-frames:v", "1", "-q:v", "2", contactRel], "storyboard contact sheet");
+
+const technical = readJson(`${analysisDir}/photos.json`);
+const uniqueUsed = [...new Set(usedPhotos)];
+const usedRel = rel(outDir, "used-photos.json"), unusedRel = rel(outDir, "unused-photos.json");
+fs.writeFileSync(path.resolve(root, usedRel), JSON.stringify({ count: uniqueUsed.length, photos: uniqueUsed }, null, 2));
+const unused = (technical?.photos || []).map((p) => p.file).filter((file) => !uniqueUsed.includes(file));
+fs.writeFileSync(path.resolve(root, unusedRel), JSON.stringify({ count: unused.length, photos: unused }, null, 2));
+
+const decisionsRel = rel(outDir, "recipe-decisions.json");
+const direction = readJson(`${analysisDir}/tier1_direction.json`);
+fs.writeFileSync(path.resolve(root, decisionsRel), JSON.stringify({
+  recipeDecisions: tl.recipeDecisions || null,
+  photoAssignment: tl.photoAssignment || null,
+  tier1Direction: direction,
+}, null, 2));
+const qaRel = rel(outDir, "qa-report.json");
+if (proxy) fs.copyFileSync(path.resolve(root, proxyRel), path.resolve(root, qaRel));
+else fs.writeFileSync(path.resolve(root, qaRel), JSON.stringify(qa, null, 2) + "\n");
+const contactQaSource = `${analysisDir}/qa/${base}.contact.jpg`;
+const contactQaJsonSource = `${analysisDir}/qa/${base}.contact.json`;
+const contactQaRel = rel(outDir, "qa-contact-sheet.jpg"), contactQaJsonRel = rel(outDir, "qa-contact-sheet.json");
+const contactQaFiles = [];
+if (fs.existsSync(path.resolve(root, contactQaSource))) { fs.copyFileSync(path.resolve(root, contactQaSource), path.resolve(root, contactQaRel)); contactQaFiles.push(contactQaRel); }
+if (fs.existsSync(path.resolve(root, contactQaJsonSource))) { fs.copyFileSync(path.resolve(root, contactQaJsonSource), path.resolve(root, contactQaJsonRel)); contactQaFiles.push(contactQaJsonRel); }
+
+const compliance = readJson(`${analysisDir}/compliance.json`);
+const approvalReceiptRel = rel(outDir, "approval-receipt.json");
+const approvalReceipt = {
+  version: 1,
+  generatedAt: new Date().toISOString(),
+  approval: approval ? {
+    status: approval.status || "legacy", previewId: approval.id || null, selectedAt: approval.selectedAt || null,
+    approvedAt: approval.approvedAt || null, recipeId: approval.recipeId || null,
+    previewGeneratedAt: approval.previewGeneratedAt || null, fingerprint: approval.fingerprint || null,
+  } : null,
+  timeline: rel(tlPath),
+  recipeId: tl.recipeDecisions?.recipeId || tl.recipeDecisions?.recipe || null,
+  qa: { ...qa, manualException: allowQaFlags && qa.verdict !== "ok" },
+  compliance: compliance ? {
+    verdict: compliance.verdict || compliance.status || null,
+    honoured: compliance.honoured?.length ?? compliance.summary?.honoured ?? null,
+    broken: compliance.broken?.length ?? compliance.summary?.broken ?? null,
+    source: `${analysisDir}/compliance.json`,
+  } : null,
+};
+fs.writeFileSync(path.resolve(root, approvalReceiptRel), JSON.stringify(approvalReceipt, null, 2) + "\n");
+
 // The manifest lists the payload it ships with, not itself — a self-entry would
 // need its own size before it is written.
 const deliverables = [
   { name: "final.mp4", path: finalDelivered, sizeBytes: sizeOf(finalDelivered) },
   { name: "preview.mp4", path: previewRel, sizeBytes: preview.sizeBytes },
   { name: "thumbnail.jpg", path: thumbRel, sizeBytes: sizeOf(thumbRel) },
+  ...[storyboardRel, contactRel, usedRel, unusedRel, decisionsRel, qaRel, approvalReceiptRel, ...contactQaFiles].map((p) => ({ name: path.basename(p), path: p, sizeBytes: sizeOf(p) })),
 ];
 
 const summary = {
@@ -388,6 +470,9 @@ if (errors.length) {
   process.exit(1);
 }
 fs.writeFileSync(path.resolve(root, summaryRel), JSON.stringify(summary, null, 2));
+appendFeedback({ root, analysisDir, projectId: tl.project?.name || base, type: "delivered",
+  recipeId: tl.recipeDecisions?.recipeId || tl.recipeDecisions?.recipe || null, pacing: tl.recipeDecisions?.pacingVariant,
+  data: { qaVerdict: qa.verdict } });
 
 const mb = (b) => (b / 1048576).toFixed(1) + "MB";
 console.log(

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { arg, loadProject } from "./lib/project.mjs";
+import { loadLedger, active, applyToTimeline } from "./lib/directives.mjs";
 
 const project = loadProject(arg("--project"));
 const read = (p) => JSON.parse(fs.readFileSync(project.abs(p), "utf8"));
@@ -70,8 +71,19 @@ const timeline = {
   metadata: { storyTemplate: project.rel(project.manifest.story || "analysis/story-template.generated.json"), targetDuration },
   slides,
 };
+// The cheap tier still has to do as it is told. Lite cannot honour everything — it has no
+// acts, so an act-scoped order has nowhere to land — but colour, overlays, transitions,
+// captions, a whole-film look and the running time it CAN do, and applyToTimeline is the
+// one place all three tiers agree on how. What Lite genuinely cannot do, the compliance
+// report says out loud rather than passing over in silence.
+const ledger = fs.existsSync(project.abs("directives.json")) ? loadLedger(project.rel("directives.json")) : { directives: [] };
+const orders = active(ledger);
+const appliedIds = orders.length ? applyToTimeline(timeline, orders) : [];
+
 const out = project.abs(project.manifest.timeline);
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, JSON.stringify(timeline, null, 2) + "\n");
-const actual = slides.reduce((n, s) => n + s.duration, 0) - overlap;
+const finalOverlap = slides.reduce((n, s) => n + (s.transition?.duration || 0), 0);
+const actual = slides.reduce((n, s) => n + s.duration, 0) - finalOverlap;
 console.log(`Wrote ${project.rel(project.manifest.timeline)}: ${slides.length} scene(s), ${actual.toFixed(2)}s / target ${targetDuration.toFixed(2)}s.`);
+if (orders.length) console.log(`  directives: ${appliedIds.length}/${orders.length} applied by the lite generator`);

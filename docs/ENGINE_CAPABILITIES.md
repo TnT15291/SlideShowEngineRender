@@ -56,6 +56,35 @@ Supported `effect` values:
   then a slow eased zoom. Needs 2 photos.
 - `portrait_blur_background`: portrait image preserved over a blurred
   full-frame background.
+- `mask_reveal`: reveals one `image` through a grayscale video supplied in
+  `mask` (black = hidden, white = visible). The mask plays once and its final
+  frame holds, so the slide may continue after the reveal completes. Use the
+  bundled presets below instead of inventing mask paths:
+  - `assets/masks/particle_gather.mp4` (`particle_reveal` in the layout
+    library): glowing particles gather to reveal a hero photo. Good for a
+    magical opener or emotional turn; at most once per video.
+  - `assets/masks/heart_wand.mp4` (`heart_reveal`): a magic wand draws a
+    glowing heart, the couple appears inside it, then the photo expands to the
+    full frame. Good for a romantic opener or first-kiss beat; at most once per
+    video and never together with `particle_reveal`.
+  - `assets/masks/brush_stroke.mp4` (`brush_reveal`): five broad alternating
+    paint strokes reveal the photo with dry-brush edges. Good for an artistic
+    or scrapbook opener/chapter break; use at most one `mask_reveal` beat per
+    video.
+
+Example bundled mask reveal:
+
+```json
+{
+  "id": "first-kiss-heart-reveal",
+  "image": "input/first-kiss.jpg",
+  "mask": "assets/masks/heart_wand.mp4",
+  "duration": 6.5,
+  "effect": "mask_reveal",
+  "transition": { "type": "crossfade", "duration": 1.0 },
+  "captions": []
+}
+```
 
 All zoom/pan/kenburns motion is eased (smoothstep). Optionally set slide-level
 `easing` on these effects only: `gentle` (softer, for calm/portrait beats),
@@ -101,6 +130,9 @@ an entrance `animation` (`none` | `fade` | `slide_up/down/left/right`, smoothste
   - `motion`: continuous Ken-Burns over the whole slide — `zoom_in`, `zoom_out`,
     `pan_left`, `pan_right`, `pan_up`, `pan_down`. Great on full-bleed backgrounds
     and hero photos.
+  - `motionStrength`: optional `0.01..0.12` travel/zoom amount. Tier 1 normally
+    uses `0.025` for groups and no more than `0.06` for portraits/details.
+  - `easing`: optional `gentle`, `snap`, or `bounce` for layer motion.
   - `frame`: card treatment `{ radius, border, borderColor, shadow }` — rounded
     corners, a matte border (keeps the outer size), and a soft drop shadow.
 - `rect`: a solid `color` panel (square corners).
@@ -211,6 +243,11 @@ Layer scene safety rules:
 
 ## Global And Per-Slide Color
 
+Tier 1 first applies bounded album-relative technical normalization per image
+(exposure, saturation, red/blue cast), then applies the recipe's creative grade.
+Layer images carry `technicalColor`; single/multi-photo presets use the average
+correction for that scene so a collage does not split into conflicting grades.
+
 Timeline-level `color` applies to every slide. Slide-level `color` overrides it.
 
 Supported grading fields:
@@ -259,6 +296,8 @@ Supported fields:
 Known local wedding assets (see `docs/ASSETS.md` for the full inventory + licenses):
 
 - Bundled procedural light leaks + particles: `overlays/`
+- Bundled reveal masks: `assets/masks/particle_gather.mp4`,
+  `assets/masks/heart_wand.mp4`, `assets/masks/brush_stroke.mp4`
 - Bokeh/light overlays: `assets/overlays/`
 - Wedding backgrounds: `assets/backgrounds/`
 - Decorative frame overlays: `assets/frames/`
@@ -365,8 +404,8 @@ Current gaps compared with the full FFmpeg universe:
 2. Pixel/vision-based visual QA for exact text fit, subject crop, and artistic
    overlap checks.
 3. Richer layer motion: per-layer easing (whole-slide effects already support
-   `gentle`/`snap`/`bounce`), zoom/pan keyframes, blur reveal, mask reveal,
-   and photo-stack shuffle.
+   `gentle`/`snap`/`bounce`), zoom/pan keyframes, blur reveal, and photo-stack
+   shuffle.
 
 ## Recommended AI Prompt Add-On
 

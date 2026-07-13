@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-12T15:59:05.059Z",
+  "entries": [
+    {
+      "id": "warm-film-01--balanced",
+      "recipeId": "warm-film-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:8|connection:layer_scene:6|build:layer_scene:5|peak:polaroid:0|closing:polaroid:0",
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.25,
+          "hash": "628423b595351109"
+        },
+        {
+          "beat": "peak",
+          "at": 6.65,
+          "hash": "03070727138f8f5a"
+        },
+        {
+          "beat": "closing",
+          "at": 8.45,
+          "hash": "238d9414460e0e16"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/warm-film-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/warm-film-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/warm-film-01--balanced/contact.jpg"
+    }
+  ]
+}

@@ -11,8 +11,16 @@
     "template": "node scripts/runProject.mjs --tier template",
     "lite": "node scripts/runProject.mjs --tier lite",
     "premium": "node scripts/runProject.mjs --tier premium",
+    "preview:tier1": "node scripts/generateTier1Previews.mjs",
+    "qa:contact": "node scripts/generateContactSheet.mjs",
+    "social": "node scripts/generateSocialOutputs.mjs",
+    "test:visual": "node scripts/generateRegressionGallery.mjs",
+    "test:tier1-albums": "node --test test/tier1-album-regression.test.mjs",
+    "rank:recipes": "node scripts/rankRecipes.mjs",
     "analyze:assets": "node scripts/analyzeAssets.mjs",
+    "analyze:faces": "node scripts/analyzePhotos.mjs",
     "select:story": "node scripts/selectStoryOption.mjs",
+    "select:music": "node scripts/selectMusicEdit.mjs",
     "project:create": "node scripts/createProject.mjs",
     "project:analyze": "node scripts/analyzeProject.mjs",
     "project:policy": "node scripts/generateSelectionPolicy.mjs",
@@ -25,6 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "onnxruntime-node": "^1.27.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

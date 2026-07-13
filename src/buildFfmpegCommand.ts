@@ -185,7 +185,7 @@ function buildLayerImageFilter(
   // Base fill at inner size: continuous Ken-Burns motion, or a static fit.
   const base =
     layer.motion && layer.motion !== "none"
-      ? layerMotionFilter(layer.motion, innerW, innerH, fps, frames)
+      ? layerMotionFilter(layer.motion, innerW, innerH, fps, frames, layer.motionStrength, layer.focusX, layer.focusY, layer.easing)
       : layer.fit === "stretch"
         ? `scale=${innerW}:${innerH}`
         : layer.fit === "contain"
@@ -195,6 +195,8 @@ function buildLayerImageFilter(
             `crop=${innerW}:${innerH}:(iw-ow)*${clamp01(layer.focusX)}:(ih-oh)*${clamp01(layer.focusY)}`;
 
   const parts = [base];
+  const technical = buildTechnicalColorFilter(layer.technicalColor);
+  if (technical) parts.push(technical);
   if (border > 0) {
     parts.push(`pad=${w}:${h}:${border}:${border}:color=${cssColor(frame!.borderColor ?? "white")}`);
   }
@@ -216,6 +218,11 @@ function buildLayerImageFilter(
   return parts.join(",");
 }
 
+function buildTechnicalColorFilter(c?: { brightness: number; saturation: number; redBalance: number; blueBalance: number }): string | undefined {
+  if (!c) return undefined;
+  return `eq=brightness=${c.brightness}:saturation=${c.saturation},colorbalance=rs=${c.redBalance}:bs=${c.blueBalance}`;
+}
+
 // Continuous Ken-Burns on an image layer: a 2x-oversampled cover fill driven by
 // zoompan over the whole slide, reusing the same eased zoom/pan exprs as the
 // whole-slide effects so layer motion matches the house style.
@@ -224,20 +231,28 @@ function layerMotionFilter(
   w: number,
   h: number,
   fps: number,
-  frames: number
+  frames: number,
+  strength = 0.08,
+  focusX = 0.5,
+  focusY = 0.5,
+  easing?: MotionEasing
 ): string {
   const base =
     `scale=${w * 2}:${h * 2}:force_original_aspect_ratio=increase,crop=${w * 2}:${h * 2}`;
-  let z = String(PAN_ZOOM);
-  let x = centerX();
-  let y = centerY();
+  const maxZoom = 1 + Math.min(0.12, Math.max(0.01, strength));
+  const p = easedProgress(frames, easing);
+  const targetX = `'(iw-iw/zoom)*${clamp01(focusX)}'`;
+  const targetY = `'(ih-ih/zoom)*${clamp01(focusY)}'`;
+  let z = maxZoom.toFixed(4);
+  let x = targetX;
+  let y = targetY;
   switch (motion) {
-    case "zoom_in": z = zoomInExpr(frames); break;
-    case "zoom_out": z = zoomOutExpr(frames); break;
-    case "pan_left": x = panXExpr(frames, "left"); break;
-    case "pan_right": x = panXExpr(frames, "right"); break;
-    case "pan_up": y = panYExpr(frames, "up"); break;
-    case "pan_down": y = panYExpr(frames, "down"); break;
+    case "zoom_in": z = `'min(1+${strength.toFixed(4)}*${p},${maxZoom.toFixed(4)})'`; break;
+    case "zoom_out": z = `'max(${maxZoom.toFixed(4)}-${strength.toFixed(4)}*${p},1)'`; break;
+    case "pan_left": x = `'(iw-iw/zoom)*(1-${p})'`; break;
+    case "pan_right": x = `'(iw-iw/zoom)*${p}'`; break;
+    case "pan_up": y = `'(ih-ih/zoom)*(1-${p})'`; break;
+    case "pan_down": y = `'(ih-ih/zoom)*${p}'`; break;
   }
   return `${base},zoompan=z=${z}:x=${x}:y=${y}:d=${frames}:s=${w}x${h}:fps=${fps}`;
 }
@@ -487,6 +502,8 @@ function buildFilmRollArgs(step: RenderSlideStep): string[] {
  */
 export function buildEffectFilter(step: RenderSlideStep): string {
   const chain = [buildFramingFilter(step)];
+  const technical = buildTechnicalColorFilter(step.technicalColor);
+  if (technical) chain.push(technical);
 
   // Grade the image first so captions stay at their authored colors.
   const grade = buildColorFilter(step.color);
@@ -1757,8 +1774,11 @@ export function buildAudioMuxArgs(
   // 2) Per-track gain, then join with acrossfade (or concat when crossfade=0).
   const n = single ? 1 : spec.tracks.length * repeats;
   for (let i = 0; i < n; i++) {
-    const vol = spec.tracks[i % spec.tracks.length].volume;
-    filters.push(`[${i + 1}:a]volume=${vol}[t${i}]`);
+    const track = spec.tracks[i % spec.tracks.length];
+    const trim = track.start != null || track.end != null
+      ? `atrim=start=${track.start ?? 0}${track.end != null ? `:end=${track.end}` : ""},asetpts=PTS-STARTPTS,`
+      : "";
+    filters.push(`[${i + 1}:a]${trim}volume=${track.volume}[t${i}]`);
   }
   let bed: string;
   if (n === 1) {
@@ -1778,7 +1798,10 @@ export function buildAudioMuxArgs(
   }
 
   // 3) Trim to video length, master automation, edge fades.
-  const chain: string[] = [`atrim=0:${videoDuration}`, "asetpts=PTS-STARTPTS"];
+  // A deliberate excerpt can be a fraction shorter than the final xfade timeline after
+  // phrase snapping. Pad that small tail before the final trim so the audio stream does
+  // not end early (QA treats >250ms A/V stream drift as a delivery defect).
+  const chain: string[] = [`apad=whole_dur=${videoDuration}`, `atrim=0:${videoDuration}`, "asetpts=PTS-STARTPTS"];
   if (spec.automation && spec.automation.length > 0) {
     chain.push(`volume='${automationExpr(spec.automation)}':eval=frame`);
   }
