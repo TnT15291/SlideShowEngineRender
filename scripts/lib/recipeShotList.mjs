@@ -68,6 +68,10 @@ function mute(scene) {
  * @param {function} photoDemandOf   (scene) => photos consumed. Injected: the caller owns
  *                                   the layout library, which is the only thing that knows
  *                                   what a layer_scene costs.
+ * @param {object}   [energy]        optional lib/pacing.mjs makeEnergy() sampler — the SAME
+ *                                   curve QA measures against. Present, it bends each body
+ *                                   scene toward the music it covers (see the durations
+ *                                   section); absent, durations stay uniform.
  * @returns {{scenes: object[], fit: object}}
  */
 export function solveRecipeShotList({
@@ -78,6 +82,7 @@ export function solveRecipeShotList({
   photoDemandOf,
   maxReuse = DEFAULT_MAX_REUSE,
   bodyPhotoBudget,
+  energy,
 }) {
   const all = (recipe.scenes || []).map((s) => ({ ...s }));
   if (!all.length) throw new Error(`${recipe.id}: the recipe has no scenes`);
@@ -164,6 +169,18 @@ export function solveRecipeShotList({
   const leastUsed = (pool) =>
     pool.reduce((a, b) => ((timesUsed.get(b.id) ?? 0) < (timesUsed.get(a.id) ?? 0) ? b : a));
 
+  // What the viewer actually sees repeated is the LAYOUT, and substitution keeps
+  // creating adjacent repeats on photo-poor jobs: the affordable pool is small, so
+  // least-used alone kept landing on the scene that was just on screen. Preferring a
+  // different layout costs nothing when the pool has one, and degrades to the old
+  // behaviour when it does not.
+  const layoutOf = (s) => s.layout || s.effect;
+  let prevLayout = opening ? layoutOf(opening) : null;
+  const preferDifferent = (pool) => {
+    const differing = pool.filter((s) => layoutOf(s) !== prevLayout);
+    return differing.length ? differing : pool;
+  };
+
   const scenes = [];
   let spent = 0;
   for (let i = 0; i < wanted.length; i++) {
@@ -179,7 +196,7 @@ export function solveRecipeShotList({
     // earns its place ONCE, where its author put it. Every recurrence after that is the
     // same clip again, so later rounds hand its slot to a scene that shows a photograph.
     if (round > 0 && !isVariable(scene) && photoDemandOf(scene) === 0 && substitutes.length) {
-      const pick = leastUsed(substitutes);
+      const pick = leastUsed(preferDifferent(substitutes));
       paletteSource = pick;
       scene = variantOf(pick, round);
       scene.id = `${pick.id}_r${round}`;
@@ -189,20 +206,41 @@ export function solveRecipeShotList({
       // A montage is sized by the budget: as many photos as this beat can afford, never
       // the 8 its author happened to type.
       const count = Math.max(2, Math.min(VARIABLE_MAX[scene.effect], want));
-      if (spent + count > storyPhotos) break;
       scene.photoSlots = [{ slot: VARIABLE_SLOT[scene.effect], count }];
-      spent += count;
-    } else {
-      const need = demandOf(scene);
-      // A scene that costs more photos than this beat can afford is SUBSTITUTED, not
-      // crammed in. Over-drawing the pool is what made editorial-bold-01 fail to build.
-      if (need > want || spent + need > storyPhotos) {
+      const cost = demandOf(scene);
+      // Pacing can make a montage denser. If its minimum shape now costs more than this
+      // beat owns, substitute an affordable single-photo scene instead of overdrawing
+      // the pool and failing much later during assignment.
+      if (cost > want || spent + cost > storyPhotos) {
         const affordable = substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent));
         if (!affordable.length) break;
-        const pick = leastUsed(affordable);
+        const pick = leastUsed(preferDifferent(affordable));
         paletteSource = pick;
         scene = round === 0 ? { ...pick } : variantOf(pick, round);
         scene.id = round === 0 ? pick.id : `${pick.id}_r${round}`;
+        spent += demandOf(scene);
+      } else {
+        spent += cost;
+      }
+    } else {
+      const need = demandOf(scene);
+      // Two reasons this beat goes to another scene. A scene that costs more photos
+      // than the beat can afford is SUBSTITUTED, not crammed in — over-drawing the pool
+      // is what made editorial-bold-01 fail to build. And a scene whose layout was just
+      // on screen is swapped for a different one when the pool has it: a repeated
+      // layout is a flaw, but a hole in the film would be a failure, so a clash with
+      // no differing substitute keeps the authored scene.
+      const unaffordable = need > want || spent + need > storyPhotos;
+      if (unaffordable || layoutOf(scene) === prevLayout) {
+        const affordable = substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent));
+        if (!affordable.length && unaffordable) break;
+        const differing = affordable.filter((s) => layoutOf(s) !== prevLayout);
+        if (differing.length || (unaffordable && affordable.length)) {
+          const pick = leastUsed(differing.length ? differing : affordable);
+          paletteSource = pick;
+          scene = round === 0 ? { ...pick } : variantOf(pick, round);
+          scene.id = round === 0 ? pick.id : `${pick.id}_r${round}`;
+        }
       }
       spent += demandOf(scene);
     }
@@ -221,6 +259,24 @@ export function solveRecipeShotList({
     bump(paletteSource.id);
     scene.id = uniqueId(scene.id);
     scenes.push(scene);
+    prevLayout = layoutOf(scene);
+  }
+
+  // Signature scenes are the authored reason to choose one template over another. The
+  // solver may substitute palette entries, but it must not silently erase every advanced
+  // effect. Restore a missing signature by replacing a non-signature scene that costs at
+  // least as many photos, keeping the already-closed photo budget intact.
+  for (const required of body.filter((scene) => scene.signature)) {
+    if (scenes.some((scene) => scene.signature && scene.id.startsWith(required.id))) continue;
+    const need = demandOf(required);
+    let at = -1;
+    for (let i = scenes.length - 1; i >= 0; i--) {
+      if (!scenes[i].signature && demandOf(scenes[i]) >= need) { at = i; break; }
+    }
+    if (at < 0) continue;
+    const removed = demandOf(scenes[at]);
+    scenes[at] = { ...required, id: uniqueId(required.id) };
+    spent += need - removed;
   }
 
   // Photo-rich jobs leave a surplus the fixed layouts cannot absorb. Hand it to the
@@ -233,9 +289,17 @@ export function solveRecipeShotList({
       if (!isVariable(scene)) continue;
       const slot = scene.photoSlots[0];
       const room = VARIABLE_MAX[scene.effect] - slot.count;
-      const add = Math.min(room, surplus);
-      slot.count += add;
-      surplus -= add;
+      // photoDemandOf may apply the pacing direction's montage multiplier. Adding one
+      // declared photo therefore does not necessarily cost one assigned photo. Grow a
+      // montage only while the SAME demand function used by assignment can pay for it.
+      for (let add = 0; add < room && surplus > 0; add++) {
+        const before = demandOf(scene);
+        const candidate = { ...scene, photoSlots: [{ ...slot, count: slot.count + 1 }] };
+        const cost = demandOf(candidate) - before;
+        if (cost > surplus) break;
+        slot.count += 1;
+        surplus -= cost;
+      }
     }
   }
 
@@ -255,8 +319,40 @@ export function solveRecipeShotList({
     transitions: scenes.map(() => xfade),
     targetDuration: storySeconds,
   });
+  let scaled = scenes.map((_, i) => bases[i] * k);
+
+  // THE FLAT BODY. A hand-written recipe's role table gives most body scenes the same
+  // natural length, and the uniform scale preserves that sameness perfectly: measured
+  // on a real 23-photo job, 8 of 10 body scenes came out at 7.14s to the hundredth —
+  // the metronome premium was rewritten to stop being. When the caller hands us the
+  // energy curve (the SAME sampler QA measures with), each body scene leans toward the
+  // music it actually covers: quiet passages breathe, loud ones cut. Three constraints
+  // keep this a modulation, not a takeover: the lean is clamped, the set is renormalized
+  // back onto the track (zero-sum — the film's length does not move), and the montages
+  // sit it out, because a beat-locked montage's length is an artistic claim and it is
+  // already the bimodal peak of the film.
+  const MOD_STRENGTH = 0.5; // lean per unit of energy deviation, before the clamp
+  const MOD_CLAMP = 0.15;   // no scene drifts more than 15% from the uniform fit
+  const eligible = scenes.map((s) => !isVariable(s));
+  if (energy && eligible.filter(Boolean).length >= 2) {
+    let at = openingDur;
+    const spans = scaled.map((d) => { const span = [at, at + d]; at += d - xfade; return span; });
+    const means = spans.map(([a, b]) => energy.meanOver(a, b));
+    const included = means.filter((_, i) => eligible[i]);
+    const eMean = included.reduce((a, b) => a + b, 0) / included.length;
+    const target = scaled.reduce((sum, d, i) => (eligible[i] ? sum + d : sum), 0);
+    const mod = scaled.map((d, i) => {
+      if (!eligible[i]) return d;
+      const lean = Math.max(1 - MOD_CLAMP, Math.min(1 + MOD_CLAMP, 1 + MOD_STRENGTH * (eMean - means[i])));
+      return d * lean;
+    });
+    const modSum = mod.reduce((sum, d, i) => (eligible[i] ? sum + d : sum), 0);
+    const renorm = modSum > 0 ? target / modSum : 1;
+    scaled = mod.map((d, i) => (eligible[i] ? d * renorm : d));
+  }
+
   scenes.forEach((s, i) => {
-    s.durationSec = +Math.min(MAX_SCENE, Math.max(MIN_SCENE, bases[i] * k)).toFixed(2);
+    s.durationSec = +Math.min(MAX_SCENE, Math.max(MIN_SCENE, scaled[i])).toFixed(2);
   });
 
   const solved = [

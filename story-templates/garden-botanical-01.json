@@ -1,0 +1,31 @@
+{
+  "id": "garden-botanical-01", "version": 1, "name": "Garden Botanical", "tier": "smart_lite", "libraryTheme": "modern_teal",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["crossfade", "dissolve", "smooth_up", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 1 } },
+  "source": { "origin": "original", "notes": "Outdoor garden wedding: botanical framing, natural greens, documentary groups and a floral interlude." },
+  "fit": { "bestFor": ["outdoor", "garden", "family_warmth", "wedding_day"], "minPhotos": 32, "idealPhotos": 70 },
+  "musicProfile": { "moods": ["acoustic", "warm", "uplifting"], "energy": "low_to_medium" },
+  "pacingVariants": [{ "id": "meadow", "maxEnergy": 0.38, "durationMultiplier": 1.12 }, { "id": "garden", "maxEnergy": 0.68, "durationMultiplier": 1 }, { "id": "celebration", "maxEnergy": 1, "durationMultiplier": 0.86 }],
+  "briefFields": { "required": ["bride", "groom"], "optional": ["date", "location", "thankYouLine"] },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 5700, "saturation": 1.01, "contrast": 1.02, "glow": 0.08 },
+    "audio": { "fade_in": 1.5, "fade_out": 3, "crossfade": 0 }, "overlays": [{ "variant": "soft", "position": "fullscreen", "opacity": 0.12, "blend": "screen", "start": 0 }],
+    "fonts": { "title": "fonts/DancingScript.ttf", "heading": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
+    "palette": { "cream": "#F2F1E8", "ink": "#253B32", "brown": "#65705A", "white": "#FFFFFF" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 5.8, "calmSceneSec": 7.2, "buildSceneSec": 4.6, "montageSec": 11, "closingSec": 8 },
+    "transitionStrategy": { "default": { "type": "crossfade", "duration": 0.8 }, "calm": { "type": "dissolve", "duration": 1 }, "memory": { "type": "dissolve", "duration": 0.8 }, "peak": { "type": "smooth_up", "duration": 0.5 }, "final": { "type": "none", "duration": 0 } },
+    "photoSelection": { "reusePolicy": "avoid_until_exhausted", "heroPriority": ["qualityNorm", "heroScore", "groupScore"], "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"], "darkPhotoMaxMeanLuma": 70 }
+  },
+  "scenes": [
+    { "id": "s01_open", "effect": "layer_scene", "layout": "full_bleed_quote", "durationRole": "calm", "transitionRole": "calm", "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best", "motion": "zoom_in" }], "text": { "quote": "{{bride}} & {{groom}}" } },
+    { "id": "s02_garden", "effect": "layer_scene", "layout": "collage_cluster_text", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }, { "slot": "tl", "orient": "landscape", "quality": "good" }, { "slot": "bl", "orient": "landscape", "quality": "good" }], "text": { "heading": "Ngày nở hoa", "body": "Giữa thiên nhiên, mình cùng viết nên một ngày thật đẹp." } },
+    { "id": "s03_flowers", "effect": "video_background", "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4", "durationRole": "normal", "transitionRole": "memory", "captionPattern": "Một khoảng lặng dành cho những điều dịu dàng." , "photoSlots": [] },
+    { "id": "s04_family", "effect": "layer_scene", "layout": "three_photo_row", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "left", "orient": "any", "quality": "good" }, { "slot": "centre", "orient": "any", "quality": "best" }, { "slot": "right", "orient": "any", "quality": "good" }], "text": { "heading": "Người thương", "caption": "Ngày vui trọn vẹn khi có gia đình và bạn bè ở bên." } },
+    { "id": "s05_breath", "effect": "mask_reveal", "mask": "assets/masks/heart_wand.mp4", "signature": true, "durationRole": "calm", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "landscape", "quality": "best" }] },
+    { "id": "s06_peak", "effect": "collage_grid", "durationRole": "montage", "transitionRole": "peak", "photoSlots": [{ "slot": "grid", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }] },
+    { "id": "s07_closing", "effect": "layer_scene", "layout": "closing_names", "durationRole": "closing", "transitionRole": "final", "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_03.png", "photoSlots": [], "text": { "names": "{{bride}} & {{groom}}", "date": "{{location}} · {{date}}" } }
+  ]
+}

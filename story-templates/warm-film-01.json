@@ -27,11 +27,10 @@
   },
   "defaults": {
     "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 4600, "saturation": 1.06, "contrast": 1.03, "glow": 0.16, "grain": 6, "vignette": true },
+    "color": { "temperature": 4600, "saturation": 1.03, "contrast": 1.03, "glow": 0.1, "grain": 5, "vignette": true, "lut": "assets/luts/super8_kodak_01.cube", "flicker": 0.2 },
     "audio": { "fade_in": 1.5, "fade_out": 3, "crossfade": 0 },
     "overlays": [
-      { "variant": "warm", "position": "fullscreen", "opacity": 0.35, "blend": "screen", "start": 0 },
-      { "path": "assets/overlays/cutestock_golden_bokeh_overlay_hd.mp4", "position": "fullscreen", "opacity": 0.2, "blend": "screen", "start": 0 }
+      { "variant": "warm", "position": "fullscreen", "opacity": 0.22, "blend": "screen", "start": 0 }
     ],
     "fonts": {
       "title": "fonts/DancingScript.ttf",
@@ -199,7 +198,9 @@
           { "captionPattern": "" }
         ]
       },
-      "effect": "polaroid",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/heart_wand.mp4",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

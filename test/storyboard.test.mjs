@@ -91,7 +91,7 @@ test("the film always ends on a closing card, and the closing card never stretch
 // endless rotation passes it. So the bar moves here: an effect vocabulary, a mix of scene
 // shapes, and a duration curve that is not flat.
 
-test("the engine has 24 effects — a premium film may not be built from one", () => {
+test("the engine has 29 effects — a premium film may not be built from one", () => {
   const sb = composeStoryboard({ photoCount: 23, musicDuration: 203, energy: track(203), library });
   const effects = new Set(sb.scenes.map((s) => s.effect));
 

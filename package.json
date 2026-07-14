@@ -19,6 +19,7 @@
     "rank:recipes": "node scripts/rankRecipes.mjs",
     "analyze:assets": "node scripts/analyzeAssets.mjs",
     "analyze:faces": "node scripts/analyzePhotos.mjs",
+    "assets:advanced": "node scripts/generateAdvancedAssets.mjs",
     "select:story": "node scripts/selectStoryOption.mjs",
     "select:music": "node scripts/selectMusicEdit.mjs",
     "project:create": "node scripts/createProject.mjs",

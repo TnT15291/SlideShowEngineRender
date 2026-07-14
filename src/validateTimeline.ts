@@ -28,6 +28,11 @@ const colorGradeSchema = z.object({
   letterbox: z.union([z.boolean(), z.number().min(1).max(4)]).optional(),
 });
 const technicalColorSchema = z.object({ brightness: z.number().min(-0.12).max(0.12), saturation: z.number().min(0.9).max(1.1), redBalance: z.number().min(-0.08).max(0.08), blueBalance: z.number().min(-0.08).max(0.08) });
+const tiltShiftSchema = z.object({
+  focusY: z.number().min(0).max(1),
+  bandHeight: z.number().min(0.05).max(0.8),
+  blur: z.number().min(1).max(40),
+});
 
 // ---- Structural schema (Zod). Runs on the already-normalized timeline. ----
 
@@ -55,6 +60,11 @@ const effectEnum = z.enum([
   "collage_grid",
   "double_exposure",
   "mask_reveal",
+  "tilt_shift",
+  "dream_glow",
+  "prism_split",
+  "spotlight_focus",
+  "mirror_split",
   "layer_scene",
 ]);
 
@@ -215,6 +225,7 @@ const timelineSchema = z.object({
         captions: z.array(captionSchema),
         color: colorGradeSchema.optional(),
         technicalColor: technicalColorSchema.optional(),
+        tiltShift: tiltShiftSchema.optional(),
       })
     )
     .min(1, "timeline must contain at least one slide"),
@@ -368,6 +379,13 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
       errors.push(
         `slide ${slide.id} easing "${slide.easing}" only applies to ` +
           `zoom/pan/kenburns effects (got "${slide.effect}")`
+      );
+    }
+
+    if (slide.tiltShift && slide.effect !== "tilt_shift") {
+      errors.push(
+        `slide ${slide.id} tiltShift only applies to effect tilt_shift ` +
+          `(got "${slide.effect}")`
       );
     }
 

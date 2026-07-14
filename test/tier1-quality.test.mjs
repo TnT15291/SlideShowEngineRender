@@ -54,6 +54,43 @@ test("diversity flags three repeated scene states unless recipe allows the seque
   assert.equal(buildDiversityReport({ scenes, assignments, photos }).warnings.length, 0);
 });
 
+test("diversity flags an adjacent same-layout pair even when a third scene breaks the run", () => {
+  const photos = [
+    { file: "1.jpg", orient: "portrait", subjectCount: 1 },
+    { file: "2.jpg", orient: "portrait", subjectCount: 1 },
+    { file: "3.jpg", orient: "portrait", subjectCount: 2 },
+  ];
+  const assignments = new Map(photos.map((p, i) => [`s${i + 1}:bg`, [p.file]]));
+  const scenes = [
+    { id: "s1", effect: "layer_scene", layout: "full_bleed_quote" },
+    { id: "s2", effect: "layer_scene", layout: "full_bleed_quote" },
+    { id: "s3", effect: "polaroid" },
+  ];
+  const report = buildDiversityReport({ scenes, assignments, photos });
+  assert.equal(report.warnings.length, 1);
+  assert.deepEqual(report.warnings[0].sceneIds, ["s1", "s2"]);
+  assert.equal(report.warnings[0].adjacentPair, true);
+  assert.equal(report.verdict, "review");
+  scenes[1].allowSequence = true;
+  assert.equal(buildDiversityReport({ scenes, assignments, photos }).warnings.length, 0);
+});
+
+test("diversity's people signal abstains when faces were never counted", () => {
+  // Same photoCount + orientation across three DIFFERENT layouts: only a degenerate
+  // "unknown === unknown" people match could push this over the 3-signal threshold.
+  const photos = [1, 2, 3].map((n) => ({ file: `${n}.jpg`, orient: "portrait" }));
+  const assignments = new Map(photos.map((p, i) => [`s${i + 1}:hero`, [p.file]]));
+  const scenes = [
+    { id: "s1", effect: "layer_scene", layout: "full_bleed_quote" },
+    { id: "s2", effect: "still" },
+    { id: "s3", effect: "slow_zoom_in" },
+  ];
+  assert.equal(buildDiversityReport({ scenes, assignments, photos }).warnings.length, 0);
+  // With real face counts the same run IS three matching signals again.
+  const counted = photos.map((p) => ({ ...p, subjectCount: 1 }));
+  assert.equal(buildDiversityReport({ scenes, assignments, photos: counted }).warnings.length, 1);
+});
+
 test("motion planner protects groups and aims hero motion at the subject", () => {
   const planner = createMotionPlanner();
   const group = planner.plan({ file: "group.jpg", subjectCount: 6, focusX: 0.5, focusY: 0.4 }, { id: "family", arcBeat: "family" }, { isHero: true });
@@ -269,6 +306,29 @@ test("Tier-1 direction records whitelisted style and multi-signal pacing", (t) =
   assert.equal(doc.pacing.controls.repeatLimit, 3);
   assert.ok(doc.style.fonts.heading && doc.style.fonts.body);
   assert.equal(doc.generatedBy, "rules");
+});
+
+test("Tier-1 direction clamps montage density when the album is below the recipe's floor", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-capacity-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const prompt = path.join(dir, "prompt.txt"), photos = path.join(dir, "photos.json");
+  const music = path.join(dir, "music.json"), out = path.join(dir, "direction.json");
+  fs.writeFileSync(prompt, "Nhịp nhanh, sôi động.");
+  fs.writeFileSync(photos, JSON.stringify({ photos: Array.from({ length: 12 }, (_, i) => ({ file: `${i}.jpg` })) }));
+  fs.writeFileSync(music, JSON.stringify({ duration: 120, bpmEstimate: 145, energy: { mean: 0.72 },
+    sections: [{ kind: "build", dur: 50 }, { kind: "normal", dur: 70 }] }));
+  const result = spawnSync(process.execPath, ["scripts/chooseTier1Direction.mjs",
+    "--recipe", "story-templates/modern-teal-01.json", "--prompt", prompt,
+    "--photos", photos, "--music", music, "--out", out], { cwd: root, encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  const doc = JSON.parse(fs.readFileSync(out, "utf8"));
+  // 12 photos < modern-teal's floor of 30: a lively track must not buy extra montage
+  // density the pool cannot pay for, and the clamp must say why it is there.
+  assert.equal(doc.pacing.class, "lively");
+  assert.equal(doc.pacing.controls.repeatLimit, 1);
+  assert.ok(doc.pacing.controls.montagePhotoMultiplier <= 1);
+  assert.equal(doc.pacing.capacityLimited.availablePhotos, 12);
+  assert.equal(doc.pacing.capacityLimited.recipeMinPhotos, 30);
 });
 
 test("global assignment reserves scarce orientations before flexible slots", () => {

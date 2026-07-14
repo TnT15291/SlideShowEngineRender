@@ -7,21 +7,21 @@ Tài liệu này gộp 2 pipeline dùng cho 2 phân khúc giá khác nhau:
 Nguyên tắc chọn tier: nếu khách trả premium cho trải nghiệm cá nhân hoá + chờ được → dùng v1. Nếu khách cần giá tốt + giao nhanh → dùng Lite.
 
 > **Nền tảng chung**: cả 2 tier đều xuất ra `timeline.json` rồi đưa qua **cùng một render
-> engine** đã hoàn thiện (23 effect, 56 transition, color grade, overlay + light-leak,
+> engine** đã hoàn thiện (29 effect, 56 transition, color grade, overlay + light-leak,
 > audio graph, easing). Xem [ENGINE-ARCHITECTURE.md](ENGINE-ARCHITECTURE.md) (engine chạy
 > thế nào), [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) / [ENGINE_CAPABILITIES.md](ENGINE_CAPABILITIES.md)
 > (năng lực + spec timeline), [generation-guide.md](generation-guide.md) (brief cho AI Director).
 
-> **Trạng thái triển khai (2026-07-08)**:
-> - **Lite** — chạy được **end-to-end hôm nay** bằng các script rule-based đã có:
->   `analyzePhotos.mjs` + `analyzeMusic.mjs` → `generateStoryClipV2.mjs` → `fitTextInTimeline.mjs`
->   → render → `qaClip.mjs`. **(2026-07-11: nay chạy qua `npm run lite -- --project <p>`;
->   driver cũ `buildClip.mjs` đã bị xoá — xem [PROJECTS.md](PROJECTS.md).)**
->   Gói "Cơ bản" bỏ node Interpret Brief; gói "Vừa" thêm 1 lần gọi AI.
-> - **v1 Premium** — **đã thiết kế đầy đủ** (tài liệu này) nhưng các node gọi AI (Story
->   Options, Creative Brief, Director Notes, QA thẩm mỹ) **chưa triển khai**. Node kỹ thuật
->   thì tái dùng đúng script của Lite. Guardrail JSON (Phụ lục A) đã được engine thực thi sẵn:
->   validate + normalize whitelist mọi enum, chặn field lạ, kiểm tra file tồn tại/ràng buộc chéo.
+> **Trạng thái triển khai (2026-07-13)**:
+> - **Template** — recipe-driven, 0 call AI, co giãn theo album + nhạc:
+>   `npm run template -- --project <p>`.
+> - **Lite** — chạy end-to-end qua orchestrator chung:
+>   `npm run lite -- --project <p>`.
+> - **v1 Premium** — các node Story Options, User Choice, Music Window, Creative Brief,
+>   Director Notes, Story Plan, validate/retry/fallback, QA loop và deliver đã nối end-to-end:
+>   `npm run premium -- --project <p>`. Không có key thì dùng STUB tất định; còn phải smoke test
+>   với key thật và đưa orchestration production vào vận hành. Guardrail JSON (Phụ lục A) vẫn là
+>   ranh giới: validate + normalize whitelist enum, chặn field lạ và kiểm tra ràng buộc chéo.
 
 ---
 
@@ -154,7 +154,7 @@ Chuyển hướng đã chọn thành định hướng sáng tạo: style tổng 
 
 ## 6. Director Notes Node
 
-AI đóng vai **đạo diễn** — đọc năng lực engine (23 effect, 56 transition, color grade...) và quyết định cách dùng.
+AI đóng vai **đạo diễn** — đọc năng lực engine (29 effect, 56 transition, color grade...) và quyết định cách dùng.
 
 Ví dụ mapping: Hero photos → `dark_feather` · Portraits → `portrait_blur_background` · Group photos → `collage_grid` · Memory scenes → `memory_wall` · Fast montage → `film_roll_left` · Opening → `slow_zoom_in` · Ending → `fade_slow`.
 
@@ -162,7 +162,7 @@ Khách không thấy chi tiết kỹ thuật — AI quyết định hết.
 
 **✅ Giải pháp cho vướng mắc "chưa có guardrail JSON":**
 Node này **bắt buộc** áp đúng 4 nguyên tắc đã thống nhất trước (xem Phụ lục A cuối tài liệu):
-1. Chỉ chọn effect/transition trong whitelist enum (23 effect, 56 transition có sẵn) — không tự bịa tên.
+1. Chỉ chọn effect/transition trong whitelist enum (29 effect, 56 transition có sẵn) — không tự bịa tên.
 2. Không tự tính số học nhạy cảm (duration, tọa độ) — các số này lấy từ `analyzeMusic.mjs`/`analyzePhotos.mjs` đã tính sẵn, AI chỉ **chọn/sắp xếp**.
 3. Validate lại output y hệt JSON viết tay (referential integrity, bounds check, tổng duration khớp nhạc).
 4. AI không có quyền set path file, quality preset, hay bất kỳ config hệ thống nào — chỉ sinh nội dung timeline.

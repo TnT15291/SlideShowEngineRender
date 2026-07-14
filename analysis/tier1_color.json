@@ -2,7 +2,7 @@
   "version": 1,
   "method": "album_median_bounded",
   "target": {
-    "luma": 132.4,
+    "luma": 129.1,
     "redGreen": 0,
     "blueGreen": 0,
     "saturation": 0.25
@@ -10,7 +10,7 @@
   "decisions": [
     {
       "file": "input/001.jpg",
-      "brightness": 0.0733,
+      "brightness": 0.0604,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -19,7 +19,7 @@
     },
     {
       "file": "input/002.jpg",
-      "brightness": 0.0839,
+      "brightness": 0.071,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -28,7 +28,7 @@
     },
     {
       "file": "input/003.jpg",
-      "brightness": 0.0353,
+      "brightness": 0.0224,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -37,7 +37,7 @@
     },
     {
       "file": "input/004.jpg",
-      "brightness": -0.0059,
+      "brightness": -0.0188,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -46,7 +46,7 @@
     },
     {
       "file": "input/005.jpg",
-      "brightness": 0.0047,
+      "brightness": -0.0082,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -55,7 +55,7 @@
     },
     {
       "file": "input/006.jpg",
-      "brightness": 0.0271,
+      "brightness": 0.0141,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -64,7 +64,7 @@
     },
     {
       "file": "input/007.jpg",
-      "brightness": 0.0302,
+      "brightness": 0.0173,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -73,7 +73,7 @@
     },
     {
       "file": "input/008.jpg",
-      "brightness": -0.0443,
+      "brightness": -0.0573,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -82,24 +82,6 @@
     },
     {
       "file": "input/009.jpg",
-      "brightness": 0.0129,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/010.jpg",
-      "brightness": -0.0259,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/011.jpg",
       "brightness": 0,
       "saturation": 1,
       "redBalance": 0,
@@ -108,8 +90,17 @@
       "reason": "album-relative exposure and color-cast correction"
     },
     {
+      "file": "input/010.jpg",
+      "brightness": -0.0388,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
       "file": "input/012.jpg",
-      "brightness": -0.0643,
+      "brightness": -0.0773,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -118,7 +109,7 @@
     },
     {
       "file": "input/013.jpg",
-      "brightness": 0.0259,
+      "brightness": 0.0129,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -136,7 +127,7 @@
     },
     {
       "file": "input/015.jpg",
-      "brightness": 0.0247,
+      "brightness": 0.0118,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -154,7 +145,7 @@
     },
     {
       "file": "input/017.jpg",
-      "brightness": -0.0318,
+      "brightness": -0.0447,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -163,7 +154,7 @@
     },
     {
       "file": "input/018.jpg",
-      "brightness": 0.029,
+      "brightness": 0.0161,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -172,87 +163,6 @@
     },
     {
       "file": "input/019.jpg",
-      "brightness": -0.0682,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/020.jpg",
-      "brightness": -0.009,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/021.jpg",
-      "brightness": -0.0898,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/022.jpg",
-      "brightness": 0.12,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/023.jpg",
-      "brightness": -0.0306,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/024.jpg",
-      "brightness": -0.0306,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/025.jpg",
-      "brightness": -0.0969,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/026.jpg",
-      "brightness": -0.0094,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/027.jpg",
-      "brightness": -0.0333,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/028.jpg",
       "brightness": -0.0812,
       "saturation": 1,
       "redBalance": 0,
@@ -261,8 +171,89 @@
       "reason": "album-relative exposure and color-cast correction"
     },
     {
+      "file": "input/020.jpg",
+      "brightness": -0.022,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/021.jpg",
+      "brightness": -0.1027,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/022.jpg",
+      "brightness": 0.1098,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/023.jpg",
+      "brightness": -0.0435,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/024.jpg",
+      "brightness": -0.0435,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/025.jpg",
+      "brightness": -0.1098,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/026.jpg",
+      "brightness": -0.0224,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/027.jpg",
+      "brightness": -0.0463,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/028.jpg",
+      "brightness": -0.0941,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
       "file": "input/029.jpg",
-      "brightness": 0.0059,
+      "brightness": -0.0071,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -271,7 +262,7 @@
     },
     {
       "file": "input/030.jpg",
-      "brightness": -0.0153,
+      "brightness": -0.0282,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -280,7 +271,7 @@
     },
     {
       "file": "input/031.jpg",
-      "brightness": -0.0376,
+      "brightness": -0.0506,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -289,7 +280,7 @@
     },
     {
       "file": "input/032.jpg",
-      "brightness": -0.0047,
+      "brightness": -0.0176,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -298,7 +289,7 @@
     },
     {
       "file": "input/033.jpg",
-      "brightness": 0.0098,
+      "brightness": -0.0031,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -307,7 +298,7 @@
     },
     {
       "file": "input/034.jpg",
-      "brightness": -0.0467,
+      "brightness": -0.0596,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -316,7 +307,7 @@
     },
     {
       "file": "input/035.jpg",
-      "brightness": -0.0063,
+      "brightness": -0.0192,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -325,7 +316,7 @@
     },
     {
       "file": "input/036.jpg",
-      "brightness": 0.0714,
+      "brightness": 0.0584,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -334,7 +325,7 @@
     },
     {
       "file": "input/037.jpg",
-      "brightness": 0.0075,
+      "brightness": -0.0055,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -352,7 +343,7 @@
     },
     {
       "file": "input/039.jpg",
-      "brightness": -0.0133,
+      "brightness": -0.0263,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -370,7 +361,7 @@
     },
     {
       "file": "input/041.jpg",
-      "brightness": 0.1051,
+      "brightness": 0.0922,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -379,7 +370,7 @@
     },
     {
       "file": "input/042.jpg",
-      "brightness": 0.12,
+      "brightness": 0.1173,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -388,7 +379,7 @@
     },
     {
       "file": "input/043.jpg",
-      "brightness": -0.0243,
+      "brightness": -0.0373,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -397,16 +388,7 @@
     },
     {
       "file": "input/044.jpg",
-      "brightness": -0.0114,
-      "saturation": 1,
-      "redBalance": 0,
-      "blueBalance": 0,
-      "confidence": 0.3,
-      "reason": "album-relative exposure and color-cast correction"
-    },
-    {
-      "file": "input/045.jpg",
-      "brightness": 0,
+      "brightness": -0.0243,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -415,7 +397,7 @@
     },
     {
       "file": "input/046.jpg",
-      "brightness": -0.011,
+      "brightness": -0.0239,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -424,7 +406,7 @@
     },
     {
       "file": "input/047.jpg",
-      "brightness": 0.0871,
+      "brightness": 0.0741,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -433,7 +415,7 @@
     },
     {
       "file": "input/048.jpg",
-      "brightness": 0.0729,
+      "brightness": 0.06,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -442,7 +424,7 @@
     },
     {
       "file": "input/049.jpg",
-      "brightness": 0.0169,
+      "brightness": 0.0039,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -451,7 +433,7 @@
     },
     {
       "file": "input/050.jpg",
-      "brightness": -0.0071,
+      "brightness": -0.02,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -460,7 +442,7 @@
     },
     {
       "file": "input/051.jpg",
-      "brightness": 0.0725,
+      "brightness": 0.0596,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -469,7 +451,7 @@
     },
     {
       "file": "input/052.jpg",
-      "brightness": 0.12,
+      "brightness": 0.1145,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -478,7 +460,7 @@
     },
     {
       "file": "input/053.jpg",
-      "brightness": 0,
+      "brightness": -0.0129,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -487,7 +469,7 @@
     },
     {
       "file": "input/054.jpg",
-      "brightness": 0.0647,
+      "brightness": 0.0518,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -496,7 +478,7 @@
     },
     {
       "file": "input/055.jpg",
-      "brightness": -0.0329,
+      "brightness": -0.0459,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -505,7 +487,7 @@
     },
     {
       "file": "input/056.jpg",
-      "brightness": -0.0204,
+      "brightness": -0.0333,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -514,7 +496,7 @@
     },
     {
       "file": "input/057.jpg",
-      "brightness": -0.0216,
+      "brightness": -0.0345,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -532,7 +514,7 @@
     },
     {
       "file": "input/059.jpg",
-      "brightness": 0.0067,
+      "brightness": -0.0063,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,
@@ -541,7 +523,223 @@
     },
     {
       "file": "input/060.jpg",
+      "brightness": -0.0239,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/061.jpg",
+      "brightness": -0.0294,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/062.jpg",
+      "brightness": 0.0776,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/063.jpg",
       "brightness": -0.011,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/064.jpg",
+      "brightness": -0.0141,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/065.jpg",
+      "brightness": 0.0643,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/066.jpg",
+      "brightness": 0.0549,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/067.jpg",
+      "brightness": 0.1055,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/068.jpg",
+      "brightness": -0.0478,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/069.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/070.jpg",
+      "brightness": -0.0867,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/071.jpg",
+      "brightness": 0.0667,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/072.jpg",
+      "brightness": 0.0114,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/073.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/074.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/076.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/077.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/078.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/082.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/083.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/084.jpg",
+      "brightness": 0.12,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/086.jpg",
+      "brightness": 0.0745,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/087.jpg",
+      "brightness": 0.0776,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/088.jpg",
+      "brightness": 0.0596,
+      "saturation": 1,
+      "redBalance": 0,
+      "blueBalance": 0,
+      "confidence": 0.3,
+      "reason": "album-relative exposure and color-cast correction"
+    },
+    {
+      "file": "input/089.jpg",
+      "brightness": 0.0569,
       "saturation": 1,
       "redBalance": 0,
       "blueBalance": 0,

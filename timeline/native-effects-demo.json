@@ -1,0 +1,39 @@
+{
+  "project": { "name": "native-effects-demo", "width": 640, "height": 360, "fps": 30, "quality": "draft" },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "output": { "path": "output/native-effects-demo.mp4" },
+  "overlays": [],
+  "slides": [
+    {
+      "id": "demo_tilt_shift", "image": "input/008.jpg", "duration": 3,
+      "effect": "tilt_shift", "tiltShift": { "focusY": 0.52, "bandHeight": 0.2, "blur": 16 },
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "TILT SHIFT", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 24, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_dream_glow", "image": "input/021.jpg", "duration": 3,
+      "effect": "dream_glow",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "DREAM GLOW", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 24, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_prism_split", "image": "input/018.jpg", "duration": 3,
+      "effect": "prism_split",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "PRISM SPLIT", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 24, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_spotlight_focus", "image": "input/019.jpg", "duration": 3,
+      "effect": "spotlight_focus",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "SPOTLIGHT FOCUS", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 24, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_mirror_split", "image": "input/020.jpg", "duration": 3,
+      "effect": "mirror_split",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [{ "text": "MIRROR SPLIT", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 24, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { solveRecipeShotList } from "../scripts/lib/recipeShotList.mjs";
 
 const root = process.cwd();
 
@@ -60,4 +61,65 @@ test("repeatable template scenes scale with photos and music", (t) => {
   }
   assert.equal(timeline.slides.at(-1).id, "s09_closing");
   assert.equal(new Set(timeline.slides.map((slide) => slide.id)).size, timeline.slides.length);
+});
+
+test("shot-list substitution never repeats a layout back-to-back while an alternative exists", () => {
+  // 6 body photos on a track wanting ~5 body beats of 1 photo each: the 2-photo scene
+  // is unaffordable on 1-photo beats, so substitution runs constantly — exactly the
+  // photo-poor regime where least-used alone kept re-picking the layout just emitted.
+  const demandByLayout = { title_card: 0, two_photo_story: 2, full_bleed_quote: 1, polaroid_card: 1, closing_names: 0 };
+  const recipe = { id: "adjacency-test", scenes: [
+    { id: "open", layout: "title_card", effect: "layer_scene", durationRole: "calm" },
+    { id: "duo", layout: "two_photo_story", effect: "layer_scene" },
+    { id: "breath", layout: "full_bleed_quote", effect: "layer_scene" },
+    { id: "solo", layout: "polaroid_card", effect: "layer_scene" },
+    { id: "close", layout: "closing_names", effect: "layer_scene", durationRole: "closing" },
+  ] };
+  const { scenes } = solveRecipeShotList({
+    recipe, photoCount: 8, musicDuration: 44,
+    durationOf: () => 6,
+    photoDemandOf: (s) => demandByLayout[s.layout] ?? 0,
+    bodyPhotoBudget: 6,
+  });
+  assert.ok(scenes.length >= 6, `expected bookends + several body scenes, got ${scenes.length}`);
+  const layoutOf = (s) => s.layout || s.effect;
+  for (let i = 1; i < scenes.length; i++) {
+    assert.notEqual(layoutOf(scenes[i]), layoutOf(scenes[i - 1]),
+      `${scenes[i - 1].id} -> ${scenes[i].id} puts ${layoutOf(scenes[i])} on screen twice in a row`);
+  }
+});
+
+test("body durations lean toward the music instead of coming out uniform", () => {
+  const demandByLayout = { title: 0, la: 1, lb: 1, closing: 0 };
+  const recipe = { id: "energy-test", scenes: [
+    { id: "open", layout: "title", effect: "layer_scene", durationRole: "calm" },
+    { id: "a", layout: "la", effect: "layer_scene" },
+    { id: "b", layout: "lb", effect: "layer_scene" },
+    { id: "close", layout: "closing", effect: "layer_scene", durationRole: "closing" },
+  ] };
+  const solve = (energy) => solveRecipeShotList({
+    recipe, photoCount: 12, musicDuration: 90,
+    durationOf: () => 6,
+    photoDemandOf: (s) => demandByLayout[s.layout] ?? 0,
+    bodyPhotoBudget: 10,
+    energy,
+  });
+  // First half of the track quiet, second half loud.
+  const flat = solve(undefined);
+  const bent = solve({ meanOver: (t0, t1) => ((t0 + t1) / 2 < 45 ? 0.2 : 0.8) });
+
+  const flatBody = flat.scenes.slice(1, -1).map((s) => s.durationSec);
+  assert.equal(new Set(flatBody).size, 1, "fixture sanity: without energy the body IS uniform");
+
+  const body = bent.scenes.slice(1, -1).map((s) => s.durationSec);
+  assert.ok(new Set(body).size >= 2, `expected varied durations, got ${body.join(", ")}`);
+  const half = Math.floor(body.length / 2);
+  const mean = (arr) => arr.reduce((x, y) => x + y, 0) / arr.length;
+  const quiet = mean(body.slice(0, half));
+  const loud = mean(body.slice(-half));
+  assert.ok(quiet > loud, `quiet scenes should breathe (${quiet.toFixed(2)}s) vs loud (${loud.toFixed(2)}s)`);
+  // The lean is clamped and zero-sum: no scene drifts far, the film's length does not move.
+  for (const d of body) assert.ok(Math.abs(d - flatBody[0]) / flatBody[0] <= 0.16, `${d}s drifts beyond the clamp`);
+  const total = (doc) => doc.scenes.reduce((n, s) => n + s.durationSec, 0);
+  assert.ok(Math.abs(total(bent) - total(flat)) < 0.1, "modulation must not change the film's length");
 });

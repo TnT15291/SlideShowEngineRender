@@ -866,6 +866,44 @@
         7.0,
         10.0
       ]
+    },
+    {
+      "id": "paper_collage",
+      "kind": "layer_scene",
+      "intent": "Layered paper scrapbook with three offset prints and a handwritten note area.",
+      "bestFor": "travel, candid memories, playful chapter",
+      "background": { "type": "cream" },
+      "photoSlots": [
+        { "id": "back", "x": 100, "y": 130, "width": 720, "height": 720, "fit": "cover", "rotation": -5, "suggestedAnimation": "slide_right" },
+        { "id": "centre", "x": 610, "y": 180, "width": 700, "height": 720, "fit": "cover", "rotation": 3, "suggestedAnimation": "slide_up" },
+        { "id": "front", "x": 1160, "y": 110, "width": 650, "height": 720, "fit": "cover", "rotation": -2, "suggestedAnimation": "slide_left" }
+      ],
+      "panels": [
+        { "id": "paper_note", "type": "rect", "x": 520, "y": 805, "width": 880, "height": 190, "color": "#FFF9E9", "opacity": 0.94, "z": "over_photos" }
+      ],
+      "textSlots": [
+        { "id": "heading", "role": "heading", "x": 570, "y": 840, "width": 780, "height": 100, "align": "center", "fontRole": "heading", "sizePx": 62 }
+      ],
+      "durationRange": [5, 7]
+    },
+    {
+      "id": "magazine_page_turn",
+      "kind": "layer_scene",
+      "intent": "Editorial spread that fakes a page turn with an incoming full-height page and receding side page.",
+      "bestFor": "fashion editorial, chapter transition, formal portraits",
+      "background": { "type": "cream" },
+      "photoSlots": [
+        { "id": "page_left", "x": 70, "y": 90, "width": 760, "height": 900, "fit": "cover", "rotation": -1, "suggestedAnimation": "slide_right" },
+        { "id": "page_right", "x": 920, "y": 70, "width": 930, "height": 940, "fit": "cover", "rotation": 1, "suggestedAnimation": "slide_left" }
+      ],
+      "panels": [
+        { "id": "spine", "type": "rect", "x": 855, "y": 70, "width": 18, "height": 940, "color": "#191919", "opacity": 0.18, "z": "over_photos" }
+      ],
+      "textSlots": [
+        { "id": "heading", "role": "heading", "x": 120, "y": 125, "width": 620, "height": 150, "align": "left", "fontRole": "heading", "sizePx": 72 },
+        { "id": "caption", "role": "caption", "x": 1040, "y": 880, "width": 680, "height": 90, "align": "right", "fontRole": "body", "sizePx": 30 }
+      ],
+      "durationRange": [5, 7]
     }
   ],
   "montageBeats": [
@@ -1011,6 +1049,34 @@
         8
       ],
       "intent": "The photo is painted onto black by five broad alternating brush swipes with ragged dry-brush edges (mask plays 5s then holds open) — artistic/scrapbook opener or chapter break; use at most one mask_reveal beat per video."
+    },
+    {
+      "id": "ink_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/ink_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Organic ink blooms spread across the frame and merge into a complete reveal."
+    },
+    {
+      "id": "watercolor_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/watercolor_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Soft irregular watercolor wash reveals a romantic hero frame."
+    },
+    {
+      "id": "torn_paper_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/torn_paper_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "A ragged paper edge tears horizontally to uncover the next photograph."
+    },
+    {
+      "id": "petal_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/petal_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Eight petal lobes bloom from the centre into a floral reveal."
+    },
+    {
+      "id": "gold_dust_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/gold_dust_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Fine dust grains accumulate into a luxury hero image."
+    },
+    {
+      "id": "stained_glass_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/stained_glass_reveal.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Stained-glass cells illuminate in a deterministic mosaic sequence."
+    },
+    {
+      "id": "geometric_teal_wipe", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/geometric_teal_wipe.mp4",
+      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "A crisp diagonal geometric wave for modern teal/editorial films."
     }
   ]
 }

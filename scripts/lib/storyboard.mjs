@@ -12,7 +12,7 @@
 // and since the 2-photo bucket holds exactly one layout, a job could come out as the same
 // frame twenty times. On the job that prompted this rewrite it came out as 23 scenes of
 // one photo each, held ten seconds apiece, rotating three text cards: A-B-C-A-B-C. The
-// engine has 24 effects and this function emitted one of them (layer_scene) plus a
+// engine has 29 effects and this function emitted one of them (layer_scene) plus a
 // montage it almost never reached. It looked cheaper than the template tier.
 //
 // So there are two numbers, not one:

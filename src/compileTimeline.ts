@@ -58,6 +58,11 @@ const CROPPING_EFFECTS: ReadonlySet<EffectPreset> = new Set([
   "kenburns_tr",
   "kenburns_bl",
   "kenburns_br",
+  "tilt_shift",
+  "dream_glow",
+  "prism_split",
+  "spotlight_focus",
+  "mirror_split",
 ]);
 
 // Reroute when cover-cropping would discard more than this fraction of the
@@ -164,6 +169,7 @@ export function compileTimeline(
       captions,
       color,
       technicalColor: slide.technicalColor,
+      tiltShift: slide.tiltShift,
       srcWidth: size?.width,
       srcHeight: size?.height,
       width: timeline.project.width,

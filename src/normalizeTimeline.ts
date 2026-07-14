@@ -77,6 +77,17 @@ const EFFECT_ALIASES: Record<string, string> = {
   mask_reveal: "mask_reveal",
   reveal: "mask_reveal",
   particle_reveal: "mask_reveal",
+  tilt_shift: "tilt_shift",
+  tiltshift: "tilt_shift",
+  miniature: "tilt_shift",
+  dream_glow: "dream_glow",
+  orton: "dream_glow",
+  prism_split: "prism_split",
+  chromatic_aberration: "prism_split",
+  spotlight_focus: "spotlight_focus",
+  spotlight: "spotlight_focus",
+  mirror_split: "mirror_split",
+  mirror: "mirror_split",
   layer_scene: "layer_scene",
   layers: "layer_scene",
   canva_scene: "layer_scene",
@@ -253,6 +264,15 @@ function normalizeSlide(s: any): any {
   if (s?.easing != null) out.easing = canonicalKey(s.easing);
   if (s?.color != null) out.color = s.color;
   if (s?.technicalColor != null) out.technicalColor = s.technicalColor;
+  if (effect === "tilt_shift") {
+    out.tiltShift = {
+      focusY: s?.tiltShift?.focusY ?? 0.5,
+      bandHeight: s?.tiltShift?.bandHeight ?? 0.22,
+      blur: s?.tiltShift?.blur ?? 14,
+    };
+  } else if (s?.tiltShift != null) {
+    out.tiltShift = s.tiltShift;
+  }
   return out;
 }
 

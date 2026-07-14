@@ -67,6 +67,12 @@
     },
     {
       "id": "s02_duo",
+      "repeatable": {
+        "variants": [
+          { "text": { "body": "Không cần nhiều, chỉ cần đúng người." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "two_photo_story",
       "durationRole": "calm",
@@ -79,7 +85,9 @@
     },
     {
       "id": "s03_circle",
-      "effect": "circle_focus",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/particle_gather.mp4",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -88,6 +96,12 @@
     },
     {
       "id": "s04_journey",
+      "repeatable": {
+        "variants": [
+          { "text": { "heading": { "value": "Cùng nhau", "color": "#2E6F6A" }, "caption": "Chậm rãi mà chắc chắn, như cách mình yêu." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "three_photo_row",
       "durationRole": "build",
@@ -104,6 +118,13 @@
     },
     {
       "id": "s05_breath",
+      "repeatable": {
+        "variants": [
+          { "text": { "quote": "Ít thôi, nhưng là tất cả." } },
+          { "text": { "quote": "Khoảng lặng cũng là một câu trả lời." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "full_bleed_quote",
       "durationRole": "normal",
@@ -111,7 +132,7 @@
       "photoSlots": [
         { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_out" }
       ],
-      "text": { "quote": "Ít mà chất, giống như tình mình." }
+      "text": { "quote": "Bình yên nằm trong những điều giản dị." }
     },
     {
       "id": "s06_hero_zoom",

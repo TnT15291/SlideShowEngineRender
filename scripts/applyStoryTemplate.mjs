@@ -24,7 +24,7 @@ import { buildDiversityReport } from "./lib/diversityPlanner.mjs";
 import { createMotionPlanner } from "./lib/motionPlanner.mjs";
 import { averageAdjustments, buildColorNormalization } from "./lib/colorNormalizer.mjs";
 import { loadLedger, active, applyToStoryboard, applyToTimeline } from "./lib/directives.mjs";
-import { fitScale, describeFit } from "./lib/pacing.mjs";
+import { fitScale, describeFit, makeEnergy } from "./lib/pacing.mjs";
 import { solveRecipeShotList } from "./lib/recipeShotList.mjs";
 import { resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
@@ -133,6 +133,22 @@ const contentByFile = new Map((contentDoc.photos || []).map((p) => [p.file, p]))
 const photos = (photosDoc.photos || []).filter((p) => !excluded.has(p.file))
   .map((p) => ({ ...p, ...contentByFile.get(p.file), file: p.file }));
 if (photos.length === 0) throw new Error(`${photosPath} has no photos`);
+
+// Below the recipe's floor the film still ships — the solver substitutes what the pool
+// cannot afford — but layouts WILL recur, and that is worth a line in the log and a
+// field in the timeline instead of a surprise on the contact sheet.
+const capacityLimited = direction?.pacing?.capacityLimited
+  || (photos.length < (template.fit?.minPhotos || 0)
+    ? { availablePhotos: photos.length, recipeMinPhotos: template.fit.minPhotos,
+        reason: "photo set is below the recipe's floor; expensive scenes will be substituted" }
+    : null);
+if (capacityLimited) {
+  console.warn(
+    `[applyStoryTemplate] WARNING — ${capacityLimited.availablePhotos} photos is below ${template.id}'s floor of ` +
+      `${capacityLimited.recipeMinPhotos}: expensive scenes will be substituted and layouts will recur. ` +
+      `The film ships, but more photos would give it more variety.`
+  );
+}
 const requestedMusicMode = orders.find((d) => d.kind === "music_mode" && d.op === "set")?.target
   || musicModeArg || brief.musicMode || "auto";
 const musicModeOrder = orders.find((d) => d.kind === "music_mode" && d.op === "set");
@@ -619,6 +635,9 @@ const shotList = composed
       durationOf: (scene, at) => durationFor(scene.durationRole, at),
       photoDemandOf: scenePhotoCount,
       bodyPhotoBudget: photos.length - reservedPhotos.size - bookendPoolCost,
+      // The same sampler QA measures with — the solver bends body durations toward
+      // the music instead of emitting the role table's uniform lengths.
+      energy: makeEnergy(music),
     });
 const expandedScenes = applyStoryArc(shotList.scenes, template.storyArc);
 console.log(
@@ -692,6 +711,7 @@ let slides = expandedScenes.map((scene, i) => {
   const slide = {
     id: scene.id,
     editorialBeat: scene.arcBeat,
+    ...(scene.signature ? { signature: true } : {}),
     // The act travels with the slide. Without it the finished timeline cannot answer
     // "did the family_friends act actually get the montage they asked for?" — and a
     // directive nobody can check is a promise nobody has to keep.
@@ -758,6 +778,7 @@ const timeline = {
     transitionGrammar: { vocabulary: transitionGrammar.vocabulary, decisions: transitionGrammar.decisions },
     motionPlan: motionPlanner.decisions,
     colorNormalization: colorPath,
+    ...(capacityLimited ? { capacityLimited } : {}),
     ...(directionPath ? { source: directionPath.replace(/\\/g, "/") } : {}) },
   photoAssignment: {
     strategy: "global_hard_slots_first",

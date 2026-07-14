@@ -32,9 +32,9 @@ if (!theme) throw new Error(`Tier-1 direction: unknown theme ${themeId}`);
 let overlayId = "recipe_default";
 let overlays = recipe.defaults?.overlays || [];
 if (/không overlay|no overlay|clean|sạch/.test(prompt)) { overlayId = "none"; overlays = []; }
-else if (/sunset|hoàng hôn/.test(prompt)) { overlayId = "sunset"; overlays = [{ variant: "sunset", position: "fullscreen", opacity: 0.5, blend: "screen" }]; }
-else if (/mềm|soft|dịu/.test(prompt)) { overlayId = "soft"; overlays = [{ variant: "soft", position: "fullscreen", opacity: 0.45, blend: "screen" }]; }
-else if (/ấm|warm|golden/.test(prompt)) { overlayId = "warm"; overlays = [{ variant: "warm", position: "fullscreen", opacity: 0.5, blend: "screen" }]; }
+else if (/sunset|hoàng hôn/.test(prompt)) { overlayId = "sunset"; overlays = [{ variant: "sunset", position: "fullscreen", opacity: 0.25, blend: "screen" }]; }
+else if (/mềm|soft|dịu/.test(prompt)) { overlayId = "soft"; overlays = [{ variant: "soft", position: "fullscreen", opacity: 0.22, blend: "screen" }]; }
+else if (/ấm|warm|golden/.test(prompt)) { overlayId = "warm"; overlays = [{ variant: "warm", position: "fullscreen", opacity: 0.25, blend: "screen" }]; }
 else if (theme.recommendedOverlays) { overlayId = `${themeId}_recommended`; overlays = theme.recommendedOverlays; }
 
 const duration = Math.max(1, Number(music.duration) || 1);
@@ -65,6 +65,20 @@ const controls = paceClass === "gentle"
     ? { durationMultiplier: pacing.durationMultiplier, transitionMultiplier: 0.75, repeatLimit: 3, montagePhotoMultiplier: 1.25 }
     : { durationMultiplier: pacing.durationMultiplier, transitionMultiplier: 1, repeatLimit: 2, montagePhotoMultiplier: 1 };
 
+// Capacity clamp — in the DIRECTION, so it is the same direction whether it was built
+// for a preview or a straight render. generateTier1Previews used to patch this in after
+// the fact, which meant a customer who skipped previews rendered at a montage density
+// no preview had ever shown them.
+const minPhotos = recipe.fit?.minPhotos || 0;
+const capacityLimited = photos.length < minPhotos
+  ? { availablePhotos: photos.length, recipeMinPhotos: minPhotos,
+      reason: "photo set is below the recipe's floor; montage density reduced to avoid photo reuse" }
+  : null;
+if (capacityLimited) {
+  controls.repeatLimit = 1;
+  controls.montagePhotoMultiplier = Math.min(1, controls.montagePhotoMultiplier);
+}
+
 const doc = {
   version: 1, generatedBy: pacingOverride ? "preview_override" : "rules", generatedAt: new Date().toISOString(), recipeId: recipe.id,
   style: {
@@ -73,6 +87,7 @@ const doc = {
   },
   pacing: {
     variantId: pacing.id, class: paceClass, score: +paceScore.toFixed(3), controls,
+    ...(capacityLimited ? { capacityLimited } : {}),
     evidence: { bpm: music.bpmEstimate ?? null, meanEnergy: music.energy?.mean ?? null, buildRatio: +buildRatio.toFixed(3), calmRatio: +calmRatio.toFixed(3), photosPerMinute: +photoDensity.toFixed(2) },
   },
 };

@@ -4,20 +4,22 @@ Dự án AI Wedding Slideshow gồm 2 tầng:
 
 1. **Render engine local** (Node/TypeScript + FFmpeg) — **đã hoàn thiện tính năng**:
    đọc `timeline.json` + ảnh + nhạc → `output/final.mp4`.
-2. **Pipeline sản xuất 2 tier** phía trên engine — Lite (rule-based, chạy được hôm nay)
-   và v1 Premium (AI đạo diễn, đã thiết kế, chưa xây phần AI-node).
+2. **Pipeline sản xuất 3 tier** phía trên engine — Template (recipe, 0 AI), Lite (rule-based)
+   và Premium (AI đạo diễn, có cổng khách chọn story + cách dùng bài nhạc).
 
-## Trạng thái (2026-07-08)
+## Trạng thái (2026-07-13)
 
-- **Engine**: 23 effect ảnh, 56 transition, caption tiếng Việt, color grading đầy đủ,
+- **Engine**: 29 effect ảnh, 56 transition, caption tiếng Việt, color grading đầy đủ,
   overlay (kèm 3 light-leak đóng gói sẵn), audio graph (playlist/automation/ducking),
   easing chuyển động (`gentle`/`snap`/`bounce`), validate → preflight → face-safe →
   image-cache → render → QA.
 - **Pipeline**: một orchestrator, ba tier — `npm run template|lite|premium -- --project <p>`
   (analyze → plan → build → render → QA → deliver, mỗi job một thư mục riêng).
   Xem [PROJECTS.md](PROJECTS.md).
-- **v1 Premium**: thiết kế hoàn chỉnh trong `PIPELINE-V1-VA-LITE.md`; các node gọi AI
-  (story options, creative brief, director notes) chưa triển khai.
+- **v1 Premium**: toàn bộ node đã nối vào orchestrator và chạy end-to-end bằng STUB khi thiếu key;
+  còn smoke test với API key thật và orchestration production. Pipeline pause bằng `exit 3` khi đang
+  chờ khách chọn story hoặc chọn highlight/full song.
+- **Kiểm thử**: 105 unit test + 1 integration test phủ pipeline dry-run → render → resume → QA → deliver.
 
 ## Triết lý
 

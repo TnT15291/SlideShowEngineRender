@@ -54,7 +54,9 @@ function generateParticleGather() {
 
   // Pre-plan particles: birth frame ramps up (few early, dense later),
   // position spreads centre -> edges as the reveal progresses.
-  const PARTICLES = 1900;
+  // Finer grain (2026-07-13): smaller radii, and MORE particles so the smaller
+  // dots still pay for the same coverage the fill ramp expects.
+  const PARTICLES = 3400;
   const parts = [];
   for (let i = 0; i < PARTICLES; i++) {
     const birthT = Math.pow(rand(), 0.6) * 0.82; // fraction of timeline, ease-in density
@@ -65,7 +67,7 @@ function generateParticleGather() {
       birth: Math.floor(birthT * frames),
       x: W / 2 + Math.cos(ang) * dist * (W / 2) * 1.15,
       y: H / 2 + Math.sin(ang) * dist * (H / 2) * 1.15,
-      r: 0.55 + rand() * 2.2, // fine grains; upscales to roughly 2..11 output px
+      r: 0.38 + rand() * 1.25, // fine grains; upscales to roughly 1.5..6.5 output px
       grow: 5 + Math.floor(rand() * 10),
     });
   }
@@ -96,7 +98,7 @@ function generateParticleGather() {
       const age = f - p.birth;
       if (age <= p.grow) {
         const k = (age + 1) / (p.grow + 1);
-        stamp(p.x, p.y, Math.max(0.38, p.r * k), 0.2);
+        stamp(p.x, p.y, Math.max(0.3, p.r * k), 0.2);
       }
     }
 
@@ -123,8 +125,9 @@ function generateParticleGather() {
           const px = cx + dx;
           const py = cy + dy;
           if (px < 0 || px >= W || py < 0 || py >= H) continue;
-          if (Math.abs(dx) + Math.abs(dy) > 1) continue; // plus-shape
-          frame[py * W + px] = 255;
+          const arm = Math.abs(dx) + Math.abs(dy);
+          if (arm > 1) continue; // plus-shape, dimmer arms = a finer twinkle
+          frame[py * W + px] = Math.max(frame[py * W + px], arm === 0 ? 255 : 165);
         }
       }
     }
@@ -220,8 +223,9 @@ function generateHeartWand() {
     const before = headAt(Math.max(0, p - 0.006));
     const angle = Math.atan2(h.y - before.y, h.x - before.x);
     // Small wand trails behind the drawing tip, angled along the curve tangent.
-    const length = 19;
-    const offset = 5;
+    // Shortened 2026-07-13: a smaller tip wants a daintier wand behind it.
+    const length = 14;
+    const offset = 4;
     const nx = -Math.sin(angle) * offset;
     const ny = Math.cos(angle) * offset;
     const x0 = h.x - Math.cos(angle) * length + nx;
@@ -237,6 +241,7 @@ function generateHeartWand() {
     const pommelX = Math.round(x0);
     const pommelY = Math.round(y0);
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (Math.abs(dx) + Math.abs(dy) > 1) continue; // plus-shape, smaller knob
       const x = pommelX + dx;
       const y = pommelY + dy;
       if (x >= 0 && x < W && y >= 0 && y < H) frame[y * W + x] = Math.max(frame[y * W + x], 150);
@@ -260,8 +265,8 @@ function generateHeartWand() {
         const q = prevP + ((p - prevP) * s) / STEPS;
         const h = headAt(q);
         const wob = Math.sin(q * 61) * 0.6; // slight hand wobble
-        stamp(h.x + wob, h.y + wob * 0.5, 2.6, 0.5); // core stroke
-        stamp(h.x, h.y, 6, 0.045); // soft glow halo
+        stamp(h.x + wob, h.y + wob * 0.5, 1.8, 0.5); // core stroke, finer line
+        stamp(h.x, h.y, 4.2, 0.04); // soft glow halo, tighter around the tip
       }
       prevP = p;
     }
@@ -297,11 +302,11 @@ function generateHeartWand() {
         }
       }
       for (let k = 0; k < 3; k++) {
-        // twinkles scattered just behind the head
+        // twinkles scattered just behind the head, hugging the smaller tip
         const back = Math.max(0, prevP - rand() * 0.03);
         const b = headAt(back);
-        const px = Math.round(b.x + (rand() - 0.5) * 8);
-        const py = Math.round(b.y + (rand() - 0.5) * 8);
+        const px = Math.round(b.x + (rand() - 0.5) * 6);
+        const py = Math.round(b.y + (rand() - 0.5) * 6);
         if (px >= 0 && px < W && py >= 0 && py < H && rand() < 0.7) frame[py * W + px] = 255;
       }
     }
@@ -327,11 +332,14 @@ function generateHeartWand() {
 }
 
 function generateBrushStroke() {
-  // "Bàn chải sơn": the photo appears through five broad horizontal paint
+  // "Bàn chải sơn": the photo appears through seven narrow horizontal paint
   // swipes on black, alternating direction like painting a wall. The natural
   // look lives in the mask texture: ragged multi-octave band edges, thin
   // dry-brush streaks along the stroke direction, bristle tips leading the
   // head, and paint spatter. A late ramp fills the deliberate gaps.
+  // (2026-07-13: 5 broad swipes -> 7 narrow ones; edge noise scaled DOWN with
+  // the band height, or the worst-case ragged dips of two neighbouring bands
+  // open a black seam the old overlap absorbed.)
   const DURATION = 5.0;
   const frames = Math.round(DURATION * FPS);
   const rand = mulberry32(20260712);
@@ -363,28 +371,31 @@ function generateBrushStroke() {
   }
 
   const smooth = (v) => (v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v));
-  const STROKES = 5;
+  const STROKES = 7;
   const bandH = H / STROKES;
   const strokes = [];
   for (let k = 0; k < STROKES; k++) {
-    const eCoarse = makeNoise2(34, 1);
-    const eFine = makeNoise2(9, 1);
+    const eCoarse = makeNoise2(26, 1);
+    const eFine = makeNoise2(7, 1);
     const streakN = makeNoise2(190, 0.75); // finer separated bristle fibres
     const leadN = makeNoise2(1, 2.2);
     // Bristle tips are fixed on the brush, so the lead profile is per-row
     // and constant for the whole sweep.
     const lead = new Float32Array(H);
-    for (let y = 0; y < H; y++) lead[y] = 1 + 8 * leadN(0, y);
+    for (let y = 0; y < H; y++) lead[y] = 1 + 6 * leadN(0, y);
     strokes.push({
       yc: (k + 0.5) * bandH,
       hh: bandH * 0.64, // bands overlap so no black seams between swipes
       isFirst: k === 0,
       isLast: k === STROKES - 1,
       dir: k % 2 === 0 ? 1 : -1,
-      start: 0.04 + k * 0.145,
+      // Same sweep window as the 5-stroke version (first head at 0.04, last
+      // finishes at 0.82, just before the 0.84 guarantee ramp) — divided
+      // among however many strokes there are.
+      start: 0.04 + (k * 0.58) / (STROKES - 1),
       dur: 0.2,
-      edgeTop: (x) => (eCoarse(x, 0) - 0.5) * 15 + (eFine(x, 0) - 0.5) * 6,
-      edgeBot: (x) => (eCoarse(x, 500) - 0.5) * 15 + (eFine(x, 500) - 0.5) * 6,
+      edgeTop: (x) => (eCoarse(x, 0) - 0.5) * 10 + (eFine(x, 0) - 0.5) * 4,
+      edgeBot: (x) => (eCoarse(x, 500) - 0.5) * 10 + (eFine(x, 500) - 0.5) * 4,
       // Mostly solid paint; sparse deep dips = dry-brush streaks that appear
       // and die out along the sweep (2-D noise, not a per-row constant).
       texture: (x, y) => 1 - 0.9 * smooth((streakN(x, y) - 0.72) / 0.055),
@@ -460,15 +471,14 @@ function generateBrushStroke() {
       frame[i] = Math.round(Math.min(1, v) * 255);
     }
 
-    // Transient paint spatter just ahead of each live head (frame only).
+    // Transient paint spatter just ahead of each live head (frame only) —
+    // single-pixel flecks, matching the narrower strokes.
     for (const { st, x } of heads) {
       for (let k = 0; k < 4; k++) {
         const px = Math.round(x + st.dir * (4 + rand() * 16));
         const py = Math.round(st.yc + (rand() - 0.5) * st.hh * 2.1);
         if (px < 1 || px >= W - 1 || py < 1 || py >= H - 1 || rand() > 0.75) continue;
         frame[py * W + px] = 255;
-        frame[py * W + px + 1] = 255;
-        frame[(py + 1) * W + px] = 255;
       }
     }
   }
@@ -503,7 +513,7 @@ for (const [name, gen] of Object.entries(GENERATORS)) {
       "-y",
       "-f", "rawvideo", "-pix_fmt", "gray", "-s", `${W}x${H}`, "-r", String(FPS),
       "-i", rawPath,
-      "-vf", `gblur=sigma=${name === "particle_gather" ? 0.55 : name === "heart_wand" ? 0.7 : 0.4},scale=${OUT_W}:${OUT_H}:flags=bicubic,format=yuv420p`,
+      "-vf", `gblur=sigma=${name === "particle_gather" ? 0.45 : name === "heart_wand" ? 0.55 : 0.35},scale=${OUT_W}:${OUT_H}:flags=bicubic,format=yuv420p`,
       "-t", String(duration),
       "-c:v", "libx264", "-preset", "medium", "-crf", "16",
       "-pix_fmt", "yuv420p", "-movflags", "+faststart",

@@ -17,6 +17,12 @@ export function sceneState(scene, files, byFile) {
 
 const SIGNALS = ["layout", "effect", "photoCount", "orientationPattern", "peoplePattern"];
 
+// "unknown" means the analysis never counted faces (photos analyzed before face
+// detection landed). Two unknowns are not evidence of two similar frames — the
+// people signal abstains rather than testifies, otherwise every pre-face-data album
+// gets this signal as a repeat for free.
+const peopleBlind = (s) => s.peoplePattern.split("+").includes("unknown");
+
 /** Report repetitive visual states across scenes. Never flags similarity inside one scene. */
 export function buildDiversityReport({ scenes, assignments, photos }) {
   const byFile = new Map(photos.map((p) => [p.file, p]));
@@ -25,16 +31,40 @@ export function buildDiversityReport({ scenes, assignments, photos }) {
       .filter(([key]) => key.startsWith(`${scene.id}:`)).flatMap(([, values]) => values);
     return sceneState(scene, files, byFile);
   });
+  const skipRun = (run) =>
+    run.some((s) => s.allowSequence || ["editorial_sequence", "chapter_sequence"].includes(s.cohesionMode));
   const warnings = [];
   for (let i = 2; i < states.length; i++) {
     const run = states.slice(i - 2, i + 1);
-    if (run.some((s) => s.allowSequence || ["editorial_sequence", "chapter_sequence"].includes(s.cohesionMode))) continue;
-    const repeatedSignals = SIGNALS.filter((key) => run.every((s) => s[key] === run[0][key]));
+    if (skipRun(run)) continue;
+    const repeatedSignals = SIGNALS.filter((key) => {
+      if (key === "peoplePattern" && run.some(peopleBlind)) return false;
+      return run.every((s) => s[key] === run[0][key]);
+    });
     // Orientation or people count alone is never a problem. Three independent
     // signals are required before a sequence is considered visually repetitive.
     if (repeatedSignals.length >= 3) warnings.push({
       sceneIds: run.map((s) => s.id), repeatedSignals, risk: +(repeatedSignals.length / SIGNALS.length).toFixed(2),
     });
+  }
+  // Adjacent PAIRS sharing a layout read as the same frame lingering, even when a
+  // third scene breaks the run-of-three rule above. Lower risk on purpose: a pair
+  // is "look at this", a run of three is "fix this". Pairs already inside a flagged
+  // run are not reported twice.
+  const flaggedPairs = new Set(
+    warnings.flatMap((w) => w.sceneIds.slice(1).map((id, j) => `${w.sceneIds[j]}|${id}`))
+  );
+  for (let i = 1; i < states.length; i++) {
+    const pair = [states[i - 1], states[i]];
+    if (skipRun(pair) || flaggedPairs.has(`${pair[0].id}|${pair[1].id}`)) continue;
+    if (["layout", "photoCount", "orientationPattern"].every((key) => pair[0][key] === pair[1][key])) {
+      warnings.push({
+        sceneIds: pair.map((s) => s.id),
+        repeatedSignals: ["layout", "photoCount", "orientationPattern"],
+        risk: 0.4,
+        adjacentPair: true,
+      });
+    }
   }
   const coverage = {
     orientations: Object.fromEntries([...new Set(states.map((s) => s.orientationPattern))].map((v) => [v, states.filter((s) => s.orientationPattern === v).length])),
@@ -52,6 +82,8 @@ export function neighborRepetitionPenalty(photo, request, assignments, requestBy
   }).flatMap(([, files]) => files.map((f) => photos.find((p) => p.file === f)).filter(Boolean));
   if (!peers.length) return 0;
   const sameOrient = peers.every((p) => p.orient === photo.orient);
-  const samePeople = peers.every((p) => bucketPeople(p.subjectCount) === bucketPeople(photo.subjectCount));
+  // A null subjectCount is "never counted", not "matches every other uncounted photo".
+  const samePeople = photo.subjectCount != null
+    && peers.every((p) => p.subjectCount != null && bucketPeople(p.subjectCount) === bucketPeople(photo.subjectCount));
   return sameOrient && samePeople ? -1.5 : 0;
 }

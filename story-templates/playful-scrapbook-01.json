@@ -1,0 +1,32 @@
+{
+  "id": "playful-scrapbook-01", "version": 1, "name": "Playful Scrapbook", "tier": "smart_lite", "libraryTheme": "editorial_bold",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["crossfade", "smooth_left", "smooth_up", "dissolve", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 2 } },
+  "source": { "origin": "original", "notes": "Bright candid scrapbook: polaroids, asymmetric clusters and quick photo sweeps for travel and everyday memories." },
+  "fit": { "bestFor": ["candid", "travel", "playful", "couple_journey"], "minPhotos": 36, "idealPhotos": 80 },
+  "musicProfile": { "moods": ["fun", "pop", "uplifting"], "energy": "medium_to_high" },
+  "pacingVariants": [{ "id": "easygoing", "maxEnergy": 0.38, "durationMultiplier": 1.08 }, { "id": "playful", "maxEnergy": 0.68, "durationMultiplier": 0.96 }, { "id": "party", "maxEnergy": 1, "durationMultiplier": 0.82 }],
+  "briefFields": { "required": ["bride", "groom"], "optional": ["date", "location", "meetingPlace", "yearsTogether"] },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 6000, "saturation": 1.04, "contrast": 1.04, "glow": 0.04 },
+    "audio": { "fade_in": 1, "fade_out": 2.5, "crossfade": 0 }, "overlays": [{ "variant": "sunset", "position": "fullscreen", "opacity": 0.1, "blend": "screen", "start": 0 }],
+    "fonts": { "title": "fonts/DancingScript.ttf", "heading": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
+    "palette": { "cream": "#FFF5E8", "ink": "#2D2630", "brown": "#B45F4D", "white": "#FFFFFF" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 4.8, "calmSceneSec": 5.8, "buildSceneSec": 3.8, "montageSec": 9.5, "closingSec": 7 },
+    "transitionStrategy": { "default": { "type": "crossfade", "duration": 0.5 }, "calm": { "type": "dissolve", "duration": 0.7 }, "memory": { "type": "smooth_up", "duration": 0.45 }, "peak": { "type": "smooth_left", "duration": 0.35 }, "final": { "type": "none", "duration": 0 } },
+    "photoSelection": { "reusePolicy": "avoid_until_exhausted", "heroPriority": ["emotionScore", "qualityNorm", "heroScore"], "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"], "darkPhotoMaxMeanLuma": 70 }
+  },
+  "scenes": [
+    { "id": "s01_open", "effect": "layer_scene", "layout": "polaroid_scatter", "durationRole": "calm", "transitionRole": "calm", "photoSlots": [{ "slot": "p1", "orient": "any", "quality": "best" }, { "slot": "p2", "orient": "any", "quality": "good" }, { "slot": "p3", "orient": "any", "quality": "good" }], "text": { "heading": "{{bride}} + {{groom}}" } },
+    { "id": "s02_start", "effect": "layer_scene", "layout": "collage_cluster_text", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }, { "slot": "tl", "orient": "landscape", "quality": "good" }, { "slot": "bl", "orient": "landscape", "quality": "good" }], "text": { "heading": "Chuyện tụi mình", "body": "Một hành trình có thật nhiều tiếng cười và những chuyến đi." } },
+    { "id": "s03_memory", "effect": "memory_wall", "durationRole": "normal", "transitionRole": "memory", "photoSlots": [{ "slot": "memories", "count": 5, "orient": "any", "quality": "good" }] },
+    { "id": "s04_pair", "effect": "layer_scene", "layout": "two_photo_story", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "portrait", "orient": "portrait", "quality": "best" }, { "slot": "wide", "orient": "landscape", "quality": "good" }], "text": { "body": "Đi đâu cũng được, miễn là đi cùng nhau." } },
+    { "id": "s05_grid", "effect": "collage_grid", "durationRole": "build", "transitionRole": "peak", "photoSlots": [{ "slot": "grid", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }] },
+    { "id": "s06_roll", "effect": "film_roll_left", "durationRole": "montage", "transitionRole": "peak", "photoSlots": [{ "slot": "film_roll", "count": 9, "orient": "any", "quality": "good", "preferEmotion": true }], "captionPattern": "Thêm thật nhiều kỷ niệm vào cuốn album của chúng mình." },
+    { "id": "s07_breath", "effect": "mask_reveal", "mask": "assets/masks/brush_stroke.mp4", "signature": true, "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "any", "quality": "best" }] },
+    { "id": "s08_closing", "effect": "layer_scene", "layout": "closing_names", "durationRole": "closing", "transitionRole": "final", "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_particle_02.png", "photoSlots": [], "text": { "names": "{{bride}} & {{groom}}", "date": "{{location}} · {{date}}" } }
+  ]
+}

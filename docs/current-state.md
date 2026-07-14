@@ -1,8 +1,8 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-11**
-> (**hợp nhất hai stack điều phối**: `runProject.mjs` giờ là orchestrator DUY NHẤT, chạy cả
-> tier `lite` lẫn `premium` trên cùng project isolation + job manifest + resume).
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-13**
+> (`runProject.mjs` là orchestrator duy nhất cho cả ba tier; Premium có hai cổng quyết định
+> của khách: hướng câu chuyện và cách dùng bài nhạc).
 >
 > Legend: ✅ xong · 🟡 một phần · ⬜ chưa làm
 
@@ -19,14 +19,14 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 
 | Tầng | Trạng thái | Ghi chú |
 |---|---|---|
-| **Render engine** | ✅ Feature-complete | **24 effect** (+`mask_reveal`), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
+| **Render engine** | ✅ Feature-complete | **29 effect** (gồm 5 effect native nâng cao mới), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
 | **Project isolation** | ✅ Xong + có test | Mỗi video sống trong `projects/<id>/` (ảnh/nhạc/analysis/timeline/logs/output riêng). `analysis/job-manifest.json` ghi phase state; `--resume` chỉ tái dùng phase còn tươi. Xem [PROJECTS.md](PROJECTS.md) |
-| **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier lite\|premium`. Hai tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
-| **Tier template (Rẻ)** | ✅ Recipe-driven, 4 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code** |
+| **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier template\|lite\|premium`. Ba tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
+| **Tier template (Rẻ)** | ✅ Recipe-driven, 8 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code** |
 | **Tier Template (Rẻ)** | ✅ Chạy end-to-end, **0 call AI** | Recipe + engine đầy đủ (layer_scene/LUT/mask/frame). `npm run template` |
 | **Tier Lite** | ✅ Chạy end-to-end | Rule-based + AI viết lời. `npm run lite -- --project <p>` |
-| **Tier Premium** | 🟡 Chạy đủ node, chờ key thật | Node 2 vision (OpenAI gpt-5.5) · 3/5+6/7 (DeepSeek) · 4 user choice · 8+9 validate→retry→fallback Lite · 10+11 QA loop · 12 deliver. **Chạy thật end-to-end trong project** (STUB, không key). Còn: key thật + điều phối production |
-| **Test** | 🟡 9 unit + 1 integration | Phủ project/manifest/resume + 1 vòng lite đầu-cuối. **Engine (~11k LOC) vẫn 0 test** |
+| **Tier Premium** | 🟡 Chạy đủ node, chờ key thật | Node 2 vision · 3/5+6/7 AI Director · 4 chọn story · **4b chọn highlight/full song** · 8+9 validate→retry→fallback Lite · 10+11 QA loop · 12 deliver. Chạy end-to-end bằng STUB; còn smoke test với key thật + điều phối production |
+| **Test** | ✅ 105 unit + 1 integration | Phủ directive, EXIF, recipe/scaling, storyboard, vision cache, project/manifest/resume, QA Tier-1 và pipeline dry-run → render → resume → QA → deliver |
 | **Docs** | ✅ Đã tổ chức lại | Hub tại [README.md](README.md) |
 
 ---
@@ -49,7 +49,7 @@ Cả ba dùng **chung** project isolation, job manifest, `--resume`, và chung k
 | Phase | `--tier template` | `--tier lite` | `--tier premium` |
 |---|---|---|---|
 | analyze | ảnh + nhạc. **BỎ vision** | ảnh + **vision** + nhạc | ảnh + **vision** + nhạc |
-| plan | policy → chọn ảnh. *Không plan gì* — recipe đã mang sẵn cấu trúc + câu chữ | policy → chọn ảnh → `generateProjectStory` (AI viết lời) | policy → chọn ảnh → **n3** story options → **n4** user choice → **n5+6** director notes → **n7** story plan |
+| plan | policy → chọn ảnh. *Không plan gì* — recipe đã mang sẵn cấu trúc + câu chữ | policy → chọn ảnh → `generateProjectStory` (AI viết lời) | policy → chọn ảnh → **n3** story options → **n4** user choice → **n4b** music window → **n5+6** director notes → **n7** story plan |
 | build | `applyStoryTemplate` từ recipe | `generateProjectTimeline` | **n8+9** `renderWithRetry` (validate → sửa → fallback Lite) |
 | qa | `qaProxy` + `qaClip` — chỉ đo | `qaProxy` + `qaClip` — chỉ đo | **n10+11** `qaLoop` — đo → sửa → render lại (trần 2) |
 | deliver | `--tier template` | `--tier lite` | `--tier` = **tier sống sót**, đọc từ `analysis/tier.json` |
@@ -72,7 +72,7 @@ thành `"unknown"`.
 **Recipe thiếu = lỗi cứng.** Tier template không có recipe → **dừng**, không âm thầm rơi về một recipe mặc
 định mà khách chưa từng chọn.
 
-**Node 4 có kết cục thứ ba.** Khách chưa trả lời mà cửa sổ còn hạn → `exit 3` và job manifest ghi
+**Node 4 và 4b có kết cục thứ ba.** Khách chưa trả lời mà cửa sổ còn hạn → `exit 3` và job manifest ghi
 `status: "paused"` (KHÔNG phải `failed`). Job không hỏng, nó **đang đợi một con người**. Gọi nó là
 `failed` là bảo người vận hành đi sửa thứ không hề gãy.
 
@@ -96,14 +96,13 @@ npm run template -- --project projects/x --auto-recipe --ai-copy
   recipe id bịa → rơi về luật **và ghi rõ là đã rơi**; theme bịa → về theme của recipe; scene/slot bịa →
   bỏ; object nhét font path + toạ độ → bỏ; câu 1400 ký tự → cắt.
 
-⬜ **CHỐT CHẶN — vì sao chưa xoá `generateProjectTimeline` + `generateProjectStory`**: recipe mới phủ
-**~45% nhạc** (track 203s → 16 scene, 91s). Cơ chế `repeatable`/`expandScenes` của phiên song song đang
-land nhưng chưa xong, và mới chỉ `warm-film-01` khai `repeatable`. Chừng nào scaling chưa phủ hết recipe
-thì bộ sinh rule **vẫn là thứ duy nhất co giãn theo mọi bản nhạc** — xoá bây giờ là ship regression.
-**Khi scaling xong: tier 2 = `template --auto-recipe --ai-copy`, và hai script kia chết.**
+✅ **Template scaling đã land.** `applyStoryTemplate.mjs`/`recipeShotList.mjs` co giãn shot list theo
+số ảnh và độ dài nhạc, giữ nhịp theo hình dạng nhạc; regression hiện kiểm cả album ít ảnh, nhiều ảnh,
+full song và highlight có chủ đích. `generateProjectTimeline` + `generateProjectStory` vẫn là đường Lite,
+không còn phải giữ chỉ vì recipe bị cố định khoảng một phút.
 
-⚠️ **`desktop/main.cjs` vẫn gọi node KHÔNG kèm `--project`** → app Electron vẫn chạy ở root, không
-isolation. Đây là lối vào root cuối cùng còn sót. Chưa sửa.
+✅ **Desktop đã đi qua project isolation.** Các lệnh preview/render trong `desktop/main.cjs` truyền
+`--project`; lựa chọn `musicMode` từ UI cũng được chuyển xuống pipeline.
 
 ---
 
@@ -437,6 +436,36 @@ analyzePhotos nếu thiếu (không crash giữa chừng).
 Dùng: `node scripts/qaProxy.mjs <timeline.json> [--strict]` (chỉ đo, không đụng file) ·
 `node scripts/qaLoop.mjs --timeline <tl> [--max-revisions 2] [--skip-render]` (đo → sửa → render lại).
 
+**Bổ sung phiên 2026-07-12→13:**
+- ✅ **Template co giãn theo album + nhạc**: shot list không còn cố định khoảng một phút;
+  `test/template-scaling.test.mjs`, album regression và fit test khóa hành vi full-song/highlight.
+- ✅ **Tier-1 direction + QA stack**: vocabulary đóng, directive có audit, shot list hai nhịp
+  (breathing frame/montage), phân ảnh theo vai trò và QA preview/contact sheet đều có test.
+- ✅ **Vision cache theo nội dung**: ảnh đã chấm không bị gửi lại; đổi vocabulary làm cache cũ mất hiệu lực;
+  đổi tên file không làm mất identity theo bytes.
+- ✅ **Gate 4b — Music Window**: Premium chỉ hỏi khi bộ ảnh không đủ gánh trọn bài và chưa có quyết định
+  từ directive/brief. Khi còn chờ khách, orchestrator pause bằng cùng hợp đồng `exit 3` của node 4;
+  quyết định được ghi project-local tại `analysis/selected_music.json` và được đọc lại khi `--resume`.
+- ✅ **Tier-1 nâng chất lượng (đánh giá lại 2026-07-13)** — đo trên job thật 23 ảnh/nhạc 203s, cả 4 recipe:
+  - **Capacity clamp dời vào `chooseTier1Direction`** (trước đó chỉ đường preview vá hậu kỳ → render thẳng
+    và preview cùng job có thể khác mật độ montage). Album dưới `fit.minPhotos` → direction ghi
+    `capacityLimited`, `applyStoryTemplate` warn to và ghi vào `recipeDecisions` — phim vẫn ship,
+    nhưng không ai bất ngờ trên contact sheet nữa.
+  - **Solver không đặt cùng layout 2 lần liền kề khi còn lựa chọn** (`recipeShotList`: substitution ưu tiên
+    layout khác cái vừa phát; hết lựa chọn thì chấp nhận lặp — lặp là khuyết điểm, lỗ hổng phim là lỗi).
+    `diversityPlanner` thêm luật **cặp kề nhau** (risk 0.4, không báo trùng với run-3) và tín hiệu người
+    `unknown` **kiêng khem** thay vì đếm "unknown == unknown" là trùng miễn phí (album phân tích trước
+    face-detection từng làm gate nhiễu).
+  - **3 recipe còn lại có `repeatable.variants`** (cinematic/editorial/modern-teal — trước chỉ warm-film):
+    lần lặp tiêu thụ câu chữ tác giả viết sẵn rồi mới câm, thay vì câm ngay từ lần hai.
+  - **Điều biến năng lượng cho duration thân** (`recipeShotList`, hằng `MOD_STRENGTH 0.5` / kẹp ±15%):
+    thân phim từng phẳng tuyệt đối (8/10 cảnh đúng 7.14s — đúng "metronome" đã kết án premium) vì bảng
+    role × scale đồng nhất; nay mỗi cảnh nghiêng theo năng lượng đoạn nhạc nó phủ (cùng `makeEnergy`
+    mà QA đo), **zero-sum** (renormalize về đúng track), montage miễn (giữ thiết kế bimodal).
+    Sau sửa: modal-duration share 2/10, tổng phim không đổi. Đây là quyết định thẩm mỹ —
+    A/B render draft (trước/sau) để duyệt bằng mắt; chỉnh = 2 hằng số.
+  - 113 test xanh (8 test mới: pair rule, unknown-abstain, capacity clamp, anti-adjacency, energy lean).
+
 ### Phase F — Giao hàng & điều phối (node 4, 12)
 - ✅ **Deliverables** (node 12) — `scripts/deliver.mjs` + `schema/project-summary.schema.json`.
   Đóng gói `final.mp4` + `preview.mp4` + `thumbnail.jpg` + `project_summary.json` vào
@@ -508,7 +537,7 @@ Dùng: `node scripts/qaProxy.mjs <timeline.json> [--strict]` (chỉ đo, không 
   là orchestrator **duy nhất** — node 2→12 chạy bên trong project isolation + job manifest + resume
   (xem §1b và §2b). Ranh giới vẫn giữ: điều phối chỉ gọi node/engine, không sinh FFmpeg.
   ✅ Ba lối vào root cũ (`buildClip.mjs`, `runPremiumJob.mjs`, `generateStoryClip.mjs`) **đã xoá** —
-  không còn cách nào chạy job mà bỏ qua isolation (trừ `desktop/main.cjs`, xem §1b).
+  Desktop cũng truyền `--project`, nên các lối vào sản phẩm đều giữ project isolation.
 - ⬜ **Orchestration production**: n8n/queue gọi CLI (mỗi job đã có thư mục riêng → chạy song song
   được rồi). Xem
   [PIPELINE-V1-VA-LITE.md → Orchestration](PIPELINE-V1-VA-LITE.md#orchestration--triển-khai).
@@ -524,8 +553,8 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
 - ⬜ QA bằng vision (đo chính xác chữ vừa khung, crop chủ thể, overlap nghệ thuật).
 - ⬜ Easing cho `layer_scene` `motion` (whole-slide effect đã có `gentle/snap/bounce`).
 - ⬜ Keyframe reveal **per-layer**, photo-stack shuffle (`mask_reveal` whole-slide đã có — §4b).
-- ⬜ Tier template: cơ chế **scale theo input** (recipe khai `repeatable` scene → nhân theo số
-  ảnh/độ dài nhạc; hiện video luôn ~1 phút dù 200 ảnh + nhạc 203s).
+- ✅ Tier template: **scale theo input** — shot list co giãn theo số ảnh/độ dài nhạc và chọn
+  full-song hoặc highlight có chủ đích; có regression cho album ít ảnh/lắm ảnh.
 - ⬜ Tier template: tiêu thụ `photo_content.json` khi có (match slot theo tag family/couple thay vì
   chỉ orient/quality — scene "Gia đình" hiện có thể nhận ảnh couple selfie).
 - ⬜ Recipe copy: 2–3 biến thể câu chữ mỗi scene (2 khách cùng mua 1 template không nhận video

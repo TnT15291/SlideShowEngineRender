@@ -111,7 +111,7 @@
         "memory_wall", "dark_feather",
         "film_roll_up", "film_roll_left", "film_roll_right",
         "video_background", "collage_grid", "double_exposure",
-        "mask_reveal",
+        "mask_reveal", "tilt_shift", "dream_glow", "prism_split", "spotlight_focus", "mirror_split",
         "layer_scene"
       ]
     },
@@ -284,7 +284,8 @@
         },
         "captions": { "type": "array", "items": { "$ref": "#/$defs/caption" }, "description": "Baked-in drawtext lines. For layer_scene prefer text layers instead." },
         "color": { "$ref": "#/$defs/colorGrade" },
-        "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 } }, "additionalProperties": false }
+        "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 } }, "additionalProperties": false },
+        "tiltShift": { "type": "object", "required": ["focusY", "bandHeight", "blur"], "properties": { "focusY": { "type": "number", "minimum": 0, "maximum": 1 }, "bandHeight": { "type": "number", "minimum": 0.05, "maximum": 0.8 }, "blur": { "type": "number", "minimum": 1, "maximum": 40 } }, "additionalProperties": false, "description": "Native tilt_shift controls. focusY and bandHeight are normalized to frame height." }
       },
       "allOf": [
         {
@@ -308,7 +309,7 @@
           "then": { "required": ["image", "mask"] }
         },
         {
-          "if": { "properties": { "effect": { "enum": ["still", "slow_zoom_in", "slow_zoom_out", "pan_left", "pan_right", "pan_up", "pan_down", "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br", "portrait_blur_background", "polaroid", "circle_focus", "dark_feather"] } } },
+          "if": { "properties": { "effect": { "enum": ["still", "slow_zoom_in", "slow_zoom_out", "pan_left", "pan_right", "pan_up", "pan_down", "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br", "portrait_blur_background", "polaroid", "circle_focus", "dark_feather", "tilt_shift", "dream_glow", "prism_split", "spotlight_focus", "mirror_split"] } } },
           "then": { "required": ["image"] }
         }
       ]

@@ -18,7 +18,7 @@ hiện tại của mã nguồn (`src/`). Mọi con số, enum, giới hạn bên
 | Độ phân giải | Tùy chỉnh `project.width/height/fps` — mặc định khuyến nghị 1920×1080 @ 30fps |
 | Nền tảng | Node + TypeScript (tsx), gọi FFmpeg CLI; chạy local trên Windows |
 | Phụ thuộc runtime | `zod` (validate) + FFmpeg (ffmpeg + ffprobe) |
-| Số effect ảnh | **23 preset** |
+| Số effect ảnh | **29 preset** |
 | Số transition | **56 kiểu** (+ `none`) |
 
 ---
@@ -76,7 +76,7 @@ Mỗi slide dùng **đúng một** kiểu nguồn ảnh, tùy theo `effect`:
 
 ---
 
-## 5. Effect ảnh (23 preset — `effect`)
+## 5. Effect ảnh (29 preset — `effect`)
 
 **Chuyển động Ken Burns / pan (1 ảnh, cover-crop 16:9):**
 - `still` — ảnh tĩnh, cover-fill.
@@ -96,6 +96,11 @@ Mỗi slide dùng **đúng một** kiểu nguồn ảnh, tùy theo `effect`:
 - `polaroid` — ảnh fit trong thẻ ảnh chụp lấy liền trắng, nghiêng nhẹ, viền dày dưới, trôi nổi trên nền mờ. **Không bao giờ cắt** ảnh. Kiểu scrapbook/hoài niệm.
 - `circle_focus` — cắt vuông tâm ảnh, mask tròn + vòng trắng, trên nền mờ. Hợp chân dung/close-up (chủ thể nên ở giữa ảnh).
 - `double_exposure` — chồng phơi sáng 2 ảnh (screen blend + zoom eased). Cần 2 ảnh.
+- `tilt_shift` — effect native tạo một dải nét ngang và làm mờ vùng ngoài bằng Gaussian blur + mask feather. Tùy chỉnh bằng `tiltShift: { focusY: 0..1, bandHeight: 0.05..0.8, blur: 1..40 }`; mặc định `{ focusY: 0.5, bandHeight: 0.22, blur: 14 }`. Alias: `tiltshift`, `miniature`.
+- `dream_glow` — bloom kiểu Orton: lớp ảnh mờ sáng được screen-blend lên ảnh gốc, tạo chất mềm và lãng mạn. Alias: `orton`.
+- `prism_split` — lệch kênh đỏ/xanh tạo viền sắc sai và cảm giác lăng kính hiện đại. Alias: `chromatic_aberration`.
+- `spotlight_focus` — vignette quang học mạnh, đặt tâm hơi cao để hướng mắt vào chủ thể. Alias: `spotlight`.
+- `mirror_split` — chia đôi và phản chiếu khung hình thành bố cục đối xứng mang tính editorial. Alias: `mirror`.
 
 **Phong cách "dark film" (thay caption thường bằng lockup chữ):**
 - `memory_wall` — 1–5 ảnh dạng thẻ in/âm bản nghiêng trên nền gần đen, có đường timeline mảnh. Caption trở thành lockup: `title`=tên serif lớn, `subtitle`=năm trên đường kẻ, `caption`=dòng nhỏ dưới. Chữ nằm trái/phải xác định theo slide id. Dùng transition `slide_left` giữa các scene để có cảm giác lia dọc bức tường.
@@ -113,7 +118,7 @@ Mỗi slide dùng **đúng một** kiểu nguồn ảnh, tùy theo `effect`:
 **Cảnh dàn layer thủ công:**
 - `layer_scene` — cảnh kiểu Canva, đặt ảnh/text/khối nền tại tọa độ chính xác. Xem §7.
 
-**Alias được `normalize` chấp nhận:** `collage`/`photo_grid`→`collage_grid`; `background_video`/`title_card`/`intro_card`→`video_background`; `polaroid_card`/`photo_card`/`instant_photo`→`polaroid`; `circle_frame`/`circle_photo`/`circle_mask`→`circle_focus`; `photo_scatter`/`film_scatter`/`timeline_wall`→`memory_wall`; `feather`/`feathered_photo`/`soft_frame`→`dark_feather`.
+**Alias được `normalize` chấp nhận:** `collage`/`photo_grid`→`collage_grid`; `background_video`/`title_card`/`intro_card`→`video_background`; `polaroid_card`/`photo_card`/`instant_photo`→`polaroid`; `circle_frame`/`circle_photo`/`circle_mask`→`circle_focus`; `photo_scatter`/`film_scatter`/`timeline_wall`→`memory_wall`; `feather`/`feathered_photo`/`soft_frame`→`dark_feather`; `tiltshift`/`miniature`→`tilt_shift`; `orton`→`dream_glow`; `chromatic_aberration`→`prism_split`; `spotlight`→`spotlight_focus`; `mirror`→`mirror_split`.
 
 ### Bảng easing (chỉ effect zoom/pan/kenburns)
 

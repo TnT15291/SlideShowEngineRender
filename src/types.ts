@@ -25,6 +25,11 @@ export type EffectPreset =
   | "collage_grid"
   | "double_exposure"
   | "mask_reveal"
+  | "tilt_shift"
+  | "dream_glow"
+  | "prism_split"
+  | "spotlight_focus"
+  | "mirror_split"
   | "layer_scene";
 
 // Canonical transition names (timeline-facing) -> ffmpeg xfade transition names.
@@ -356,6 +361,16 @@ export interface Slide {
   captions: Caption[]; // normalize folds a legacy single `caption` into this
   color?: ColorGrade; // per-slide grade, merged over the timeline-level one
   technicalColor?: TechnicalColor;
+  tiltShift?: TiltShiftConfig;
+}
+
+export interface TiltShiftConfig {
+  /** Vertical center of the sharp band, normalized to frame height. */
+  focusY: number;
+  /** Height of the fully sharp band, normalized to frame height. */
+  bandHeight: number;
+  /** Gaussian blur sigma outside the focus band. */
+  blur: number;
 }
 
 export interface Timeline {
@@ -433,6 +448,7 @@ export interface RenderSlideStep {
   captions: CompiledCaption[]; // baked into the slide video via drawtext
   color?: ColorGrade; // merged global+slide grade; lut resolved to absolute path
   technicalColor?: TechnicalColor;
+  tiltShift?: TiltShiftConfig;
   srcWidth?: number; // intrinsic image width (undefined if unreadable)
   srcHeight?: number; // intrinsic image height
   width: number; // output frame width

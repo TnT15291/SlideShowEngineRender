@@ -8,7 +8,7 @@
 // got depended on which code path reached the scene first.
 //
 // Worse than the drift: composeStoryboard — the one node that DECIDES what a premium
-// film is made of — knew about exactly two effects. The engine has 24. So premium
+// film is made of — knew about exactly two effects. The engine has 29. So premium
 // rendered 100% layer_scene, three layouts on rotation, and looked cheaper than the
 // template tier it was supposed to beat.
 //
@@ -52,6 +52,11 @@ const SINGLE = {
   polaroid: { motion: false, hint: "photo as a physical print; nostalgic, keepsake feel" },
   circle_focus: { motion: false, hint: "vignette to a circle; intimate, draws to a detail" },
   dark_feather: { motion: false, hint: "feathered dark vignette; cinematic, good under a subtitle" },
+  tilt_shift: { motion: false, hint: "sharp horizontal focus band over a blurred frame; miniature/dreamlike emphasis" },
+  dream_glow: { motion: false, hint: "soft Orton-style bloom blended over the original; romantic and luminous" },
+  prism_split: { motion: false, hint: "offset red/blue channels; modern prism and chromatic-fringe accent" },
+  spotlight_focus: { motion: false, hint: "strong optical vignette centered slightly high; directs attention to a subject" },
+  mirror_split: { motion: false, hint: "symmetrical mirrored split; graphic editorial beat for details or dance scenes" },
 };
 
 /** Effects that consume MANY photographs. `slot` is the photoSlots key applyStoryTemplate

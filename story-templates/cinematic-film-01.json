@@ -27,10 +27,10 @@
   },
   "defaults": {
     "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 5200, "saturation": 0.9, "contrast": 1.12, "grain": 8, "letterbox": 2.39, "vignette": true, "glow": 0.08 },
+    "color": { "temperature": 5200, "saturation": 0.92, "contrast": 1.08, "grain": 6, "letterbox": 2.39, "vignette": true, "glow": 0.06 },
     "audio": { "fade_in": 2, "fade_out": 3.5, "crossfade": 0 },
     "overlays": [
-      { "path": "overlays/particles.mp4", "position": "fullscreen", "opacity": 0.3, "blend": "screen", "start": 0 }
+      { "path": "overlays/particles.mp4", "position": "fullscreen", "opacity": 0.18, "blend": "screen", "start": 0 }
     ],
     "fonts": {
       "title": "fonts/Italianno-Regular.ttf",
@@ -79,6 +79,7 @@
     {
       "id": "s03_double_exposure",
       "effect": "double_exposure",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -87,6 +88,12 @@
     },
     {
       "id": "s04_memory_wall",
+      "repeatable": {
+        "variants": [
+          { "captionPattern": "Ký ức xếp cạnh nhau, thành hình bóng hai người." },
+          { "captionPattern": "" }
+        ]
+      },
       "effect": "memory_wall",
       "durationRole": "normal",
       "transitionRole": "memory",
@@ -97,6 +104,13 @@
     },
     {
       "id": "s05_breath",
+      "repeatable": {
+        "variants": [
+          { "text": { "quote": "Có những khoảnh khắc, im lặng là đủ." } },
+          { "text": { "quote": "Ánh sáng nào rồi cũng tìm về phía hai người." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "full_bleed_quote",
       "durationRole": "normal",
@@ -108,6 +122,12 @@
     },
     {
       "id": "s06_duo",
+      "repeatable": {
+        "variants": [
+          { "text": { "body": "Hai thế giới, từ đây là một câu chuyện." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "two_photo_story",
       "durationRole": "calm",
@@ -130,7 +150,15 @@
     },
     {
       "id": "s08_promise",
-      "effect": "dark_feather",
+      "repeatable": {
+        "variants": [
+          { "captionPattern": "Lời hứa không cần nói to, chỉ cần giữ thật lâu." },
+          { "captionPattern": "" }
+        ]
+      },
+      "effect": "mask_reveal",
+      "mask": "assets/masks/particle_gather.mp4",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "calm",
       "captionPattern": "Từ hôm nay, mình gọi nhau là nhà.",

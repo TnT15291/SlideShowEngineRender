@@ -1,0 +1,50 @@
+{
+  "project": {
+    "name": "tilt-shift-native-demo",
+    "width": 640,
+    "height": 360,
+    "fps": 30,
+    "quality": "draft"
+  },
+  "music": [],
+  "audio": {
+    "fade_in": 0,
+    "fade_out": 0,
+    "crossfade": 0
+  },
+  "output": {
+    "path": "output/tilt-shift-native-demo.mp4"
+  },
+  "overlays": [],
+  "slides": [
+    {
+      "id": "tilt_shift_native",
+      "image": "input/008.jpg",
+      "duration": 4,
+      "effect": "tilt_shift",
+      "tiltShift": {
+        "focusY": 0.52,
+        "bandHeight": 0.2,
+        "blur": 16
+      },
+      "transition": {
+        "type": "none",
+        "duration": 0
+      },
+      "captions": [
+        {
+          "text": "NATIVE EFFECT · TILT SHIFT",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.25,
+          "duration": 3.5,
+          "size": 22,
+          "color": "white",
+          "outline": { "color": "black", "width": 2 },
+          "shadow": true,
+          "animation": "fade"
+        }
+      ]
+    }
+  ]
+}

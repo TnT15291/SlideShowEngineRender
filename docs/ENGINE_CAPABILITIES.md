@@ -110,6 +110,17 @@ All zoom/pan/kenburns motion is eased (smoothstep). Optionally set slide-level
   text lockup as `memory_wall`. Slow to render (per-pixel feather) — use
   for a few hero moments. Both effects ignore caption `position`; roles
   drive placement.
+- `tilt_shift`: native selective-focus effect. It keeps a feathered horizontal
+  band sharp and applies Gaussian blur above and below it. Optional controls:
+  `tiltShift: { focusY: 0..1, bandHeight: 0.05..0.8, blur: 1..40 }`; defaults
+  are `{ focusY: 0.5, bandHeight: 0.22, blur: 14 }`.
+- `dream_glow`: Orton-style luminous bloom made by screen-blending a softened,
+  lifted copy over the original frame.
+- `prism_split`: red/blue channel offsets plus a small contrast lift, producing
+  a modern chromatic-aberration accent.
+- `spotlight_focus`: strong optical vignette centered slightly above mid-frame
+  to direct attention toward a portrait subject.
+- `mirror_split`: half-frame mirror composition for a symmetrical editorial beat.
 - `film_roll_up`: vertical Fujifilm-style film strip moving upward.
 - `film_roll_left`: horizontal Fujifilm-style film strip moving right to left.
 - `film_roll_right`: horizontal Fujifilm-style film strip moving left to right.
@@ -148,6 +159,11 @@ Aliases accepted by normalization:
 - `circle_frame`, `circle_photo`, `circle_mask` -> `circle_focus`
 - `photo_scatter`, `film_scatter`, `timeline_wall` -> `memory_wall`
 - `feather`, `feathered_photo`, `soft_frame` -> `dark_feather`
+- `tiltshift`, `miniature` -> `tilt_shift`
+- `orton` -> `dream_glow`
+- `chromatic_aberration` -> `prism_split`
+- `spotlight` -> `spotlight_focus`
+- `mirror` -> `mirror_split`
 
 ## Transitions
 

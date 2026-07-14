@@ -20,9 +20,17 @@ export function makePreviewCut(timeline, { duration = 20, output } = {}) {
     if (picked.length >= 5) break;
     if (!picked.includes(slide)) picked.push(slide);
   }
+  // A template preview must show what makes that template worth choosing. Signature
+  // scenes are authored differentiators (mask reveal, double exposure, film treatment),
+  // not optional filler to lose behind five generic beat representatives.
+  const signature = slides.find((s) => s.signature && !picked.includes(s));
+  if (signature) {
+    const replace = picked.findIndex((s) => !["hook", "closing"].includes(s.editorialBeat) && !s.signature);
+    if (replace >= 0) picked[replace] = signature;
+  }
   const riskiest = slides.reduce((best, slide) => sceneRisk(slide) > sceneRisk(best) ? slide : best, slides[0]);
   if (riskiest && sceneRisk(riskiest) > 0 && !picked.includes(riskiest)) {
-    const replace = picked.findIndex((s) => !["hook", "closing"].includes(s.editorialBeat));
+    const replace = picked.findIndex((s) => !["hook", "closing"].includes(s.editorialBeat) && !s.signature);
     if (replace >= 0) picked[replace] = riskiest;
   }
   picked.sort((a, b) => slides.indexOf(a) - slides.indexOf(b));

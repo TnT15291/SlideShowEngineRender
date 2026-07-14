@@ -1,0 +1,31 @@
+{
+  "id": "classic-luxury-01", "version": 1, "name": "Classic Luxury", "tier": "smart_lite", "libraryTheme": "dark_film",
+  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
+  "transitionGrammar": { "vocabulary": ["fade_slow", "dissolve", "fade_to_black", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 1 } },
+  "source": { "origin": "original", "notes": "Formal black-and-gold reception look: symmetrical cards, deliberate holds and an Art Deco finish." },
+  "fit": { "bestFor": ["formal", "ceremony", "luxury", "reception"], "minPhotos": 30, "idealPhotos": 65 },
+  "musicProfile": { "moods": ["elegant", "orchestral", "cinematic"], "energy": "low_to_medium" },
+  "pacingVariants": [{ "id": "stately", "maxEnergy": 0.38, "durationMultiplier": 1.15 }, { "id": "gala", "maxEnergy": 0.68, "durationMultiplier": 1 }, { "id": "grand", "maxEnergy": 1, "durationMultiplier": 0.87 }],
+  "briefFields": { "required": ["bride", "groom"], "optional": ["date", "location", "thankYouLine"] },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 5400, "saturation": 0.94, "contrast": 1.09, "grain": 3, "vignette": true, "glow": 0.04 },
+    "audio": { "fade_in": 2, "fade_out": 4, "crossfade": 0 }, "overlays": [],
+    "fonts": { "title": "fonts/Italianno-Regular.ttf", "heading": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
+    "palette": { "cream": "#11100F", "ink": "#E8D3A4", "brown": "#C5A363", "white": "#F8F1E4" }
+  },
+  "timelineRules": {
+    "durationStrategy": { "baseSceneSec": 6.2, "calmSceneSec": 8, "buildSceneSec": 5, "montageSec": 11, "closingSec": 9 },
+    "transitionStrategy": { "default": { "type": "fade_slow", "duration": 1 }, "calm": { "type": "fade_slow", "duration": 1.2 }, "memory": { "type": "dissolve", "duration": 0.8 }, "peak": { "type": "fade_to_black", "duration": 0.7 }, "final": { "type": "none", "duration": 0 } },
+    "photoSelection": { "reusePolicy": "avoid_until_exhausted", "heroPriority": ["qualityNorm", "heroScore", "emotionScore"], "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"], "darkPhotoMaxMeanLuma": 55 }
+  },
+  "scenes": [
+    { "id": "s01_open", "effect": "dark_feather", "durationRole": "calm", "transitionRole": "calm", "captionPattern": "{{bride}} & {{groom}}", "photoSlots": [{ "slot": "hero", "orient": "landscape", "quality": "best" }] },
+    { "id": "s02_title", "effect": "layer_scene", "layout": "hero_title_card", "durationRole": "calm", "transitionRole": "default", "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best" }, { "slot": "strip_1", "orient": "portrait", "quality": "good" }, { "slot": "strip_2", "orient": "portrait", "quality": "good" }, { "slot": "strip_3", "orient": "portrait", "quality": "good" }], "text": { "eyebrow": "Trân trọng", "date": "{{date}}" } },
+    { "id": "s03_ceremony", "effect": "layer_scene", "layout": "three_photo_row", "durationRole": "normal", "transitionRole": "memory", "photoSlots": [{ "slot": "left", "orient": "any", "quality": "good" }, { "slot": "centre", "orient": "any", "quality": "best" }, { "slot": "right", "orient": "any", "quality": "good" }], "text": { "heading": "Ngày trọng đại", "caption": "Khoảnh khắc hai gia đình cùng chứng kiến một lời hẹn ước." } },
+    { "id": "s04_hero", "effect": "mask_reveal", "mask": "assets/masks/particle_gather.mp4", "signature": true, "durationRole": "calm", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "landscape", "quality": "best" }] },
+    { "id": "s05_family", "effect": "memory_wall", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "memories", "count": 5, "orient": "any", "quality": "good" }], "captionPattern": "Niềm vui được sẻ chia cùng những người thân yêu." },
+    { "id": "s06_peak", "effect": "film_roll_up", "durationRole": "montage", "transitionRole": "peak", "photoSlots": [{ "slot": "film_roll", "count": 8, "orient": "any", "quality": "good" }] },
+    { "id": "s07_closing", "effect": "layer_scene", "layout": "closing_names", "durationRole": "closing", "transitionRole": "final", "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_art_deco_01.png", "photoSlots": [], "text": { "names": "{{bride}} & {{groom}}", "date": "{{location}} · {{date}}" } }
+  ]
+}

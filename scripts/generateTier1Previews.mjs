@@ -33,23 +33,15 @@ const descriptions = {
   balanced: "the recipe's middle rhythm and visual density",
   lively: "shorter scenes, tighter transitions, denser montage beats",
 };
-const photoCount = JSON.parse(fs.readFileSync(path.resolve(root, photos), "utf8")).photos?.length || 0;
-const recipeDoc = JSON.parse(fs.readFileSync(path.resolve(root, recipe), "utf8"));
 const variants = [];
 for (const pacing of ["gentle", "balanced", "lively"]) {
   const direction = `${directionDir}/${pacing}.json`;
   const fullTimeline = `${timelineDir}/${pacing}.full.json`;
   const previewTimeline = `${timelineDir}/${pacing}.json`;
   const video = `${outDir}/${pacing}.mp4`;
+  // The capacity clamp (photo set below the recipe's floor) lives in
+  // chooseTier1Direction itself now, so previews and straight renders share it.
   run(["scripts/chooseTier1Direction.mjs", "--recipe", recipe, "--prompt", project.rel(project.manifest.promptFile || "prompt.txt"), "--photos", photos, "--music", musicAnalysis, "--pacing", pacing, "--out", direction], `direction ${pacing}`);
-  if (photoCount < (recipeDoc.fit?.minPhotos || 0)) {
-    const safe = JSON.parse(fs.readFileSync(path.resolve(root, direction), "utf8"));
-    safe.pacing.controls.repeatLimit = 1;
-    safe.pacing.controls.montagePhotoMultiplier = Math.min(1, safe.pacing.controls.montagePhotoMultiplier);
-    safe.pacing.capacityLimited = { availablePhotos: photoCount, recipeMinPhotos: recipeDoc.fit.minPhotos,
-      reason: "preview/full direction reduced montage density to avoid photo reuse" };
-    fs.writeFileSync(path.resolve(root, direction), JSON.stringify(safe, null, 2) + "\n");
-  }
   run(["scripts/applyStoryTemplate.mjs", "--template", recipe, "--photos", photos, "--music", music, "--analysis-dir", analysis, "--direction", direction, "--out", fullTimeline, "--output", video, "--name", `${project.manifest.name} — ${pacing}`, "--quality", "draft", "--prompt", project.rel(project.manifest.promptFile || "prompt.txt")], `timeline ${pacing}`);
   const full = JSON.parse(fs.readFileSync(path.resolve(root, fullTimeline), "utf8"));
   const cut = makePreviewCut(full, { duration, output: video });

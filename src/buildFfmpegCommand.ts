@@ -42,6 +42,12 @@ const IMPLEMENTED_EFFECTS: ReadonlySet<EffectPreset> = new Set([
   "video_background",
   "collage_grid",
   "double_exposure",
+  "mask_reveal",
+  "tilt_shift",
+  "dream_glow",
+  "prism_split",
+  "spotlight_focus",
+  "mirror_split",
   "layer_scene",
 ]);
 
@@ -637,6 +643,21 @@ function buildFramingFilter(step: RenderSlideStep): string {
     case "dark_feather":
       return darkFeatherFilter(step);
 
+    case "tilt_shift":
+      return tiltShiftFilter(step);
+
+    case "dream_glow":
+      return dreamGlowFilter(step);
+
+    case "prism_split":
+      return prismSplitFilter(step);
+
+    case "spotlight_focus":
+      return spotlightFocusFilter(step);
+
+    case "mirror_split":
+      return mirrorSplitFilter(step);
+
     case "slow_zoom_in":
       return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), centerX(), centerY(), tail);
 
@@ -671,6 +692,64 @@ function buildFramingFilter(step: RenderSlideStep): string {
         `crop=${w}:${h},${tail}`
       );
   }
+}
+
+function tiltShiftFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps } = step;
+  const config = step.tiltShift ?? { focusY: 0.5, bandHeight: 0.22, blur: 14 };
+  const focusY = Math.round(config.focusY * h);
+  const halfBand = Math.max(1, Math.round((config.bandHeight * h) / 2));
+  const feather = Math.max(12, Math.round(halfBand * 0.65));
+  const outer = halfBand + feather;
+  const maskExpr = `255*clip((${outer}-abs(Y-${focusY}))/${feather},0,1)`;
+
+  return (
+    `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+    `setsar=1,split=3[ts_sharp][ts_blur_src][ts_mask_src];` +
+    `[ts_blur_src]gblur=sigma=${config.blur.toFixed(2)}[ts_blur];` +
+    `[ts_mask_src]format=gray,geq=lum='${maskExpr}'[ts_mask];` +
+    `[ts_blur][ts_sharp][ts_mask]maskedmerge,fps=${fps},format=yuv420p`
+  );
+}
+
+function coverFilter(w: number, h: number): string {
+  return `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},setsar=1`;
+}
+
+function dreamGlowFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps } = step;
+  return (
+    `${coverFilter(w, h)},split=2[dg_base][dg_soft_src];` +
+    `[dg_soft_src]gblur=sigma=10,eq=brightness=0.06:saturation=1.12[dg_soft];` +
+    `[dg_base][dg_soft]blend=all_mode=screen:all_opacity=0.32,` +
+    `fps=${fps},format=yuv420p`
+  );
+}
+
+function prismSplitFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps } = step;
+  return (
+    `${coverFilter(w, h)},rgbashift=rh=7:bh=-7:edge=smear,` +
+    `eq=contrast=1.04:saturation=1.08,fps=${fps},format=yuv420p`
+  );
+}
+
+function spotlightFocusFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps } = step;
+  return (
+    `${coverFilter(w, h)},vignette=angle=PI/3:x0=w/2:y0=h*0.46:aspect=${w}/${h},` +
+    `eq=contrast=1.06:saturation=0.96,fps=${fps},format=yuv420p`
+  );
+}
+
+function mirrorSplitFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps } = step;
+  return (
+    `${coverFilter(w, h)},split=2[ms_left_src][ms_right_src];` +
+    `[ms_left_src]crop=w=iw/2:h=ih:x=0:y=0[ms_left];` +
+    `[ms_right_src]hflip,crop=w=iw/2:h=ih:x=0:y=0[ms_right];` +
+    `[ms_left][ms_right]hstack=inputs=2,fps=${fps},format=yuv420p`
+  );
 }
 
 // zoompan operates on a 2x-oversampled cover-filled canvas: the extra pixels

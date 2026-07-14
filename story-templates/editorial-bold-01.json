@@ -69,6 +69,12 @@
     },
     {
       "id": "s02_beginning",
+      "repeatable": {
+        "variants": [
+          { "text": { "heading": "Gặp gỡ", "body": "Chuyện lớn nào cũng bắt đầu từ một điều rất nhỏ." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "collage_cluster_text",
       "durationRole": "calm",
@@ -85,10 +91,16 @@
     },
     {
       "id": "s03_chapter",
+      "repeatable": {
+        "variants": [
+          { "text": { "heading": "Chương mới", "caption": "Mỗi khung hình là một trang tạp chí của riêng hai người." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "three_photo_row",
       "durationRole": "normal",
-      "transitionRole": "peak",
+      "transitionRole": "memory",
       "photoSlots": [
         { "slot": "left", "orient": "any", "quality": "good" },
         { "slot": "centre", "orient": "any", "quality": "best", "motion": "zoom_in" },
@@ -101,6 +113,13 @@
     },
     {
       "id": "s04_breath",
+      "repeatable": {
+        "variants": [
+          { "text": { "quote": "Một ánh nhìn, đủ thành tuyên ngôn." } },
+          { "text": { "quote": "Tối giản, như cách mình chọn nhau." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "full_bleed_quote",
       "durationRole": "normal",
@@ -112,6 +131,12 @@
     },
     {
       "id": "s05_duo",
+      "repeatable": {
+        "variants": [
+          { "text": { "body": "Đứng cạnh nhau, mọi phông nền đều thành phụ." } },
+          { "text": {} }
+        ]
+      },
       "effect": "layer_scene",
       "layout": "two_photo_story",
       "durationRole": "calm",
@@ -144,7 +169,9 @@
     },
     {
       "id": "s08_portrait",
-      "effect": "portrait_blur_background",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/brush_stroke.mp4",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
