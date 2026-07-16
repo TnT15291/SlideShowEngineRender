@@ -1,0 +1,258 @@
+{
+  "id": "white-weddings-editorial-01",
+  "version": 1,
+  "name": "White Weddings Editorial",
+  "tier": "smart_lite",
+  "libraryTheme": "white_weddings",
+  "storyArc": {
+    "sequence": ["save_the_date", "establish", "couple", "details", "story", "memories", "celebration", "closing"]
+  },
+  "transitionGrammar": {
+    "vocabulary": ["dissolve", "crossfade", "fade_slow", "none"],
+    "specialRoles": ["memory", "peak"],
+    "limits": { "memory": 2, "peak": 1 }
+  },
+  "source": {
+    "origin": "reference_adaptation",
+    "notes": "Adapted from the local White Weddings Theme reference deck: warm ivory editorial pages, restrained serif typography, asymmetric photo stories and soft dissolves."
+  },
+  "fit": {
+    "bestFor": ["pre_wedding", "save_the_date", "garden", "editorial", "minimal", "white_wedding"],
+    "minPhotos": 24,
+    "idealPhotos": 58
+  },
+  "musicProfile": {
+    "moods": ["romantic", "elegant", "gentle", "acoustic"],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    { "id": "vow", "maxEnergy": 0.38, "durationMultiplier": 1.14 },
+    { "id": "editorial", "maxEnergy": 0.68, "durationMultiplier": 1 },
+    { "id": "celebration", "maxEnergy": 1, "durationMultiplier": 0.88 }
+  ],
+  "briefFields": {
+    "required": ["bride", "groom"],
+    "optional": ["date", "location", "thankYouLine"]
+  },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 5600, "saturation": 1.02, "contrast": 1.03, "glow": 0.08, "grain": 1 },
+    "audio": { "fade_in": 1.8, "fade_out": 3.5, "crossfade": 0 },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/GreatVibes-Regular.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#FBF6ED",
+      "ink": "#2D2D33",
+      "brown": "#634C31",
+      "white": "#FFFDFC"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.8,
+      "calmSceneSec": 7.4,
+      "buildSceneSec": 4.8,
+      "montageSec": 10.5,
+      "closingSec": 8.5
+    },
+    "transitionStrategy": {
+      "default": { "type": "dissolve", "duration": 0.8 },
+      "calm": { "type": "fade_slow", "duration": 1.1 },
+      "memory": { "type": "dissolve", "duration": 0.9 },
+      "peak": { "type": "crossfade", "duration": 0.6 },
+      "final": { "type": "none", "duration": 0 }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": ["qualityNorm", "heroScore", "emotionScore"],
+      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "darkPhotoMaxMeanLuma": 72
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_save_the_date",
+      "effect": "layer_scene",
+      "layout": "hero_title_card",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        { "slot": "bg", "orient": "landscape", "quality": "best", "motion": "zoom_in" },
+        { "slot": "strip_1", "orient": "portrait", "quality": "good" },
+        { "slot": "strip_2", "orient": "portrait", "quality": "best" },
+        { "slot": "strip_3", "orient": "portrait", "quality": "good" }
+      ],
+      "text": { "eyebrow": "SAVE THE DATE", "date": { "value": "{{date}}", "sizePx": 110 } }
+    },
+    {
+      "id": "s02_getting_married",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best", "motion": "pan_right" }],
+      "text": { "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED" }
+    },
+    {
+      "id": "s03_about_us",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "text": {
+        "heading": { "value": "Our Wedding Day", "sizePx": 78 },
+        "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          { "text": { "heading": { "value": "The Big Day", "sizePx": 78 }, "body": "Niềm vui giản dị nhất là được ở cạnh nhau trong ngày đặc biệt này." } },
+          { "text": { "heading": { "value": "One Love", "sizePx": 78 }, "body": "Từ những khoảnh khắc nhỏ, mình đã có một câu chuyện thật dài." } },
+          { "text": {} }
+        ]
+      }
+    },
+    {
+      "id": "s04_special_day",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        { "slot": "left", "orient": "portrait", "quality": "good" },
+        { "slot": "centre", "orient": "portrait", "quality": "best" },
+        { "slot": "right", "orient": "portrait", "quality": "good" }
+      ],
+      "text": { "heading": "Special Day", "caption": "Những khoảnh khắc dịu dàng làm nên ngày đáng nhớ nhất." },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          { "text": { "heading": "Beautiful Moments", "caption": "Mỗi ánh nhìn, mỗi nụ cười đều trở thành một phần ký ức." } },
+          { "text": { "heading": "Getting Ready", "caption": "Tất cả đã sẵn sàng cho ngày chúng mình về chung một nhà." } },
+          { "text": {} }
+        ]
+      }
+    },
+    {
+      "id": "s05_one_lifetime",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "portrait", "orient": "portrait", "quality": "best" },
+        { "slot": "wide", "orient": "landscape", "quality": "good" }
+      ],
+      "text": { "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau." }
+    },
+    {
+      "id": "s06_love_in_the_air",
+      "effect": "layer_scene",
+      "layout": "collage_cluster_text",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "tl", "orient": "landscape", "quality": "good" },
+        { "slot": "bl", "orient": "landscape", "quality": "good" },
+        { "slot": "hero", "orient": "portrait", "quality": "best" }
+      ],
+      "text": { "heading": "Fall in Love", "body": "Không cần lời hứa trăm năm, chỉ cần hôm nay ta cùng nắm tay nhau." }
+    },
+    {
+      "id": "s07_editorial_scatter",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        { "slot": "p1", "orient": "any", "quality": "good", "frame": "polaroid" },
+        { "slot": "p2", "orient": "any", "quality": "best", "frame": "polaroid" },
+        { "slot": "p3", "orient": "any", "quality": "good", "frame": "polaroid" }
+      ],
+      "text": { "heading": "Love Is in the Air" }
+    },
+    {
+      "id": "s08_the_moment",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "landscape", "quality": "best" }]
+    },
+    {
+      "id": "s08a_studio_reflection",
+      "effect": "portrait_reflection",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }]
+    },
+    {
+      "id": "s08b_floating_cards",
+      "effect": "floating_card_gallery",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "OUR LOVE STORY"
+    },
+    {
+      "id": "s08c_background_echo",
+      "effect": "moving_background_echo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "TOGETHER · ALWAYS"
+    },
+    {
+      "id": "s08d_album_panel",
+      "effect": "panel_flip",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "THE STORY CONTINUES"
+    },
+    {
+      "id": "s09_memories",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [{ "slot": "memories", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }],
+      "captionPattern": "MEMORIES · MOMENTS"
+    },
+    {
+      "id": "s10_paper_story",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "back", "orient": "any", "quality": "good" },
+        { "slot": "centre", "orient": "portrait", "quality": "best" },
+        { "slot": "front", "orient": "any", "quality": "good" }
+      ],
+      "text": { "heading": "Our Journey" }
+    },
+    {
+      "id": "s11_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Thank you for celebrating with us · {{date}}"
+      }
+    }
+  ]
+}

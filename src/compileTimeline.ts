@@ -155,6 +155,10 @@ export function compileTimeline(
     return {
       type: "render_slide",
       slideId: slide.id,
+      renderer: slide.renderer ?? "ffmpeg",
+      rendererTemplate: slide.template,
+      rendererAssets: (slide.assets ?? []).map((asset) => path.resolve(baseDir, asset)),
+      rendererParams: slide.params ?? {},
       input,
       inputs,
       mask: slide.mask ? path.resolve(baseDir, slide.mask) : undefined,

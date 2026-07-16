@@ -31,7 +31,7 @@ test("authored special transitions stay inside their own grammar limits", () => 
 });
 
 test("every template owns at least one advanced signature scene", () => {
-  const advanced = new Set(["mask_reveal", "double_exposure", "video_background"]);
+  const advanced = new Set(["mask_reveal", "double_exposure", "video_background", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip"]);
   for (const recipe of recipes) {
     const signatures = recipe.scenes.filter((scene) => scene.signature);
     assert.ok(signatures.length, `${recipe.id} has no signature scene`);
@@ -39,11 +39,22 @@ test("every template owns at least one advanced signature scene", () => {
   }
 });
 
-test("every recipe and pacing variant can budget the regression album", () => {
+test("every recipe and pacing variant can budget the regression album", (t) => {
   const gallery = path.join(root, "analysis", "regression-gallery");
   const photos = path.join(root, "analysis", "photos.json");
   const music = path.join(root, "music", "a thousand years.mp3");
-  if (!fs.existsSync(photos) || !fs.existsSync(music)) return;
+  if (!fs.existsSync(photos) || !fs.existsSync(music)) {
+    t.skip("regression album inputs unavailable");
+    return;
+  }
+  const photoAnalysis = JSON.parse(fs.readFileSync(photos, "utf8"));
+  const missingPhotos = (photoAnalysis.photos || [])
+    .map((photo) => photo.file)
+    .filter((file) => !fs.existsSync(path.resolve(root, file)));
+  if (missingPhotos.length) {
+    t.skip(`regression album incomplete: ${missingPhotos[0]}`);
+    return;
+  }
 
   const result = spawnSync(process.execPath, [
     "scripts/generateRegressionGallery.mjs", "--dry-run",

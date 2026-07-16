@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { FRAME_DARK_YAVG, FRAME_DARK_LENIENT_YAVG, FRAME_BRIGHT_YAVG, FRAME_FLAT_RANGE } from "./lib/rules/thresholds.mjs";
 
 const root = process.cwd();
 const tlPath = process.argv[2];
@@ -56,7 +57,7 @@ function statsAt(sec) {
   return { yavg: get("YAVG"), ymin: get("YMIN"), ymax: get("YMAX") };
 }
 
-const DARK = 42, BRIGHT = 224, FLAT = 38;
+const DARK = FRAME_DARK_YAVG, BRIGHT = FRAME_BRIGHT_YAVG, FLAT = FRAME_FLAT_RANGE;
 const results = scenes.map((sc) => {
   const st = statsAt(sc.mid);
   const range = st.ymax != null && st.ymin != null ? st.ymax - st.ymin : null;
@@ -71,7 +72,7 @@ const results = scenes.map((sc) => {
   // Montages and full-bleed frames run darker by design (grain, letterbox, scrim).
   const lenient = sc.effect !== "layer_scene";
   const flags = [];
-  if (st.yavg != null && st.yavg < (lenient ? 20 : DARK)) flags.push("too_dark");
+  if (st.yavg != null && st.yavg < (lenient ? FRAME_DARK_LENIENT_YAVG : DARK)) flags.push("too_dark");
   if (st.yavg != null && st.yavg > BRIGHT) flags.push("too_bright");
   if (range != null && range < FLAT) flags.push("flat_or_empty");
   return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, photo: true, lenient, verdict: flags.length ? "review" : "ok", flags };
@@ -81,7 +82,7 @@ const problems = results.filter((r) => r.verdict !== "ok");
 const report = {
   video: tl.output.path, scenes: results.length,
   passed: results.length - problems.length, flagged: problems.length,
-  problems: problems.map((p) => ({ id: p.id, flags: p.flags, yavg: p.yavg, range: p.range })),
+  problems: problems.map((p) => ({ id: p.id, check: "frame_brightness", flags: p.flags, yavg: p.yavg, range: p.range })),
   results,
 };
 fs.mkdirSync(path.dirname(path.resolve(root, outPath)), { recursive: true });

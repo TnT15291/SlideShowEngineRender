@@ -32,6 +32,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { appendFeedback } from "./lib/feedbackLedger.mjs";
+import { actionFor } from "./lib/rules/policy.mjs";
 
 const root = process.cwd();
 const node = process.execPath;
@@ -50,6 +51,10 @@ const analysisDir = arg("--analysis-dir", siblingAnalysis).replace(/\\/g, "/").r
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const jobDir = arg("--job-dir", "");
 const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
+// Which repairs this tier is ALLOWED to apply comes from lib/rules/policy.mjs.
+// Premium is the default because it matches the historical behavior of a direct
+// invocation: every deterministic fix may run.
+const TIER = arg("--tier", "premium");
 const PREFLIGHT_PASSES = 3; // free passes; the fix-once rule usually converges in 1
 const skipRender = process.argv.includes("--skip-render");
 const skipInitialRender = process.argv.includes("--skip-initial-render");
@@ -100,6 +105,7 @@ function applyProxyFixes(report) {
   const applied = [];
   for (const p of report.problems) {
     if (!p.fix) continue;                       // e.g. hero_not_in_content: needs re-analysis, not a swap
+    if (actionFor(TIER, p.check) !== "repair") continue; // this tier reports the rule but may not touch the film for it
     const key = `${p.id}:${p.check}`;
     if (repaired.has(key)) continue;            // anti-oscillation
     const slide = tl.slides.find((s) => s.id === p.id);
@@ -140,6 +146,7 @@ function applyProxyFixes(report) {
 
 /** Swap the hero of any story scene qaClip found dark/bright/flat for the best unused photo. */
 function applyClipFixes(qa) {
+  if (actionFor(TIER, "frame_brightness") !== "repair") return [];
   const fixable = qa.problems.filter((p) => /_dark|_bright|flat/.test(p.flags.join(",")));
   if (!fixable.length) return [];
   const photos = readJson(`${analysisDir}/photos.json`).photos;
@@ -169,13 +176,16 @@ function applyClipFixes(qa) {
   return applied;
 }
 
+const policyProblems = (problems) => problems.filter((p) => actionFor(TIER, p.check) !== "warn");
+const blockingProblems = (problems) => problems.filter((p) => actionFor(TIER, p.check) === "block");
+
 // --- loop ------------------------------------------------------------------
 console.log(`[qaLoop] ${TL} — max ${MAX_REVISIONS} revision(s) after the first render.`);
 
 let revisions = 0;
 const journal = [];
 
-function writeSummary(manualReview = []) {
+function writeSummary(manualReview = [], statusOverride = "") {
   const tl = readJson(TL);
   const summary = {
     timeline: TL,
@@ -184,7 +194,7 @@ function writeSummary(manualReview = []) {
     maxRevisions: MAX_REVISIONS,
     journal,
     manualReview,
-    status: manualReview.length ? "delivered_with_flags" : "clean",
+    status: statusOverride || (manualReview.length ? "delivered_with_flags" : "clean"),
   };
   const loopOut = `${analysisDir}/qa/${base}.loop.json`;
   fs.mkdirSync(path.dirname(path.resolve(root, loopOut)), { recursive: true });
@@ -208,11 +218,30 @@ for (let pass = 1; pass <= PREFLIGHT_PASSES; pass++) {
   journal.push(...applied.map((a) => `preflight: ${a}`));
 }
 
+// Do not spend an encode on a timeline that the tier is forbidden to ship.
+// Repairs above get their bounded chance first; unresolved blockers stop here.
+const preRenderReport = runProxy();
+const preRenderBlockers = blockingProblems(preRenderReport.problems);
+if (preRenderBlockers.length) {
+  const open = preRenderBlockers.map((p) => `${p.id}[${p.flags.join(",")}]`);
+  console.error(`[qaLoop] PRE-RENDER GATE FAILED: ${open.join(" ")}`);
+  writeSummary(open, "blocked_pre_render");
+  process.exit(1);
+}
+
 if (skipRender) {
   console.log("\n[qaLoop] --skip-render: stopping after pre-flight.");
   const rep = runProxy();
+  const open = policyProblems(rep.problems).map((p) => `${p.id}[${p.flags.join(",")}]`);
   console.log(`[qaLoop] final proxy verdict: ${rep.verdict} (${rep.problems.length} problem(s) remain).`);
-  writeSummary(rep.problems.map((p) => `${p.id}[${p.flags.join(",")}]`));
+  writeSummary(open);
+  // --strict gates in every mode. A pre-flight-only run that leaves manual-review issues
+  // open must fail exactly as the render+revise path does below — otherwise --skip-render
+  // silently turns a strict gate into a no-op and passes a timeline it should have blocked.
+  if (strict && open.length) {
+    console.error(`[qaLoop] QUALITY GATE FAILED: ${open.length} issue(s) remain (pre-flight only).`);
+    process.exit(1);
+  }
   process.exit(0);
 }
 
@@ -226,7 +255,7 @@ while (true) {
   const proxy = runProxy();                   // layer 2: proxies (+ bookend frames now that video exists)
   const open = [
     ...qa.problems.map((p) => `${p.id}[${p.flags.join(",")}]`),
-    ...proxy.problems.map((p) => `${p.id}[${p.flags.join(",")}]`),
+    ...policyProblems(proxy.problems).map((p) => `${p.id}[${p.flags.join(",")}]`),
   ];
   if (!open.length) { manualReview = []; console.log("\n[qaLoop] clean: both QA layers pass."); break; }
 

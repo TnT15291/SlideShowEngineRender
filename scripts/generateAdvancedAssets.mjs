@@ -116,8 +116,13 @@ function renderMask(name, fn) {
   }
   const tmp = path.join(os.tmpdir(), `${name}.gray`), out = path.resolve(root, "assets/masks", `${name}.mp4`);
   fs.writeFileSync(tmp, raw); fs.mkdirSync(path.dirname(out), { recursive: true });
+  // Upscale FIRST, then blur + deband at full resolution. Blurring the 320x180
+  // source before a 6x scale only softens 320-px structure and leaves the mask
+  // edge aliased and 8-bit-banded once composited over a photo. Doing it at
+  // 1920 gives a genuinely smooth reveal front; deband dithers the gentle wash
+  // gradients so no contour steps survive the final 8-bit encode.
   const r = spawnSync(ffmpeg, ["-y", "-f", "rawvideo", "-pix_fmt", "gray", "-s", `${W}x${H}`, "-r", String(FPS), "-i", tmp,
-    "-vf", `gblur=sigma=0.45,scale=${OW}:${OH}:flags=bicubic,format=yuv420p`, "-t", String(D), "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p", out], { encoding: "utf8", maxBuffer: 1 << 26 });
+    "-vf", `scale=${OW}:${OH}:flags=bicubic,gblur=sigma=2.8,deband=1thr=0.006:2thr=0.006:3thr=0.006:range=22,format=yuv420p`, "-t", String(D), "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p", out], { encoding: "utf8", maxBuffer: 1 << 26 });
   fs.rmSync(tmp, { force: true }); if (r.status !== 0) throw new Error(`${name}: ${r.stderr}`);
   console.log(`${name}: ${Math.round(fs.statSync(out).size / 1024)} KB`);
 }

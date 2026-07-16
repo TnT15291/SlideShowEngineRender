@@ -1,0 +1,1378 @@
+{
+  "project": {
+    "name": "White Weddings Preview",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "projects/the-20-best/music/Em Đồng Ý (I Do).mp3",
+      "volume": 0.82,
+      "start": 113.648,
+      "end": 203.13
+    }
+  ],
+  "audio": {
+    "fade_in": 1.8,
+    "fade_out": 3.5,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5600,
+    "saturation": 1.02,
+    "contrast": 1.03,
+    "glow": 0.08,
+    "grain": 1
+  },
+  "overlays": [],
+  "output": {
+    "path": "temp/white-weddings-preview.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_save_the_date",
+      "editorialBeat": "save_the_date",
+      "signature": true,
+      "duration": 7.4,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.6,
+          "focusY": 0.323,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/082.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 108,
+          "y": 95,
+          "width": 1704,
+          "height": 175,
+          "color": "#FBF6ED",
+          "opacity": 0.95
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 160,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.525,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/062.jpg",
+            "brightness": 0.0918,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 711,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.501,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/078.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 1262,
+          "y": 358,
+          "width": 504,
+          "height": 577,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.577,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/057.jpg",
+            "brightness": -0.0204,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 580,
+          "width": 1920,
+          "height": 250,
+          "color": "#000000",
+          "opacity": 0.3
+        },
+        {
+          "type": "text",
+          "text": "SAVE THE DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 636,
+          "y": 150,
+          "width": 648,
+          "height": 151,
+          "size": 84,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Our Wedding Day",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 257,
+          "y": 610,
+          "width": 1557,
+          "height": 240,
+          "size": 110,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 1.1
+      }
+    },
+    {
+      "id": "s02_getting_married",
+      "editorialBeat": "establish",
+      "duration": 7.8,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.499,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/037.jpg",
+            "brightness": 0.0086,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_right",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom · WE ARE GETTING MARRIED",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "size": 56,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_about_us",
+      "editorialBeat": "establish",
+      "duration": 6.14,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.49,
+          "focusY": 0.432,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/086.jpg",
+            "brightness": 0.0886,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "Our Wedding Day",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 78,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s05_one_lifetime",
+      "editorialBeat": "couple",
+      "duration": 6.42,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.462,
+          "focusY": 0.575,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/039.jpg",
+            "brightness": -0.0122,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.517,
+          "focusY": 0.517,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/034.jpg",
+            "brightness": -0.0455,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 826,
+          "width": 1688,
+          "height": 200,
+          "size": 33,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s02_getting_married_2",
+      "editorialBeat": "couple",
+      "duration": 7.51,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.547,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/010.jpg",
+            "brightness": -0.0247,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_right",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_about_us_2",
+      "editorialBeat": "details",
+      "duration": 6.29,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.48,
+          "focusY": 0.628,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/077.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "The Big Day",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 78,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Niềm vui giản dị nhất là được ở cạnh nhau trong ngày đặc biệt này.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s05_one_lifetime_2",
+      "editorialBeat": "story",
+      "duration": 5.63,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.377,
+          "focusY": 0.599,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/012.jpg",
+            "brightness": -0.0631,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/008.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.499,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/008.jpg",
+            "brightness": -0.0431,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "slide_left",
+          "start": 0.25
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s08_memories",
+      "editorialBeat": "story",
+      "duration": 10.92,
+      "effect": "memory_wall",
+      "images": [
+        "projects/the-20-best/input/029.jpg",
+        "projects/the-20-best/input/015.jpg",
+        "projects/the-20-best/input/002.jpg",
+        "projects/the-20-best/input/004.jpg",
+        "projects/the-20-best/input/061.jpg"
+      ],
+      "captions": [
+        {
+          "text": "MEMORIES · MOMENTS",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade"
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "technicalColor": {
+        "brightness": 0.0196,
+        "saturation": 1,
+        "redBalance": 0,
+        "blueBalance": 0
+      }
+    },
+    {
+      "id": "s02_getting_married_3",
+      "editorialBeat": "memories",
+      "duration": 7.95,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.574,
+          "focusY": 0.477,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/030.jpg",
+            "brightness": -0.0141,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_right",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_about_us_r1",
+      "editorialBeat": "memories",
+      "duration": 6.13,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.511,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/064.jpg",
+            "brightness": 0,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "One Love",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 78,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Từ những khoảnh khắc nhỏ, mình đã có một câu chuyện thật dài.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s02_getting_married_r1",
+      "editorialBeat": "celebration",
+      "duration": 8.97,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/033.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.493,
+          "focusY": 0.689,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/033.jpg",
+            "brightness": 0.011,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_right",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_about_us_r1_2",
+      "editorialBeat": "celebration",
+      "duration": 6.76,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.502,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/068.jpg",
+            "brightness": -0.0337,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s10_closing",
+      "editorialBeat": "closing",
+      "duration": 8.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.6,
+          "focusY": 0.323,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/082.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          }
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#000000",
+          "opacity": 0.42
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Thank you for celebrating with us · Our Wedding Day",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ],
+  "recipeDecisions": {
+    "recipeId": "white-weddings-editorial-01",
+    "pacingVariant": "editorial",
+    "theme": "white_weddings",
+    "heroPhoto": "projects/the-20-best/input/082.jpg",
+    "endingPhoto": "projects/the-20-best/input/082.jpg",
+    "storyArc": [
+      {
+        "sceneId": "s01_save_the_date",
+        "beat": "save_the_date"
+      },
+      {
+        "sceneId": "s02_getting_married",
+        "beat": "establish"
+      },
+      {
+        "sceneId": "s03_about_us",
+        "beat": "establish"
+      },
+      {
+        "sceneId": "s05_one_lifetime",
+        "beat": "couple"
+      },
+      {
+        "sceneId": "s02_getting_married_2",
+        "beat": "couple"
+      },
+      {
+        "sceneId": "s03_about_us_2",
+        "beat": "details"
+      },
+      {
+        "sceneId": "s05_one_lifetime_2",
+        "beat": "story"
+      },
+      {
+        "sceneId": "s08_memories",
+        "beat": "story"
+      },
+      {
+        "sceneId": "s02_getting_married_3",
+        "beat": "memories"
+      },
+      {
+        "sceneId": "s03_about_us_r1",
+        "beat": "memories"
+      },
+      {
+        "sceneId": "s02_getting_married_r1",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s03_about_us_r1_2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s10_closing",
+        "beat": "closing"
+      }
+    ],
+    "phraseSnaps": 4,
+    "musicEdit": {
+      "mode": "highlight",
+      "sourceDuration": 203.13,
+      "start": 113.648,
+      "end": 203.13,
+      "duration": 89.482,
+      "reason": "photo_budget",
+      "fullSongRequiredPhotos": 29,
+      "selection": {
+        "score": 0.417,
+        "cadenceDrop": 0.097,
+        "sectionBoundaryDrift": 0.03
+      }
+    },
+    "transitionGrammar": {
+      "vocabulary": [
+        "dissolve",
+        "crossfade",
+        "fade_slow",
+        "none"
+      ],
+      "decisions": [
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "peak",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "final",
+          "resolvedRole": "final",
+          "type": "none",
+          "reason": "role"
+        }
+      ]
+    },
+    "motionPlan": [
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/082.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.6,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/062.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.472,
+          "y": 0.525
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/078.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.504,
+          "y": 0.501
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/057.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.492,
+          "y": 0.577
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s02_getting_married",
+        "file": "projects/the-20-best/input/037.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.504,
+          "y": 0.499
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s03_about_us",
+        "file": "projects/the-20-best/input/086.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.49,
+          "y": 0.432
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s05_one_lifetime",
+        "file": "projects/the-20-best/input/039.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.462,
+          "y": 0.575
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s05_one_lifetime",
+        "file": "projects/the-20-best/input/034.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.517,
+          "y": 0.517
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s02_getting_married_2",
+        "file": "projects/the-20-best/input/010.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.495,
+          "y": 0.547
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s03_about_us_2",
+        "file": "projects/the-20-best/input/077.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.48,
+          "y": 0.628
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s05_one_lifetime_2",
+        "file": "projects/the-20-best/input/012.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.377,
+          "y": 0.599
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s05_one_lifetime_2",
+        "file": "projects/the-20-best/input/008.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.518,
+          "y": 0.499
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s02_getting_married_3",
+        "file": "projects/the-20-best/input/030.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.574,
+          "y": 0.477
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s03_about_us_r1",
+        "file": "projects/the-20-best/input/064.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.577,
+          "y": 0.511
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s02_getting_married_r1",
+        "file": "projects/the-20-best/input/033.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.493,
+          "y": 0.689
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s03_about_us_r1_2",
+        "file": "projects/the-20-best/input/068.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.536,
+          "y": 0.502
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push; repeated direction reset"
+      },
+      {
+        "sceneId": "s10_closing",
+        "file": "projects/the-20-best/input/082.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.6,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "closing holds still"
+      }
+    ],
+    "colorNormalization": "projects/the-20-best/analysis/tier1_color.json",
+    "capacityLimited": {
+      "availablePhotos": 23,
+      "recipeMinPhotos": 24,
+      "reason": "photo set is below the recipe's floor; expensive scenes will be substituted"
+    },
+    "fit": {
+      "targetDuration": 89.48,
+      "actualDuration": 86.72,
+      "coverage": 0.9691,
+      "scale": 1.089,
+      "boundBy": "music",
+      "totalPhotos": 23,
+      "reservedPhotos": 1,
+      "unusedPhotos": 2,
+      "phraseSnaps": 4
+    }
+  },
+  "photoAssignment": {
+    "strategy": "global_hard_slots_first",
+    "customerLocks": {
+      "mustUsePhotos": [],
+      "excludePhotos": [],
+      "openingPhoto": "projects/the-20-best/input/082.jpg",
+      "endingPhoto": "projects/the-20-best/input/082.jpg"
+    },
+    "slots": {
+      "s02_getting_married:bg": [
+        "projects/the-20-best/input/037.jpg"
+      ],
+      "s02_getting_married_2:bg": [
+        "projects/the-20-best/input/010.jpg"
+      ],
+      "s02_getting_married_3:bg": [
+        "projects/the-20-best/input/030.jpg"
+      ],
+      "s02_getting_married_r1:bg": [
+        "projects/the-20-best/input/033.jpg"
+      ],
+      "s01_save_the_date:strip_2": [
+        "projects/the-20-best/input/078.jpg"
+      ],
+      "s03_about_us:hero": [
+        "projects/the-20-best/input/086.jpg"
+      ],
+      "s05_one_lifetime:portrait": [
+        "projects/the-20-best/input/039.jpg"
+      ],
+      "s03_about_us_2:hero": [
+        "projects/the-20-best/input/077.jpg"
+      ],
+      "s05_one_lifetime_2:portrait": [
+        "projects/the-20-best/input/012.jpg"
+      ],
+      "s03_about_us_r1:hero": [
+        "projects/the-20-best/input/064.jpg"
+      ],
+      "s03_about_us_r1_2:hero": [
+        "projects/the-20-best/input/068.jpg"
+      ],
+      "s05_one_lifetime:wide": [
+        "projects/the-20-best/input/034.jpg"
+      ],
+      "s05_one_lifetime_2:wide": [
+        "projects/the-20-best/input/008.jpg"
+      ],
+      "s01_save_the_date:strip_1": [
+        "projects/the-20-best/input/062.jpg"
+      ],
+      "s01_save_the_date:strip_3": [
+        "projects/the-20-best/input/057.jpg"
+      ],
+      "s08_memories:memories": [
+        "projects/the-20-best/input/029.jpg",
+        "projects/the-20-best/input/015.jpg",
+        "projects/the-20-best/input/002.jpg",
+        "projects/the-20-best/input/004.jpg",
+        "projects/the-20-best/input/061.jpg"
+      ]
+    },
+    "diversityReport": "projects/the-20-best/analysis/tier1_diversity.json"
+  }
+}

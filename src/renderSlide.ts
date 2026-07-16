@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import { buildSlideArgs } from "./buildFfmpegCommand";
-import { Logger, runFfmpeg } from "./fileUtils";
+import { Logger } from "./fileUtils";
+import { renderScene } from "./renderScene";
 import type { RenderPlan } from "./types";
 
 /**
@@ -39,12 +39,11 @@ export async function renderSlides(
     }
 
     logger.info(
-      `Rendering slide ${i + 1}/${total}: ${step.slideId} (${step.duration}s, ${step.effect})`
+      `Rendering slide ${i + 1}/${total}: ${step.slideId} (${step.duration}s, ${step.renderer}:${step.rendererTemplate ?? step.effect})`
     );
 
-    const args = buildSlideArgs(step);
     try {
-      await runFfmpeg(args, `slide ${step.slideId}`, logger, dryRun);
+      await renderScene(step, logger, dryRun);
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
       logger.error(

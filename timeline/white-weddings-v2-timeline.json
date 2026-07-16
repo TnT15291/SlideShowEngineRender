@@ -1,0 +1,3366 @@
+{
+  "project": {
+    "name": "White Weddings Full Cycle",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "projects/the-20-best/music/Em Đồng Ý (I Do).mp3",
+      "volume": 0.82
+    }
+  ],
+  "audio": {
+    "fade_in": 1.8,
+    "fade_out": 3.5,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5600,
+    "saturation": 1.02,
+    "contrast": 1.03,
+    "glow": 0.08,
+    "grain": 1
+  },
+  "overlays": [],
+  "output": {
+    "path": "temp/white-weddings-v2-full-cycle.mp4"
+  },
+  "slides": [
+    {
+      "id": "p01_fall_in_love",
+      "editorialBeat": "save_the_date",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 110,
+          "y": 250,
+          "width": 500,
+          "height": 560,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 655,
+          "y": 60,
+          "width": 470,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 1165,
+          "y": 95,
+          "width": 255,
+          "height": 345,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 1470,
+          "y": 140,
+          "width": 330,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 655,
+          "y": 400,
+          "width": 330,
+          "height": 220,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "text",
+          "text": "FALL IN LOVE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 850,
+          "width": 430,
+          "height": 160,
+          "size": 62,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Không cần lời hứa trăm năm, chỉ cần hôm nay, ta cùng nắm tay nhau đi qua mọi ngày mai.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 640,
+          "y": 870,
+          "width": 760,
+          "height": 130,
+          "size": 28,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 14,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 1.1
+      }
+    },
+    {
+      "id": "p02_big_day_1",
+      "editorialBeat": "establish",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 180,
+          "y": 215,
+          "width": 520,
+          "height": 590,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 740,
+          "y": 160,
+          "width": 360,
+          "height": 700,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 1140,
+          "y": 215,
+          "width": 340,
+          "height": 590,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1500,
+          "y": 120,
+          "width": 320,
+          "height": 80,
+          "size": 44,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p03_save_date_moments",
+      "editorialBeat": "establish",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 150,
+          "y": 120,
+          "width": 560,
+          "height": 760,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 760,
+          "y": 120,
+          "width": 560,
+          "height": 360,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 1360,
+          "y": 120,
+          "width": 410,
+          "height": 360,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/033.jpg",
+          "x": 760,
+          "y": 520,
+          "width": 1010,
+          "height": 360,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p04_love_in_your_area",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 520,
+          "height": 760,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 665,
+          "y": 60,
+          "width": 450,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 1230,
+          "y": 430,
+          "width": 540,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "LOVE\nIN\nYOUR\nAREA",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1150,
+          "y": 90,
+          "width": 340,
+          "height": 320,
+          "size": 58,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 4,
+          "animation": "fade",
+          "start": 0.7
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p05_love_is_in_the_air",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FFF4EF",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "LOVE IS IN THE AIR",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 460,
+          "y": 120,
+          "width": 1000,
+          "height": 90,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/008.jpg",
+          "x": 170,
+          "y": 320,
+          "width": 760,
+          "height": 480,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/004.jpg",
+          "x": 990,
+          "y": 320,
+          "width": 760,
+          "height": 480,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p06_invitation",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 350,
+          "y": 130,
+          "width": 1220,
+          "height": 110,
+          "size": 64,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 280,
+          "y": 330,
+          "width": 320,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 620,
+          "y": 330,
+          "width": 320,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 960,
+          "y": 330,
+          "width": 320,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 1300,
+          "y": 330,
+          "width": 320,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "text",
+          "text": "WE WOULD LIKE TO INVITE YOU TO OUR SPECIAL WEDDING DAY.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 460,
+          "y": 880,
+          "width": 1000,
+          "height": 60,
+          "size": 26,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p07_our_journey",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/056.jpg",
+          "x": 620,
+          "y": 95,
+          "width": 1000,
+          "height": 570,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 1400,
+          "y": 480,
+          "width": 300,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "OUR JOURNEY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 680,
+          "width": 640,
+          "height": 110,
+          "size": 72,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "From friendship to forever",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 115,
+          "y": 800,
+          "width": 500,
+          "height": 40,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p08_best_day_polaroids",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "rect",
+          "x": 210,
+          "y": 140,
+          "width": 540,
+          "height": 420,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/061.jpg",
+          "x": 234,
+          "y": 164,
+          "width": 492,
+          "height": 310,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "rect",
+          "x": 260,
+          "y": 470,
+          "width": 540,
+          "height": 420,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/015.jpg",
+          "x": 284,
+          "y": 494,
+          "width": 492,
+          "height": 310,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "WELCOME TO THE BEST DAY OF OUR LIVES!",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 240,
+          "width": 700,
+          "height": 40,
+          "size": 24,
+          "color": "#2D2D33",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 900,
+          "y": 320,
+          "width": 900,
+          "height": 220,
+          "size": 92,
+          "color": "#2D2D33",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "30 · 11 · 2025",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 900,
+          "y": 600,
+          "width": 700,
+          "height": 60,
+          "size": 34,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p09_laughs_memories",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/029.jpg",
+          "x": 110,
+          "y": 330,
+          "width": 500,
+          "height": 560,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 650,
+          "y": 140,
+          "width": 480,
+          "height": 720,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 1170,
+          "y": 240,
+          "width": 430,
+          "height": 600,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "LAUGHS &\nMEMORIES",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 95,
+          "width": 600,
+          "height": 170,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Laughter, adventures, and so many memories!",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1250,
+          "y": 900,
+          "width": 540,
+          "height": 110,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 12,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p10_big_day_2",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 95,
+          "width": 420,
+          "height": 80,
+          "size": 48,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "One love one lifetime",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1520,
+          "y": 100,
+          "width": 290,
+          "height": 70,
+          "size": 24,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 480,
+          "y": 170,
+          "width": 600,
+          "height": 750,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 1140,
+          "y": 240,
+          "width": 420,
+          "height": 600,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p11_one_love_one_lifetime",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "ONE LOVE\nONE LIFETIME",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 95,
+          "width": 620,
+          "height": 170,
+          "size": 56,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Beautiful moments",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1580,
+          "y": 105,
+          "width": 230,
+          "height": 60,
+          "size": 24,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 110,
+          "y": 300,
+          "width": 640,
+          "height": 640,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 790,
+          "y": 300,
+          "width": 420,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 1250,
+          "y": 300,
+          "width": 540,
+          "height": 640,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 790,
+          "y": 760,
+          "width": 420,
+          "height": 180,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p12_getting_ready",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 170,
+          "y": 110,
+          "width": 560,
+          "height": 790,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 810,
+          "y": 140,
+          "width": 330,
+          "height": 220,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 1180,
+          "y": 110,
+          "width": 300,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "GETTING\nREADY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 810,
+          "y": 560,
+          "width": 500,
+          "height": 170,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "All the planning led to this day!",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1330,
+          "y": 620,
+          "width": 380,
+          "height": 100,
+          "size": 24,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 12,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p13_our_wedding_day",
+      "editorialBeat": "celebration",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "OUR\nWEDDING\nDAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 95,
+          "width": 520,
+          "height": 260,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 6,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 110,
+          "y": 400,
+          "width": 560,
+          "height": 580,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 700,
+          "y": 120,
+          "width": 360,
+          "height": 520,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 1080,
+          "y": 95,
+          "width": 480,
+          "height": 560,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/033.jpg",
+          "x": 700,
+          "y": 690,
+          "width": 520,
+          "height": 290,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "text",
+          "text": "Cheers to love, laughter, and happily ever after!",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1280,
+          "y": 760,
+          "width": 420,
+          "height": 130,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 12,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p14_our_future_together",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "rect",
+          "x": 760,
+          "y": 110,
+          "width": 820,
+          "height": 840,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 784,
+          "y": 134,
+          "width": 772,
+          "height": 730,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "OUR\nFUTURE\nTOGETHER",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 300,
+          "width": 520,
+          "height": 260,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 6,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Here's to a lifetime of love and laughter.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 110,
+          "y": 600,
+          "width": 430,
+          "height": 90,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 12,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p15_names_grid",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 830,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/008.jpg",
+          "x": 960,
+          "y": 95,
+          "width": 850,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/004.jpg",
+          "x": 110,
+          "y": 545,
+          "width": 830,
+          "height": 440,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/056.jpg",
+          "x": 960,
+          "y": 545,
+          "width": 850,
+          "height": 440,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "rect",
+          "x": 760,
+          "y": 430,
+          "width": 400,
+          "height": 220,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 790,
+          "y": 480,
+          "width": 340,
+          "height": 130,
+          "size": 52,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p16_grid_date",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/061.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.27
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 1330,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.39
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/015.jpg",
+          "x": 110,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.51
+        },
+        {
+          "type": "rect",
+          "x": 720,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "color": "#AEB4C6",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "30.11.2025",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 760,
+          "y": 539,
+          "width": 500,
+          "height": 88,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/029.jpg",
+          "x": 1330,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.63
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 110,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.87
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 1330,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.99
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p17_grid_memories_moments",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "rect",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "MEMORIES",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 760,
+          "y": 218,
+          "width": 500,
+          "height": 66,
+          "size": 30,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 1330,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.27
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 110,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.39
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 720,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.51
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 1330,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.63
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 110,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.87
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 1330,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.99
+        },
+        {
+          "type": "rect",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "MOMENTS",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 760,
+          "y": 875,
+          "width": 500,
+          "height": 70,
+          "size": 30,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p18_grid_memories_script",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/033.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.27
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 1330,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.39
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 110,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.51
+        },
+        {
+          "type": "rect",
+          "x": 720,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Memories",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 760,
+          "y": 521,
+          "width": 500,
+          "height": 132,
+          "size": 60,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/008.jpg",
+          "x": 1330,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.63
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 110,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/004.jpg",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.87
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 1330,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.99
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p19_grid_getting_married",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/056.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.27
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 1330,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.39
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/061.jpg",
+          "x": 110,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.51
+        },
+        {
+          "type": "rect",
+          "x": 720,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "We are getting married",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 760,
+          "y": 537.2,
+          "width": 500,
+          "height": 92.4,
+          "size": 42,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 10,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/015.jpg",
+          "x": 1330,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.63
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 110,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/029.jpg",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.87
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 1330,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.99
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p20_happy_wedding",
+      "editorialBeat": "celebration",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Happy Wedding",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 200,
+          "y": 890,
+          "width": 1520,
+          "height": 170,
+          "size": 120,
+          "color": "#E5DCC8",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 300,
+          "y": 140,
+          "width": 380,
+          "height": 540,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 720,
+          "y": 240,
+          "width": 380,
+          "height": 540,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 1140,
+          "y": 340,
+          "width": 380,
+          "height": 540,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p21_happy_ending_taupe",
+      "editorialBeat": "celebration",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "rect",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 420,
+          "color": "#CDC1B3",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Happy\nEnding",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 1330,
+          "y": 170,
+          "width": 400,
+          "height": 280,
+          "size": 64,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 12,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 110,
+          "y": 545,
+          "width": 540,
+          "height": 440,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 680,
+          "y": 545,
+          "width": 540,
+          "height": 440,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 1250,
+          "y": 545,
+          "width": 560,
+          "height": 440,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p22_arch_trio",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p23_gazebo_feature",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/033.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p24_happy_ending_overlay",
+      "editorialBeat": "celebration",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 700,
+          "y": 95,
+          "width": 520,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "HAPPY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 500,
+          "y": 700,
+          "width": 700,
+          "height": 130,
+          "size": 110,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Ending",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 800,
+          "y": 820,
+          "width": 500,
+          "height": 130,
+          "size": 84,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p25_save_date_grid",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 470,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 470,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.27
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 1330,
+          "y": 95,
+          "width": 480,
+          "height": 470,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.39
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/008.jpg",
+          "x": 110,
+          "y": 595,
+          "width": 580,
+          "height": 390,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.51
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 720,
+          "y": 595,
+          "width": 580,
+          "height": 390,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.63
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/004.jpg",
+          "x": 1330,
+          "y": 595,
+          "width": 480,
+          "height": 390,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p26_welcome_duo",
+      "editorialBeat": "establish",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 150,
+          "y": 120,
+          "width": 790,
+          "height": 840,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 980,
+          "y": 120,
+          "width": 790,
+          "height": 840,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p27_vow_book_trio",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 850,
+          "y": 95,
+          "width": 420,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/056.jpg",
+          "x": 1310,
+          "y": 95,
+          "width": 500,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p28_thank_you",
+      "editorialBeat": "closing",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "THANK YOU FOR\nCELEBRATING\nWITH US!",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 140,
+          "width": 640,
+          "height": 380,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 10,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 110,
+          "y": 580,
+          "width": 400,
+          "height": 50,
+          "size": 28,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "rect",
+          "x": 900,
+          "y": 140,
+          "width": 760,
+          "height": 800,
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/061.jpg",
+          "x": 924,
+          "y": 164,
+          "width": 712,
+          "height": 690,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "Everyday",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 1080,
+          "y": 830,
+          "width": 400,
+          "height": 90,
+          "size": 48,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p29_save_date_card",
+      "editorialBeat": "save_the_date",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/015.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 360,
+          "y": 180,
+          "width": 1200,
+          "height": 720,
+          "color": "#FBF6ED",
+          "opacity": 0.96
+        },
+        {
+          "type": "text",
+          "text": "SAVE the DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 610,
+          "y": 250,
+          "width": 700,
+          "height": 90,
+          "size": 60,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 430,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 790,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 1150,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.75
+        },
+        {
+          "type": "text",
+          "text": "30 · 11 · 2025",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 610,
+          "y": 820,
+          "width": 700,
+          "height": 60,
+          "size": 42,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p30_welcome_note",
+      "editorialBeat": "establish",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 190,
+          "width": 760,
+          "height": 130,
+          "size": 76,
+          "color": "#2D2D33",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Chúng con rất hân hạnh được chào đón sự góp mặt của các vị khách quý. Sự hiện diện của tất cả mọi người là lời chúc tốt đẹp nhất dành cho chúng con.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 110,
+          "y": 400,
+          "width": 700,
+          "height": 380,
+          "size": 30,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/002.jpg",
+          "x": 960,
+          "y": 95,
+          "width": 850,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p31_special_day",
+      "editorialBeat": "memories",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "SPECIAL DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 95,
+          "width": 520,
+          "height": 90,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/063.jpg",
+          "x": 110,
+          "y": 260,
+          "width": 520,
+          "height": 640,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 680,
+          "y": 140,
+          "width": 480,
+          "height": 760,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 1210,
+          "y": 260,
+          "width": 540,
+          "height": 640,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 560,
+          "y": 930,
+          "width": 800,
+          "height": 100,
+          "size": 28,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p32_our_story_text",
+      "editorialBeat": "story",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "Sau quãng thời gian tìm hiểu và yêu thương nhau, chúng con đã chính thức về chung một nhà trong sự chúc phúc của gia đình, họ hàng hai bên, anh chị em, bạn bè, đồng nghiệp.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 360,
+          "y": 140,
+          "width": 1200,
+          "height": 270,
+          "size": 30,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 20,
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/029.jpg",
+          "x": 360,
+          "y": 470,
+          "width": 700,
+          "height": 470,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 1100,
+          "y": 470,
+          "width": 460,
+          "height": 470,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p33_big_day_3",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 850,
+          "y": 95,
+          "width": 520,
+          "height": 890,
+          "fit": "cover",
+          "animation": "fade",
+          "start": 0.3
+        },
+        {
+          "type": "text",
+          "text": "THE BIG DAY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1420,
+          "y": 140,
+          "width": 390,
+          "height": 90,
+          "size": 48,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Không có khoảnh khắc nào thật sự hoàn hảo, chỉ có hai con người chọn cùng nhau tạo nên điều hoàn hảo. Và hôm nay, câu chuyện ấy được kể lại bằng những nụ cười.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1420,
+          "y": 280,
+          "width": 390,
+          "height": 460,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p34_welcome_title",
+      "editorialBeat": "save_the_date",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "welcome to the wedding of",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 220,
+          "width": 900,
+          "height": 60,
+          "size": 30,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.45
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 900,
+          "y": 330,
+          "width": 900,
+          "height": 300,
+          "size": 110,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "30 · 11 · 2025",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 700,
+          "width": 900,
+          "height": 50,
+          "size": 26,
+          "color": "#2D2D33",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p35_full_bleed_names",
+      "editorialBeat": "couple",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 760,
+          "width": 1920,
+          "height": 320,
+          "color": "#000000",
+          "opacity": 0.25
+        },
+        {
+          "type": "text",
+          "text": "BRIDE & GROOM",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 310,
+          "y": 820,
+          "width": 1300,
+          "height": 90,
+          "size": 68,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "WEDDING",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 310,
+          "y": 930,
+          "width": 1300,
+          "height": 50,
+          "size": 28,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p36_about_bride",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "ABOUT THE\nBRIDE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 900,
+          "y": 260,
+          "width": 760,
+          "height": 180,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Cô dâu – cô gái dịu dàng, luôn tin vào những điều nhỏ bé nhưng chân thật. Dễ xúc động, hay cười, và luôn mang trong tim một tình yêu đủ đầy dành cho người mình chọn.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 500,
+          "width": 720,
+          "height": 320,
+          "size": 28,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p37_about_groom",
+      "editorialBeat": "details",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "text",
+          "text": "ABOUT THE\nGROOM",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 150,
+          "y": 260,
+          "width": 700,
+          "height": 180,
+          "size": 60,
+          "color": "#8A7355",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "Chú rể – người trầm lặng, ít nói nhưng luôn có cách khiến cô cười. Anh không giỏi nói lời ngọt ngào, chỉ âm thầm quan tâm bằng những điều nhỏ nhất.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 150,
+          "y": 500,
+          "width": 660,
+          "height": 320,
+          "size": 28,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 1110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p38_love_air_full_bleed",
+      "editorialBeat": "celebration",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 400,
+          "width": 1920,
+          "height": 300,
+          "color": "#000000",
+          "opacity": 0.18
+        },
+        {
+          "type": "text",
+          "text": "LOVE IS IN THE AIR",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 310,
+          "y": 460,
+          "width": 1300,
+          "height": 110,
+          "size": 80,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "BRIDE & GROOM",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 310,
+          "y": 600,
+          "width": 1300,
+          "height": 40,
+          "size": 24,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "p39_getting_married_2025",
+      "editorialBeat": "closing",
+      "duration": 10,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "motion": "zoom_in",
+          "motionStrength": 0.05,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 760,
+          "height": 1080,
+          "color": "#000000",
+          "opacity": 0.2
+        },
+        {
+          "type": "text",
+          "text": "WE ARE\nGETTING\nMARRIED",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 150,
+          "y": 420,
+          "width": 560,
+          "height": 300,
+          "size": 72,
+          "color": "#FFFFFF",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 8,
+          "animation": "fade",
+          "start": 0.7
+        },
+        {
+          "type": "text",
+          "text": "IN 2025",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 150,
+          "y": 950,
+          "width": 300,
+          "height": 40,
+          "size": 28,
+          "color": "#FFFFFF",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 1
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ]
+}

@@ -459,6 +459,7 @@ try {
           "--content", content,
           "--analysis-dir", analysisDir,
           "--job-dir", project.relDir,
+          "--tier", tier,
           "--max-revisions", tier === "premium" ? maxRevisions : "1",
           "--strict",
           ...(tier === "premium" ? [] : ["--skip-initial-render"]),

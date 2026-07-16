@@ -513,7 +513,13 @@ for (const [name, gen] of Object.entries(GENERATORS)) {
       "-y",
       "-f", "rawvideo", "-pix_fmt", "gray", "-s", `${W}x${H}`, "-r", String(FPS),
       "-i", rawPath,
-      "-vf", `gblur=sigma=${name === "particle_gather" ? 0.45 : name === "heart_wand" ? 0.55 : 0.35},scale=${OUT_W}:${OUT_H}:flags=bicubic,format=yuv420p`,
+      // Upscale FIRST, then blur at full resolution: a blur applied to the
+      // 480x270 source before a 4x scale only softens source-px structure and
+      // leaves the reveal edge aliased after upscale. At 1920 the same sigma
+      // gives a genuinely smooth edge. deband dithers the soft glow/wash
+      // gradients so no 8-bit contour steps survive compositing. Sigmas stay
+      // modest on the detailed masks (sparkles, dry-brush) to keep their grain.
+      "-vf", `scale=${OUT_W}:${OUT_H}:flags=bicubic,gblur=sigma=${name === "particle_gather" ? 2.0 : name === "heart_wand" ? 2.4 : 1.6},deband=1thr=0.006:2thr=0.006:3thr=0.006:range=22,format=yuv420p`,
       "-t", String(duration),
       "-c:v", "libx264", "-preset", "medium", "-crf", "16",
       "-pix_fmt", "yuv420p", "-movflags", "+faststart",

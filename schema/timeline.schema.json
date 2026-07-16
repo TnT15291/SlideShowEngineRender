@@ -107,7 +107,7 @@
         "still", "slow_zoom_in", "slow_zoom_out",
         "pan_left", "pan_right", "pan_up", "pan_down",
         "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br",
-        "portrait_blur_background", "polaroid", "circle_focus",
+        "portrait_blur_background", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip", "polaroid", "circle_focus",
         "memory_wall", "dark_feather",
         "film_roll_up", "film_roll_left", "film_roll_right",
         "video_background", "collage_grid", "double_exposure",
@@ -263,6 +263,10 @@
       "required": ["id", "duration", "effect", "transition", "captions"],
       "properties": {
         "id": { "type": "string", "minLength": 1, "description": "Unique across the timeline." },
+        "renderer": { "enum": ["ffmpeg", "remotion", "blender"], "default": "ffmpeg", "description": "Backend for this scene. FFmpeg is the backward-compatible default." },
+        "template": { "type": "string", "minLength": 1, "description": "Required by Remotion and Blender scenes." },
+        "assets": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Ordered media inputs for a Remotion or Blender template." },
+        "params": { "type": "object", "additionalProperties": true, "description": "Template-specific renderer parameters." },
         "image": { "type": "string", "minLength": 1, "description": "One photo for single-image effects." },
         "images": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Multiple photos for film_roll_*/collage_grid/double_exposure (>=2) or memory_wall (1-5)." },
         "background": { "type": "string", "minLength": 1, "description": "Looping video file for video_background." },
@@ -289,6 +293,10 @@
       },
       "allOf": [
         {
+          "if": { "required": ["renderer"], "properties": { "renderer": { "enum": ["remotion", "blender"] } } },
+          "then": { "required": ["template", "assets"], "properties": { "assets": { "minItems": 1 } } }
+        },
+        {
           "if": { "properties": { "effect": { "const": "layer_scene" } } },
           "then": { "required": ["layers"], "properties": { "layers": { "minItems": 1 } } }
         },
@@ -309,7 +317,7 @@
           "then": { "required": ["image", "mask"] }
         },
         {
-          "if": { "properties": { "effect": { "enum": ["still", "slow_zoom_in", "slow_zoom_out", "pan_left", "pan_right", "pan_up", "pan_down", "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br", "portrait_blur_background", "polaroid", "circle_focus", "dark_feather", "tilt_shift", "dream_glow", "prism_split", "spotlight_focus", "mirror_split"] } } },
+          "if": { "properties": { "renderer": { "const": "ffmpeg" }, "effect": { "enum": ["still", "slow_zoom_in", "slow_zoom_out", "pan_left", "pan_right", "pan_up", "pan_down", "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br", "portrait_blur_background", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip", "polaroid", "circle_focus", "dark_feather", "tilt_shift", "dream_glow", "prism_split", "spotlight_focus", "mirror_split"] } } },
           "then": { "required": ["image"] }
         }
       ]

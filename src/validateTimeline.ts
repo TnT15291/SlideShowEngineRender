@@ -49,6 +49,10 @@ const effectEnum = z.enum([
   "kenburns_bl",
   "kenburns_br",
   "portrait_blur_background",
+  "portrait_reflection",
+  "floating_card_gallery",
+  "moving_background_echo",
+  "panel_flip",
   "polaroid",
   "circle_focus",
   "memory_wall",
@@ -210,6 +214,10 @@ const timelineSchema = z.object({
     .array(
       z.object({
         id: z.string().min(1),
+        renderer: z.enum(["ffmpeg", "remotion", "blender"]).default("ffmpeg"),
+        template: z.string().min(1).optional(),
+        assets: z.array(z.string().min(1)).default([]),
+        params: z.record(z.unknown()).default({}),
         image: z.string().min(1).optional(),
         images: z.array(z.string().min(1)).optional(),
         background: z.string().min(1).optional(),
@@ -312,7 +320,14 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
     }
     seenIds.add(slide.id);
 
-    if (slide.effect === "layer_scene") {
+    if (slide.renderer !== "ffmpeg") {
+      if (!slide.template) {
+        errors.push(`slide ${slide.id} ${slide.renderer} renderer requires template`);
+      }
+      if ((slide.assets ?? []).length < 1) {
+        errors.push(`slide ${slide.id} ${slide.renderer} renderer requires assets`);
+      }
+    } else if (slide.effect === "layer_scene") {
       if (!slide.layers || slide.layers.length < 1) {
         errors.push(`slide ${slide.id} layer_scene requires layers`);
       }
@@ -357,6 +372,11 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
     }
     if (slide.background && !fileExists(path.resolve(baseDir, slide.background))) {
       errors.push(`slide ${slide.id} background not found: ${slide.background}`);
+    }
+    for (const asset of slide.assets ?? []) {
+      if (!fileExists(path.resolve(baseDir, asset))) {
+        errors.push(`slide ${slide.id} renderer asset not found: ${asset}`);
+      }
     }
 
     for (const [li, layer] of (slide.layers ?? []).entries()) {

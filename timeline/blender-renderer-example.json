@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "Blender Renderer Smoke Test",
+    "width": 640,
+    "height": 360,
+    "fps": 24,
+    "quality": "draft"
+  },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "overlays": [],
+  "output": { "path": "temp/blender-renderer-example.mp4" },
+  "slides": [
+    {
+      "id": "blender-page-flip",
+      "renderer": "blender",
+      "template": "page_flip_3d",
+      "assets": ["public/gpu-effects/page-a.jpg", "public/gpu-effects/page-b.jpg"],
+      "params": {},
+      "duration": 2,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    }
+  ]
+}

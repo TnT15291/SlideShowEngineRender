@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "Hybrid Renderer Example",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "draft"
+  },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "overlays": [],
+  "output": { "path": "temp/hybrid-renderer-example.mp4" },
+  "slides": [
+    {
+      "id": "remotion-page-flip",
+      "renderer": "remotion",
+      "template": "page_flip",
+      "assets": ["public/gpu-effects/page-a.jpg", "public/gpu-effects/page-b.jpg"],
+      "params": { "paperColor": "#f7f3eb" },
+      "duration": 4,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    }
+  ]
+}

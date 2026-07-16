@@ -1,7 +1,9 @@
+import { TEXT_SAFE_MARGIN, MAX_LAYOUT_RUN, MIN_CLOSING_SECONDS } from "./rules/thresholds.mjs";
+
 const filesIn = (slide) => [slide.image, ...(slide.images || []),
   ...(slide.layers || []).filter((l) => l.type === "image").map((l) => l.path)].filter(Boolean);
 
-export function evaluateTier1Quality(timeline, { safeMargin = 0.05, maxLayoutRun = 3, minClosingSeconds = 2.5,
+export function evaluateTier1Quality(timeline, { safeMargin = TEXT_SAFE_MARGIN, maxLayoutRun = MAX_LAYOUT_RUN, minClosingSeconds = MIN_CLOSING_SECONDS,
   enforceClosing = Boolean(timeline.recipeDecisions?.recipeId) } = {}) {
   const errors = [], warnings = [], manualReview = [];
   const slides = timeline.slides || [];

@@ -14,6 +14,10 @@ export type EffectPreset =
   | "kenburns_bl"
   | "kenburns_br"
   | "portrait_blur_background"
+  | "portrait_reflection"
+  | "floating_card_gallery"
+  | "moving_background_echo"
+  | "panel_flip"
   | "polaroid"
   | "circle_focus"
   | "memory_wall"
@@ -307,6 +311,15 @@ export interface TextSceneLayer extends BaseSceneLayer {
 
 export type SceneLayer = ImageSceneLayer | RectSceneLayer | TextSceneLayer;
 
+export type SceneRenderer = "ffmpeg" | "remotion" | "blender";
+
+export interface SceneRenderConfig {
+  renderer: SceneRenderer;
+  template?: string;
+  assets: string[];
+  params: Record<string, unknown>;
+}
+
 export type OverlayPosition =
   | "top_left"
   | "top_right"
@@ -349,6 +362,10 @@ export interface Overlay {
 
 export interface Slide {
   id: string;
+  renderer?: SceneRenderer;
+  template?: string;
+  assets?: string[];
+  params?: Record<string, unknown>;
   image?: string;
   images?: string[];
   background?: string;
@@ -434,6 +451,10 @@ export type CompiledSceneLayer =
 export interface RenderSlideStep {
   type: "render_slide";
   slideId: string;
+  renderer: SceneRenderer;
+  rendererTemplate?: string;
+  rendererAssets: string[];
+  rendererParams: Record<string, unknown>;
   input: string; // absolute path to source image
   inputs: string[]; // absolute paths; film_roll_up uses multiple images
   mask?: string; // absolute path to the reveal-mask video (mask_reveal only)

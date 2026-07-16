@@ -463,7 +463,9 @@ Dùng: `node scripts/qaProxy.mjs <timeline.json> [--strict]` (chỉ đo, không 
     role × scale đồng nhất; nay mỗi cảnh nghiêng theo năng lượng đoạn nhạc nó phủ (cùng `makeEnergy`
     mà QA đo), **zero-sum** (renormalize về đúng track), montage miễn (giữ thiết kế bimodal).
     Sau sửa: modal-duration share 2/10, tổng phim không đổi. Đây là quyết định thẩm mỹ —
-    A/B render draft (trước/sau) để duyệt bằng mắt; chỉnh = 2 hằng số.
+    **đã DUYỆT 2026-07-15**: A/B render draft 85s (cinematic, job the-20-best) → khách chọn **B (giữ
+    điều biến ở 0.5/±15%)**. Khác biệt cố tình tinh tế (≤0.6s mỗi cảnh body, rõ nhất cảnh title lặp
+    +0.60s; bản A phẳng chỉ 2 độ dài luân phiên theo role). Không đổi hằng số — B là default đang chạy.
   - 113 test xanh (8 test mới: pair rule, unknown-abstain, capacity clamp, anti-adjacency, energy lean).
 
 ### Phase F — Giao hàng & điều phối (node 4, 12)

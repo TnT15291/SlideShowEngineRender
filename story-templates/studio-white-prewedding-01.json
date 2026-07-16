@@ -1,0 +1,179 @@
+{
+  "id": "studio-white-prewedding-01",
+  "version": 1,
+  "name": "Studio White Pre-Wedding",
+  "tier": "smart_lite",
+  "libraryTheme": "white_weddings",
+  "storyArc": {
+    "sequence": ["title", "establish", "portraits", "couple", "gallery", "turn", "build", "peak", "closing"]
+  },
+  "transitionGrammar": {
+    "vocabulary": ["fade_slow", "dissolve", "fade_to_white", "crossfade", "none"],
+    "specialRoles": ["memory", "peak"],
+    "limits": { "memory": 2, "peak": 1 }
+  },
+  "source": {
+    "origin": "reference_adaptation",
+    "url": "https://www.youtube.com/watch?v=VyQ9yOcp0m0",
+    "title": "Pre-Wedding Le Quang - Loan Anh - STT260620.mp4",
+    "notes": "Adapted from the reference video's bright studio slideshow language: centered portrait cards, soft enlarged background echoes, white-flash dissolves, triptychs, page turns and floating gallery motion. It recreates the visual grammar with engine-native effects rather than copying source media."
+  },
+  "fit": {
+    "bestFor": ["pre_wedding", "studio", "portrait_heavy", "white_wedding", "minimal", "romantic"],
+    "minPhotos": 24,
+    "idealPhotos": 48
+  },
+  "musicProfile": {
+    "moods": ["romantic", "gentle", "sentimental", "piano_pop"],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    { "id": "airy", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
+    { "id": "studio", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
+    { "id": "gallery", "maxEnergy": 1.0, "durationMultiplier": 0.9 }
+  ],
+  "briefFields": {
+    "required": ["bride", "groom"],
+    "optional": ["date", "location", "thankYouLine"]
+  },
+  "defaults": {
+    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
+    "color": { "temperature": 5850, "saturation": 0.96, "contrast": 0.99, "brightness": 0.025, "glow": 0.1, "grain": 0 },
+    "audio": { "fade_in": 2.0, "fade_out": 3.5, "crossfade": 0 },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/GreatVibes-Regular.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#FAF8F2",
+      "ink": "#343438",
+      "brown": "#A28E72",
+      "white": "#FFFFFF"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.8,
+      "calmSceneSec": 7.4,
+      "buildSceneSec": 4.9,
+      "montageSec": 10.5,
+      "closingSec": 8.2
+    },
+    "transitionStrategy": {
+      "default": { "type": "dissolve", "duration": 0.85 },
+      "calm": { "type": "fade_slow", "duration": 1.15 },
+      "memory": { "type": "fade_to_white", "duration": 0.55 },
+      "peak": { "type": "dissolve", "duration": 0.6 },
+      "final": { "type": "none", "duration": 0 }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": ["qualityNorm", "heroScore", "skinFrac"],
+      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "darkPhotoMaxMeanLuma": 82
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_title_detail",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best", "motion": "zoom_in" }],
+      "text": { "quote": "Save the date · {{bride}} & {{groom}}" }
+    },
+    {
+      "id": "s02_centered_portrait",
+      "effect": "portrait_reflection",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }]
+    },
+    {
+      "id": "s03_portrait_echo",
+      "effect": "floating_card_gallery",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "Our Love Story"
+    },
+    {
+      "id": "s04_studio_triptych",
+      "effect": "moving_background_echo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "Together · every quiet moment becomes part of our forever.",
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          { "captionPattern": "You & Me · this is where our next chapter begins." },
+          { "captionPattern": "Always · a collection of moments we will keep close." },
+          { "captionPattern": "" }
+        ]
+      }
+    },
+    {
+      "id": "s05_soft_pair",
+      "effect": "panel_flip",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "captionPattern": "One love · one lifetime · one beautiful beginning.",
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          { "captionPattern": "The simplest moments are the ones we remember most." },
+          { "captionPattern": "Here is to every day that comes after this one." },
+          { "captionPattern": "" }
+        ]
+      }
+    },
+    {
+      "id": "s06_page_turn",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        { "slot": "page_left", "orient": "portrait", "quality": "good" },
+        { "slot": "page_right", "orient": "portrait", "quality": "best" }
+      ],
+      "text": { "heading": "The Story Continues", "caption": "{{date}}" }
+    },
+    {
+      "id": "s07_floating_gallery",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [{ "slot": "memories", "count": 6, "orient": "portrait", "quality": "good", "preferVariety": true }],
+      "captionPattern": "Beautiful moments · beautiful memories"
+    },
+    {
+      "id": "s08_gallery_peak",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [{ "slot": "film_roll", "count": 8, "orient": "portrait", "quality": "good", "preferEmotion": true }]
+    },
+    {
+      "id": "s09_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

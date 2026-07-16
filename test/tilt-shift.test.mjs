@@ -56,7 +56,7 @@ test("the native creative effects compile to their intended FFmpeg filters", () 
     import { validateTimeline } from "./src/validateTimeline.ts";
     import { compileTimeline } from "./src/compileTimeline.ts";
     import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
-    const effects = ["dream_glow", "prism_split", "spotlight_focus", "mirror_split"];
+    const effects = ["dream_glow", "prism_split", "spotlight_focus", "mirror_split", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip"];
     const raw = {
       project: { name: "test", width: 640, height: 360, fps: 30, quality: "draft" },
       music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],

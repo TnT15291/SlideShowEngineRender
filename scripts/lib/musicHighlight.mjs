@@ -1,3 +1,5 @@
+import { HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC } from "./rules/thresholds.mjs";
+
 const round = (n) => +n.toFixed(3);
 
 /** The line past which a full song stops being carriable: every photo would hold more
@@ -20,14 +22,14 @@ export function chooseMusicEdit(music, photoCount, { mode = "auto", targetDurati
   const wantsExcerpt = mode === "highlight" || (targetDuration > 0 && targetDuration < sourceDuration) || needsExcerpt(music, photoCount);
   if (!wantsExcerpt) return { mode: "full_song", sourceDuration, start: 0, end: sourceDuration, duration: sourceDuration };
 
-  const desired = Math.min(105, Math.max(60, Number(targetDuration) || photoCount * 4));
+  const desired = Math.min(HIGHLIGHT_MAX_SEC, Math.max(HIGHLIGHT_MIN_SEC, Number(targetDuration) || photoCount * 4));
   const phraseTimes = (music.phrases || []).map((p) => Number(p.time)).filter(Number.isFinite);
   const boundaries = [...new Set([0, ...phraseTimes, sourceDuration])].sort((a, b) => a - b);
   let best = null;
   for (let i = 0; i < boundaries.length - 1; i++) {
     for (let j = i + 1; j < boundaries.length; j++) {
       const start = boundaries[i], end = boundaries[j], duration = end - start;
-      if (duration < 60 || duration > 105) continue;
+      if (duration < HIGHLIGHT_MIN_SEC || duration > HIGHLIGHT_MAX_SEC) continue;
       const energy = meanEnergy(music, start, end);
       const early = meanEnergy(music, start, start + duration * 0.25);
       const late = meanEnergy(music, end - duration * 0.35, end);
@@ -52,7 +54,7 @@ export function chooseMusicEdit(music, photoCount, { mode = "auto", targetDurati
     end: round(picked.end),
     duration: round(picked.duration),
     reason: "photo_budget",
-    fullSongRequiredPhotos: Math.ceil(sourceDuration / 7.2),
+    fullSongRequiredPhotos: Math.ceil(sourceDuration / FULL_SONG_MAX_SEC_PER_PHOTO),
     selection: best ? { score: round(best.score), cadenceDrop: round(best.cadenceDrop),
       sectionBoundaryDrift: Number.isFinite(best.sectionBoundary) ? round(best.sectionBoundary) : null } : { fallback: true },
   };

@@ -1,0 +1,59 @@
+{
+  "project": {
+    "name": "Quốc & Nhi Hybrid Demo",
+    "width": 960,
+    "height": 540,
+    "fps": 24,
+    "quality": "draft"
+  },
+  "music": [
+    { "path": "music/Em Đồng Ý (I Do).mp3", "volume": 0.78, "start": 0 }
+  ],
+  "audio": { "fade_in": 1, "fade_out": 1.5, "crossfade": 0 },
+  "overlays": [],
+  "output": { "path": "temp/quoc-nhi-hybrid-demo.mp4" },
+  "slides": [
+    {
+      "id": "hybrid-title",
+      "renderer": "remotion",
+      "template": "title",
+      "assets": ["public/gpu-effects/page-a.jpg"],
+      "params": { "title": "Quốc & Nhi · 16.07.2026" },
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "fade_slow", "duration": 0.6 },
+      "captions": []
+    },
+    {
+      "id": "hybrid-album-3d",
+      "renderer": "blender",
+      "template": "page_flip_3d",
+      "assets": ["public/gpu-effects/page-a.jpg", "public/gpu-effects/page-b.jpg"],
+      "params": {},
+      "duration": 2.5,
+      "effect": "still",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": []
+    },
+    {
+      "id": "hybrid-portrait",
+      "renderer": "ffmpeg",
+      "image": "public/gpu-effects/page-b.jpg",
+      "duration": 3,
+      "effect": "portrait_blur_background",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": []
+    },
+    {
+      "id": "hybrid-filmstrip",
+      "renderer": "remotion",
+      "template": "filmstrip",
+      "assets": ["public/gpu-effects/page-a.jpg", "public/gpu-effects/page-b.jpg"],
+      "params": { "speed": 4, "background": "#171311" },
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    }
+  ]
+}

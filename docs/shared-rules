@@ -1,0 +1,166 @@
+# Shared Rules Layer — `scripts/lib/rules/`
+
+> **Trạng thái 2026-07-15: ĐÃ TRIỂN KHAI.** Tài liệu này thay bản nháp cũ (viết
+> quanh `generateStoryClipV2.mjs`, đã xóa). Kiến trúc dưới đây là thứ đang chạy,
+> rebase trên pipeline thật: `runProject.mjs --tier template|lite|premium` →
+> build (applyStoryTemplate / generateProjectTimeline / premium storyboard) →
+> render → qaLoop (qaProxy + qaClip) → auditCompliance gate → deliver.
+
+---
+
+## Ba nguyên tắc (rút từ review bản nháp cũ)
+
+1. **Phủ đều, hành động khác nhau.** Mọi tier nhìn thấy cùng một bộ rule; thứ
+   khác nhau giữa tier là *hành động* (block / repair / manual-review / warn) và *ngân
+   sách revision*, không phải rule nào được chạy.
+2. **Khai báo một lần.** Thêm một rule = một entry trong `contract.mjs` + một
+   hàng trong `policy.mjs`. `test/rules.test.mjs` quét source các emitter và
+   fail nếu có `check` chưa khai báo — cưỡng chế bằng test, không bằng kỷ luật.
+3. **Validator đo, policy quyết, qaLoop sửa.** Ba trách nhiệm không bao giờ gộp:
+   - *đo*: qaProxy / qaClip / tier1QualityGate chỉ MEASURE và PROPOSE (`fix` là
+     đề xuất, không phải hành động);
+   - *quyết*: `policy.mjs` nói tier này được áp repair nào;
+   - *sửa*: `qaLoop.mjs` là **writer duy nhất** của timeline, giữ nguyên fix-once
+     per `(scene, check)` và revision cap.
+   Bản nháp cũ đề xuất `fixTimelineQuality(timeline, issues)` batch-fix trong
+   validator — bị loại bỏ có chủ đích: batch-fix đổi duration một slide làm dịch
+   start time mọi slide sau và tự đuổi đuôi mình (xem header qaLoop.mjs).
+
+---
+
+## Các file
+
+```
+scripts/lib/rules/
+├─ thresholds.mjs   ← nguồn ngưỡng duy nhất (brightness, highlight window,
+│                     pacing tolerance, safe margin, focus bounds, audio drift…)
+├─ contract.mjs     ← finding shape + registry: ruleId → { scope, repairs }
+└─ policy.mjs       ← bảng tier × rule → { severity, action } + coverageMatrix()
+```
+
+**Ngưỡng nào được vào `thresholds.mjs`:** chỉ khi HAI nơi phải đồng ý về nó
+(generator + QA check audit nó, hoặc hai QA layer đo cùng tín hiệu), hoặc khi nó
+định nghĩa *ý nghĩa* của một rule. Ngưỡng có một chủ sở hữu duy nhất ở nguyên
+chỗ cũ (`MIN_SCENE`/`MAX_SCENE` trong lib/pacing.mjs, `MAX_SLIDE_SEC` derive từ
+schema trong lib/directives.mjs). File này không được thành bãi rác literal.
+
+**Finding shape** (đã là format chung của qaProxy + tier1QualityGate + qaClip;
+contract.mjs biến trùng hợp thành hợp đồng):
+
+```json
+{ "id": "scene-04", "check": "text_overflow", "flags": ["text_overflow"],
+  "detail": "…", "fix": { "kind": "fit_text", "layer": 1 } }
+```
+
+`check` chính là ruleId — không có trường `ruleId` riêng. `scope` không nằm trên
+từng finding mà tra từ registry (normalize, không denormalize).
+
+**Scope phân theo nguồn bằng chứng** (timeline JSON không chứng minh được frame
+render tối; frame sample không chứng minh được thiếu ảnh must-use):
+
+| scope | bằng chứng từ | rules |
+|---|---|---|
+| timeline | timeline JSON | must_use_coverage, text_safe_area, text_overflow, caption_integrity, closing_card |
+| asset | photos.json join timeline | crop |
+| editorial | nhịp/lặp/hero | duplicate_photo, layout_repetition, overlay_repetition, pacing, hero |
+| rendered-frame | frame sample từ video | frame_brightness, black_frame |
+| audio-video | output đã mux / music analysis | music_edit, audio_drift |
+
+---
+
+## Policy: severity là quyết định, không phải thuộc tính của rule
+
+`policy.mjs` giữ bảng per-tier `ruleId → { severity, action }`:
+
+- `repair` — qaLoop được áp deterministic fix (vẫn qua fix-once + revision cap);
+- `block` — lỗi integrity không được phép giao; dừng trước render nếu đã có đủ
+  bằng chứng ở pre-flight;
+- `manual-review` — không tự sửa; chặn `--strict`, flag cho người khi cạn budget;
+- `warn` — advisory, không chặn, không sửa.
+
+In ma trận coverage (tier × rule × action, generate từ code nên không drift):
+
+```
+node scripts/lib/rules/policy.mjs
+```
+
+Tier Lite đã có policy riêng:
+
+| action | rules Lite |
+|---|---|
+| block | must_use_coverage, text_safe_area, caption_integrity, closing_card, black_frame, music_edit, audio_drift |
+| repair | text_overflow, crop, pacing, frame_brightness |
+| warn | duplicate_photo, layout_repetition, overlay_repetition, hero |
+
+Như vậy Lite giảm chi phí bằng cách không can thiệp các quyết định thẩm mỹ,
+không phải bằng cách giao output hỏng. `runProject` giữ budget hậu render ở một
+revision cho Lite; các repair timeline ở pre-flight không tốn encode.
+
+---
+
+## Rule chạy ở đâu trong pipeline thật
+
+```
+runProject --tier <t>
+  ├─ build  (applyStoryTemplate | generateProjectTimeline | premium storyboard)
+  │    └─ fitTextInTimeline
+  ├─ render (engine: validate → normalize → face-safe → preflight → compile)
+  │    (premium: qaLoop sở hữu render)
+  ├─ qaLoop --tier <t> --max-revisions <budget>
+  │    ├─ PRE-FLIGHT (free, không render): qaProxy đo timeline/asset/editorial
+  │    │    → fix theo policy → re-proxy (≤3 pass, fix-once)
+  │    │    → Lite còn blocker: dừng trước encode
+  │    ├─ RENDER
+  │    └─ REVISE (đắt): qaClip (rendered-frame) + qaProxy (giờ có video:
+  │         black_frame, audio_drift, bookend frames) → fix theo policy
+  │         → warning bị loại khỏi open issues; repair có budget thì re-render;
+  │           blocker còn lại làm `--strict` fail, không deliver
+  ├─ auditCompliance (directive gate — CHẠY SAU QA vì fix của QA cũng có thể
+  │    phá lệnh khách; broken `must` → exit 2, không deliver)
+  └─ deliver
+```
+
+Hai checkpoint đúng thứ tự tự nhiên xuất hiện từ cấu trúc trên: pre-flight đo
+timeline SAU khi build+fitText hoàn tất (không còn bị normalize làm hết hiệu
+lực), rendered-frame checks đo SAU render. Không cần checkpoint machinery riêng.
+
+**Fallback:** premium → Lite chỉ xảy ra trong renderWithRetry cho lỗi thuộc
+director layer / generation complexity. Rule fail KHÔNG fallback: thiếu
+must-use, text ngoài safe area, thiếu closing card đi đường manual-review /
+auditCompliance gate — fallback không chữa được ý định khách bị mất.
+
+---
+
+## Thêm một rule mới
+
+1. Khai báo trong `contract.mjs`: scope + repair kinds được phép (repairs ⊆
+   `REPAIR_KINDS` — những gì qaLoop thực thi được).
+2. Thêm hàng policy trong `policy.mjs` (BASE nếu ba tier giống nhau).
+3. Emit finding đúng shape từ emitter phù hợp với scope (qaProxy cho
+   timeline/asset/editorial, qaClip cho rendered-frame, tier1QualityGate cho
+   gate blockers). Ngưỡng mới mà generator và QA cùng dùng → `thresholds.mjs`.
+4. `node --test test/rules.test.mjs` — test tự bắt: check chưa khai báo, policy
+   thiếu hàng, action `repair` trên rule không có repair kind, repair kind chưa
+   được qaLoop implement.
+
+Repair mới (kind thứ 5) là chuyện khác: implement trong qaLoop (writer duy
+nhất), thêm vào `REPAIR_KINDS`, rồi mới được tham chiếu.
+
+---
+
+## Những gì bản nháp cũ đề xuất và bị loại CÓ CHỦ ĐÍCH
+
+| Đề xuất cũ | Vì sao loại |
+|---|---|
+| `fixTimelineQuality(timeline, issues)` — fixer trong validator | Batch-fix phá fix-once/anti-oscillation; qaLoop đã là writer duy nhất có kỷ luật hội tụ |
+| Severity MANDATORY/RECOMMENDED/OPTIONAL hardcode trong rule | Severity là policy (tier × phase × directive), sống trong policy.mjs |
+| `validateTimelineQuality()` một hàm phủ cả brightness | Timeline JSON không chứng minh được chuyện của frame; scope tách theo nguồn bằng chứng |
+| "Mandatory fail → fallback Lite" | Fallback không chữa được must-use/safe-area/closing-card; Lite policy block trực tiếp và compliance vẫn audit directive sau QA |
+| Tuần tự validate → fitText → normalize | Checkpoint phải nằm sau bước cuối cùng còn sửa timeline; pre-flight của qaLoop đã đứng đúng chỗ |
+| `.ts` cho tầng scripts | Tầng scripts là .mjs không build step; engine (src/) mới là TS |
+
+Cây `rules/` với registry/evaluators/policies/repairs tách 10+ module (đề xuất
+trong review) cũng KHÔNG xây: 4 repair kinds và 2 consumer chưa justify một
+framework. Khi policy các tier thật sự phân kỳ hoặc repair vượt ~8 kinds, tách
+`repairs/` ra khỏi qaLoop là bước tiếp theo tự nhiên — bảng policy và contract
+đã sẵn chỗ cắm.

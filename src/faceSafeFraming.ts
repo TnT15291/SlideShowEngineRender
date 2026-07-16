@@ -4,7 +4,6 @@ import { coverCropLoss, readImageSize } from "./imageSize";
 import type { SceneLayer, Timeline } from "./types";
 
 const DEFAULT_MAX_CROP_LOSS = 0.18;
-const BACKGROUND_AREA_RATIO = 0.9;
 
 export function applyFaceSafeFraming(
   timeline: Timeline,
@@ -22,14 +21,12 @@ export function applyFaceSafeFraming(
     if (slide.effect !== "layer_scene" || !slide.layers) return slide;
 
     const layers = slide.layers.map((layer, li): SceneLayer => {
-      if (layer.type !== "image" || layer.fit !== "cover") return layer;
-      // A supplied focal point (from photo analysis) already keeps the subject
-      // inside a cover crop, so keep cover and let it crop toward the face
-      // instead of falling back to a letterboxed contain.
-      if (layer.focusX !== undefined || layer.focusY !== undefined) return layer;
-      if (isLikelyBackground(layer, timeline.project.width, timeline.project.height)) {
-        return layer;
-      }
+      if (layer.type !== "image") return layer;
+      // The motion renderer uses a cover-sized zoompan source regardless of the
+      // declared fit. Judge the geometry that will actually be rendered, not
+      // only `fit`, or a portrait `contain + zoom_in` can still lose both faces.
+      const hasMotion = layer.motion !== undefined && layer.motion !== "none";
+      if (layer.fit !== "cover" && !hasMotion) return layer;
 
       const size = readImageSize(path.resolve(baseDir, layer.path));
       const loss = coverCropLoss(size, layer.width, layer.height);
@@ -38,9 +35,10 @@ export function applyFaceSafeFraming(
       changed++;
       logger.info(
         `Face-safe framing: slide ${slide.id} layers[${li}] ` +
-          `cover -> contain (${Math.round(loss * 100)}% crop risk, ${layer.path})`
+          `${hasMotion ? `${layer.fit} + ${layer.motion}` : "cover"} -> contain + no motion ` +
+          `(${Math.round(loss * 100)}% crop risk, ${layer.path})`
       );
-      return { ...layer, fit: "contain" };
+      return { ...layer, fit: "contain", motion: "none", motionStrength: undefined };
     });
 
     return layers === slide.layers ? slide : { ...slide, layers };
@@ -60,20 +58,4 @@ function parseMaxCropLoss(): number {
   if (!raw) return DEFAULT_MAX_CROP_LOSS;
   const n = Number(raw);
   return Number.isFinite(n) ? n : DEFAULT_MAX_CROP_LOSS;
-}
-
-function isLikelyBackground(
-  layer: SceneLayer,
-  frameWidth: number,
-  frameHeight: number
-): boolean {
-  const frameArea = frameWidth * frameHeight;
-  const layerArea = layer.width * layer.height;
-  return (
-    layer.x <= 0 &&
-    layer.y <= 0 &&
-    layer.width >= frameWidth &&
-    layer.height >= frameHeight &&
-    layerArea / frameArea >= BACKGROUND_AREA_RATIO
-  );
 }

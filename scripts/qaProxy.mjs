@@ -31,6 +31,8 @@ import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pac
 import { createTextMeasurer } from "./lib/textMeasure.mjs";
 import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
+import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
+  HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC } from "./lib/rules/thresholds.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -43,8 +45,11 @@ if (!tlPath || tlPath.startsWith("--")) {
   console.error("Usage: node scripts/qaProxy.mjs <timeline.json> [--content ...] [--strict]");
   process.exit(1);
 }
-const TOLERANCE = Number(arg("--tolerance", "0.25"));
-const HERO_MARGIN = Number(arg("--hero-margin", "0.15"));
+const TOLERANCE = Number(arg("--tolerance", String(PACING_TOLERANCE)));
+const HERO_MARGIN = Number(arg("--hero-margin", String(HERO_SWAP_MARGIN)));
+// How far into the film the opening title card may sit and still count as the opening
+// bookend when its copy echoes on the closing card (a cold-open pushes it off slide 0).
+const OPENING_BOOKEND_MAX = 1;
 const strict = process.argv.includes("--strict");
 // Same rule as qaLoop: the report belongs to the job that owns the timeline, so
 // derive `<job>/analysis` from `<job>/timeline/x.json`. A root timeline still
@@ -134,7 +139,12 @@ for (const [slideIndex, slide] of tl.slides.entries()) {
     if (vietnamese.test(value) && decorativeFont.test(item.font || "") && value.split(/\s+/).length > 3) flags.push("vietnamese_in_decorative_font");
     const normalized = value.toLowerCase().replace(/\s+/g, " ");
     const firstSeen = normalized ? seenCopy.get(normalized) : null;
-    const intentionalBookendEcho = slideIndex === tl.slides.length - 1 && firstSeen?.slideIndex === 0;
+    // The couple's names on the opening title card, echoed on the closing card, is a
+    // deliberate bookend — not a copy defect. The opening title is not always slide 0:
+    // a cinematic recipe cold-opens on a text-less photo and puts the names on the NEXT
+    // slide, so the opening bookend spans the leading cards, not just index 0.
+    const isClosing = slideIndex === tl.slides.length - 1;
+    const intentionalBookendEcho = isClosing && firstSeen != null && firstSeen.slideIndex <= OPENING_BOOKEND_MAX;
     if (normalized && firstSeen && !intentionalBookendEcho) flags.push("duplicate_caption");
     else if (normalized) seenCopy.set(normalized, { slideIndex, location: `${slide.id}:${item.where}` });
     const row = { id: slide.id, where: item.where, flags };
@@ -172,8 +182,8 @@ for (const slide of tl.slides) {
   for (const [index, layer] of (slide.layers || []).entries()) {
     if (layer.type !== "image" || layer.fit !== "cover") continue;
     const flags = [];
-    if ((layer.focusX ?? 0.5) < 0.08 || (layer.focusX ?? 0.5) > 0.92 ||
-        (layer.focusY ?? 0.5) < 0.08 || (layer.focusY ?? 0.5) > 0.92) flags.push("unsafe_focus");
+    if ((layer.focusX ?? 0.5) < FOCUS_SAFE_MIN || (layer.focusX ?? 0.5) > FOCUS_SAFE_MAX ||
+        (layer.focusY ?? 0.5) < FOCUS_SAFE_MIN || (layer.focusY ?? 0.5) > FOCUS_SAFE_MAX) flags.push("unsafe_focus");
     if (!(layer.width > 0 && layer.height > 0)) flags.push("invalid_crop_box");
     const photo = technicalByFile.get(layer.path);
     let visible = null;
@@ -189,7 +199,7 @@ for (const slide of tl.slides) {
       const faces = photo.faces?.length ? photo.faces.map((f) => f.box) : (photo.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
       const face = faces[0];
       if (faces.length) {
-        const margin = 0.015;
+        const margin = FACE_CONTAIN_MARGIN;
         const contained = faces.every((box) => box.x >= visible.x - margin && box.y >= visible.y - margin &&
           box.x + box.width <= visible.x + visible.width + margin &&
           box.y + box.height <= visible.y + visible.height + margin);
@@ -419,7 +429,7 @@ const musicEdit = { status: "ran", flagged: 0 };
   } else {
     Object.assign(musicEdit, { mode: edit.mode, start: edit.start, end: edit.end, duration: edit.duration });
     const invalidRange = !(edit.start >= 0 && edit.end > edit.start && edit.end <= edit.sourceDuration + 0.01);
-    const invalidHighlightLength = edit.mode === "highlight" && (edit.duration < 60 || edit.duration > 105);
+    const invalidHighlightLength = edit.mode === "highlight" && (edit.duration < HIGHLIGHT_MIN_SEC || edit.duration > HIGHLIGHT_MAX_SEC);
     const contractMismatch = edit.mode === "highlight" && (track?.start !== edit.start || track?.end !== edit.end);
     const phraseTimes = sourceMusic?.phrases?.map((p) => p.time) || [];
     const nearest = (value) => phraseTimes.length ? Math.min(...phraseTimes.map((t) => Math.abs(t - value))) : null;
@@ -427,7 +437,7 @@ const musicEdit = { status: "ran", flagged: 0 };
     musicEdit.endPhraseDrift = nearest(edit.end);
     const endsAtTrackEnd = Math.abs(edit.end - edit.sourceDuration) <= 0.05;
     const offPhrase = edit.mode === "highlight" && phraseTimes.length > 0 &&
-      (musicEdit.startPhraseDrift > 0.05 || (!endsAtTrackEnd && musicEdit.endPhraseDrift > 0.05));
+      (musicEdit.startPhraseDrift > PHRASE_SNAP_TOLERANCE_SEC || (!endsAtTrackEnd && musicEdit.endPhraseDrift > PHRASE_SNAP_TOLERANCE_SEC));
     const flags = [invalidRange && "invalid_music_edit_range", invalidHighlightLength && "invalid_highlight_length",
       contractMismatch && "music_trim_contract_mismatch", offPhrase && "music_edit_off_phrase"].filter(Boolean);
     musicEdit.flagged = flags.length;
@@ -444,7 +454,7 @@ if (videoAbs && fs.existsSync(videoAbs)) {
     const text = `${r.stdout || ""}${r.stderr || ""}`;
     const yavg = Number(text.match(/lavfi\.signalstats\.YAVG=([0-9.]+)/)?.[1]);
     const row = { id: sc.id, at: +sc.mid.toFixed(2), yavg: Number.isFinite(yavg) ? yavg : null, flags: [] };
-    if (Number.isFinite(yavg) && yavg < 4) {
+    if (Number.isFinite(yavg) && yavg < BLACK_FRAME_YAVG) {
       row.flags.push("black_frame"); blackFrames.flagged++;
       problems.push({ id: sc.id, check: "black_frame", flags: row.flags,
         detail: `sample at ${sc.mid.toFixed(2)}s has YAVG ${yavg.toFixed(2)}` });
@@ -464,7 +474,7 @@ if (videoAbs && fs.existsSync(videoAbs)) {
   audioDrift.audioDuration = Number.isFinite(audioDuration) ? audioDuration : null;
   audioDrift.drift = Number.isFinite(videoDuration) && Number.isFinite(audioDuration)
     ? +Math.abs(videoDuration - audioDuration).toFixed(3) : null;
-  if (audioDrift.drift != null && audioDrift.drift > 0.25) {
+  if (audioDrift.drift != null && audioDrift.drift > AUDIO_DRIFT_MAX_SEC) {
     audioDrift.flagged = 1;
     problems.push({ id: "audio", check: "audio_drift", flags: ["audio_video_duration_mismatch"],
       detail: `audio/video duration differs by ${audioDrift.drift}s` });

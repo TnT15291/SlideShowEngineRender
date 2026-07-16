@@ -1,0 +1,1424 @@
+{
+  "project": {
+    "name": "white-weddings-full-01",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "projects/the-20-best/music/Em Đồng Ý (I Do).mp3",
+      "volume": 0.82,
+      "start": 113.648,
+      "end": 203.13
+    }
+  ],
+  "audio": {
+    "fade_in": 1.8,
+    "fade_out": 3.5,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5600,
+    "saturation": 1.02,
+    "contrast": 1.03,
+    "glow": 0.08,
+    "grain": 1
+  },
+  "overlays": [],
+  "output": {
+    "path": "temp/white-weddings-full-01-test.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_save_the_date",
+      "editorialBeat": "save_the_date",
+      "signature": true,
+      "duration": 7.4,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.6,
+          "focusY": 0.323,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/082.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 360,
+          "y": 180,
+          "width": 1200,
+          "height": 720,
+          "color": "#FBF6ED",
+          "opacity": 0.96
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/062.jpg",
+          "x": 430,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.525,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/062.jpg",
+            "brightness": 0.0918,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/068.jpg",
+          "x": 790,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.502,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/068.jpg",
+            "brightness": -0.0337,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/057.jpg",
+          "x": 1150,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.577,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/057.jpg",
+            "brightness": -0.0204,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        },
+        {
+          "type": "text",
+          "text": "SAVE the DATE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 610,
+          "y": 250,
+          "width": 700,
+          "height": 90,
+          "size": 60,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "15.07.2026",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 610,
+          "y": 820,
+          "width": 700,
+          "height": 60,
+          "size": 42,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 1.1
+      }
+    },
+    {
+      "id": "s02_welcome_title",
+      "editorialBeat": "establish",
+      "duration": 7.97,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/078.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.501,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/078.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "welcome to the wedding of",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 220,
+          "width": 900,
+          "height": 60,
+          "size": 30,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Thanh & Quốc",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 900,
+          "y": 330,
+          "width": 900,
+          "height": 300,
+          "size": 110,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "15.07.2026",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 900,
+          "y": 700,
+          "width": 900,
+          "height": 50,
+          "size": 26,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s03_getting_married",
+      "editorialBeat": "establish",
+      "duration": 6.18,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/037.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.499,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/037.jpg",
+            "brightness": 0.0086,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_right",
+          "motionStrength": 0.06,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 640,
+          "width": 1920,
+          "height": 440,
+          "color": "#000000",
+          "opacity": 0.35
+        },
+        {
+          "type": "text",
+          "text": "Thanh & Quốc · WE ARE GETTING MARRIED",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 260,
+          "y": 820,
+          "width": 1400,
+          "height": 180,
+          "size": 56,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s04_about_bride",
+      "editorialBeat": "couple",
+      "duration": 6.63,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/086.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.49,
+          "focusY": 0.432,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/086.jpg",
+            "brightness": 0.0886,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "ABOUT THE\nBRIDE",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 1040,
+          "y": 210,
+          "width": 784,
+          "height": 180,
+          "size": 62,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Cô dâu Thanh – dịu dàng, hay cười và luôn tin vào một tình yêu chân thật dành cho người mình chọn.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 1040,
+          "y": 470,
+          "width": 784,
+          "height": 400,
+          "size": 32,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s05_about_groom",
+      "editorialBeat": "couple",
+      "duration": 7.09,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/077.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.48,
+          "focusY": 0.628,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/077.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "ABOUT THE\nGROOM",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 62,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Chú rể Quốc – trầm lặng nhưng luôn có cách khiến Thanh mỉm cười, âm thầm quan tâm bằng những điều nhỏ nhất.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s06_our_journey",
+      "editorialBeat": "details",
+      "duration": 6.53,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/010.jpg",
+          "x": 620,
+          "y": 95,
+          "width": 1000,
+          "height": 570,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.547,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/010.jpg",
+            "brightness": -0.0247,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/061.jpg",
+          "x": 1400,
+          "y": 480,
+          "width": 300,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.674,
+          "focusY": 0.472,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/061.jpg",
+            "brightness": -0.0153,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "OUR JOURNEY",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 680,
+          "width": 640,
+          "height": 110,
+          "size": 72,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "From friendship to forever",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 115,
+          "y": 800,
+          "width": 500,
+          "height": 40,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s08_love_is_in_the_air",
+      "editorialBeat": "story",
+      "duration": 5.39,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FFF4EF",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/030.jpg",
+          "x": 170,
+          "y": 320,
+          "width": 760,
+          "height": 480,
+          "fit": "cover",
+          "focusX": 0.574,
+          "focusY": 0.477,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/030.jpg",
+            "brightness": -0.0141,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/034.jpg",
+          "x": 990,
+          "y": 320,
+          "width": 760,
+          "height": 480,
+          "fit": "cover",
+          "focusX": 0.517,
+          "focusY": 0.517,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/034.jpg",
+            "brightness": -0.0455,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "LOVE IS IN THE AIR",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 460,
+          "y": 120,
+          "width": 1000,
+          "height": 90,
+          "size": 60,
+          "color": "#634C31",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s10_future_together",
+      "editorialBeat": "story",
+      "duration": 8.04,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/039.jpg",
+          "x": 760,
+          "y": 110,
+          "width": 820,
+          "height": 840,
+          "fit": "cover",
+          "focusX": 0.462,
+          "focusY": 0.575,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/039.jpg",
+            "brightness": -0.0122,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "frame": {
+            "radius": 28,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "OUR FUTURE\nTOGETHER",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 300,
+          "width": 520,
+          "height": 260,
+          "size": 60,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Here's to a lifetime of love and laughter.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 110,
+          "y": 600,
+          "width": 430,
+          "height": 90,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.9
+      }
+    },
+    {
+      "id": "s10b_intimate_reveal",
+      "editorialBeat": "memories",
+      "signature": true,
+      "duration": 8.16,
+      "effect": "mask_reveal",
+      "image": "projects/the-20-best/input/033.jpg",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "captions": [],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "technicalColor": {
+        "brightness": 0.011,
+        "saturation": 1,
+        "redBalance": 0,
+        "blueBalance": 0
+      }
+    },
+    {
+      "id": "s10_future_together_2",
+      "editorialBeat": "memories",
+      "duration": 7.05,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/012.jpg",
+          "x": 760,
+          "y": 110,
+          "width": 820,
+          "height": 840,
+          "fit": "cover",
+          "focusX": 0.377,
+          "focusY": 0.599,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/012.jpg",
+            "brightness": -0.0631,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "frame": {
+            "radius": 28,
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "THANK YOU FOR\nCELEBRATING\nWITH US!",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 110,
+          "y": 300,
+          "width": 520,
+          "height": 260,
+          "size": 60,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Thank you for being part of our story",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 110,
+          "y": 600,
+          "width": 430,
+          "height": 90,
+          "size": 26,
+          "color": "#634C31",
+          "align": "left",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.9
+      }
+    },
+    {
+      "id": "s10b_intimate_reveal_2",
+      "editorialBeat": "celebration",
+      "signature": true,
+      "duration": 8.23,
+      "effect": "mask_reveal",
+      "image": "projects/the-20-best/input/029.jpg",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "captions": [],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "technicalColor": {
+        "brightness": 0.0071,
+        "saturation": 1,
+        "redBalance": 0,
+        "blueBalance": 0
+      }
+    },
+    {
+      "id": "s02_welcome_title_2",
+      "editorialBeat": "celebration",
+      "duration": 8.79,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#FBF6ED",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/064.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.511,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/064.jpg",
+            "brightness": 0,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.06,
+          "easing": "gentle",
+          "animation": "slide_right",
+          "start": 0.15
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "s20_closing",
+      "editorialBeat": "closing",
+      "duration": 8.5,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/the-20-best/input/082.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.6,
+          "focusY": 0.323,
+          "technicalColor": {
+            "file": "projects/the-20-best/input/082.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": 0,
+            "blueBalance": 0,
+            "confidence": 0.3,
+            "reason": "album-relative exposure and color-cast correction"
+          }
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#000000",
+          "opacity": 0.42
+        },
+        {
+          "type": "text",
+          "text": "Thanh & Quốc",
+          "font": "fonts/GreatVibes-Regular.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Thank you for celebrating with us · 15.07.2026",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ],
+  "recipeDecisions": {
+    "recipeId": "white-weddings-full-01",
+    "pacingVariant": "editorial",
+    "theme": "white_weddings",
+    "heroPhoto": "projects/the-20-best/input/082.jpg",
+    "endingPhoto": "projects/the-20-best/input/082.jpg",
+    "storyArc": [
+      {
+        "sceneId": "s01_save_the_date",
+        "beat": "save_the_date"
+      },
+      {
+        "sceneId": "s02_welcome_title",
+        "beat": "establish"
+      },
+      {
+        "sceneId": "s03_getting_married",
+        "beat": "establish"
+      },
+      {
+        "sceneId": "s04_about_bride",
+        "beat": "couple"
+      },
+      {
+        "sceneId": "s05_about_groom",
+        "beat": "couple"
+      },
+      {
+        "sceneId": "s06_our_journey",
+        "beat": "details"
+      },
+      {
+        "sceneId": "s08_love_is_in_the_air",
+        "beat": "story"
+      },
+      {
+        "sceneId": "s10_future_together",
+        "beat": "story"
+      },
+      {
+        "sceneId": "s10b_intimate_reveal",
+        "beat": "memories"
+      },
+      {
+        "sceneId": "s10_future_together_2",
+        "beat": "memories"
+      },
+      {
+        "sceneId": "s10b_intimate_reveal_2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s02_welcome_title_2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s20_closing",
+        "beat": "closing"
+      }
+    ],
+    "phraseSnaps": 3,
+    "musicEdit": {
+      "mode": "highlight",
+      "sourceDuration": 203.13,
+      "start": 113.648,
+      "end": 203.13,
+      "duration": 89.482,
+      "reason": "photo_budget",
+      "fullSongRequiredPhotos": 29,
+      "selection": {
+        "score": 0.417,
+        "cadenceDrop": 0.097,
+        "sectionBoundaryDrift": 0.03
+      }
+    },
+    "transitionGrammar": {
+      "vocabulary": [
+        "dissolve",
+        "crossfade",
+        "fade_slow",
+        "none"
+      ],
+      "decisions": [
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "final",
+          "resolvedRole": "final",
+          "type": "none",
+          "reason": "role"
+        }
+      ]
+    },
+    "motionPlan": [
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/082.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.6,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/062.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.472,
+          "y": 0.525
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/068.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.536,
+          "y": 0.502
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s01_save_the_date",
+        "file": "projects/the-20-best/input/057.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.492,
+          "y": 0.577
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s02_welcome_title",
+        "file": "projects/the-20-best/input/078.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.504,
+          "y": 0.501
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s03_getting_married",
+        "file": "projects/the-20-best/input/037.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.504,
+          "y": 0.499
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s04_about_bride",
+        "file": "projects/the-20-best/input/086.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.49,
+          "y": 0.432
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s05_about_groom",
+        "file": "projects/the-20-best/input/077.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.48,
+          "y": 0.628
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push; repeated direction reset"
+      },
+      {
+        "sceneId": "s06_our_journey",
+        "file": "projects/the-20-best/input/010.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.495,
+          "y": 0.547
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push; repeated direction reset"
+      },
+      {
+        "sceneId": "s06_our_journey",
+        "file": "projects/the-20-best/input/061.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.674,
+          "y": 0.472
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s08_love_is_in_the_air",
+        "file": "projects/the-20-best/input/030.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.574,
+          "y": 0.477
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s08_love_is_in_the_air",
+        "file": "projects/the-20-best/input/034.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.517,
+          "y": 0.517
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s10_future_together",
+        "file": "projects/the-20-best/input/039.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.462,
+          "y": 0.575
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s10_future_together_2",
+        "file": "projects/the-20-best/input/012.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.377,
+          "y": 0.599
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s02_welcome_title_2",
+        "file": "projects/the-20-best/input/064.jpg",
+        "motion": "zoom_in",
+        "strength": 0.06,
+        "target": {
+          "x": 0.577,
+          "y": 0.511
+        },
+        "easing": "gentle",
+        "reason": "detail/context image gets a slow push"
+      },
+      {
+        "sceneId": "s20_closing",
+        "file": "projects/the-20-best/input/082.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.6,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "closing holds still"
+      }
+    ],
+    "colorNormalization": "projects/the-20-best/analysis/tier1_color.json",
+    "fit": {
+      "targetDuration": 89.48,
+      "actualDuration": 85.86,
+      "coverage": 0.9595,
+      "scale": 1.111,
+      "boundBy": "music",
+      "totalPhotos": 23,
+      "reservedPhotos": 1,
+      "unusedPhotos": 6,
+      "phraseSnaps": 3
+    }
+  },
+  "photoAssignment": {
+    "strategy": "global_hard_slots_first",
+    "customerLocks": {
+      "mustUsePhotos": [],
+      "excludePhotos": [],
+      "openingPhoto": "projects/the-20-best/input/082.jpg",
+      "endingPhoto": "projects/the-20-best/input/082.jpg"
+    },
+    "slots": {
+      "s03_getting_married:bg": [
+        "projects/the-20-best/input/037.jpg"
+      ],
+      "s06_our_journey:wide": [
+        "projects/the-20-best/input/010.jpg"
+      ],
+      "s08_love_is_in_the_air:left": [
+        "projects/the-20-best/input/030.jpg"
+      ],
+      "s10b_intimate_reveal:hero": [
+        "projects/the-20-best/input/033.jpg"
+      ],
+      "s10b_intimate_reveal_2:hero": [
+        "projects/the-20-best/input/029.jpg"
+      ],
+      "s02_welcome_title:hero": [
+        "projects/the-20-best/input/078.jpg"
+      ],
+      "s04_about_bride:hero": [
+        "projects/the-20-best/input/086.jpg"
+      ],
+      "s05_about_groom:hero": [
+        "projects/the-20-best/input/077.jpg"
+      ],
+      "s10_future_together:feature": [
+        "projects/the-20-best/input/039.jpg"
+      ],
+      "s10_future_together_2:feature": [
+        "projects/the-20-best/input/012.jpg"
+      ],
+      "s02_welcome_title_2:hero": [
+        "projects/the-20-best/input/064.jpg"
+      ],
+      "s08_love_is_in_the_air:right": [
+        "projects/the-20-best/input/034.jpg"
+      ],
+      "s01_save_the_date:p1": [
+        "projects/the-20-best/input/062.jpg"
+      ],
+      "s01_save_the_date:p2": [
+        "projects/the-20-best/input/068.jpg"
+      ],
+      "s01_save_the_date:p3": [
+        "projects/the-20-best/input/057.jpg"
+      ],
+      "s06_our_journey:accent": [
+        "projects/the-20-best/input/061.jpg"
+      ]
+    },
+    "diversityReport": "projects/the-20-best/analysis/tier1_diversity.json"
+  }
+}

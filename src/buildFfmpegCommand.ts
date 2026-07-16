@@ -32,6 +32,10 @@ const IMPLEMENTED_EFFECTS: ReadonlySet<EffectPreset> = new Set([
   "kenburns_bl",
   "kenburns_br",
   "portrait_blur_background",
+  "portrait_reflection",
+  "floating_card_gallery",
+  "moving_background_echo",
+  "panel_flip",
   "polaroid",
   "circle_focus",
   "memory_wall",
@@ -634,6 +638,18 @@ function buildFramingFilter(step: RenderSlideStep): string {
     case "portrait_blur_background":
       return portraitBlurFilter(w, h, fps);
 
+    case "portrait_reflection":
+      return portraitReflectionFilter(w, h, fps);
+
+    case "floating_card_gallery":
+      return floatingCardGalleryFilter(step);
+
+    case "moving_background_echo":
+      return movingBackgroundEchoFilter(step);
+
+    case "panel_flip":
+      return panelFlipFilter(step);
+
     case "polaroid":
       return polaroidFilter(w, h, fps, duration);
 
@@ -849,6 +865,109 @@ function portraitBlurFilter(w: number, h: number, fps: number): string {
       `crop=${w}:${h},gblur=sigma=${BG_BLUR_SIGMA},setsar=1[bgb]`,
     `[fg]scale=${w}:${h}:force_original_aspect_ratio=decrease,setsar=1[fgf]`,
     `[bgb][fgf]overlay=(W-w)/2:(H-h)/2,fps=${fps},format=yuv420p`,
+  ].join(";");
+}
+
+// Bright studio card with a soft floor reflection. Both the portrait and its
+// reflection use contain-fit geometry, so faces and dresses are never cropped.
+// The background is derived from the photo itself; no stock studio asset is required.
+function portraitReflectionFilter(w: number, h: number, fps: number): string {
+  const cardW = Math.round(w * 0.62);
+  const cardH = Math.round(h * 0.68);
+  const reflectionH = Math.round(cardH * 0.28);
+  const photoY = Math.round(h * 0.06);
+  const reflectionY = photoY + cardH + Math.round(h * 0.012);
+
+  return [
+    "split=3[pr_bg][pr_photo_src][pr_ref_src]",
+    `[pr_bg]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+      "gblur=sigma=32,eq=brightness=0.22:contrast=0.72:saturation=0.42[pr_bg_soft]",
+    `[pr_photo_src]scale=${cardW}:${cardH}:force_original_aspect_ratio=decrease,` +
+      `pad=${cardW}:${cardH}:(ow-iw)/2:(oh-ih)/2:color=white,setsar=1[pr_photo]`,
+    `[pr_ref_src]scale=${cardW}:${cardH}:force_original_aspect_ratio=decrease,` +
+      `pad=${cardW}:${cardH}:(ow-iw)/2:(oh-ih)/2:color=white,vflip,` +
+      `crop=${cardW}:${reflectionH}:0:0,gblur=sigma=2,format=rgba,` +
+      "colorchannelmixer=aa=0.18[pr_reflection]",
+    `[pr_bg_soft][pr_photo]overlay=(W-w)/2:${photoY}[pr_with_photo]`,
+    `[pr_with_photo][pr_reflection]overlay=(W-w)/2:${reflectionY},` +
+      `fps=${fps},format=yuv420p`,
+  ].join(";");
+}
+
+// One photograph becomes three physical cards at different apparent depths.
+// Small counter-moving drifts create parallax without requiring a 3D renderer.
+function floatingCardGalleryFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps, duration } = step;
+  const backW = Math.round(w * 0.28);
+  const backH = Math.round(h * 0.58);
+  const heroW = Math.round(w * 0.39);
+  const heroH = Math.round(h * 0.76);
+  const p = `min(t/${duration.toFixed(4)},1)`;
+  const ease = `(${p}*${p}*(3-2*${p}))`;
+
+  return [
+    "split=4[fc_bg][fc_left_src][fc_hero_src][fc_right_src]",
+    `[fc_bg]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+      "gblur=sigma=36,eq=brightness=0.19:contrast=0.74:saturation=0.5[fc_canvas]",
+    `[fc_left_src]scale=${backW}:${backH}:force_original_aspect_ratio=decrease,` +
+      `pad=${backW}:${backH}:(ow-iw)/2:(oh-ih)/2:color=white,` +
+      "rotate=-0.045:fillcolor=none:ow=rotw(-0.045):oh=roth(-0.045),format=rgba,colorchannelmixer=aa=0.58[fc_left]",
+    `[fc_right_src]scale=${backW}:${backH}:force_original_aspect_ratio=decrease,` +
+      `pad=${backW}:${backH}:(ow-iw)/2:(oh-ih)/2:color=white,` +
+      "rotate=0.045:fillcolor=none:ow=rotw(0.045):oh=roth(0.045),format=rgba,colorchannelmixer=aa=0.58[fc_right]",
+    `[fc_hero_src]scale=${heroW}:${heroH}:force_original_aspect_ratio=decrease,` +
+      `pad=${heroW}:${heroH}:(ow-iw)/2:(oh-ih)/2:color=white,format=rgba[fc_hero]`,
+    `[fc_canvas][fc_left]overlay=x='${Math.round(w * 0.08)}+28*${ease}':y='${Math.round(h * 0.22)}-10*${ease}'[fc_l]`,
+    `[fc_l][fc_right]overlay=x='W-w-${Math.round(w * 0.08)}-28*${ease}':y='${Math.round(h * 0.2)}+12*${ease}'[fc_lr]`,
+    `[fc_lr][fc_hero]overlay=x='(W-w)/2':y='${Math.round(h * 0.1)}-14*${ease}',fps=${fps},format=yuv420p`,
+  ].join(";");
+}
+
+// The center photograph stays sharp while two enlarged, blurred echoes move
+// behind it in opposite directions. This matches the common studio-slideshow
+// depth cue without needing extra background assets.
+function movingBackgroundEchoFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps, duration } = step;
+  const echoW = Math.round(w * 0.58);
+  const echoH = Math.round(h * 0.9);
+  const heroW = Math.round(w * 0.38);
+  const heroH = Math.round(h * 0.78);
+  const p = `min(t/${duration.toFixed(4)},1)`;
+  const ease = `(${p}*${p}*(3-2*${p}))`;
+
+  return [
+    "split=4[me_bg][me_left_src][me_right_src][me_hero_src]",
+    `[me_bg]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+      "gblur=sigma=42,eq=brightness=0.24:contrast=0.66:saturation=0.35[me_canvas]",
+    `[me_left_src]scale=${echoW}:${echoH}:force_original_aspect_ratio=increase,crop=${echoW}:${echoH},` +
+      "gblur=sigma=18,format=rgba,colorchannelmixer=aa=0.22[me_left]",
+    `[me_right_src]scale=${echoW}:${echoH}:force_original_aspect_ratio=increase,crop=${echoW}:${echoH},` +
+      "gblur=sigma=18,format=rgba,colorchannelmixer=aa=0.22[me_right]",
+    `[me_hero_src]scale=${heroW}:${heroH}:force_original_aspect_ratio=decrease,` +
+      `pad=${heroW}:${heroH}:(ow-iw)/2:(oh-ih)/2:color=white,format=rgba[me_hero]`,
+    `[me_canvas][me_left]overlay=x='-${Math.round(echoW * 0.42)}+42*${ease}':y='(H-h)/2'[me_l]`,
+    `[me_l][me_right]overlay=x='W-w+${Math.round(echoW * 0.42)}-42*${ease}':y='(H-h)/2'[me_lr]`,
+    `[me_lr][me_hero]overlay=x='(W-w)/2':y='(H-h)/2',fps=${fps},format=yuv420p`,
+  ].join(";");
+}
+
+// A 2D album-panel flip: horizontal foreshortening closes the card to a thin
+// edge at mid-scene, then opens it again. The blurred canvas prevents a black
+// gap while the panel is edge-on.
+function panelFlipFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps, duration } = step;
+  const cardW = Math.round(w * 0.68);
+  const cardH = Math.round(h * 0.82);
+  const phase = `(PI*t/${duration.toFixed(4)})`;
+
+  return [
+    "split[pf_bg][pf_panel_src]",
+    `[pf_bg]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+      "gblur=sigma=34,eq=brightness=0.16:contrast=0.78:saturation=0.55[pf_canvas]",
+    `[pf_panel_src]scale=${cardW}:${cardH}:force_original_aspect_ratio=decrease,` +
+      `pad=${cardW}:${cardH}:(ow-iw)/2:(oh-ih)/2:color=white,` +
+      `scale=w='max(8,iw*abs(cos(${phase})))':h=ih:eval=frame,format=rgba[pf_panel]`,
+    `[pf_canvas][pf_panel]overlay=x='(W-w)/2':y='(H-h)/2',fps=${fps},format=yuv420p`,
   ].join(";");
 }
 

@@ -77,6 +77,7 @@ function collectImageRefs(timeline: Timeline): string[] {
   for (const slide of timeline.slides) {
     if (slide.image) refs.push(slide.image);
     for (const image of slide.images ?? []) refs.push(image);
+    for (const asset of slide.assets ?? []) refs.push(asset);
     for (const layer of slide.layers ?? []) {
       if (layer.type === "image") refs.push(layer.path);
     }

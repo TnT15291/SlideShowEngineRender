@@ -17,6 +17,7 @@ import { compareRegression, hammingHex } from "../scripts/lib/regressionFrames.m
 import { aggregateFeedback, anonymousProjectId } from "../scripts/lib/feedbackLedger.mjs";
 import { revisionInvalidation, invalidateApproval } from "../scripts/lib/revisionInvalidation.mjs";
 import { evaluateTier1Quality } from "../scripts/lib/tier1QualityGate.mjs";
+import { solveRecipeShotList } from "../scripts/lib/recipeShotList.mjs";
 import { createRequire } from "node:module";
 const { fingerprintFiles, validateFingerprint } = createRequire(import.meta.url)("../scripts/lib/approvalFingerprint.cjs");
 const { currentSelection, validateApprovedSelection } = createRequire(import.meta.url)("../scripts/lib/previewApproval.cjs");
@@ -379,4 +380,106 @@ test("story arc is explicit and scene boundaries snap to phrases", () => {
   ], { phrases: [{ time: 5 }] });
   assert.equal(result.slides[0].duration, 5.4);
   assert.equal(result.snapped, 1);
+});
+
+// The library geometry IS the template tier's product; a slot that crosses the 5% title-safe
+// margin makes qaProxy's tier-1 gate flag every recipe that uses it (it fired on 7 of 8 until
+// the slots were pulled in). This locks the geometry the frame-hash regression suite cannot see.
+test("every library text slot sits inside the 5% title-safe margin", () => {
+  const lib = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
+  const W = 1920, H = 1080, mx = W * 0.05, my = H * 0.05;
+  const offenders = [];
+  for (const layout of lib.layouts) for (const t of layout.textSlots || []) {
+    if (t.x < mx || t.y < my || t.x + t.width > W - mx || t.y + t.height > H - my) offenders.push(`${layout.id}.${t.id}`);
+  }
+  assert.deepEqual(offenders, [], `text slots cross the title-safe margin: ${offenders.join(", ")}`);
+});
+
+// recipeShotList repeats body scenes to spend the photo budget; a repeat with no authored
+// variant goes MUTE. Driving the real solver on the photo-poor job that first exposed this,
+// a scene that recurs must show its authored variant copy (>1 distinct line), never fall
+// silent after the first use, and never repeat the same line. Strip the variants and s04_quote
+// shows copy exactly once — this fails.
+test("a repeated story scene consumes its authored variants instead of falling silent", () => {
+  const recipe = JSON.parse(fs.readFileSync("story-templates/korean-soft-01.json", "utf8"));
+  const photoDemandOf = (s) => (s.photoSlots || []).reduce((n, p) => n + (p.count || 1), 0);
+  const { scenes } = solveRecipeShotList({ recipe, photoCount: 23, musicDuration: 203, durationOf: () => 5, photoDemandOf, bodyPhotoBudget: 19 });
+  const spokenCopy = (id) => scenes.filter((s) => s.id === id || s.id.startsWith(`${id}_`))
+    .map((s) => (s.text ? Object.values(s.text) : []).filter((v) => typeof v === "string" && v.trim()).join(" | "))
+    .filter(Boolean);
+  for (const id of ["s04_quote", "s05_story"]) { // both recur many times on this job
+    const copy = spokenCopy(id);
+    assert.ok(copy.length >= 2, `${id} repeats but speaks only once — its variants were not consumed`);
+    assert.equal(new Set(copy).size, copy.length, `${id} shows the same line twice: ${copy.join(" / ")}`);
+  }
+});
+
+// The regression this guards: the 4 recipes added in the eight-template commit shipped WITHOUT
+// variants, so their story scenes fell silent on repeat. Each named narrative scene must offer
+// at least one variant that actually carries copy (an all-empty variants list is the same bug).
+test("the recipes added after the original four declare copy variants on their story scenes", () => {
+  const required = {
+    "classic-luxury-01": ["s03_ceremony", "s05_family"],
+    "garden-botanical-01": ["s02_garden", "s04_family"],
+    "korean-soft-01": ["s03_pair", "s04_quote", "s05_story"],
+    "playful-scrapbook-01": ["s02_start", "s04_pair", "s06_roll"],
+  };
+  for (const [id, sceneIds] of Object.entries(required)) {
+    const recipe = JSON.parse(fs.readFileSync(`story-templates/${id}.json`, "utf8"));
+    for (const sceneId of sceneIds) {
+      const scene = recipe.scenes.find((s) => s.id === sceneId);
+      assert.ok(scene, `${id}: scene ${sceneId} is missing`);
+      const variants = scene.repeatable?.variants || [];
+      const hasCopy = variants.some((v) => (v.text && Object.values(v.text).some((x) => String(x).trim())) || String(v.captionPattern || "").trim());
+      assert.ok(hasCopy, `${id}: ${sceneId} declares no copy variant — its repeats will be silent`);
+    }
+  }
+});
+
+// A cold-open recipe puts the couple's names on the slide AFTER a text-less opening photo, so
+// the names first appear at index 1, not 0. The closing card echoes them — a deliberate
+// bookend, not a copy defect. The old exception only excused an echo of slide 0.
+test("caption integrity treats a title-to-closing name echo as an intentional bookend after a cold open", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-bookend-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const photos = path.join(dir, "photos.json");
+  fs.writeFileSync(photos, JSON.stringify({ photos: [] }));
+  const textSlide = (id, text) => ({ id, duration: 5, effect: "layer_scene", transition: { type: "none", duration: 0 }, captions: [],
+    layers: text
+      ? [{ type: "text", text, x: 300, y: 300, width: 800, height: 200, size: 60 }]
+      : [{ type: "image", path: "x.jpg", x: 0, y: 0, width: 1920, height: 1080, fit: "cover" }] });
+  const runProxy = (slides) => {
+    const tl = path.join(dir, "tl.json"), out = path.join(dir, "qa.json");
+    fs.writeFileSync(tl, JSON.stringify({ project: { width: 1920, height: 1080, fps: 30, quality: "draft" },
+      output: { path: path.join(dir, "missing.mp4") }, slides }));
+    const r = spawnSync(process.execPath, ["scripts/qaProxy.mjs", tl, "--photos", photos, "--out", out], { cwd: root, encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    return JSON.parse(fs.readFileSync(out, "utf8"));
+  };
+  const echo = runProxy([textSlide("cold_open", null), textSlide("title", "An & Binh"), textSlide("body", "A quiet start"), textSlide("closing", "An & Binh")]);
+  assert.ok(!echo.problems.some((p) => p.check === "caption_integrity"), "opening title echoed on the closing card must not be a duplicate");
+  const midFilm = runProxy([textSlide("cold_open", null), textSlide("title", "An & Binh"), textSlide("body", "An & Binh"), textSlide("closing", "The End")]);
+  assert.ok(midFilm.problems.some((p) => p.check === "caption_integrity" && p.flags.includes("duplicate_caption")), "a genuine mid-film repeat must still flag");
+});
+
+// --strict is a gate in EVERY mode. qaLoop's --skip-render path used to exit 0 unconditionally,
+// so a pre-flight-only strict run silently passed a timeline it should have blocked.
+test("qaLoop --skip-render honours --strict on an unresolved manual-review finding", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-skiprender-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const analysisDir = path.join(dir, "analysis");
+  fs.mkdirSync(analysisDir, { recursive: true });
+  fs.writeFileSync(path.join(analysisDir, "photos.json"), JSON.stringify({ photos: [] }));
+  const timeline = path.join(dir, "timeline.json");
+  // A text layer shoved into the bleed → text_safe_area, a manual-review finding with no fix.
+  fs.writeFileSync(timeline, JSON.stringify({ project: { width: 1920, height: 1080, fps: 30, quality: "draft" },
+    output: { path: path.join(dir, "missing.mp4") }, slides: [
+      { id: "a", duration: 5, effect: "layer_scene", transition: { type: "none", duration: 0 }, captions: [],
+        layers: [{ type: "text", text: "Off the edge", x: -40, y: 300, width: 800, height: 200, size: 60 }] },
+      { id: "closing", duration: 4, effect: "layer_scene", transition: { type: "none", duration: 0 }, captions: [], layers: [] },
+    ] }));
+  const runLoop = (extra) => spawnSync(process.execPath, ["scripts/qaLoop.mjs", "--timeline", timeline,
+    "--analysis-dir", analysisDir, "--tier", "template", "--skip-render", ...extra], { cwd: root, encoding: "utf8" });
+  assert.equal(runLoop([]).status, 0, "without --strict the finding is delivered with flags, not failed");
+  assert.equal(runLoop(["--strict"]).status, 1, "with --strict an open manual-review finding must fail the gate");
 });
