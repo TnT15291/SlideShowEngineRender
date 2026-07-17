@@ -35,11 +35,23 @@
 // round to a COPY, diffs it, names what would be lost, and writes NOTHING — no ledger,
 // no timeline, no manifest. It is the only mode here that cannot change the film.
 //
+// --undo <round> TAKES A ROUND BACK. Not by applying an inverse — there is no such thing
+// here, because the operations do not commute — but by withdrawing the round from the
+// ledger and letting the film be re-derived from what is left. Two things make that
+// honest rather than a coin flip: rebuilds are now repeatable (lib/textCache.mjs), and
+// supersession is re-derived rather than trusted (recomputeSupersession), because
+// appendRound only ever sets it and undo has to walk back through that one-way door.
+//
+// An undo never uses the timeline patch path, however narrow it looks: that patch is
+// destructive in place (applyToTimeline DELETED the caption), so dropping the directive
+// cannot bring the words back. Only the storyboard still has them. Floor: `build`.
+//
 // Exit: 0 applied (or previewed) · 4 needs --confirm-restory · 5 revision budget spent · 1 error.
 //
 // Usage:
 //   node scripts/reviseProject.mjs --project <dir> --request "đoạn bạn bè dùng lật trang phim"
 //   node scripts/reviseProject.mjs --project <dir> --request "..." --preview   # show, change nothing
+//   node scripts/reviseProject.mjs --project <dir> --undo 2 [--preview]        # take round 2 back
 //   node scripts/reviseProject.mjs --project <dir> --request-file reply.txt [--run]
 //   ... [--confirm-restory] [--max-rounds 2] [--force] [--storyboard <path>]
 import fs from "node:fs";
@@ -48,7 +60,7 @@ import { spawnSync } from "node:child_process";
 import { hasKey, callDeepSeekJSON } from "./lib/deepseek.mjs";
 import { ruleHits, recallNet } from "./lib/briefRules.mjs";
 import {
-  validateDirective, loadLedger, saveLedger, appendRound, active,
+  validateDirective, loadLedger, saveLedger, appendRound, active, undoRound,
   blastRadius, widestRadius, applyToTimeline,
   EFFECTS, TRANSITIONS, CURVES, OVERLAYS, PACING, ACTS, ROLES,
 } from "./lib/directives.mjs";
@@ -70,7 +82,20 @@ const preview = has("--preview");
 if (preview && doRun) die("--preview and --run are opposites: one shows, the other builds");
 
 const request = (arg("--request", "") || (requestFile ? fs.readFileSync(path.resolve(root, requestFile), "utf8") : "")).trim();
-if (!request) die(`nothing to do: pass --request "<what to change>" or --request-file <file>`);
+
+// --undo <round>: take a round back. Not "apply the inverse" — these operations do not
+// commute, so an inverse is a fiction. It withdraws the round from the ledger and lets
+// the film be re-derived from what is left, which is only honest because a rebuild is
+// now repeatable (lib/textCache.mjs). Before that, undo would have landed the customer
+// somewhere new rather than somewhere they had been.
+const undoArg = arg("--undo", "");
+const undoTarget = undoArg ? Number(undoArg) : null;
+if (undoArg && !Number.isInteger(undoTarget)) die(`--undo takes a round NUMBER, got ${JSON.stringify(undoArg)}`);
+if (undoTarget !== null && request) die("--undo and --request are different operations — run them one at a time");
+if (undoTarget === null && !request) {
+  die(`nothing to do: pass --request "<what to change>", --request-file <file>, or --undo <round>`);
+}
+const undoing = undoTarget !== null;
 
 const ledgerPath = project.rel("directives.json");
 const timelinePath = project.rel(project.manifest.timeline);
@@ -87,6 +112,8 @@ process.env.TEXT_CACHE_DIR = project.abs(project.manifest.analysisDir);
 
 // ---------------------------------------------------------------------------
 // 1. Compile the request. A revision is PURE IMPERATIVE — there is no story half.
+//    Skipped entirely when undoing: an undo names a round, not a wish, so there is
+//    nothing to compile and no reason to spend a model call finding that out.
 // ---------------------------------------------------------------------------
 function buildSystem() {
   return [
@@ -121,20 +148,22 @@ function buildSystem() {
   ].join("\n");
 }
 
-let raw;
-if (hasKey()) {
-  raw = await callDeepSeekJSON({
-    system: buildSystem(),
-    user: `Their message:\n\n${request}\n\nCompile it now.`,
-    temperature: 0.1, // extraction, not invention
-    label: "reviseProject",
-    // The same sentence must compile to the same round on --preview and on apply, so a
-    // second run is a cache hit BY DESIGN. Say which one happened; announcing a call
-    // that never went out is the small lie that makes the big ones believable.
-    onCall: (real) => console.log(real ? "  DeepSeek revision-compile call..." : "  revision-compile: cached (same request as before — same answer, no call)"),
-  });
-} else {
-  raw = ruleHits(request); // no key: the rules ARE the compiler, and their misses are the honest report
+let raw = { directives: [], unmapped: [] };
+if (!undoing) {
+  if (hasKey()) {
+    raw = await callDeepSeekJSON({
+      system: buildSystem(),
+      user: `Their message:\n\n${request}\n\nCompile it now.`,
+      temperature: 0.1, // extraction, not invention
+      label: "reviseProject",
+      // The same sentence must compile to the same round on --preview and on apply, so a
+      // second run is a cache hit BY DESIGN. Say which one happened; announcing a call
+      // that never went out is the small lie that makes the big ones believable.
+      onCall: (real) => console.log(real ? "  DeepSeek revision-compile call..." : "  revision-compile: cached (same request as before — same answer, no call)"),
+    });
+  } else {
+    raw = ruleHits(request); // no key: the rules ARE the compiler, and their misses are the honest report
+  }
 }
 
 const incoming = [];
@@ -153,10 +182,10 @@ for (const u of Array.isArray(raw.unmapped) ? raw.unmapped : []) {
 // one place with no net under the model. Caught live: "Dùng hiệu ứng lật trang phim"
 // compiled to transition=smooth_left while the rule for lật trang -> film_roll_up sat
 // unused. An instruction the model skips is an instruction that vanishes silently.
-const missed = hasKey() ? recallNet(request, incoming, "revision-rule") : [];
+const missed = hasKey() && !undoing ? recallNet(request, incoming, "revision-rule") : [];
 incoming.push(...missed);
 
-if (!incoming.length) {
+if (!undoing && !incoming.length) {
   console.error(`[reviseProject] nothing in that message maps to something this engine can change.`);
   for (const u of unmapped) console.error(`  ✗ ${JSON.stringify(u.quote)} — ${u.reason}`);
   console.error(`\n  Nothing was changed. Ask them to be more specific, or say plainly that we cannot do it.`);
@@ -164,15 +193,69 @@ if (!incoming.length) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. The gates: revision budget, and the one radius that can change the film.
+// 2. Build the new ledger, then gate it.
 // ---------------------------------------------------------------------------
 const ledger = loadLedger(ledgerPath);
 const round = Math.max(0, ...ledger.directives.map((d) => d.round ?? 0)) + 1;
 
+let next;
+let affected;      // the directives whose presence changed — what the radius is measured on
+let undone = [];
+let restored = [];
+if (undoing) {
+  const result = undoRound(ledger, undoTarget, round);
+  if (!result.undone.length) {
+    // Undo is one-way by design, so "nothing to undo" has three quite different causes and
+    // one unhelpful sentence. Say which one it is: a person staring at "nothing to undo"
+    // for a round they can see in the file will go looking for a bug that is not there.
+    const withdrew = ledger.directives.filter((d) => d.undoneBy === undoTarget);
+    const already = ledger.directives.filter((d) => (d.round ?? 0) === undoTarget && d.undoneBy);
+    const rounds = [...new Set(ledger.directives.map((d) => d.round ?? 0))].sort((a, b) => a - b);
+
+    if (withdrew.length) {
+      die(
+        `round ${undoTarget} is itself an UNDO (it withdrew ${withdrew.length} instruction(s) from round ${withdrew[0].round}).\n` +
+          `  There is no redo: an undo round holds marks, not orders, so there is nothing to take back.\n` +
+          `  To reinstate what it withdrew, ask for it again — e.g. --request ${JSON.stringify(withdrew[0].quote)}`
+      );
+    }
+    if (already.length) {
+      die(`round ${undoTarget} was already undone (by round ${already[0].undoneBy}). Nothing to do.`);
+    }
+    die(
+      `round ${undoTarget} has no instructions to undo.\n` +
+        `  Rounds in this ledger: ${rounds.join(", ") || "(none)"}. Round 0 is the original prompt, not a revision.`
+    );
+  }
+  next = result.ledger;
+  undone = result.undone;
+  restored = result.restored;
+  // BOTH directions move the film: withdrawing "use polaroid" also reinstates whatever it
+  // had replaced. Measuring the radius on the departures alone would under-rebuild.
+  affected = [...undone, ...restored];
+} else {
+  next = appendRound(ledger, incoming, round);
+  next.unmapped = [...(ledger.unmapped || []), ...unmapped.map((u) => ({ ...u, round }))];
+  affected = incoming;
+}
+
+// UNDO NEVER TAKES THE TIMELINE PATH. A `timeline` radius means "patch the finished
+// timeline in place and re-render" — and that patch is not reversible: applyToTimeline
+// DELETED the caption, so dropping the directive cannot bring it back. The words only
+// exist in the storyboard, so an undo must rebuild from there. Floor it at `build`.
+const RADIUS_RANK = ["timeline", "build", "plan"];
+const wider = (a, b) => (RADIUS_RANK.indexOf(a) >= RADIUS_RANK.indexOf(b) ? a : b);
+const radius = undoing ? wider("build", widestRadius(affected)) : widestRadius(affected);
+
 // A preview reports the gates rather than dying on them: its whole job is to say what
 // WOULD happen, and "you have no rounds left" is part of that answer, not a reason to
 // withhold it. It changes nothing either way, so there is nothing to protect it from.
-if (round > maxRounds && !force) {
+//
+// AN UNDO IS NEVER BUDGETED. The cap exists so a job ships, not to trap a customer inside
+// a change they regret — "you have used all your revisions, so you must keep the montage
+// that ate your vows" is not a deal anyone would sign. Applies still consume rounds, so
+// the cap still binds the thing it was built to bind.
+if (round > maxRounds && !force && !undoing) {
   const msg =
     `revision budget spent: this would be round ${round}, and the job allows ${maxRounds}.\n` +
     `  Rounds are capped for the same reason QA's repair loop is: an unbounded revise loop is how a job\n` +
@@ -184,9 +267,8 @@ if (round > maxRounds && !force) {
   console.log(`[reviseProject] NOTE — ${msg}`);
 }
 
-const radius = widestRadius(incoming);
 if (radius === "plan" && !confirmRestory && !preview) {
-  const restory = incoming.filter((d) => blastRadius(d) === "plan");
+  const restory = affected.filter((d) => blastRadius(d) === "plan");
   console.error(
     `[reviseProject] this is not a revision — it is a re-telling.\n\n` +
       restory.map((d) => `    ${JSON.stringify(d.quote)}`).join("\n") +
@@ -199,28 +281,43 @@ if (radius === "plan" && !confirmRestory && !preview) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. Append. Never overwrite: the ledger is the only thing that stops round 2
-//    from silently undoing round 1.
+// 3. Record it. Append-only in both directions: the ledger is the only thing that
+//    stops round 2 from silently undoing round 1 — and an undo is marked, not
+//    deleted, so the receipt can still say "you asked for X, then took it back".
 // ---------------------------------------------------------------------------
-const next = appendRound(ledger, incoming, round);
-next.unmapped = [...(ledger.unmapped || []), ...unmapped.map((u) => ({ ...u, round }))];
 if (!preview) saveLedger(ledgerPath, next);
 
-const superseded = next.directives.filter((d) => d.supersededBy === round);
+const where = (d) =>
+  d.scope.act ? `act ${d.scope.act}` : d.scope.scene ? `scene ${d.scope.scene}` : d.scope.role ? `${d.scope.role} shots` : "the whole film";
 
-console.log(`\n[reviseProject] round ${round}: ${incoming.length} change(s), blast radius = ${radius}`);
-for (const d of incoming) {
-  const where = d.scope.act ? `act ${d.scope.act}` : d.scope.scene ? `scene ${d.scope.scene}` : d.scope.role ? `${d.scope.role} shots` : "the whole film";
-  console.log(`  • ${d.kind}/${d.op} ${JSON.stringify(d.target)} @ ${where}  [${blastRadius(d)}]`);
-  console.log(`      ${JSON.stringify(d.quote)}`);
-}
-for (const u of unmapped) console.log(`  ✗ CANNOT DO: ${JSON.stringify(u.quote)} — ${u.reason}`);
-if (missed.length) {
-  console.log(`  (recall net caught ${missed.length} the model walked past: ${missed.map((d) => `${d.kind}/${d.target}`).join(", ")})`);
-}
-if (superseded.length) {
-  console.log(`\n  ${superseded.length} earlier instruction(s) replaced by this round (kept in the ledger, marked superseded):`);
-  for (const d of superseded) console.log(`      was: ${d.kind}/${d.op} ${JSON.stringify(d.target)} — ${JSON.stringify(d.quote)}`);
+if (undoing) {
+  console.log(`\n[reviseProject] round ${round}: UNDO round ${undoTarget} — ${undone.length} instruction(s) withdrawn, blast radius = ${radius}`);
+  for (const d of undone) {
+    console.log(`  ↩ withdrawn: ${d.kind}/${d.op} ${JSON.stringify(d.target)} @ ${where(d)}`);
+    console.log(`      they had said: ${JSON.stringify(d.quote)}`);
+  }
+  // The half a customer never expects. Taking back "use polaroid" does not return the
+  // film to no-instruction — it returns whatever polaroid had replaced, which may be an
+  // order from three rounds ago that everyone has forgotten.
+  if (restored.length) {
+    console.log(`\n  ${restored.length} earlier instruction(s) come BACK into force as a result:`);
+    for (const d of restored) console.log(`      again: ${d.kind}/${d.op} ${JSON.stringify(d.target)} @ ${where(d)} — ${JSON.stringify(d.quote)}`);
+  }
+} else {
+  const superseded = next.directives.filter((d) => d.supersededBy === round);
+  console.log(`\n[reviseProject] round ${round}: ${incoming.length} change(s), blast radius = ${radius}`);
+  for (const d of incoming) {
+    console.log(`  • ${d.kind}/${d.op} ${JSON.stringify(d.target)} @ ${where(d)}  [${blastRadius(d)}]`);
+    console.log(`      ${JSON.stringify(d.quote)}`);
+  }
+  for (const u of unmapped) console.log(`  ✗ CANNOT DO: ${JSON.stringify(u.quote)} — ${u.reason}`);
+  if (missed.length) {
+    console.log(`  (recall net caught ${missed.length} the model walked past: ${missed.map((d) => `${d.kind}/${d.target}`).join(", ")})`);
+  }
+  if (superseded.length) {
+    console.log(`\n  ${superseded.length} earlier instruction(s) replaced by this round (kept in the ledger, marked superseded):`);
+    for (const d of superseded) console.log(`      was: ${d.kind}/${d.op} ${JSON.stringify(d.target)} — ${JSON.stringify(d.quote)}`);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -291,13 +388,17 @@ if (preview) {
 
   const lines = formatDiff(diff);
   if (!lines.length) {
-    // Directives that compile, validate, and then change nothing. The customer would have
-    // watched the same cut come back and concluded we ignored them — the failure this
-    // whole layer exists to kill, arriving through the front door.
+    // Nothing changes. Both ways of arriving here are worth saying out loud, and they are
+    // NOT the same sentence — telling someone their undo was ignored, when in fact a later
+    // round already overrode it, sends them hunting for a bug that is not there.
     console.log(
-      `  NOTHING WOULD CHANGE in ${sbPath}.\n` +
-        `  Their words compiled into valid directives, but the film they describe is the film\n` +
-        `  that already exists. Say that to them plainly — do not re-render and call it a revision.`
+      undoing
+        ? `  NOTHING WOULD CHANGE in ${sbPath}.\n` +
+            `  Round ${undoTarget} is already overridden by a later round, so withdrawing it changes\n` +
+            `  nothing that is in force. To go back further, undo the round that replaced it.`
+        : `  NOTHING WOULD CHANGE in ${sbPath}.\n` +
+            `  Their words compiled into valid directives, but the film they describe is the film\n` +
+            `  that already exists. Say that to them plainly — do not re-render and call it a revision.`
     );
     process.exit(0);
   }
@@ -340,7 +441,9 @@ function invalidateFrom(phase) {
   return hit;
 }
 
-const invalidation = revisionInvalidation(incoming, radius);
+// `affected`, not `incoming`: an undo's re-approval trigger lives in the directives that
+// LEFT and the ones that came back, and `incoming` is empty on that path.
+const invalidation = revisionInvalidation(affected, radius);
 let reenter;
 if (radius === "timeline") {
   // The cheap path: patch the finished timeline and re-render it. The storyboard, the
