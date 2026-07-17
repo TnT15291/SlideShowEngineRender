@@ -91,6 +91,15 @@ if (suppliedDirection && tier !== "template") throw new Error("--direction appli
 if (suppliedDirection && !fs.existsSync(path.resolve(root, suppliedDirection))) throw new Error(`direction not found: ${suppliedDirection}`);
 const tier1Direction = suppliedDirection || `${analysisDir}/tier1_direction.json`;
 const contentSample = `${analysisDir}/photo_content.sample.json`;
+
+// Every text node this run spawns memoises its answers HERE, in this job's own analysis
+// dir (see lib/textCache.mjs). Set once: spawnSync inherits process.env, so the three
+// spawn sites below need no argument and no node needs a flag.
+//
+// This is what makes re-deriving the film from the directive ledger repeatable — and a
+// revision loop whose rebuild is a coin flip cannot honour an undo. Absolute, because a
+// node run by hand from another cwd must still find its own project and not invent one.
+process.env.TEXT_CACHE_DIR = project.abs(project.manifest.analysisDir);
 // The directive ledger sits with the customer's OWN files (prompt.txt, brief.json),
 // not in analysis/: it is not something we derived about them, it is what they said —
 // plus everything they have said since seeing a preview (see reviseProject.mjs).

@@ -25,7 +25,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON } from "./lib/deepseek.mjs";
-import { extractDirectives } from "./lib/briefRules.mjs";
+import { ruleHits, recallNet } from "./lib/briefRules.mjs";
 import {
   validateDirective, loadLedger, saveLedger, blastRadius, stampIds,
   EFFECTS, TRANSITIONS, CURVES, OVERLAYS, PACING, ACTS, ROLES,
@@ -94,24 +94,21 @@ function buildSystem() {
 
 // --- run -------------------------------------------------------------------
 // The rules always run: as the STUB when there is no key, and as a recall net under
-// the model when there is. Their `__unmapped` rows are instruction-shaped sentences
-// no rule understood — kept apart from the directives they failed to become.
-const ruleHits = extractDirectives(prompt);
-const ruleDirectives = ruleHits.filter((d) => !d.__unmapped);
-const ruleUnmapped = ruleHits.filter((d) => d.__unmapped).map(({ quote, reason }) => ({ quote, reason }));
-
+// the model when there is (see recallNet in briefRules.mjs). Their `__unmapped` rows are
+// instruction-shaped sentences no rule understood — kept apart from the directives they
+// failed to become.
 let raw;
 if (hasKey()) {
-  process.stdout.write("  DeepSeek brief-compile call... ");
   raw = await callDeepSeekJSON({
     system: buildSystem(),
     user: `The customer's brief:\n\n${prompt}\n\nSeparate it now.`,
     temperature: 0.1, // extraction, not invention
+    label: "parseBrief",
+    onCall: (real) => console.log(real ? "  DeepSeek brief-compile call..." : "  brief-compile: cached (unchanged prompt — same ledger, no call)"),
   });
-  console.log("ok");
 } else {
   // In STUB mode the rules ARE the compiler, so their misses are the honest report.
-  raw = { story: prompt, directives: ruleDirectives, unmapped: ruleUnmapped };
+  raw = { story: prompt, ...ruleHits(prompt) };
 }
 
 // --- guardrail: clamp onto the engine, and REPORT what would not clamp ------
@@ -127,23 +124,10 @@ for (const u of Array.isArray(raw.unmapped) ? raw.unmapped : []) {
 }
 
 // --- the recall net: what did the model walk past? --------------------------
-// Merged on (kind, scope) — not on the exact target — because the failure we are
-// catching is "the model never noticed the customer mentioned transitions at all".
-// If it DID notice and chose a different target, that is a judgement call, and the
-// model saw more context than a regex did, so we leave its answer alone.
-const covered = new Set(directives.map((d) => `${d.kind}:${JSON.stringify(d.scope)}`));
-const missed = [];
-if (hasKey()) {
-  ruleDirectives.forEach((d, i) => {
-    const key = `${d.kind}:${JSON.stringify(d.scope)}`;
-    if (covered.has(key)) return;
-    const r = validateDirective({ ...d, round: 0, source: "prompt-rule" }, directives.length + i);
-    if (!r.ok) return;
-    covered.add(key);
-    directives.push(r.directive);
-    missed.push(r.directive);
-  });
-}
+// Shared with reviseProject, which is where most of the customer's direction actually
+// arrives — and which, until this was extracted, had no net at all.
+const missed = hasKey() ? recallNet(prompt, directives, "prompt-rule") : [];
+directives.push(...missed);
 
 const ledger = loadLedger(outPath);
 const kept = (ledger.directives || []).filter((d) => (d.round ?? 0) > 0); // revision rounds survive

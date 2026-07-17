@@ -15,6 +15,15 @@
 // compliance report shows the customer what we thought they asked for, and a wrong
 // row is a visible, fixable wrong row), while under-extracting is the invisible
 // failure. Every hit quotes the clause that produced it — see rule 1 in directives.mjs.
+//
+// Job 2 is `recallNet()` at the bottom of this file. It used to be inlined in
+// parseBrief only, and reviseProject — the node where most of the customer's direction
+// actually arrives — computed its rule hits and then dropped them on the floor whenever
+// a key was present. Caught live: "Dùng hiệu ứng lật trang phim" compiled to
+// transition=smooth_left, and the rule that says lật trang -> film_roll_up was sitting
+// right there, already evaluated, unused. One copy now, so a net that exists is a net
+// that is actually under both nodes.
+import { validateDirective } from "./directives.mjs";
 
 /** A Unicode-safe word boundary. JavaScript's \b is ASCII-only, so /\bấm\b/ does not
  *  match "ấm" AT ALL — the rule looks right, fires never, and the customer's request
@@ -195,4 +204,39 @@ export function extractDirectives(prompt) {
     }
   }
   return out;
+}
+
+/** Split rule hits into the directives they became and the orders none of them understood. */
+export function ruleHits(text) {
+  const hits = extractDirectives(text);
+  return {
+    directives: hits.filter((d) => !d.__unmapped),
+    unmapped: hits.filter((d) => d.__unmapped).map(({ quote, reason }) => ({ quote, reason })),
+  };
+}
+
+/** THE RECALL NET: rule hits the model walked past, validated and ready to merge.
+ *
+ *  Merged on (kind, scope) — NOT on the exact target — because the failure being caught
+ *  is "the model never noticed the customer mentioned transitions at all". If it DID
+ *  notice and picked a different target, that is a judgement call, and the model read
+ *  more context than a regex can, so its answer stands.
+ *
+ *  @param {string} text      what the customer wrote
+ *  @param {Array}  already   the validated directives the model produced
+ *  @param {string} source    provenance stamp for anything this adds
+ *  @returns {Array} validated directives to append (possibly empty)
+ */
+export function recallNet(text, already, source) {
+  const covered = new Set(already.map((d) => `${d.kind}:${JSON.stringify(d.scope)}`));
+  const missed = [];
+  ruleHits(text).directives.forEach((d, i) => {
+    const key = `${d.kind}:${JSON.stringify(d.scope)}`;
+    if (covered.has(key)) return;
+    const r = validateDirective({ ...d, source }, already.length + i);
+    if (!r.ok) return;
+    covered.add(key); // a rule firing twice on one clause is still one instruction
+    missed.push(r.directive);
+  });
+  return missed;
 }

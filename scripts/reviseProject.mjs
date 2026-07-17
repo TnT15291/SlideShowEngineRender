@@ -28,17 +28,25 @@
 // fresh model call that quietly forgets the last one, which is the classic way these
 // tools hand you back a fixed scene 12 and a broken scene 4.
 //
-// Exit: 0 applied · 4 needs --confirm-restory · 5 revision budget spent · 1 error.
+// --preview ANSWERS THE OTHER HALF. Printing the compiled directives looks like a
+// preview but only restates the REQUEST; the CONSEQUENCE is elsewhere, and it bites:
+// a single-image retarget deletes a scene's layout and text, and a montage splices its
+// neighbours out of existence. Both are correct. Both were silent. --preview applies the
+// round to a COPY, diffs it, names what would be lost, and writes NOTHING — no ledger,
+// no timeline, no manifest. It is the only mode here that cannot change the film.
+//
+// Exit: 0 applied (or previewed) · 4 needs --confirm-restory · 5 revision budget spent · 1 error.
 //
 // Usage:
 //   node scripts/reviseProject.mjs --project <dir> --request "đoạn bạn bè dùng lật trang phim"
+//   node scripts/reviseProject.mjs --project <dir> --request "..." --preview   # show, change nothing
 //   node scripts/reviseProject.mjs --project <dir> --request-file reply.txt [--run]
-//   ... [--confirm-restory] [--max-rounds 2] [--force]
+//   ... [--confirm-restory] [--max-rounds 2] [--force] [--storyboard <path>]
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { hasKey, callDeepSeekJSON } from "./lib/deepseek.mjs";
-import { extractDirectives } from "./lib/briefRules.mjs";
+import { ruleHits, recallNet } from "./lib/briefRules.mjs";
 import {
   validateDirective, loadLedger, saveLedger, appendRound, active,
   blastRadius, widestRadius, applyToTimeline,
@@ -46,6 +54,7 @@ import {
 } from "./lib/directives.mjs";
 import { arg, loadProject, root } from "./lib/project.mjs";
 import { revisionInvalidation, invalidateApproval } from "./lib/revisionInvalidation.mjs";
+import { previewChange, formatDiff, photoDemandFrom } from "./lib/revisionDiff.mjs";
 
 const has = (flag) => process.argv.includes(flag);
 const die = (msg) => { console.error(`[reviseProject] FAILED: ${msg}`); process.exit(1); };
@@ -57,6 +66,8 @@ const maxRounds = Number(arg("--max-rounds", "2"));
 const confirmRestory = has("--confirm-restory");
 const force = has("--force");
 const doRun = has("--run");
+const preview = has("--preview");
+if (preview && doRun) die("--preview and --run are opposites: one shows, the other builds");
 
 const request = (arg("--request", "") || (requestFile ? fs.readFileSync(path.resolve(root, requestFile), "utf8") : "")).trim();
 if (!request) die(`nothing to do: pass --request "<what to change>" or --request-file <file>`);
@@ -64,6 +75,15 @@ if (!request) die(`nothing to do: pass --request "<what to change>" or --request
 const ledgerPath = project.rel("directives.json");
 const timelinePath = project.rel(project.manifest.timeline);
 const manifestPath = project.abs(`${project.manifest.analysisDir}/job-manifest.json`);
+
+// Memoise this project's text calls (lib/textCache.mjs). runProject sets this for the
+// nodes it spawns; this node is run BY HAND, so it must set its own or it gets none.
+//
+// Without it --preview is worthless. The compile runs at temperature 0.1, not 0: the
+// same sentence really does land differently across runs (observed: "lật trang phim" ->
+// smooth_left one call, squeeze_h the next). So the customer would approve one diff and
+// apply another. A preview that does not bind the thing it previewed is just a rumour.
+process.env.TEXT_CACHE_DIR = project.abs(project.manifest.analysisDir);
 
 // ---------------------------------------------------------------------------
 // 1. Compile the request. A revision is PURE IMPERATIVE — there is no story half.
@@ -101,17 +121,20 @@ function buildSystem() {
   ].join("\n");
 }
 
-const ruleHits = extractDirectives(request);
 let raw;
 if (hasKey()) {
-  process.stdout.write("  DeepSeek revision-compile call... ");
-  raw = await callDeepSeekJSON({ system: buildSystem(), user: `Their message:\n\n${request}\n\nCompile it now.`, temperature: 0.1 });
-  console.log("ok");
+  raw = await callDeepSeekJSON({
+    system: buildSystem(),
+    user: `Their message:\n\n${request}\n\nCompile it now.`,
+    temperature: 0.1, // extraction, not invention
+    label: "reviseProject",
+    // The same sentence must compile to the same round on --preview and on apply, so a
+    // second run is a cache hit BY DESIGN. Say which one happened; announcing a call
+    // that never went out is the small lie that makes the big ones believable.
+    onCall: (real) => console.log(real ? "  DeepSeek revision-compile call..." : "  revision-compile: cached (same request as before — same answer, no call)"),
+  });
 } else {
-  raw = {
-    directives: ruleHits.filter((d) => !d.__unmapped),
-    unmapped: ruleHits.filter((d) => d.__unmapped).map(({ quote, reason }) => ({ quote, reason })),
-  };
+  raw = ruleHits(request); // no key: the rules ARE the compiler, and their misses are the honest report
 }
 
 const incoming = [];
@@ -124,6 +147,14 @@ const unmapped = [];
 for (const u of Array.isArray(raw.unmapped) ? raw.unmapped : []) {
   if (u?.quote) unmapped.push({ quote: String(u.quote).slice(0, 300), reason: String(u.reason || "the engine has no way to do this").slice(0, 240) });
 }
+
+// The recall net. This node used to compute its rule hits and then discard them whenever
+// a key was present — so the one place the customer does most of their directing was the
+// one place with no net under the model. Caught live: "Dùng hiệu ứng lật trang phim"
+// compiled to transition=smooth_left while the rule for lật trang -> film_roll_up sat
+// unused. An instruction the model skips is an instruction that vanishes silently.
+const missed = hasKey() ? recallNet(request, incoming, "revision-rule") : [];
+incoming.push(...missed);
 
 if (!incoming.length) {
   console.error(`[reviseProject] nothing in that message maps to something this engine can change.`);
@@ -138,17 +169,23 @@ if (!incoming.length) {
 const ledger = loadLedger(ledgerPath);
 const round = Math.max(0, ...ledger.directives.map((d) => d.round ?? 0)) + 1;
 
+// A preview reports the gates rather than dying on them: its whole job is to say what
+// WOULD happen, and "you have no rounds left" is part of that answer, not a reason to
+// withhold it. It changes nothing either way, so there is nothing to protect it from.
 if (round > maxRounds && !force) {
-  console.error(
-    `[reviseProject] revision budget spent: this would be round ${round}, and the job allows ${maxRounds}.\n` +
-      `  Rounds are capped for the same reason QA's repair loop is: an unbounded revise loop is how a job\n` +
-      `  never ships. Pass --force to grant another round, or --max-rounds N to change the deal.`
-  );
-  process.exit(5);
+  const msg =
+    `revision budget spent: this would be round ${round}, and the job allows ${maxRounds}.\n` +
+    `  Rounds are capped for the same reason QA's repair loop is: an unbounded revise loop is how a job\n` +
+    `  never ships. Pass --force to grant another round, or --max-rounds N to change the deal.`;
+  if (!preview) {
+    console.error(`[reviseProject] ${msg}`);
+    process.exit(5);
+  }
+  console.log(`[reviseProject] NOTE — ${msg}`);
 }
 
 const radius = widestRadius(incoming);
-if (radius === "plan" && !confirmRestory) {
+if (radius === "plan" && !confirmRestory && !preview) {
   const restory = incoming.filter((d) => blastRadius(d) === "plan");
   console.error(
     `[reviseProject] this is not a revision — it is a re-telling.\n\n` +
@@ -167,7 +204,7 @@ if (radius === "plan" && !confirmRestory) {
 // ---------------------------------------------------------------------------
 const next = appendRound(ledger, incoming, round);
 next.unmapped = [...(ledger.unmapped || []), ...unmapped.map((u) => ({ ...u, round }))];
-saveLedger(ledgerPath, next);
+if (!preview) saveLedger(ledgerPath, next);
 
 const superseded = next.directives.filter((d) => d.supersededBy === round);
 
@@ -178,9 +215,106 @@ for (const d of incoming) {
   console.log(`      ${JSON.stringify(d.quote)}`);
 }
 for (const u of unmapped) console.log(`  ✗ CANNOT DO: ${JSON.stringify(u.quote)} — ${u.reason}`);
+if (missed.length) {
+  console.log(`  (recall net caught ${missed.length} the model walked past: ${missed.map((d) => `${d.kind}/${d.target}`).join(", ")})`);
+}
 if (superseded.length) {
   console.log(`\n  ${superseded.length} earlier instruction(s) replaced by this round (kept in the ledger, marked superseded):`);
   for (const d of superseded) console.log(`      was: ${d.kind}/${d.op} ${JSON.stringify(d.target)} — ${JSON.stringify(d.quote)}`);
+}
+
+// ---------------------------------------------------------------------------
+// 3b. --preview: what this round would DO. Nothing has been written to reach here.
+// ---------------------------------------------------------------------------
+/** The storyboard a rebuild would start from: a composed one (premium) or the recipe
+ *  (template). Resolved the same way runProject resolves it, and NEVER guessed — a
+ *  preview of the wrong recipe is a confident lie, which is worse than "I don't know". */
+function resolveStoryboard() {
+  const explicit = arg("--storyboard", "");
+  if (explicit) return explicit;
+  const composed = project.rel(`${project.manifest.analysisDir}/storyboard.json`);
+  if (fs.existsSync(path.resolve(root, composed))) return composed;
+  if (project.manifest.recipe) return project.manifest.recipe;
+  const choice = project.abs(`${project.manifest.analysisDir}/recipe_choice.json`);
+  if (fs.existsSync(choice)) {
+    try {
+      const picked = JSON.parse(fs.readFileSync(choice, "utf8")).recipe;
+      if (picked) return picked;
+    } catch { /* a corrupt choice is a missing choice */ }
+  }
+  return "";
+}
+
+function readJson(p, fallback = null) {
+  const abs = path.resolve(root, p);
+  if (!fs.existsSync(abs)) return fallback;
+  try { return JSON.parse(fs.readFileSync(abs, "utf8")); } catch { return fallback; }
+}
+
+if (preview) {
+  console.log(`\n[reviseProject] PREVIEW — nothing was written. What this round would do:\n`);
+
+  if (radius === "plan") {
+    // Honest refusal. A plan-radius change re-runs the story nodes; the storyboard this
+    // would diff against does not exist yet, and inventing a diff for a film that will be
+    // re-pitched from scratch would be the exact "confident lie" this mode exists to stop.
+    console.log(
+      `  This is a RE-TELLING, not a revision — it cannot be previewed as a diff.\n` +
+        `  It re-runs the story nodes and returns a different film: different acts, different\n` +
+        `  words, possibly different photos. Apply it with --confirm-restory when they know that.`
+    );
+    process.exit(0);
+  }
+
+  const sbPath = resolveStoryboard();
+  const storyboard = sbPath ? readJson(sbPath) : null;
+  if (!storyboard?.scenes) {
+    console.log(
+      `  Cannot preview: no storyboard to diff against` +
+        (sbPath ? ` (${sbPath} is missing or has no scenes).` : `. Pass --storyboard <path>, or set "recipe" in project.json.`) +
+        `\n  The directives above are what would be applied; their consequences are not knowable without it.`
+    );
+    process.exit(0);
+  }
+
+  const photosDoc = readJson(project.manifest.selectedPhotos || `${project.manifest.analysisDir}/photos.selected.json`)
+    || readJson(project.rel(`${project.manifest.analysisDir}/photos.json`), { photos: [] });
+  const library = readJson("layouts/library.json", { layouts: [] });
+
+  const diff = previewChange({
+    storyboard,
+    before: active(ledger),
+    after: active(next),
+    availablePhotos: photosDoc?.photos?.length ?? Infinity,
+    photoDemand: photoDemandFrom(library),
+  });
+
+  const lines = formatDiff(diff);
+  if (!lines.length) {
+    // Directives that compile, validate, and then change nothing. The customer would have
+    // watched the same cut come back and concluded we ignored them — the failure this
+    // whole layer exists to kill, arriving through the front door.
+    console.log(
+      `  NOTHING WOULD CHANGE in ${sbPath}.\n` +
+        `  Their words compiled into valid directives, but the film they describe is the film\n` +
+        `  that already exists. Say that to them plainly — do not re-render and call it a revision.`
+    );
+    process.exit(0);
+  }
+
+  console.log(`  storyboard: ${sbPath}`);
+  console.log(`  rebuild at: ${radius}\n`);
+  for (const l of lines) console.log(l);
+
+  if (diff.destructive) {
+    console.log(
+      `\n  ⚠ THIS DESTROYS WORK. Scenes and words listed above go away — the montage absorbs\n` +
+        `    its neighbours, and a retargeted scene drops the layout and the text it carried.\n` +
+        `    Show the customer this list before you apply it, not after they watch the cut.`
+    );
+  }
+  console.log(`\n  To apply: re-run without --preview.`);
+  process.exit(0);
 }
 
 // ---------------------------------------------------------------------------

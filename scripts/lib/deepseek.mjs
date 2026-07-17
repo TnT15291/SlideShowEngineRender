@@ -34,6 +34,7 @@
 //   (default https://api.deepseek.com).
 
 import { isRetryableStatus, MAX_ATTEMPTS, RETRY_BASE_MS, sleep } from "./retryPolicy.mjs";
+import * as textCache from "./textCache.mjs";
 
 export const apiKey = process.env.DEEPSEEK_API_KEY || "";
 export const baseUrl = (process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com").replace(/\/+$/, "");
@@ -56,14 +57,35 @@ export function provenance(model = defaultModel) {
  * linear backoff; a 4xx client error (bad key, bad request) throws immediately.
  *
  * @param {object}   opts
+ * Memoised when the orchestrator set TEXT_CACHE_DIR: an identical request returns the
+ * identical object without a call. This is a CORRECTNESS feature before it is a cheap
+ * one — re-deriving the film from the directive ledger is what makes undo mean anything,
+ * and at temperature > 0 an un-memoised node re-answers differently every rebuild. See
+ * lib/textCache.mjs. Pass `--no-cache` (or TEXT_CACHE=off) for a deliberate re-roll.
+ *
+ * @param {object}   opts
  * @param {string}   opts.system       System prompt (rubric + whitelist + JSON instruction).
  * @param {string}   opts.user         User prompt (the concrete task + data).
  * @param {string}  [opts.model]       Override DEEPSEEK_MODEL.
  * @param {number}  [opts.temperature] Default 0.4 (some creative range, still steerable).
+ * @param {string}  [opts.label]       Which node is asking — recorded in the cache file.
+ * @param {function}[opts.onCall]      Called with true when a real request is about to go
+ *                                     out, false on a cache hit. Callers that announce
+ *                                     "calling DeepSeek..." must use this or they will
+ *                                     announce a call that never happened.
  * @returns {Promise<object>} parsed top-level object
  */
-export async function callDeepSeekJSON({ system, user, model = defaultModel, temperature = 0.4 }) {
+export async function callDeepSeekJSON({ system, user, model = defaultModel, temperature = 0.4, label = "", onCall }) {
   if (!hasKey()) throw new Error("callDeepSeekJSON requires DEEPSEEK_API_KEY (use hasKey() to branch to a stub)");
+
+  const req = { model, temperature, system, user };
+  const remembered = textCache.read(req);
+  if (remembered) {
+    onCall?.(false);
+    return remembered;
+  }
+  onCall?.(true);
+
   const body = {
     model,
     messages: [
@@ -88,6 +110,7 @@ export async function callDeepSeekJSON({ system, user, model = defaultModel, tem
         const text = data?.choices?.[0]?.message?.content ?? "";
         const parsed = JSON.parse(text);
         if (!parsed || typeof parsed !== "object") throw new Error("DeepSeek returned a non-object JSON payload");
+        textCache.write(req, parsed, label); // only a success is a fact worth remembering
         return parsed;
       }
       const detail = (await resp.text()).slice(0, 300);
