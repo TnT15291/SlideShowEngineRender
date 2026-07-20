@@ -43,6 +43,8 @@ const selectionPath = arg("--selection", "analysis/selected_story.json");
 const musicPath = arg("--music", "");
 const assetsPath = arg("--assets", "analysis/assets_catalog.ai.json"); // shared engine assets, not per-job
 const outPath = arg("--out", "analysis/director_notes.json");
+const language = arg("--language", "vi");
+const languageName = language === "en" ? "English" : "Vietnamese";
 // Music ANALYSIS lives beside the job that produced it. Resolving it from a fixed
 // root path meant a project silently read another job's analysis whenever the two
 // tracks happened to share a filename — and it "worked", which is worse.
@@ -141,6 +143,7 @@ const assetIds = {
 // --- prompts ---------------------------------------------------------------
 function buildSystem() {
   return [
+    `Write every viewer-visible string in ${languageName} only. Keep engine enum values unchanged.`,
     "You are the director of a wedding film. You are given ONE chosen story direction and must turn it into (1) a creative brief and (2) concrete direction for a fixed render engine.",
     "You DECIDE FEELING AND WHICH TOOLS TO USE. You do NOT decide numbers: never output durations, timings, coordinates, cut points, file paths, or quality settings — other stages compute those.",
     "",
@@ -364,6 +367,7 @@ if (hasKey()) {
 }
 
 const out = {
+  language,
   generatedBy: provenance(model),
   ...(hasKey() ? { model: `deepseek/${model}` } : {}),
   generatedAt: new Date().toISOString(),

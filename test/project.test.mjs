@@ -82,6 +82,24 @@ test("loads a valid project manifest", (t) => {
   assert.equal(loadProject(f.rel).manifest.id, "test-project");
 });
 
+test("accepts only supported project languages", (t) => {
+  const valid = fixture({ language: "en" });
+  const invalid = fixture({ language: "fr" });
+  t.after(() => fs.rmSync(valid.dir, { recursive: true, force: true }));
+  t.after(() => fs.rmSync(invalid.dir, { recursive: true, force: true }));
+  assert.equal(loadProject(valid.rel).manifest.language, "en");
+  assert.throws(() => loadProject(invalid.rel), /language.*not in enum/);
+});
+
+test("accepts only explicit photo sequence modes", (t) => {
+  const valid = fixture({ sequenceMode: "chronological" });
+  const invalid = fixture({ sequenceMode: "filename" });
+  t.after(() => fs.rmSync(valid.dir, { recursive: true, force: true }));
+  t.after(() => fs.rmSync(invalid.dir, { recursive: true, force: true }));
+  assert.equal(loadProject(valid.rel).manifest.sequenceMode, "chronological");
+  assert.throws(() => loadProject(invalid.rel), /sequenceMode.*not in enum/);
+});
+
 test("rejects a manifest that violates the schema", (t) => {
   const f = fixture({ quality: "ultra" });
   t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));

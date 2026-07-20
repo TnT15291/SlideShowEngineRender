@@ -29,6 +29,8 @@ const arg = (flag, def) => {
 const contentPath = arg("--content", "analysis/photo_content.json");
 const directivesPath = arg("--directives", "");
 const outPath = arg("--out", "analysis/story_options.json");
+const language = arg("--language", "vi");
+const languageName = language === "en" ? "English" : "Vietnamese";
 
 // The customer's own words. This node ACCEPTED a brief for its whole life and the
 // orchestrator never passed one — so every premium film was pitched by a director who
@@ -79,6 +81,7 @@ const profile = buildProfile(photos);
 // --- prompts ---------------------------------------------------------------
 function buildSystem() {
   return [
+    `Write every viewer-visible string in ${languageName} only.`,
     "You are a wedding-film creative director. From a summary of what a couple's photo set contains, you propose FOUR clearly different ways to tell their story.",
     "Think ONLY about emotion, narrative and rhythm. Do NOT mention video effects, transitions, software, durations, or file names — another stage handles all of that.",
     "The four options must be genuinely distinct in feeling (e.g. elegant/minimal vs. warm/chronological vs. dreamy/soft vs. relationships-and-joy), not four rewordings of one idea.",
@@ -179,6 +182,7 @@ const pacingOrder = shapeOrders.find((d) => d.kind === "pacing" && d.strength ==
 if (pacingOrder) for (const o of options) o.pacing = pacingOrder.target;
 
 const out = {
+  language,
   generatedBy: provenance(model),
   ...(hasKey() ? { model: `deepseek/${model}` } : {}),
   generatedAt: new Date().toISOString(),

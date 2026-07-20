@@ -125,7 +125,7 @@ if (!files.length) { console.error(`[analyzePhotos] FAILED: no .jpg/.png found i
 
 const photos = [];
 const failures = [];
-for (const name of files) {
+for (const [uploadIndex, name] of files.entries()) {
   const abs = path.join(inputDir, name);
   const dims = probeDims(abs);
   const frame = rgbFrame(abs);
@@ -187,6 +187,7 @@ for (const name of files) {
   if (groupBox) { focusX = +(groupBox.x + groupBox.width / 2).toFixed(3); focusY = +(groupBox.y + groupBox.height / 2).toFixed(3); }
   photos.push({
     file: `${filePrefix.replace(/\\/g, "/").replace(/\/$/, "")}/${name}`,
+    uploadIndex,
     w, h, orient: w >= h ? "landscape" : "portrait",
     sharpness: +sharpness.toFixed(3), meanLuma: +meanLuma.toFixed(1),
     meanRgb: { r: +(rAcc / (N * N)).toFixed(1), g: +(gAcc / (N * N)).toFixed(1), b: +(bAcc / (N * N)).toFixed(1) },

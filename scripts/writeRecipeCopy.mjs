@@ -42,6 +42,8 @@ const promptPath = arg("--prompt", "");
 const contentPath = arg("--content", "analysis/photo_content.json");
 const musicPath = arg("--music", "");
 const outPath = arg("--out", "analysis/recipe_copy.json");
+const language = arg("--language", "vi");
+const languageName = language === "en" ? "English" : "Vietnamese";
 const MAX_CHARS = Number(arg("--max-chars", "120"));
 
 if (!recipePath) die("--recipe <story-templates/x.json> is required");
@@ -136,7 +138,7 @@ if (hasKey()) {
   const raw = await callDeepSeekJSON({
     temperature: 0.6,
     system:
-      `You write the on-screen words for a Vietnamese wedding slideshow. ` +
+      `You write the on-screen words for a wedding slideshow. Write every viewer-visible string in ${languageName} only. ` +
       `Return JSON: {"scenes": {"<sceneId>": {"<slotId>": "<text>"}}}. ` +
       `Use ONLY the sceneIds and slotIds given in "slots" — you may not add scenes or slots. ` +
       `Return text and nothing else: no file paths, no effects, no durations, no fonts, no numbers of seconds. ` +
@@ -171,8 +173,12 @@ if (hasKey()) {
 
 const totalSlots = Object.values(slots).reduce((n, ids) => n + ids.length, 0);
 const withheld = Object.values(factSlots).reduce((n, ids) => n + ids.length, 0);
+if (language === "en" && rewritten < totalSlots - withheld) {
+  die(`English output requires all writable recipe text slots to be rewritten (${rewritten}/${totalSlots - withheld}); refusing to mix Vietnamese recipe copy into the video`);
+}
 const doc = {
   version: 1,
+  language,
   generatedAt: new Date().toISOString(),
   generatedBy,
   recipeId: recipe.id,

@@ -16,7 +16,7 @@ const bucket = (n) => (n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "s
 
 /** A Lite project on disk: manifest + photos + (optional) story, music, prompt. The
  *  generators never stat the image files, so the photo records are enough — no pixels. */
-function fixture({ photos, story, music, prompt }) {
+function fixture({ photos, story, music, prompt, language }) {
   const dir = fs.mkdtempSync(path.join(root, "tmp-lite-tier-"));
   fs.mkdirSync(path.join(dir, "input"));
   fs.mkdirSync(path.join(dir, "music"));
@@ -28,6 +28,7 @@ function fixture({ photos, story, music, prompt }) {
   if (prompt != null) fs.writeFileSync(path.join(dir, "prompt.txt"), prompt);
   fs.writeFileSync(path.join(dir, "project.json"), JSON.stringify({
     version: 1, id: "lite-tier-test", name: "Lite tier test",
+    ...(language ? { language } : {}),
     ...(prompt != null ? { promptFile: "prompt.txt" } : {}),
     inputDir: "input", music: ["music/track.mp3"], analysisDir: "analysis",
     timeline: "timeline/timeline.json", output: "output/final.mp4", quality: "draft", tier: "lite",
@@ -244,4 +245,13 @@ test("no-key story pads a one-line prompt up to the three-beat floor", (t) => {
 
   assert.equal(story.beats.length, 3, "a single-sentence prompt must still be padded to three beats");
   assert.equal(story.generatedBy, "stub");
+});
+
+test("English projects generate English fallback headings and language metadata", (t) => {
+  const f = fixture({ photos: bodyPhotos, prompt: "A day to remember.", music: { duration: 60 }, language: "en" });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  generateStory(f.rel);
+  const story = readStory(f.dir);
+  assert.equal(story.language, "en");
+  assert.equal(story.beats[0].heading, "Opening");
 });

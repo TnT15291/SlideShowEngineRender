@@ -4,6 +4,8 @@ import { arg, loadProject } from "./lib/project.mjs";
 import { callDeepSeekJSON, hasKey, provenance, str, oneOf } from "./lib/deepseek.mjs";
 
 const project = loadProject(arg("--project"));
+const language = project.manifest.language || "vi";
+const languageName = language === "en" ? "English" : "Vietnamese";
 const read = (p) => JSON.parse(fs.readFileSync(project.abs(p), "utf8"));
 const promptRel = project.manifest.promptFile || "prompt.txt";
 const prompt = fs.readFileSync(project.abs(promptRel), "utf8").trim();
@@ -21,7 +23,9 @@ const sceneKinds = new Set(["single", "montage"]);
 
 function fallback() {
   const sentences = prompt.split(/(?<=[.!?])\s+|\r?\n+/).map((s) => s.trim()).filter(Boolean);
-  const headings = ["Mở đầu", "Gặp gỡ", "Bên nhau", "Hành trình", "Ngày chung đôi", "Lời cảm ơn"];
+  const headings = language === "en"
+    ? ["Opening", "First Meeting", "Together", "Our Journey", "The Wedding Day", "Thank You"]
+    : ["Mở đầu", "Gặp gỡ", "Bên nhau", "Hành trình", "Ngày chung đôi", "Lời cảm ơn"];
   const beats = sentences.slice(0, 8).map((body, i) => ({
     heading: headings[Math.min(i, headings.length - 1)], body,
     emotion: i === 0 ? "calm" : i === sentences.length - 1 ? "tender" : "warm",
@@ -39,8 +43,8 @@ if (hasKey()) {
   });
   raw = await callDeepSeekJSON({
     temperature: 0.45,
-    system: `You are a slideshow story editor. Return one JSON object with title, closing, and beats (3..10). Each beat has heading, body, emotion (calm|warm|build|peak|tender), sceneKind (single|montage), and optional preferredPhotos containing only exact file strings from the supplied photo menu. Do not output durations, paths outside the menu, effects, transitions, or pixel geometry. Shape the emotional arc to the music sections and the user's prompt.`,
-    user: JSON.stringify({ prompt, music: music ? { duration: music.duration, bpmEstimate: music.bpmEstimate, sections: music.sections, buildWindows: music.buildWindows } : null, photos: photoMenu }),
+    system: `You are a slideshow story editor. Return one JSON object with title, closing, and beats (3..10). Each beat has heading, body, emotion (calm|warm|build|peak|tender), sceneKind (single|montage), and optional preferredPhotos containing only exact file strings from the supplied photo menu. Do not output durations, paths outside the menu, effects, transitions, or pixel geometry. Shape the emotional arc to the music sections and the user's prompt. Write every viewer-visible string in ${languageName} only.`,
+    user: JSON.stringify({ language, prompt, music: music ? { duration: music.duration, bpmEstimate: music.bpmEstimate, sections: music.sections, buildWindows: music.buildWindows } : null, photos: photoMenu }),
   });
 }
 
@@ -57,6 +61,7 @@ if (beats.length < 3) beats.push(...fallback().beats.slice(beats.length, 3));
 
 const story = {
   version: 1,
+  language,
   generatedAt: new Date().toISOString(),
   generatedBy: provenance(),
   source: project.rel(promptRel),

@@ -3,7 +3,7 @@
 import { scoreForRole } from "./tier1Editorial.mjs";
 import { neighborRepetitionPenalty } from "./diversityPlanner.mjs";
 
-export function assignPhotos({ photos, requests, reserved = [] }) {
+export function assignPhotos({ photos, requests, reserved = [], sequenceMode = "editorial" }) {
   const used = new Set(reserved);
   const groupOf = (file) => photos.find((p) => p.file === file)?.duplicateGroup;
   const usedGroups = new Set(reserved.map(groupOf).filter(Boolean));
@@ -37,13 +37,15 @@ export function assignPhotos({ photos, requests, reserved = [] }) {
         (!p.duplicateGroup || !neighborGroups.has(p.duplicateGroup))
       );
       const candidates = (nonDuplicate.length ? nonDuplicate : available).sort((a, b) => {
+        if (sequenceMode === "chronological") return (a.uploadIndex ?? Infinity) - (b.uploadIndex ?? Infinity);
         const diversity = (p) => (previous?.duplicateGroup && p.duplicateGroup === previous.duplicateGroup) ||
           (p.duplicateGroup && neighborGroups.has(p.duplicateGroup)) ? -20 : 0;
         const dark = (p) => (p.meanLuma ?? 128) < 75 ? -5 : 0;
         const preferred = (p) => request.preferred === p.file ? 10000 : 0;
         const sequence = (p) => request.allowSequence ? 0 : neighborRepetitionPenalty(p, request, assignments, requestByKey, photos);
-        return (quality(b, request) + diversity(b) + sequence(b) + dark(b) + preferred(b)) -
+        const score = (quality(b, request) + diversity(b) + sequence(b) + dark(b) + preferred(b)) -
           (quality(a, request) + diversity(a) + sequence(a) + dark(a) + preferred(a));
+        return score || a.file.localeCompare(b.file, undefined, { numeric: true });
       });
       const chosen = candidates[0] || photos.find((p) => !used.has(p.file));
       if (!chosen) break;

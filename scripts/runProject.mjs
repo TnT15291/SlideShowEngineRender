@@ -94,6 +94,8 @@ if (suppliedDirection && tier !== "template") throw new Error("--direction appli
 if (suppliedDirection && !fs.existsSync(path.resolve(root, suppliedDirection))) throw new Error(`direction not found: ${suppliedDirection}`);
 const tier1Direction = suppliedDirection || `${analysisDir}/tier1_direction.json`;
 const contentSample = `${analysisDir}/photo_content.sample.json`;
+const language = project.manifest.language || "vi";
+const sequenceMode = project.manifest.sequenceMode || "editorial";
 
 // Every text node this run spawns memoises its answers HERE, in this job's own analysis
 // dir (see lib/textCache.mjs). Set once: spawnSync inherits process.env, so the three
@@ -391,6 +393,7 @@ try {
             "--content", contentSample,
             ...(musicAnalysis ? ["--music", musicAnalysis] : []),
             "--out", recipeCopy,
+            "--language", language,
           ], "node B: write recipe copy");
         } else {
           console.log(`[runProject] story: ${recipe} (recipe copy, no AI)`);
@@ -410,6 +413,7 @@ try {
           "--content", content,
           "--directives", directives,
           "--out", options,
+          "--language", language,
         ], "node 3: story options");
         selectStoryChoice();
         run([
@@ -420,6 +424,7 @@ try {
           "--analysis-dir", analysisDir,
           "--directives", directives,
           "--out", director,
+          "--language", language,
         ], "nodes 5+6: director notes");
         run([
           "scripts/generateStoryPlan.mjs",
@@ -427,6 +432,7 @@ try {
           "--content", content,
           "--directives", directives,
           "--out", plan,
+          "--language", language,
         ], "node 7: story plan");
       }
     });
@@ -459,6 +465,8 @@ try {
           "--prompt", promptFile,
           "--direction", tier1Direction,
           "--directives", directives,
+          "--language", language,
+          "--sequence-mode", sequenceMode,
           ...(project.manifest.musicMode ? ["--music-mode", project.manifest.musicMode] : []),
           ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
           ...(aiCopy ? ["--copy", recipeCopy] : []),

@@ -19,6 +19,8 @@
     "version": { "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
     "name": { "type": "string", "minLength": 1 },
+    "language": { "enum": ["vi", "en"] },
+    "sequenceMode": { "enum": ["editorial", "chronological"] },
     "createdAt": { "type": "string", "minLength": 1 },
     "promptFile": { "type": "string", "minLength": 1 },
     "inputDir": { "type": "string", "minLength": 1 },

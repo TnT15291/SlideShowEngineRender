@@ -353,6 +353,34 @@ test("global assignment reserves scarce orientations before flexible slots", () 
   assert.equal(plan.unfilled.length, 0);
 });
 
+test("chronological assignment follows uploadIndex instead of editorial quality", () => {
+  const photos = [
+    { file: "late-best.jpg", orient: "landscape", qualityNorm: 1, uploadIndex: 2 },
+    { file: "first.jpg", orient: "landscape", qualityNorm: 0.1, uploadIndex: 0 },
+    { file: "second.jpg", orient: "landscape", qualityNorm: 0.5, uploadIndex: 1 },
+  ];
+  const requests = [
+    { key: "scene-1", order: 0, count: 1, orient: "landscape" },
+    { key: "scene-2", order: 1, count: 1, orient: "landscape" },
+  ];
+  const editorial = assignPhotos({ photos, requests });
+  const chronological = assignPhotos({ photos, requests, sequenceMode: "chronological" });
+  assert.deepEqual([...editorial.assignments.values()].flat(), ["late-best.jpg", "second.jpg"]);
+  assert.deepEqual([...chronological.assignments.values()].flat(), ["first.jpg", "second.jpg"]);
+});
+
+test("editorial assignment is stable when upload order changes", () => {
+  const photos = [
+    { file: "02.jpg", orient: "landscape", qualityNorm: 0.8, uploadIndex: 0 },
+    { file: "01.jpg", orient: "landscape", qualityNorm: 0.8, uploadIndex: 1 },
+    { file: "03.jpg", orient: "landscape", qualityNorm: 0.5, uploadIndex: 2 },
+  ];
+  const requests = [{ key: "scene", order: 0, count: 2, orient: "landscape" }];
+  const assigned = (pool) => [...assignPhotos({ photos: pool, requests }).assignments.values()].flat();
+  assert.deepEqual(assigned(photos), ["01.jpg", "02.jpg"]);
+  assert.deepEqual(assigned([...photos].reverse()), ["01.jpg", "02.jpg"]);
+});
+
 test("global assignment keeps perceptual duplicates out of neighbouring scenes", () => {
   const photos = [
     { file: "duplicate-a.jpg", orient: "landscape", qualityNorm: 1, duplicateGroup: "same-photo" },

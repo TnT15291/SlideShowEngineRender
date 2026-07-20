@@ -31,6 +31,8 @@ const directivesPath = arg("--directives", "");
 const notesPath = arg("--notes", "analysis/director_notes.json");
 const contentPath = arg("--content", "analysis/photo_content.json");
 const outPath = arg("--out", "analysis/story_plan.json");
+const language = arg("--language", "vi");
+const languageName = language === "en" ? "English" : "Vietnamese";
 
 const SEGMENTS = ["opening", "love_story", "ceremony", "family_friends", "ending"];
 const PACING = new Set(["slow", "medium", "fast", "dynamic"]);
@@ -68,6 +70,7 @@ if (fs.existsSync(absContent)) {
 // --- prompts ---------------------------------------------------------------
 function buildSystem() {
   return [
+    `Write every viewer-visible string in ${languageName} only. Keep act and engine enum values unchanged.`,
     "You are structuring a wedding film into exactly five acts, in this order:",
     "opening, love_story, ceremony, family_friends, ending.",
     "For each act give: goal, emotion, pacing, emphasis, photoTags, priorityEffect, captionIdea.",
@@ -153,6 +156,7 @@ if (hasKey()) {
 const segments = validateSegments(raw);
 
 const out = {
+  language,
   generatedBy: provenance(model),
   ...(hasKey() ? { model: `deepseek/${model}` } : {}),
   generatedAt: new Date().toISOString(),

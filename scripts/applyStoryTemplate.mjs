@@ -56,6 +56,8 @@ const promptPath = arg("--prompt", "");
 const directivesPath = arg("--directives", "");
 const directionPath = arg("--direction", "");
 const musicModeArg = arg("--music-mode", "");
+const language = arg("--language", "vi");
+const sequenceMode = arg("--sequence-mode", "editorial");
 // The second track for "playlist" mode (nối sang bài khác). Absent → playlist degrades to
 // loop (the engine's own -stream_loop already repeats a single track to cover any video
 // length; see buildAudioMuxArgs), and we say so rather than fail.
@@ -850,7 +852,7 @@ const assignmentPhotos = photos.filter((photo) =>
   !photo.duplicateGroup || lockedForAssignment.has(photo.file) ||
   representativeByGroup.get(photo.duplicateGroup) === photo.file
 );
-const assignmentPlan = assignPhotos({ photos: assignmentPhotos, requests, reserved });
+const assignmentPlan = assignPhotos({ photos: assignmentPhotos, requests, reserved, sequenceMode });
 if (assignmentPlan.unfilled.length) {
   const demanded = requests.reduce((n, r) => n + r.count, 0);
   throw new Error(
@@ -924,6 +926,8 @@ if (colorOrder) {
 }
 
 const timeline = {
+  language,
+  sequenceMode,
   project: {
     name: projectName,
     ...template.defaults.project,
@@ -954,7 +958,7 @@ const timeline = {
     ...(capacityLimited ? { capacityLimited } : {}),
     ...(directionPath ? { source: directionPath.replace(/\\/g, "/") } : {}) },
   photoAssignment: {
-    strategy: "global_hard_slots_first",
+    strategy: sequenceMode === "chronological" ? "chronological" : "global_hard_slots_first",
     customerLocks: { mustUsePhotos: mustUse, excludePhotos: [...excluded], openingPhoto: heroPhoto.file, endingPhoto: endingPhoto.file },
     slots: Object.fromEntries(globalAssignments),
     diversityReport: diversityPath,
