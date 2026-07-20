@@ -31,6 +31,7 @@ const BASE = {
   text_safe_area: REVIEW,
   text_overflow: REPAIR,
   caption_integrity: REVIEW,
+  caption_language: BLOCK,
   closing_card: REVIEW,
   crop: REPAIR,
   duplicate_photo: REVIEW,

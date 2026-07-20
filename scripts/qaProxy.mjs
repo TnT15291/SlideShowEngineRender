@@ -31,6 +31,7 @@ import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pac
 import { createTextMeasurer } from "./lib/textMeasure.mjs";
 import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
+import { inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
 import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
   HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC } from "./lib/rules/thresholds.mjs";
 
@@ -91,6 +92,14 @@ const technicalByFile = new Map((technicalPhotos?.photos || []).map((p) => [p.fi
 const scenes = sceneTimes(tl.slides);
 const problems = [];
 const advisories = [];
+
+const visibleText = tl.slides.flatMap((slide) => [
+  ...(slide.captions || []).map((caption) => caption.text),
+  ...(slide.layers || []).filter((layer) => layer.type === "text").map((layer) => layer.text),
+]).filter(Boolean);
+const captionLanguage = inspectCaptionLanguage(visibleText, tl.language);
+if (captionLanguage.flagged) problems.push({ id: "project", check: "caption_language", flags: captionLanguage.flags,
+  detail: `viewer-visible text does not consistently match timeline language ${tl.language}` });
 
 const photoPaths = (slide) => [
   ...(slide.image ? [slide.image] : []),
@@ -533,7 +542,7 @@ const report = {
     music: musicJson ? musicJson.replace(/\\/g, "/") : null,
     photoContent: content ? { path: contentPath.replace(/\\/g, "/"), generatedBy: content.generatedBy } : null,
   },
-  checks: { pacing, hero, textOverflow, captionIntegrity, duplicates, crop, tier1Gate, blackFrames, audioDrift, musicEdit, bookend },
+  checks: { pacing, hero, textOverflow, captionIntegrity, captionLanguage, duplicates, crop, tier1Gate, blackFrames, audioDrift, musicEdit, bookend },
   advisories,
   problems,
   verdict,

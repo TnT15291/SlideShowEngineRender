@@ -37,6 +37,7 @@ export const RULES = {
   text_safe_area:    { scope: "timeline", repairs: [] },
   text_overflow:     { scope: "timeline", repairs: ["fit_text"] },
   caption_integrity: { scope: "timeline", repairs: [] }, // mojibake/tokens/dupes need a human or a re-generate
+  caption_language:  { scope: "timeline", repairs: [] },
   closing_card:      { scope: "timeline", repairs: [] },
 
   // -- asset ---------------------------------------------------------------------
