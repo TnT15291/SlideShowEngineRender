@@ -26,6 +26,7 @@ test("every recipe and pacing variant can budget the regression album", (t) => {
   const result = spawnSync(process.execPath, [
     "scripts/generateRegressionGallery.mjs", "--dry-run",
     "--out-dir", gallery,
+    ...(process.env.REGRESSION_PACING ? ["--pacing", process.env.REGRESSION_PACING] : []),
   ], { cwd: root, encoding: "utf8", maxBuffer: 1 << 26 });
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const report = JSON.parse(fs.readFileSync(path.join(gallery, "gallery.json"), "utf8"));

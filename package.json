@@ -37,6 +37,8 @@
     "test:unit": "node --test --test-timeout=30000 test/*.test.mjs",
     "test:integration": "node --test --test-concurrency=1 --test-timeout=180000 test/integration/*.test.mjs",
     "test:regression": "node --test --test-concurrency=1 --test-timeout=600000 test/regression/*.test.mjs",
+    "test:release": "node --test --test-concurrency=1 --test-timeout=180000 test/release/render-smoke.test.mjs",
+    "test:premium-provider": "node --test --test-concurrency=1 --test-timeout=120000 test/release/premium-provider-smoke.test.mjs",
     "test:project": "node --test test/project.test.mjs",
     "typecheck": "npm run typecheck:core && npm run typecheck:gpu && npm run typecheck:scripts",
     "typecheck:core": "tsc --noEmit",

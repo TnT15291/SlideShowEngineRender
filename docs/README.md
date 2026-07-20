@@ -72,3 +72,15 @@ npm run desktop
 ```
 
 FFmpeg được tìm theo thứ tự: env `FFMPEG_PATH` → `ffmpeg-static` (devDependency đã cài) → PATH.
+
+## Release gate
+
+- `npm run check` là gate bắt buộc cho mỗi push/PR.
+- `npm run test:release` render ba timeline nhỏ trên checkout sạch: single-image, native creative
+  và multi-image.
+- `npm run test:regression` chạy full regression gallery khi bộ media cục bộ có sẵn; scheduled
+  release chạy pacing `balanced` cho mọi recipe để giữ thời gian ổn định, còn ba pacing được phủ
+  bởi unit test.
+- Workflow **Release Gate** chạy theo lịch hoặc thủ công. Job `premium-provider` chỉ chạy khi
+  dispatch thủ công và yêu cầu repository secret `DEEPSEEK_API_KEY`; thiếu key là lỗi cứng,
+  không được tính STUB là smoke test production.

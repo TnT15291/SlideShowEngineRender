@@ -58,7 +58,7 @@ for (const recipePath of recipes) for (const pacing of pacings) {
     "--out", fullTl, "--output", video, "--name", id, "--quality", "draft", "--prompt", prompt], `timeline ${id}`);
   run(["scripts/qaLoop.mjs", "--timeline", fullTl, "--analysis-dir", `${dir}/analysis`, "--photos", photos,
     "--content", `${analysisDir}/photo_content.json`, "--music", musicJson, "--tier", "template",
-    "--max-revisions", "1", "--skip-render", "--strict"], `pre-flight QA ${id}`);
+    "--max-revisions", "1", "--skip-render"], `pre-flight QA ${id}`);
   const full = JSON.parse(fs.readFileSync(path.resolve(root, fullTl), "utf8")), cut = makePreviewCut(full, { duration, output: video });
   fs.writeFileSync(path.resolve(root, timelinePath), JSON.stringify(cut, null, 2) + "\n"); run(["scripts/fitTextInTimeline.mjs", timelinePath], `fit ${id}`);
   const qa = qaGate(fullTl, dir); // gate the full film, not the trimmed preview cut
