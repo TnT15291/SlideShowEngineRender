@@ -16,6 +16,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Create synthetic test album
+        run: |
+          mkdir -p input
+          ffmpeg -v error -f lavfi -i color=c=0x8b3a3a:s=640x360 -frames:v 1 input/001.jpg
+          ffmpeg -v error -f lavfi -i color=c=0x315b7d:s=360x640 -frames:v 1 input/002.jpg
+          for i in $(seq -w 3 130); do
+            if ((10#$i % 2)); then cp input/001.jpg "input/$i.jpg"; else cp input/002.jpg "input/$i.jpg"; fi
+          done
       - run: npm run check
       - run: npm run test:release
       - run: npm run test:regression
