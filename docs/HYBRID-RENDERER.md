@@ -42,8 +42,36 @@ renderers use `template`, `assets` and `params` instead.
 ## Templates currently implemented
 
 - Remotion: `title`, `filmstrip`, `page_flip`, `portrait_echo`, `triptych`,
-  `card_gallery`, `paper_peel`, `panel_reveal`, `floating_frame`, `light_rays`.
-- Blender: `page_flip_3d`, `camera_gallery_3d`.
+  `card_gallery`, `paper_peel`, `panel_reveal`, `floating_frame`, `light_rays`,
+  `gl_transition`, `glass_frame`, `confetti_bloom`.
+- Blender: `page_flip_3d`, `camera_gallery_3d`, `ring_spin_reveal`, `photo_frame_orbit`.
+
+### GPU / trending additions (2026-07-16)
+
+- **`gl_transition`** (Remotion, needs 2 assets) — a real GPU shader wipe between two
+  photos, rendered with `@remotion/three` + the `gl-transitions` shader catalog (already
+  installed, previously unused). `params.name` picks the shader; curated allow-list:
+  `heart`, `kaleidoscope`, `cube`, `doorway`, `circleopen`, `ripple`, `windowslice`,
+  `DreamyZoom`, `FilmBurn`, `morph` (defaults to `heart`). `params.shaderParams` overrides
+  that shader's own uniforms (e.g. `{ "count": 14 }` for `windowslice`). Both photos are
+  center-cropped to fill the frame (`object-fit: cover`), not letterboxed.
+- **`glass_frame`** (Remotion) — glassmorphism reveal: blurred full-bleed backdrop behind
+  a frosted glass panel (`backdrop-filter`) holding the sharp photo, with one light-sweep
+  highlight crossing the glass early in the shot. `params.tint` is an `"r,g,b"` string for
+  the glass/sweep color (default white).
+- **`confetti_bloom`** (Remotion) — react-three-fiber scene: ~46 soft blush/ivory/gold/sage
+  petal sprites (procedural canvas texture, on-brand with the garden/silk story templates)
+  drift in from the edges and settle around the photo while the camera gently dollies in.
+  `params.background` sets the CSS backdrop color behind the 3D canvas.
+- **`ring_spin_reveal`** (Blender, EEVEE, needs 1 asset) — a procedural gold ring with a
+  glass gem spins in the foreground while the camera racks focus from the ring back to the
+  photo behind it, revealing it in soft bokeh. Wedding-intro motif.
+- **`photo_frame_orbit`** (Blender, EEVEE, needs 1 asset) — camera slowly orbits a single
+  hanging photo frame with warm bokeh "string light" points defocused in the background.
+
+The `ring_spin_reveal`/`photo_frame_orbit` Blender templates use EEVEE (real lighting,
+raytracing, depth of field) instead of Workbench — `page_flip_3d`/`camera_gallery_3d` stay
+on Workbench since their flat-page look doesn't need it and Workbench renders faster.
 
 The Blender CLI is resolved from `BLENDER_PATH`, then from `blender` on PATH.
 On this workstation the engine also auto-detects the installed user-local

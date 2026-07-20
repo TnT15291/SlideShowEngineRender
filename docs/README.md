@@ -19,7 +19,9 @@ Dự án AI Wedding Slideshow gồm 2 tầng:
 - **v1 Premium**: toàn bộ node đã nối vào orchestrator và chạy end-to-end bằng STUB khi thiếu key;
   còn smoke test với API key thật và orchestration production. Pipeline pause bằng `exit 3` khi đang
   chờ khách chọn story hoặc chọn highlight/full song.
-- **Kiểm thử**: 105 unit test + 1 integration test phủ pipeline dry-run → render → resume → QA → deliver.
+- **Kiểm thử**: `npm run check` chạy typecheck core + GPU, unit test nhanh và integration pipeline
+  dry-run → render → resume → QA → deliver. Regression album/media cục bộ chạy riêng bằng
+  `npm run test:regression`.
 
 ## Triết lý
 

@@ -52,7 +52,7 @@ SlideshowRenderEngine/
 | `types.ts` | **Source of truth** cho enum/field: `EffectPreset`, `XFADE_BY_TRANSITION` (56 transition), `MOTION_EASINGS`, `LIGHT_LEAK_VARIANTS`, mọi interface timeline |
 | `normalizeTimeline.ts` | Alias thân thiện → tên chuẩn (`zoom in`→`slow_zoom_in`, `fade`→`crossfade`), default (opacity, blend, easing, variant light-leak → path asset), gộp legacy (`caption` đơn → `captions[]`, `music` object → mảng) |
 | `validateTimeline.ts` | Zod schema + kiểm tra ngữ nghĩa: id duy nhất, file tồn tại, ràng buộc chéo (transition < duration, caption/layer trong slide, easing đúng nhóm effect, overlay path xor variant) |
-| `faceSafeFraming.ts` | Layer ảnh `cover` có crop-loss > `FACE_SAFE_MAX_CROP_LOSS` (0.18) → `contain`; có `focusX/focusY` thì giữ cover |
+| `faceSafeFraming.ts` | Layer ảnh `cover` có `faceBox` (mặt đã phát hiện) và crop-loss > `FACE_SAFE_MAX_CROP_LOSS` (0.18) → `contain`; không có `faceBox` (không phát hiện mặt) thì rule không áp dụng, giữ nguyên `cover`/motion |
 | `preflightTimeline.ts` | Báo cáo trước render + cảnh báo tràn chữ, media hỏng, layer vượt khung (chặn bleed ngoài canvas) |
 | `preprocessImages.ts` / `imageSize.ts` | Đọc kích thước ảnh; thu nhỏ ảnh > `IMAGE_CACHE_MAX_EDGE` (2560px) vào `temp/image-cache` |
 | `compileTimeline.ts` | Timeline → RenderPlan: path tuyệt đối, merge color global+slide, auto-route ảnh lệch tỉ lệ → `portrait_blur_background` (crop-loss > 0.3 so với khung **dự án**), caption/text → file UTF-8 cho drawtext |

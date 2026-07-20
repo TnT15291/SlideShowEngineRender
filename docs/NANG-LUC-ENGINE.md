@@ -270,7 +270,7 @@ Nhạc/voiceover phải tồn tại (validate kiểm tra). Thời lượng track
 ## 12. Xử lý an toàn & tự động
 
 - **Image cache:** ảnh quá lớn được thu nhỏ vào `temp/image-cache` trước render (không sửa ảnh gốc). Cạnh dài mặc định **2560px** — chỉnh bằng env `IMAGE_CACHE_MAX_EDGE`, đặt `0` để tắt.
-- **Face-safe framing:** với layer ảnh `layer_scene`, layer không phải nền dùng `fit:"cover"` mà tỉ lệ crop-loss quá cao sẽ bị đổi sang `contain`. Ngưỡng env `FACE_SAFE_MAX_CROP_LOSS` (mặc định **0.18**), đặt `0` để tắt. Nếu layer có `focusX/focusY` thì **giữ cover** (điểm neo đã đảm bảo an toàn mặt).
+- **Face-safe framing:** với layer ảnh `layer_scene`, layer không phải nền dùng `fit:"cover"` mà tỉ lệ crop-loss quá cao sẽ bị đổi sang `contain`. Ngưỡng env `FACE_SAFE_MAX_CROP_LOSS` (mặc định **0.18**), đặt `0` để tắt. **Chỉ áp dụng khi layer có `faceBox`** (do `analyzePhotos.mjs` phát hiện mặt/da thật) — ảnh không có mặt (phong cảnh, đồ vật, decor...) giữ nguyên `cover` + motion đã khai báo, vì không có gì để bảo vệ.
 - **Preflight:** trước khi render báo cáo số slide/ảnh/nhạc, thời lượng ước tính, media không đọc được, nguy cơ tràn chữ, và lỗi layer vượt khung.
 - Auto-route ảnh dọc → `portrait_blur_background`; auto-route theo tỉ lệ khung (crop-loss > 0.3) khi khung khác 16:9.
 
