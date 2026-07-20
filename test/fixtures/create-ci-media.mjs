@@ -11,6 +11,7 @@ fs.mkdirSync("input", { recursive: true });
 fs.mkdirSync("music", { recursive: true });
 fs.mkdirSync(path.join("analysis", "music"), { recursive: true });
 fs.mkdirSync(path.join("assets", "backgrounds"), { recursive: true });
+fs.mkdirSync(path.join("assets", "frames", "custom-wedding-frames-20"), { recursive: true });
 for (let index = 1; index <= 6; index++) {
   const size = index % 2 ? "640x360" : "360x640";
   run(["-f", "lavfi", "-i", `testsrc2=size=${size}:rate=1`, "-vf", `hue=h=${index * 47}`,
@@ -22,6 +23,8 @@ for (let index = 7; index <= 130; index++) {
 }
 run(["-f", "lavfi", "-i", "color=c=black:s=640x360:r=30", "-t", "1", "-pix_fmt", "yuv420p",
   "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4"]);
+run(["-f", "lavfi", "-i", "color=c=white@0.1:s=640x360", "-frames:v", "1",
+  "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png"]);
 
 const tracks = [
   ["River Flows In You", 188.83],
