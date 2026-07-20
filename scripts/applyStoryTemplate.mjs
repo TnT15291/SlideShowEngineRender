@@ -18,16 +18,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import { assignPhotos } from "./lib/photoAssignment.mjs";
-import { applyStoryArc, editorialRole, snapScenesToPhrases } from "./lib/tier1Editorial.mjs";
+import { applyStoryArc, editorialRole } from "./lib/tier1Editorial.mjs";
+import { retimeSlidesToMusic, MAX_TRANSITION_SEC } from "./lib/musicRetime.mjs";
 import { createTransitionGrammar } from "./lib/transitionGrammar.mjs";
 import { buildDiversityReport } from "./lib/diversityPlanner.mjs";
 import { createMotionPlanner } from "./lib/motionPlanner.mjs";
 import { averageAdjustments, buildColorNormalization } from "./lib/colorNormalizer.mjs";
 import { loadLedger, active, applyToStoryboard, applyToTimeline } from "./lib/directives.mjs";
-import { fitScale, describeFit, makeEnergy } from "./lib/pacing.mjs";
+import { fitScale, describeFit, makeEnergy, MAX_SCENE } from "./lib/pacing.mjs";
 import { solveRecipeShotList } from "./lib/recipeShotList.mjs";
 import { resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
+import { NATURAL_SEC_PER_PHOTO } from "./lib/fitPlan.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_MAX, EASING_EFFECTS,
 } from "./lib/engineCapabilities.mjs";
@@ -54,6 +56,10 @@ const promptPath = arg("--prompt", "");
 const directivesPath = arg("--directives", "");
 const directionPath = arg("--direction", "");
 const musicModeArg = arg("--music-mode", "");
+// The second track for "playlist" mode (nối sang bài khác). Absent → playlist degrades to
+// loop (the engine's own -stream_loop already repeats a single track to cover any video
+// length; see buildAudioMuxArgs), and we say so rather than fail.
+const extraMusicPath = arg("--extra-music", "");
 // How far the finished film may drift from the track before we refuse to write it.
 // 10%: the phrase snap and the closing card own the last few seconds, and nobody hears
 // a 10s difference on a 200s song. A THIRD of the song missing is a different thing.
@@ -158,20 +164,52 @@ if (requestedMusicMode === "full_song" && sourceMusic.duration / photos.length >
     `Add at least ${Math.ceil(sourceMusic.duration / 7.2) - photos.length} photo(s), choose highlight/auto, or pass --accept-misfit.`
   );
 }
-// The same window composeStoryboard solved its shot list against — same function, same
-// inputs. When these two disagreed, premium built a 219s film for a 93s excerpt.
-const musicEdit = resolveMusicWindow({
-  music: sourceMusic,
-  photoCount: photos.length,
-  orders,
-  brief,
-  musicMode: musicModeArg,
-});
-if (musicModeOrder) appliedIds.add(musicModeOrder.id);
-const music = sliceMusicAnalysis(sourceMusic, musicEdit);
+// playlist/loop EXTEND a track too short for the album — the mirror of highlight, which
+// TRIMS one too long. chooseMusicEdit only knows trim-or-keep (auto/highlight/full_song),
+// so these two are resolved by hand: the target is what the kept photos naturally want
+// (photoCount * NATURAL_SEC_PER_PHOTO), not the source track's own length. The engine needs
+// no new code for this — a single music track shorter than the film already loops via
+// -stream_loop -1 (buildAudioMuxArgs); "loop" mode is simply NOT trimming to the source
+// duration. "playlist" additionally appends a second track, letting acrossfade join them.
+let musicEdit;
+if (requestedMusicMode === "playlist" || requestedMusicMode === "loop") {
+  const sourceDuration = Number(sourceMusic.duration) || 0;
+  const extendedDuration = Math.max(sourceDuration, photos.length * NATURAL_SEC_PER_PHOTO);
+  const usePlaylist = requestedMusicMode === "playlist" && extraMusicPath;
+  if (requestedMusicMode === "playlist" && !extraMusicPath) {
+    console.log(`[applyStoryTemplate] playlist requested but no --extra-music given — looping "${musicPath}" instead.`);
+  }
+  musicEdit = {
+    mode: usePlaylist ? "playlist" : "loop",
+    sourceDuration, start: 0, end: sourceDuration,
+    duration: +extendedDuration.toFixed(3),
+    reason: "photo_budget_extend",
+  };
+  if (musicModeOrder) appliedIds.add(musicModeOrder.id);
+} else {
+  // The same window composeStoryboard solved its shot list against — same function, same
+  // inputs. When these two disagreed, premium built a 219s film for a 93s excerpt.
+  musicEdit = resolveMusicWindow({
+    music: sourceMusic,
+    photoCount: photos.length,
+    orders,
+    brief,
+    musicMode: musicModeArg,
+  });
+  if (musicModeOrder) appliedIds.add(musicModeOrder.id);
+}
+// sliceMusicAnalysis only knows highlight/full_song; loop/playlist keep every phrase/beat
+// the source track has (nothing to trim) but must still carry the EXTENDED duration so
+// downstream pacing solves the shot list against it, not the shorter source length.
+const music = (musicEdit.mode === "playlist" || musicEdit.mode === "loop")
+  ? { ...sourceMusic, duration: musicEdit.duration }
+  : sliceMusicAnalysis(sourceMusic, musicEdit);
 if (musicEdit.mode === "highlight") {
   console.log(`[applyStoryTemplate] highlight: ${musicEdit.start}s–${musicEdit.end}s (${musicEdit.duration}s) ` +
     `because ${photos.length} photos cannot carry the ${musicEdit.sourceDuration}s full song naturally`);
+} else if (musicEdit.mode === "loop" || musicEdit.mode === "playlist") {
+  console.log(`[applyStoryTemplate] ${musicEdit.mode}: extending to ${musicEdit.duration}s ` +
+    `(source track is ${musicEdit.sourceDuration}s) so ${photos.length} photos are not rushed`);
 }
 const availableFiles = new Set(photos.map((p) => p.file));
 for (const file of [...(brief.mustUsePhotos || []), brief.openingPhoto, brief.endingPhoto].filter(Boolean)) {
@@ -179,6 +217,46 @@ for (const file of [...(brief.mustUsePhotos || []), brief.openingPhoto, brief.en
 }
 
 const byFile = new Map(photos.map((p) => [p.file, p]));
+
+/** Constrain a normalized face box to the unit square the way analyzePhotos.mjs's own
+ *  clampBox does — but applied HERE too, at the chokepoint where analysis data becomes
+ *  timeline JSON. An external face-detection merge in analyzePhotos.mjs writes
+ *  faceBoxEstimate straight from a supplied detector's box without running it back
+ *  through clampBox, so a box whose edge sits a pixel past the frame (a real detector
+ *  result, not a typo) reaches here at x+width = 1.008 — and validateTimeline's schema
+ *  rejects the WHOLE render over a sub-1% overflow. Re-clamping on the way out is the
+ *  one place guaranteed to see every faceBox this file emits, regardless of which
+ *  analyzer produced it or whether that analyzer remembered to clamp. */
+function clampFaceBox(box) {
+  if (!box) return box;
+  const cx = Math.min(Math.max(box.x, 0), 1), cy = Math.min(Math.max(box.y, 0), 1);
+  return {
+    x: +cx.toFixed(4), y: +cy.toFixed(4),
+    width: +Math.min(Math.max(box.width, 0), 1 - cx).toFixed(4),
+    height: +Math.min(Math.max(box.height, 0), 1 - cy).toFixed(4),
+  };
+}
+
+/** The analyzer's face-derived focus for a photo, as slide fields.
+ *
+ *  A single-photo slide cover-crops to the frame, and without a focus that crop is dead
+ *  centre — which decapitates a portrait in a 16:9 frame, because heads are at the top and
+ *  the top is precisely what a centre crop discards. layer_scene images have carried focus
+ *  for a while (buildLayerImage does it); plain slides never did, so the same album was
+ *  face-safe in a card and beheaded in a zoom.
+ *
+ *  Omitted rather than defaulted when the analyzer has no answer: absent means "centre" to
+ *  the renderer anyway, and writing a made-up 0.5 would make an unanalysed photo
+ *  indistinguishable from one whose subject really is centred. */
+const focusOf = (file) => {
+  const p = byFile.get(file);
+  return {
+    ...(Number.isFinite(p?.focusX) ? { focusX: p.focusX } : {}),
+    ...(Number.isFinite(p?.focusY) ? { focusY: p.focusY } : {}),
+    ...(p?.faceBoxEstimate ? { faceBox: clampFaceBox(p.faceBoxEstimate) } : {}),
+  };
+};
+
 const used = new Set();
 const byQuality = [...photos].sort((a, b) =>
   (b.heroScore ?? b.qualityNorm ?? 0) - (a.heroScore ?? a.qualityNorm ?? 0) ||
@@ -247,6 +325,7 @@ function pic(file, x, y, width, height, extra = {}, scene = null, intent = {}) {
     fit: "cover",
     focusX: p.focusX ?? 0.5,
     focusY: p.focusY ?? 0.45,
+    ...(p.faceBoxEstimate ? { faceBox: clampFaceBox(p.faceBoxEstimate) } : {}),
     technicalColor: colorByFile.get(file),
     ...(plan?.motion && plan.motion !== "none" ? { motion: plan.motion, motionStrength: plan.strength, easing: plan.easing } : {}),
     ...extra,
@@ -535,15 +614,34 @@ const capsFor = (pattern, role = "caption") => {
 // which you got depended on which code path reached the scene first.
 
 function buildScene(scene) {
+  // A signature hybrid scene (scripts/composeStoryboard.mjs / hand-authored recipe): the
+  // photo it takes was requested and assigned through the exact same path as any other
+  // single-photo scene (photoSlotsFor gave it a "hero" slot, scene.effect is the harmless
+  // "still" placeholder the schema still requires) — only the render backend differs.
+  if (scene.renderer && scene.template) {
+    const needsPair = scene.template === "gl_transition";
+    const hybridAssets = needsPair
+      ? photosFor("pair", scene, 2)
+      : [scene === expandedScenes?.[0] ? heroPhoto.file : photo("hero", scene)];
+    if (!needsPair && scene === expandedScenes?.[0]) { used.add(hybridAssets[0]); lastPhoto = heroPhoto; }
+    return {
+      effect: "still",
+      renderer: scene.renderer,
+      template: scene.template,
+      assets: hybridAssets,
+      params: scene.params || {},
+      captions: capsFor(scene.captionPattern),
+    };
+  }
   if (scene.effect === "layer_scene") return buildLayerSceneFromLayout(scene);
   if (scene.effect === "memory_wall") {
-    return { effect: "memory_wall", images: photosFor("memories", scene, 5), captions: capsFor(scene.captionPattern) };
+    return { effect: "memory_wall", images: photosFor("memories", scene, 5), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
   }
   if (scene.effect === "collage_grid") {
-    return { effect: "collage_grid", images: photosFor("grid", scene, 6), captions: capsFor(scene.captionPattern) };
+    return { effect: "collage_grid", images: photosFor("grid", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
   }
-  if (scene.effect === "film_roll_left" || scene.effect === "film_roll_up" || scene.effect === "film_roll_right") {
-    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), captions: capsFor(scene.captionPattern) };
+  if (["film_roll_left", "film_roll_up", "film_roll_right", "photo_strip_up", "photo_strip_left", "photo_strip_right"].includes(scene.effect)) {
+    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
   }
   if (scene.effect === "double_exposure") {
     return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern) };
@@ -555,11 +653,14 @@ function buildScene(scene) {
   if (scene.effect === "mask_reveal") {
     const isOpening = scene === expandedScenes?.[0];
     if (isOpening) { used.add(heroPhoto.file); lastPhoto = heroPhoto; }
+    const maskImage = isOpening ? heroPhoto.file : photo("hero", scene);
     return {
       effect: "mask_reveal",
-      image: isOpening ? heroPhoto.file : photo("hero", scene),
+      image: maskImage,
       mask: scene.mask || "assets/masks/particle_gather.mp4",
+      params: scene.params || {},
       captions: capsFor(scene.captionPattern),
+      ...focusOf(maskImage),
     };
   }
   if (SINGLE_PHOTO_EFFECTS.has(scene.effect)) {
@@ -570,7 +671,7 @@ function buildScene(scene) {
     // and the build died on an unrelated scene. Same bug, second door.
     const image = scene === expandedScenes?.[0] ? heroPhoto.file : photo("hero", scene);
     if (scene === expandedScenes?.[0]) { used.add(image); lastPhoto = heroPhoto; }
-    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role) };
+    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role), ...focusOf(image) };
     if (scene.easing && EASING_EFFECTS.has(scene.effect)) slide.easing = scene.easing;
     return slide;
   }
@@ -626,19 +727,43 @@ const bookendPoolCost =
 // of every other scene in the film. The energy-driven pacing the composer had just
 // computed was overwritten before anything could render it.
 const composed = template.source?.origin === "composed";
-const shotList = composed
+const solveShotList = () => solveRecipeShotList({
+  recipe: template,
+  photoCount: photos.length,
+  musicDuration: Number(music.duration) || 0,
+  durationOf: (scene, at) => durationFor(scene.durationRole, at),
+  photoDemandOf: scenePhotoCount,
+  bodyPhotoBudget: photos.length - reservedPhotos.size - bookendPoolCost,
+  // The same sampler QA measures with — the solver bends body durations toward
+  // the music instead of emitting the role table's uniform lengths.
+  energy: makeEnergy(music),
+});
+let shotList = composed
   ? { scenes: template.scenes.map((s) => ({ ...s })), fit: template.fit ?? { message: "composed", scale: 1 } }
-  : solveRecipeShotList({
-      recipe: template,
-      photoCount: photos.length,
-      musicDuration: Number(music.duration) || 0,
-      durationOf: (scene, at) => durationFor(scene.durationRole, at),
-      photoDemandOf: scenePhotoCount,
-      bodyPhotoBudget: photos.length - reservedPhotos.size - bookendPoolCost,
-      // The same sampler QA measures with — the solver bends body durations toward
-      // the music instead of emitting the role table's uniform lengths.
-      energy: makeEnergy(music),
-    });
+  : solveShotList();
+
+// loop/playlist EXTENDS the target past what the source track needed, and a recipe's own
+// scene budget (repeat caps, photo-poor substitution) can fall short of it: the solver
+// clamps each scene to MAX_SCENE internally, so pushing k (scale) far past 1 leaves MANY
+// scenes pinned at the ceiling and the clamped SUM short of the target it was solved
+// against. Weights sized for an unreachable target do not redistribute cleanly — retime's
+// rails found this the hard way (an "earliest > latest" inversion whenever weights were
+// solved against a bigger duration than the one actually handed to it). Re-solving against
+// the true achievable ceiling, BEFORE building slides, keeps the weights self-consistent
+// with the target retime will actually receive.
+if (!composed && (musicEdit.mode === "loop" || musicEdit.mode === "playlist")) {
+  const ceiling = shotList.scenes.length > 0
+    ? (shotList.scenes.length - 1) * (MAX_SCENE - MAX_TRANSITION_SEC) + MAX_SCENE
+    : 0;
+  if (music.duration > ceiling) {
+    console.log(`[applyStoryTemplate] ${musicEdit.mode} target ${music.duration}s exceeds what ${shotList.scenes.length} scenes can ` +
+      `sustain (≤${ceiling.toFixed(2)}s at this recipe's repeat caps) — using ${ceiling.toFixed(2)}s instead. ` +
+      `A richer recipe or a less aggressive cull would use more of the extension.`);
+    music.duration = +ceiling.toFixed(3);
+    musicEdit.duration = +ceiling.toFixed(3);
+    shotList = solveShotList();
+  }
+}
 const expandedScenes = applyStoryArc(shotList.scenes, template.storyArc);
 console.log(
   `[applyStoryTemplate] shot list: ${shotList.fit.sceneCount} scenes, ${shotList.fit.photosUsed}/${shotList.fit.photoCount} photos ` +
@@ -670,8 +795,13 @@ function assignmentRequests(scenes) {
     // ask the pool for a photo — that is one request more than the pool can serve, and the
     // shortfall surfaces on some unrelated scene much later.
     if (order === 0 && !multi) return;
-    const base = slot.count || (scene.effect === "double_exposure" ? 2 : 1);
-    const count = multi ? Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(base * (direction?.pacing?.controls?.montagePhotoMultiplier ?? 1)))) : 1;
+    // A pair-consuming scene (double_exposure, or a gl_transition hybrid — buildScene asks
+    // both for TWO photos) declares count:2. The old code computed `base` correctly and then
+    // threw it away, hardcoding the non-montage request at 1 — so the global plan reserved a
+    // single photo, buildScene asked for two, and the engine rejected the one-asset slide.
+    const paired = scene.effect === "double_exposure" || scene.template === "gl_transition";
+    const base = slot.count || (paired ? 2 : 1);
+    const count = multi ? Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(base * (direction?.pacing?.controls?.montagePhotoMultiplier ?? 1)))) : base;
     out.push({ key: `${scene.id}:${slot.slot}`, sceneId: scene.id, order, count, orient: slot.orient || "any", role: editorialRole(scene, slot),
       allowSequence: Boolean(scene.allowSequence), cohesionMode: scene.cohesionMode || "auto",
       hero: slot.quality === "best" || slot.slot === "hero" });
@@ -723,8 +853,8 @@ let slides = expandedScenes.map((scene, i) => {
   t += Math.max(0, duration - transition.duration);
   return slide;
 });
-const phraseSnap = snapScenesToPhrases(slides, music);
-slides = phraseSnap.slides;
+const musicRetiming = retimeSlidesToMusic(slides, music);
+slides = musicRetiming.slides;
 for (const slide of slides) {
   if (slide.effect === "layer_scene") continue;
   const files = [slide.image, ...(slide.images || [])].filter(Boolean);
@@ -765,15 +895,24 @@ const timeline = {
     ...template.defaults.project,
     ...(qualityOverride ? { quality: qualityOverride } : {}),
   },
-  music: [{ path: musicPath, volume: 0.82,
-    ...(musicEdit.mode === "highlight" ? { start: musicEdit.start, end: musicEdit.end } : {}) }],
-  audio: template.defaults.audio,
+  // loop: a single track, no start/end trim — the engine already repeats a track shorter
+  // than the video (-stream_loop -1 in buildAudioMuxArgs) to cover it, so nothing else is
+  // needed here. playlist: a second track appended; the engine's playlist path joins them
+  // with acrossfade and repeats the WHOLE pair until it covers the video.
+  music: musicEdit.mode === "playlist"
+    ? [{ path: musicPath, volume: 0.82 }, { path: extraMusicPath, volume: 0.82 }]
+    : [{ path: musicPath, volume: 0.82,
+        ...(musicEdit.mode === "highlight" ? { start: musicEdit.start, end: musicEdit.end } : {}) }],
+  audio: musicEdit.mode === "playlist"
+    ? { ...template.defaults.audio, crossfade: Math.max(2, template.defaults.audio?.crossfade || 0) }
+    : template.defaults.audio,
   color: timelineColor,
   overlays: selectedOverlays,
   output: { path: videoOut },
   slides,
   recipeDecisions: { recipeId: template.id, pacingVariant: selectedPacing.id, theme: themeRef, heroPhoto: heroPhoto.file, endingPhoto: endingPhoto.file,
-    storyArc: expandedScenes.map((s) => ({ sceneId: s.id, beat: s.arcBeat })), phraseSnaps: phraseSnap.snapped,
+    storyArc: expandedScenes.map((s) => ({ sceneId: s.id, beat: s.arcBeat })), phraseSnaps: musicRetiming.sync.snappedBoundaries,
+    musicSync: musicRetiming.sync,
     musicEdit,
     transitionGrammar: { vocabulary: transitionGrammar.vocabulary, decisions: transitionGrammar.decisions },
     motionPlan: motionPlanner.decisions,
@@ -830,7 +969,7 @@ timeline.recipeDecisions.fit = {
   reservedPhotos: reserved.length,
   assignedPhotos: assignmentPlan.used.length,
   unusedPhotos: Math.max(0, photos.length - used.size),
-  phraseSnaps: phraseSnap.snapped,
+  phraseSnaps: musicRetiming.sync.snappedBoundaries,
 };
 
 if (targetSec > 0) {

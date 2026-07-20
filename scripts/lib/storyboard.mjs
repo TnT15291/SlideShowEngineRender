@@ -385,6 +385,34 @@ export function composeStoryboard({
   };
 }
 
+/**
+ * Swap ONE plain single-photo scene — the one with peak energy — for a hybrid renderer
+ * scene (Remotion/Blender; see scripts/lib/engineCapabilities.mjs HYBRID_SIGNATURE_TEMPLATES).
+ *
+ * Kept to exactly one substitution, and to a scene composeStoryboard already decided was a
+ * single photo held full-frame: everything about the scene (duration, photo count, its slot
+ * in the fit-scaled shot list) was already solved against the photo budget and the track
+ * before this runs, so touching only WHICH renderer draws one already-existing scene is the
+ * only way to add a slower-to-render template without silently invalidating that arithmetic.
+ * `photos`/`slot` are untouched on purpose — everything downstream (photo assignment,
+ * duration, transitions) still sees an ordinary single-photo scene. `easing` is dropped: it
+ * was computed for the effect this scene is no longer rendered with, and the hybrid
+ * templates have no use for it.
+ */
+export function applySignatureHybridScene(scenes, { template, renderer } = {}) {
+  if (!template || !renderer) return scenes;
+  const candidates = scenes
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => SINGLE_PHOTO_EFFECTS.has(s.effect));
+  if (!candidates.length) return scenes;
+  const { i: peak } = candidates.reduce((a, b) => (b.s.energy > a.s.energy ? b : a));
+  return scenes.map((s, i) => {
+    if (i !== peak) return s;
+    const { easing, ...rest } = s;
+    return { ...rest, effect: "still", renderer, template };
+  });
+}
+
 /** What the shot list actually looks like — the number the old composer could not have
  *  reported, because the answer was always "one effect, three layouts". */
 function describeVariety(scenes) {

@@ -1,0 +1,334 @@
+{
+  "id": "cinematic-vows-01",
+  "version": 1,
+  "name": "Cinematic Vows",
+  "tier": "smart_lite",
+  "libraryTheme": "teal_orange_editorial",
+  "storyArc": {
+    "sequence": [
+      "cold_open",
+      "anticipation",
+      "first_look",
+      "vows",
+      "rings",
+      "kiss",
+      "celebration",
+      "epilogue"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "fade_to_black",
+      "crossfade",
+      "dissolve",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 2
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A film-trailer treatment focused tightly on wedding-day anticipation, vows and emotional reaction shots, with a controlled teal/orange editorial grade."
+  },
+  "fit": {
+    "bestFor": [
+      "cinematic",
+      "vows",
+      "wedding_day",
+      "emotional",
+      "landscape_heavy"
+    ],
+    "minPhotos": 22,
+    "idealPhotos": 52
+  },
+  "musicProfile": {
+    "moods": [
+      "cinematic",
+      "orchestral",
+      "emotional"
+    ],
+    "energy": "medium_to_high"
+  },
+  "pacingVariants": [
+    {
+      "id": "arthouse",
+      "maxEnergy": 0.4,
+      "durationMultiplier": 1.14
+    },
+    {
+      "id": "feature",
+      "maxEnergy": 0.72,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "trailer",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.8
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "lut": "assets/luts/teal_orange_01.cube",
+      "contrast": 1.05,
+      "saturation": 1.01,
+      "grain": 3,
+      "glow": 0.05
+    },
+    "audio": {
+      "fade_in": 1.5,
+      "fade_out": 4,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#12191C",
+      "ink": "#F2EFE9",
+      "brown": "#D96F32",
+      "white": "#FBFCFB"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.2,
+      "calmSceneSec": 7.2,
+      "buildSceneSec": 4,
+      "montageSec": 9.5,
+      "closingSec": 8.5
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "crossfade",
+        "duration": 0.5
+      },
+      "calm": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "peak": {
+        "type": "fade_to_black",
+        "duration": 0.45
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "emotionScore",
+        "heroScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 58
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_coldopen",
+      "effect": "dark_feather",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "captionPattern": "A FILM ABOUT {{bride}} & {{groom}}",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s02_anticipation",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "build",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s03_firstlook",
+      "effect": "portrait_reflection",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s04_vows",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_in"
+        }
+      ],
+      "text": {
+        "quote": "Hôm nay · và mọi ngày về sau"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "quote": "Bên nhau"
+            }
+          },
+          {
+            "text": {
+              "quote": "Ngày chung đôi"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s05_rings",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "durationRole": "normal",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#303A3C"
+      }
+    },
+    {
+      "id": "s06_kiss",
+      "effect": "slow_zoom_in",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "ring_spin_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07_celebrate",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 8,
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "captionPattern": "Và hôm nay, mình chính thức thuộc về nhau.",
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "captionPattern": "Những khoảnh khắc mình muốn giữ mãi."
+          },
+          {
+            "captionPattern": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "s08_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Thank you for celebrating with us · {{date}}"
+      }
+    }
+  ]
+}

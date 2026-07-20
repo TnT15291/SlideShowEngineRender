@@ -1,0 +1,12 @@
+{
+  "dir": "test/fixtures/photos",
+  "count": 6,
+  "photos": [
+    { "file": "test/fixtures/photos/portrait-01.jpg", "orient": "portrait", "quality": 0.91, "focusX": 0.48, "focusY": 0.34 },
+    { "file": "test/fixtures/photos/portrait-02.jpg", "orient": "portrait", "quality": 0.84, "focusX": 0.52, "focusY": 0.38 },
+    { "file": "test/fixtures/photos/landscape-01.jpg", "orient": "landscape", "quality": 0.88, "focusX": 0.45, "focusY": 0.47 },
+    { "file": "test/fixtures/photos/landscape-02.jpg", "orient": "landscape", "quality": 0.79, "focusX": 0.57, "focusY": 0.44 },
+    { "file": "test/fixtures/photos/landscape-03.jpg", "orient": "landscape", "quality": 0.76, "focusX": 0.5, "focusY": 0.5 },
+    { "file": "test/fixtures/photos/landscape-04.jpg", "orient": "landscape", "quality": 0.72, "focusX": 0.54, "focusY": 0.46 }
+  ]
+}

@@ -1,4 +1,4 @@
-const bucketPeople = (n) => n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "solo" : n === 2 ? "pair" : "group";
+export const bucketPeople = (n) => n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "solo" : n === 2 ? "pair" : "group";
 
 export function sceneState(scene, files, byFile) {
   const photos = files.map((f) => byFile.get(f)).filter(Boolean);

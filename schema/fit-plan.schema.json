@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fit-plan.schema.json",
+  "title": "Fit plan — does this album fit this song, and what could be done about it",
+  "description": "Written by scripts/assessFit.mjs from photo count + music duration. Purely DESCRIPTIVE: it classifies the job and lists the options a person could choose between, but decides nothing (the decision, and who made it, lives in fit-decision.schema.json). This is the contract a UI reads to render the recommendation.",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "regime", "evidence", "options"],
+  "properties": {
+    "generatedBy": { "const": "fit-advisor" },
+    "generatedAt": { "type": "string" },
+    "regime": {
+      "description": "How the album and the song relate.",
+      "enum": ["balanced", "few_photos", "far_too_few_photos", "many_photos", "far_too_many_photos", "too_few_for_a_film"]
+    },
+    "preAnswered": {
+      "type": "boolean",
+      "description": "True when the customer's own prompt already settled this (a music_mode/duration directive) — a UI should not ask again."
+    },
+    "evidence": {
+      "type": "object",
+      "description": "The numbers behind the regime, so a UI can show its reasoning rather than just its verdict.",
+      "required": ["photoCount", "musicDuration", "targetPhotos", "feasibleBand"],
+      "properties": {
+        "photoCount": { "type": "integer", "minimum": 0 },
+        "musicDuration": { "type": "number", "minimum": 0 },
+        "secondsPerPhoto": { "type": ["number", "null"], "minimum": 0 },
+        "targetPhotos": { "type": "integer", "minimum": 1, "description": "Photos that fill the song at a natural cut (~4s each)." },
+        "feasibleBand": {
+          "type": "object",
+          "description": "Photo counts that fit the song: fewer than min and the film crawls; more than max and montages cannot hold them all.",
+          "required": ["min", "max"],
+          "properties": { "min": { "type": "integer" }, "max": { "type": "integer" } }
+        },
+        "fullSongCarriable": { "type": "boolean" },
+        "preAnswered": {
+          "type": "object",
+          "properties": { "kind": { "type": "string" }, "target": {}, "quote": { "type": "string" } }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "description": "The choices to put in front of a person, most-recommended first. Empty when the job is balanced and no question exists.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "consequence", "executable"],
+        "properties": {
+          "id": { "enum": ["highlight", "full_song_stretch", "keep_all", "cull", "add_photos", "loop", "playlist", "shorter_track", "shorter_film"] },
+          "label": { "type": "string", "maxLength": 120 },
+          "consequence": { "type": "string", "maxLength": 400, "description": "What the film becomes if this is chosen — in the customer's language." },
+          "recommended": { "type": "boolean" },
+          "executable": { "type": "boolean", "description": "True if a downstream node can carry it out unattended; false needs the customer to act (add photos, pick another song)." },
+          "musicMode": { "enum": ["highlight", "full_song", "loop", "playlist"] },
+          "targetPhotos": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  }
+}

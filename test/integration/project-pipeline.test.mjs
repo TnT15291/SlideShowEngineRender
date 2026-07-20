@@ -45,7 +45,9 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   const rootLoopExisted = fs.existsSync(rootLoopPath);
   const projectRel = `projects/${id}`;
   const projectDir = path.join(root, projectRel);
-  t.after(() => fs.rmSync(projectDir, { recursive: true, force: true }));
+  if (!process.env.KEEP_TEST_ARTIFACTS) {
+    t.after(() => fs.rmSync(projectDir, { recursive: true, force: true }));
+  }
 
   run(node, [
     "scripts/createProject.mjs",

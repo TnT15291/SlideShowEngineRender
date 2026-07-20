@@ -1,32 +1,1122 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-12T15:59:05.059Z",
+  "updatedAt": "2026-07-16T19:35:07.433Z",
   "entries": [
+    {
+      "id": "cinematic-film-01--gentle",
+      "recipeId": "cinematic-film-01",
+      "pacing": "gentle",
+      "signature": "hook:dark_feather:0|hook:double_exposure:0|establish:layer_scene:4|connection:mask_reveal:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "1eb4309ac2cc8d84"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/cinematic-film-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/cinematic-film-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/cinematic-film-01--gentle/contact.jpg"
+    },
+    {
+      "id": "cinematic-film-01--balanced",
+      "recipeId": "cinematic-film-01",
+      "pacing": "balanced",
+      "signature": "hook:dark_feather:0|hook:double_exposure:0|establish:layer_scene:4|peak:double_exposure:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "011a110d09092f30"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0125252123630400"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/cinematic-film-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/cinematic-film-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/cinematic-film-01--balanced/contact.jpg"
+    },
+    {
+      "id": "cinematic-film-01--lively",
+      "recipeId": "cinematic-film-01",
+      "pacing": "lively",
+      "signature": "hook:dark_feather:0|hook:double_exposure:0|establish:layer_scene:4|connection:double_exposure:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0125252525650000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/cinematic-film-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/cinematic-film-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/cinematic-film-01--lively/contact.jpg"
+    },
+    {
+      "id": "classic-luxury-01--gentle",
+      "recipeId": "classic-luxury-01",
+      "pacing": "gentle",
+      "signature": "hook:dark_feather:0|hook:layer_scene:8|establish:mask_reveal:0|peak:film_roll_up:0|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "684a4a6a6a6a4e6e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0000000c0c000000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/classic-luxury-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/classic-luxury-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/classic-luxury-01--gentle/contact.jpg"
+    },
+    {
+      "id": "classic-luxury-01--balanced",
+      "recipeId": "classic-luxury-01",
+      "pacing": "balanced",
+      "signature": "hook:dark_feather:0|connection:mask_reveal:0|build:mask_reveal:0|peak:mask_reveal:0|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 8.46,
+          "hash": "010000040c000000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.78,
+          "hash": "00605c4559616101"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/classic-luxury-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/classic-luxury-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/classic-luxury-01--balanced/contact.jpg"
+    },
+    {
+      "id": "classic-luxury-01--lively",
+      "recipeId": "classic-luxury-01",
+      "pacing": "lively",
+      "signature": "hook:dark_feather:0|hook:layer_scene:8|establish:mask_reveal:0|build:mask_reveal:0|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "000c0c0c0c0c0c00"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "80604c4d69616101"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/classic-luxury-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/classic-luxury-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/classic-luxury-01--lively/contact.jpg"
+    },
+    {
+      "id": "editorial-bold-01--gentle",
+      "recipeId": "editorial-bold-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:3|hook:layer_scene:6|establish:mask_reveal:0|build:mask_reveal:0|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "084c5c4c4c6c4c18"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/editorial-bold-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/editorial-bold-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/editorial-bold-01--gentle/contact.jpg"
+    },
+    {
+      "id": "editorial-bold-01--balanced",
+      "recipeId": "editorial-bold-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:3|hook:layer_scene:6|establish:mask_reveal:0|peak:film_roll_left:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "0d29494d4d4c171b"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "2121252525210000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/editorial-bold-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/editorial-bold-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/editorial-bold-01--balanced/contact.jpg"
+    },
+    {
+      "id": "editorial-bold-01--lively",
+      "recipeId": "editorial-bold-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:3|hook:layer_scene:6|establish:mask_reveal:0|peak:layer_scene:3|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "2161656565612000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.95,
+          "hash": "616361616169a000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/editorial-bold-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/editorial-bold-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/editorial-bold-01--lively/contact.jpg"
+    },
+    {
+      "id": "garden-botanical-01--gentle",
+      "recipeId": "garden-botanical-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:3|connection:mask_reveal:0|build:mask_reveal:0|peak:mask_reveal:0|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.46,
+          "hash": "01040602140c0000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.78,
+          "hash": "00004c4949710101"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/garden-botanical-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/garden-botanical-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/garden-botanical-01--gentle/contact.jpg"
+    },
+    {
+      "id": "garden-botanical-01--balanced",
+      "recipeId": "garden-botanical-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:3|establish:mask_reveal:0|connection:layer_scene:6|peak:layer_scene:4|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.43,
+          "hash": "0d4c5c545c5c5c4c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.76,
+          "hash": "00204c4d49216101"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/garden-botanical-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/garden-botanical-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/garden-botanical-01--balanced/contact.jpg"
+    },
+    {
+      "id": "garden-botanical-01--lively",
+      "recipeId": "garden-botanical-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:3|establish:mask_reveal:0|connection:layer_scene:6|peak:mask_reveal:0|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "0105060614080000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.95,
+          "hash": "0004060214080000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/garden-botanical-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/garden-botanical-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/garden-botanical-01--lively/contact.jpg"
+    },
+    {
+      "id": "jmii-silk-botanical-01--gentle",
+      "recipeId": "jmii-silk-botanical-01",
+      "pacing": "gentle",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|title:layer_scene:4|title:video_background:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e050d0957571d0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e050d0957571d0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "25262606020a0a0b"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/jmii-silk-botanical-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/jmii-silk-botanical-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/jmii-silk-botanical-01--gentle/contact.jpg"
+    },
+    {
+      "id": "jmii-silk-botanical-01--balanced",
+      "recipeId": "jmii-silk-botanical-01",
+      "pacing": "balanced",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|title:layer_scene:4|title:video_background:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e050d0957571f0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e050d0957571f0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "2626240309010604"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/jmii-silk-botanical-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/jmii-silk-botanical-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/jmii-silk-botanical-01--balanced/contact.jpg"
+    },
+    {
+      "id": "jmii-silk-botanical-01--lively",
+      "recipeId": "jmii-silk-botanical-01",
+      "pacing": "lively",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|title:layer_scene:4|title:video_background:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e050d6d55571b0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e050d6d55571b0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "2424260c0c0c0404"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/jmii-silk-botanical-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/jmii-silk-botanical-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/jmii-silk-botanical-01--lively/contact.jpg"
+    },
+    {
+      "id": "korean-soft-01--gentle",
+      "recipeId": "korean-soft-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:4|hook:mask_reveal:0|hook:layer_scene:4|peak:layer_scene:3|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0171511353030303"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "0323252421600000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "c909e26000000000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/korean-soft-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/korean-soft-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/korean-soft-01--gentle/contact.jpg"
+    },
+    {
+      "id": "korean-soft-01--balanced",
+      "recipeId": "korean-soft-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:4|hook:mask_reveal:0|hook:layer_scene:4|peak:layer_scene:2|closing:film_roll_left:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0171511353030303"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "3130303078181838"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0222b2b2b2b20808"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/korean-soft-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/korean-soft-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/korean-soft-01--balanced/contact.jpg"
+    },
+    {
+      "id": "korean-soft-01--lively",
+      "recipeId": "korean-soft-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:4|hook:mask_reveal:0|hook:layer_scene:4|build:mask_reveal:0|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0171511353030303"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0171511353030303"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "6961526000000000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/korean-soft-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/korean-soft-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/korean-soft-01--lively/contact.jpg"
+    },
+    {
+      "id": "modern-teal-01--gentle",
+      "recipeId": "modern-teal-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:3|hook:mask_reveal:0|hook:layer_scene:6|peak:collage_grid:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "2696929095949c8e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0123212121690000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/modern-teal-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/modern-teal-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/modern-teal-01--gentle/contact.jpg"
+    },
+    {
+      "id": "modern-teal-01--balanced",
+      "recipeId": "modern-teal-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:3|hook:mask_reveal:0|hook:layer_scene:6|peak:slow_zoom_in:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "4728f890b3d37633"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "0123212121690000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/modern-teal-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/modern-teal-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/modern-teal-01--balanced/contact.jpg"
+    },
+    {
+      "id": "modern-teal-01--lively",
+      "recipeId": "modern-teal-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:3|hook:mask_reveal:0|hook:layer_scene:6|connection:mask_reveal:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0c0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "21352d25044c8d8c"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/modern-teal-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/modern-teal-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/modern-teal-01--lively/contact.jpg"
+    },
+    {
+      "id": "playful-scrapbook-01--gentle",
+      "recipeId": "playful-scrapbook-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:5|hook:layer_scene:6|establish:mask_reveal:0|peak:mask_reveal:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "802d696969611400"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "8333226000000000"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "2125252525250000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/playful-scrapbook-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/playful-scrapbook-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/playful-scrapbook-01--gentle/contact.jpg"
+    },
+    {
+      "id": "playful-scrapbook-01--balanced",
+      "recipeId": "playful-scrapbook-01",
+      "pacing": "balanced",
+      "signature": "hook:layer_scene:5|hook:layer_scene:6|establish:mask_reveal:0|connection:mask_reveal:0|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "802d696969611400"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "802d696969611400"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "6163612161690000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/playful-scrapbook-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/playful-scrapbook-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/playful-scrapbook-01--balanced/contact.jpg"
+    },
+    {
+      "id": "playful-scrapbook-01--lively",
+      "recipeId": "playful-scrapbook-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:5|hook:layer_scene:6|hook:mask_reveal:0|peak:layer_scene:3|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "804d696b69691400"
+        },
+        {
+          "beat": "peak",
+          "at": 8.4,
+          "hash": "0163737363630800"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "6b0f626000000000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/playful-scrapbook-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/playful-scrapbook-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/playful-scrapbook-01--lively/contact.jpg"
+    },
+    {
+      "id": "studio-white-prewedding-01--gentle",
+      "recipeId": "studio-white-prewedding-01",
+      "pacing": "gentle",
+      "signature": "title:layer_scene:3|title:portrait_reflection:0|title:floating_card_gallery:0|build:floating_card_gallery:0|closing:moving_background_echo:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0e0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "6873533733333316"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/studio-white-prewedding-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/studio-white-prewedding-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/studio-white-prewedding-01--gentle/contact.jpg"
+    },
+    {
+      "id": "studio-white-prewedding-01--balanced",
+      "recipeId": "studio-white-prewedding-01",
+      "pacing": "balanced",
+      "signature": "title:layer_scene:3|title:portrait_reflection:0|title:floating_card_gallery:0|establish:layer_scene:6|closing:portrait_reflection:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0e0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "3333333333333312"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/studio-white-prewedding-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/studio-white-prewedding-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/studio-white-prewedding-01--balanced/contact.jpg"
+    },
+    {
+      "id": "studio-white-prewedding-01--lively",
+      "recipeId": "studio-white-prewedding-01",
+      "pacing": "lively",
+      "signature": "title:layer_scene:3|title:portrait_reflection:0|build:portrait_reflection:0|peak:layer_scene:4|closing:layer_scene:4",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e1e1e0e0e0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 8.43,
+          "hash": "3373337373737373"
+        },
+        {
+          "beat": "closing",
+          "at": 10.73,
+          "hash": "3177355353555555"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/studio-white-prewedding-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/studio-white-prewedding-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/studio-white-prewedding-01--lively/contact.jpg"
+    },
+    {
+      "id": "warm-film-01--gentle",
+      "recipeId": "warm-film-01",
+      "pacing": "gentle",
+      "signature": "hook:layer_scene:8|establish:mask_reveal:0|build:mask_reveal:0|peak:layer_scene:2|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e050f5b1313170e"
+        },
+        {
+          "beat": "peak",
+          "at": 8.46,
+          "hash": "7333596925251525"
+        },
+        {
+          "beat": "closing",
+          "at": 10.78,
+          "hash": "00040602140c0800"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/warm-film-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/warm-film-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/warm-film-01--gentle/contact.jpg"
+    },
     {
       "id": "warm-film-01--balanced",
       "recipeId": "warm-film-01",
       "pacing": "balanced",
-      "signature": "hook:layer_scene:8|connection:layer_scene:6|build:layer_scene:5|peak:polaroid:0|closing:polaroid:0",
+      "signature": "hook:layer_scene:8|establish:mask_reveal:0|build:layer_scene:5|peak:film_roll_left:0|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
       "frames": [
         {
           "beat": "hook",
-          "at": 1.25,
-          "hash": "628423b595351109"
+          "at": 1.5,
+          "hash": "0e050b2b2b2b0b0e"
         },
         {
           "beat": "peak",
-          "at": 6.65,
-          "hash": "03070727138f8f5a"
+          "at": 8.43,
+          "hash": "0e1e073616660e0e"
         },
         {
           "beat": "closing",
-          "at": 8.45,
-          "hash": "238d9414460e0e16"
+          "at": 10.98,
+          "hash": "2f272b3337173727"
         }
       ],
       "timeline": "analysis/regression-gallery/warm-film-01--balanced/timeline.json",
       "video": "analysis/regression-gallery/warm-film-01--balanced/preview.mp4",
       "contact": "analysis/regression-gallery/warm-film-01--balanced/contact.jpg"
+    },
+    {
+      "id": "warm-film-01--lively",
+      "recipeId": "warm-film-01",
+      "pacing": "lively",
+      "signature": "hook:layer_scene:8|establish:mask_reveal:0|build:layer_scene:2|peak:mask_reveal:0|closing:mask_reveal:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e050f5b1313170e"
+        },
+        {
+          "beat": "peak",
+          "at": 8.43,
+          "hash": "01010800140c0800"
+        },
+        {
+          "beat": "closing",
+          "at": 10.76,
+          "hash": "00040410140c0800"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/warm-film-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/warm-film-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/warm-film-01--lively/contact.jpg"
+    },
+    {
+      "id": "white-weddings-editorial-01--gentle",
+      "recipeId": "white-weddings-editorial-01",
+      "pacing": "gentle",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|establish:layer_scene:6|establish:layer_scene:6|closing:floating_card_gallery:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e05070347571f0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e05070347571f0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "9b131434b4341449"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-editorial-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-editorial-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-editorial-01--gentle/contact.jpg"
+    },
+    {
+      "id": "white-weddings-editorial-01--balanced",
+      "recipeId": "white-weddings-editorial-01",
+      "pacing": "balanced",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|establish:layer_scene:6|establish:layer_scene:6|closing:layer_scene:5",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e05070347571f0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e05070347571f0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "01216567614f8e16"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-editorial-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-editorial-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-editorial-01--balanced/contact.jpg"
+    },
+    {
+      "id": "white-weddings-editorial-01--lively",
+      "recipeId": "white-weddings-editorial-01",
+      "pacing": "lively",
+      "signature": "save_the_date:layer_scene:8|save_the_date:layer_scene:4|save_the_date:layer_scene:6|establish:layer_scene:6|closing:floating_card_gallery:0",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e054d4f0f155f0e"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e054d4f0f155f0e"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "5696f2b2b2b2d6cc"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-editorial-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-editorial-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-editorial-01--lively/contact.jpg"
+    },
+    {
+      "id": "white-weddings-full-01--gentle",
+      "recipeId": "white-weddings-full-01",
+      "pacing": "gentle",
+      "signature": "save_the_date:layer_scene:7|establish:layer_scene:4|establish:layer_scene:6|couple:layer_scene:7|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e0b121e1b0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e0b121e1b0e0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.76,
+          "hash": "7070707070787850"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-full-01--gentle/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-full-01--gentle/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-full-01--gentle/contact.jpg"
+    },
+    {
+      "id": "white-weddings-full-01--balanced",
+      "recipeId": "white-weddings-full-01",
+      "pacing": "balanced",
+      "signature": "save_the_date:layer_scene:7|save_the_date:layer_scene:3|establish:layer_scene:4|establish:layer_scene:6|closing:layer_scene:2",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e0b2a3a3b0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e0b2a3a3b0e0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "7070707070783850"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-full-01--balanced/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-full-01--balanced/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-full-01--balanced/contact.jpg"
+    },
+    {
+      "id": "white-weddings-full-01--lively",
+      "recipeId": "white-weddings-full-01",
+      "pacing": "lively",
+      "signature": "save_the_date:layer_scene:7|save_the_date:layer_scene:3|save_the_date:layer_scene:4|establish:layer_scene:6|closing:layer_scene:3",
+      "qa": {
+        "verdict": "ok",
+        "blocking": [],
+        "repairable": []
+      },
+      "frames": [
+        {
+          "beat": "hook",
+          "at": 1.5,
+          "hash": "0e0e0b121e1b0e0c"
+        },
+        {
+          "beat": "peak",
+          "at": 1.5,
+          "hash": "0e0e0b121e1b0e0c"
+        },
+        {
+          "beat": "closing",
+          "at": 10.7,
+          "hash": "0000315515350000"
+        }
+      ],
+      "timeline": "analysis/regression-gallery/white-weddings-full-01--lively/timeline.json",
+      "video": "analysis/regression-gallery/white-weddings-full-01--lively/preview.mp4",
+      "contact": "analysis/regression-gallery/white-weddings-full-01--lively/contact.jpg"
     }
   ]
 }

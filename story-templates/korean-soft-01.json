@@ -1,36 +1,378 @@
 {
-  "id": "korean-soft-01", "version": 1, "name": "Korean Soft", "tier": "smart_lite",
+  "id": "korean-soft-01",
+  "version": 1,
+  "name": "Korean Soft",
+  "tier": "smart_lite",
   "libraryTheme": "white_weddings",
-  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
-  "transitionGrammar": { "vocabulary": ["crossfade", "fade_slow", "dissolve", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 1 } },
-  "source": { "origin": "original", "notes": "Bright Korean studio romance: airy whites, portrait-led cards, restrained motion and generous breathing room." },
-  "fit": { "bestFor": ["soft_romance", "studio", "portrait_heavy", "prewedding"], "minPhotos": 24, "idealPhotos": 50 },
-  "musicProfile": { "moods": ["soft", "romantic", "piano"], "energy": "low" },
+  "storyArc": {
+    "sequence": [
+      "hook",
+      "establish",
+      "connection",
+      "build",
+      "family",
+      "peak",
+      "breathe",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "fade_slow",
+      "dissolve",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "Bright Korean studio romance: airy whites, portrait-led cards, restrained motion and generous breathing room."
+  },
+  "fit": {
+    "bestFor": [
+      "soft_romance",
+      "studio",
+      "portrait_heavy",
+      "prewedding"
+    ],
+    "minPhotos": 24,
+    "idealPhotos": 50
+  },
+  "musicProfile": {
+    "moods": [
+      "soft",
+      "romantic",
+      "piano"
+    ],
+    "energy": "low"
+  },
   "pacingVariants": [
-    { "id": "airy", "maxEnergy": 0.38, "durationMultiplier": 1.14 },
-    { "id": "romance", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
-    { "id": "bright", "maxEnergy": 1.0, "durationMultiplier": 0.88 }
+    {
+      "id": "airy",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.14
+    },
+    {
+      "id": "romance",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "bright",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.88
+    }
   ],
-  "briefFields": { "required": ["bride", "groom"], "optional": ["date", "location", "thankYouLine"] },
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
   "defaults": {
-    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 5900, "saturation": 0.96, "contrast": 0.98, "brightness": 0.03, "glow": 0.08 },
-    "audio": { "fade_in": 2, "fade_out": 3, "crossfade": 0 }, "overlays": [],
-    "fonts": { "title": "fonts/PlayfairDisplay.ttf", "heading": "fonts/PlayfairDisplay.ttf", "body": "fonts/BeVietnamPro-Regular.ttf" },
-    "palette": { "cream": "#FAF7F4", "ink": "#403A3C", "brown": "#8A7478", "white": "#FFFFFF" }
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5900,
+      "saturation": 0.96,
+      "contrast": 0.98,
+      "brightness": 0.03,
+      "glow": 0.08
+    },
+    "audio": {
+      "fade_in": 2,
+      "fade_out": 3,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#FAF7F4",
+      "ink": "#403A3C",
+      "brown": "#8A7478",
+      "white": "#FFFFFF"
+    }
   },
   "timelineRules": {
-    "durationStrategy": { "baseSceneSec": 6, "calmSceneSec": 7.5, "buildSceneSec": 4.8, "montageSec": 10, "closingSec": 8 },
-    "transitionStrategy": { "default": { "type": "crossfade", "duration": 0.8 }, "calm": { "type": "fade_slow", "duration": 1 }, "memory": { "type": "dissolve", "duration": 0.7 }, "peak": { "type": "fade_slow", "duration": 0.8 }, "final": { "type": "none", "duration": 0 } },
-    "photoSelection": { "reusePolicy": "avoid_until_exhausted", "heroPriority": ["qualityNorm", "heroScore", "skinFrac"], "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"], "darkPhotoMaxMeanLuma": 85 }
+    "durationStrategy": {
+      "baseSceneSec": 6,
+      "calmSceneSec": 7.5,
+      "buildSceneSec": 4.8,
+      "montageSec": 10,
+      "closingSec": 8
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "crossfade",
+        "duration": 0.8
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.7
+      },
+      "peak": {
+        "type": "fade_slow",
+        "duration": 0.8
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "skinFrac"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 85
+    }
   },
   "scenes": [
-    { "id": "s01_open", "effect": "layer_scene", "layout": "text_left_photo_right", "durationRole": "calm", "transitionRole": "calm", "photoSlots": [{ "slot": "photo", "orient": "portrait", "quality": "best", "motion": "zoom_in" }], "text": { "heading": "{{bride}} & {{groom}}", "body": "Một câu chuyện dịu dàng, bắt đầu từ hai người." } },
-    { "id": "s02_portrait", "effect": "mask_reveal", "mask": "assets/masks/brush_stroke.mp4", "signature": true, "durationRole": "calm", "transitionRole": "default", "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }] },
-    { "id": "s03_pair", "effect": "layer_scene", "layout": "two_photo_story", "durationRole": "normal", "transitionRole": "memory", "photoSlots": [{ "slot": "portrait", "orient": "portrait", "quality": "best" }, { "slot": "wide", "orient": "landscape", "quality": "good" }], "text": { "body": "Từ những điều rất nhỏ, mình dần trở thành bình yên của nhau." }, "repeatable": { "maxRepeats": 3, "variants": [ { "text": { "body": "Bình yên là điều mình tìm thấy ở nhau." } }, { "text": { "body": "Những điều giản dị hóa ra lại quý giá nhất." } }, { "text": {} } ] } },
-    { "id": "s04_quote", "effect": "layer_scene", "layout": "full_bleed_quote", "durationRole": "calm", "transitionRole": "default", "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best", "motion": "zoom_out" }], "text": { "quote": "Thương nhau theo cách thật nhẹ nhàng." }, "repeatable": { "maxRepeats": 3, "variants": [ { "text": { "quote": "Yêu thương đôi khi chỉ là ở lại, thật lâu." } }, { "text": { "quote": "Hạnh phúc là được là chính mình bên nhau." } }, { "text": {} } ] } },
-    { "id": "s05_story", "effect": "layer_scene", "layout": "photo_left_text_right", "durationRole": "normal", "transitionRole": "default", "photoSlots": [{ "slot": "photo", "orient": "portrait", "quality": "best" }], "text": { "heading": "Bên nhau", "body": "Mỗi ngày bình thường đều trở nên đáng nhớ." }, "repeatable": { "maxRepeats": 3, "variants": [ { "text": { "heading": "Đồng hành", "body": "Mình cùng nhau đi qua những ngày rất đỗi bình thường." } }, { "text": { "heading": "Chuyện của mình", "body": "Từng ngày nhỏ góp lại thành một hành trình dài." } }, { "text": {} } ] } },
-    { "id": "s06_peak", "effect": "film_roll_left", "durationRole": "montage", "transitionRole": "peak", "photoSlots": [{ "slot": "film_roll", "count": 7, "orient": "any", "quality": "good", "preferEmotion": true }] },
-    { "id": "s07_closing", "effect": "layer_scene", "layout": "closing_names", "durationRole": "closing", "transitionRole": "final", "photoSlots": [], "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_floral_01.png", "text": { "names": "{{bride}} & {{groom}}", "date": "{{location}} · {{date}}" } }
+    {
+      "id": "s01_open",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "photo",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "{{bride}} & {{groom}}",
+        "body": "Một câu chuyện dịu dàng, bắt đầu từ hai người."
+      }
+    },
+    {
+      "id": "s02_portrait",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/brush_stroke.mp4",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#4A4139"
+      }
+    },
+    {
+      "id": "s03_pair",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "body": "Từ những điều rất nhỏ, mình dần trở thành bình yên của nhau."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "body": "Bình yên là điều mình tìm thấy ở nhau."
+            }
+          },
+          {
+            "text": {
+              "body": "Những điều giản dị hóa ra lại quý giá nhất."
+            }
+          },
+          {
+            "text": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "s04_quote",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_out"
+        }
+      ],
+      "text": {
+        "quote": "Thương nhau theo cách thật nhẹ nhàng."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "quote": "Yêu thương đôi khi chỉ là ở lại, thật lâu."
+            }
+          },
+          {
+            "text": {
+              "quote": "Hạnh phúc là được là chính mình bên nhau."
+            }
+          },
+          {
+            "text": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "s05_story",
+      "effect": "layer_scene",
+      "layout": "photo_left_text_right",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "photo",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Bên nhau",
+        "body": "Mỗi ngày bình thường đều trở nên đáng nhớ."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Đồng hành",
+              "body": "Mình cùng nhau đi qua những ngày rất đỗi bình thường."
+            }
+          },
+          {
+            "text": {
+              "heading": "Chuyện của mình",
+              "body": "Từng ngày nhỏ góp lại thành một hành trình dài."
+            }
+          },
+          {
+            "layout": "full_bleed_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "text": {}
+          }
+        ]
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06_peak",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 7,
+          "orient": "any",
+          "quality": "good",
+          "preferEmotion": true
+        }
+      ]
+    },
+    {
+      "id": "s07_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_floral_01.png",
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
   ]
 }

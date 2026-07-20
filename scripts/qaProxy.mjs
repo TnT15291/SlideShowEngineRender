@@ -186,6 +186,7 @@ for (const slide of tl.slides) {
         (layer.focusY ?? 0.5) < FOCUS_SAFE_MIN || (layer.focusY ?? 0.5) > FOCUS_SAFE_MAX) flags.push("unsafe_focus");
     if (!(layer.width > 0 && layer.height > 0)) flags.push("invalid_crop_box");
     const photo = technicalByFile.get(layer.path);
+    const faces = photo?.faces?.length ? photo.faces.map((f) => f.box) : (photo?.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
     let visible = null;
     if (photo?.w > 0 && photo?.h > 0 && layer.width > 0 && layer.height > 0) {
       const sourceAspect = photo.w / photo.h, targetAspect = layer.width / layer.height;
@@ -196,7 +197,6 @@ for (const slide of tl.slides) {
         const height = sourceAspect / targetAspect;
         visible = { x: 0, y: (1 - height) * (layer.focusY ?? 0.5), width: 1, height };
       }
-      const faces = photo.faces?.length ? photo.faces.map((f) => f.box) : (photo.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
       const face = faces[0];
       if (faces.length) {
         const margin = FACE_CONTAIN_MARGIN;
@@ -211,14 +211,28 @@ for (const slide of tl.slides) {
     if (flags.length) {
       crop.flagged++;
       const face = photo?.faceBoxEstimate;
-      const clamp = (v) => Math.max(0, Math.min(1, v));
+      // A proposed focus must satisfy the same safe bounds this check enforces;
+      // clamping to 0..1 produced fixes at 0 that were immediately flagged again.
+      const clampFocus = (v) => Math.max(FOCUS_SAFE_MIN, Math.min(FOCUS_SAFE_MAX, v));
       const focusX = face && visible?.width < 1
-        ? clamp((face.x + face.width / 2 - visible.width / 2) / (1 - visible.width)) : 0.5;
+        ? clampFocus((face.x + face.width / 2 - visible.width / 2) / (1 - visible.width)) : 0.5;
       const focusY = face && visible?.height < 1
-        ? clamp((face.y + face.height / 2 - visible.height / 2) / (1 - visible.height)) : 0.5;
+        ? clampFocus((face.y + face.height / 2 - visible.height / 2) / (1 - visible.height)) : 0.5;
+      const hasSafeFocus = (start, size, visibleSize) => {
+        if (visibleSize >= 1) return true;
+        const travel = 1 - visibleSize;
+        const low = (start + size - visibleSize - FACE_CONTAIN_MARGIN) / travel;
+        const high = (start + FACE_CONTAIN_MARGIN) / travel;
+        return Math.max(low, FOCUS_SAFE_MIN) <= Math.min(high, FOCUS_SAFE_MAX);
+      };
+      const focusCannotContainFaces = face && visible && (
+        !hasSafeFocus(face.x, face.width, visible.width) ||
+        !hasSafeFocus(face.y, face.height, visible.height));
       problems.push({ id: slide.id, check: "crop", flags,
         detail: `${layer.path} has an unsafe cover crop/focus or cuts the estimated face region`,
-        fix: { kind: "set_focus", layer: index, focusX, focusY } });
+        fix: focusCannotContainFaces
+          ? { kind: "set_fit", layer: index, to: "contain" }
+          : { kind: "set_focus", layer: index, focusX, focusY } });
     }
   }
 }

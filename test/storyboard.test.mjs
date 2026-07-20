@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { composeStoryboard, planSceneCount } from "../scripts/lib/storyboard.mjs";
+import { composeStoryboard, planSceneCount, applySignatureHybridScene } from "../scripts/lib/storyboard.mjs";
 import { makeEnergy } from "../scripts/lib/pacing.mjs";
 import { MOTION_EFFECTS } from "../scripts/lib/engineCapabilities.mjs";
 
@@ -167,4 +167,42 @@ test("planSceneCount: the binding constraint is named, not guessed", () => {
   const rich = planSceneCount({ photoCount: 500, musicDuration: 120, avgBase: 5.8 });
   assert.equal(rich.bound, "music");
   assert.ok(rich.photosPerScene > 1, "a photo-rich job must pack photos into each scene");
+});
+
+// ---------------------------------------------------------------------------
+// A SIGNATURE HYBRID SCENE IS ONE SWAP, NOT A SECOND PALETTE. The Blender-backed templates
+// cost minutes per scene instead of seconds, so the substitution must never change scene
+// count, photo count or total duration — only which scene, and which renderer, draws one
+// already-decided single-photo beat.
+
+test("signature hybrid scene replaces exactly the peak-energy single-photo scene", () => {
+  const sb = composeStoryboard({ photoCount: 40, musicDuration: 180, energy: track(180), library });
+  const before = { count: sb.scenes.length, photos: photosIn(sb), duration: filmLength(sb) };
+
+  const singlePhotoScenes = sb.scenes.filter((s) => !s.layout && s.photos === 1 && s.id !== "s99_closing");
+  const peak = singlePhotoScenes.reduce((a, b) => (b.energy > a.energy ? b : a));
+
+  const scenes = applySignatureHybridScene(sb.scenes, { template: "confetti_bloom", renderer: "remotion" });
+
+  assert.equal(scenes.length, before.count, "substitution must not change scene count");
+  assert.equal(scenes.reduce((n, s) => n + s.photos, 0), before.photos, "substitution must not change photo count");
+  assert.equal(filmLength({ scenes }), before.duration, "substitution must not change total film length");
+
+  const swapped = scenes.filter((s) => s.renderer);
+  assert.equal(swapped.length, 1, "exactly one scene is substituted");
+  assert.equal(swapped[0].id, peak.id, "the substituted scene is the one with peak energy");
+  assert.equal(swapped[0].renderer, "remotion");
+  assert.equal(swapped[0].template, "confetti_bloom");
+  assert.equal(swapped[0].effect, "still", "effect stays the schema's back-compat placeholder");
+  assert.ok(!("easing" in swapped[0]), "easing computed for the old effect must not survive the swap");
+});
+
+test("signature hybrid scene is a no-op without a template, and skips gracefully with no candidate", () => {
+  const sb = composeStoryboard({ photoCount: 40, musicDuration: 180, energy: track(180), library });
+  assert.deepEqual(applySignatureHybridScene(sb.scenes, {}), sb.scenes);
+  assert.deepEqual(applySignatureHybridScene(sb.scenes, { template: null, renderer: null }), sb.scenes);
+
+  const noSingles = sb.scenes.map((s) => ({ ...s, effect: "layer_scene" }));
+  const result = applySignatureHybridScene(noSingles, { template: "confetti_bloom", renderer: "remotion" });
+  assert.deepEqual(result, noSingles, "with no single-photo scene to carry it, the shot list is returned unchanged");
 });

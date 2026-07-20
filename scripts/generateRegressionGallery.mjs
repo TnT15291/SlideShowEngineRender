@@ -51,9 +51,14 @@ for (const recipePath of recipes) for (const pacing of pacings) {
   const recipe = JSON.parse(fs.readFileSync(path.resolve(root, recipePath), "utf8")), id = `${recipe.id}--${pacing}`, dir = `${outDir}/${id}`;
   fs.mkdirSync(path.resolve(root, dir), { recursive: true });
   const direction = `${dir}/direction.json`, fullTl = `${dir}/full.json`, timelinePath = `${dir}/timeline.json`, video = `${dir}/preview.mp4`, contact = `${dir}/contact.jpg`;
+  // Do not let pre-flight QA sample a preview left by an older timeline.
+  fs.rmSync(path.resolve(root, video), { force: true });
   run(["scripts/chooseTier1Direction.mjs", "--recipe", recipePath, "--prompt", prompt, "--photos", photos, "--music", musicJson, "--pacing", pacing, "--out", direction], `direction ${id}`);
   run(["scripts/applyStoryTemplate.mjs", "--template", recipePath, "--photos", photos, "--music", music, "--analysis-dir", analysisDir, "--direction", direction,
     "--out", fullTl, "--output", video, "--name", id, "--quality", "draft", "--prompt", prompt], `timeline ${id}`);
+  run(["scripts/qaLoop.mjs", "--timeline", fullTl, "--analysis-dir", `${dir}/analysis`, "--photos", photos,
+    "--content", `${analysisDir}/photo_content.json`, "--music", musicJson, "--tier", "template",
+    "--max-revisions", "1", "--skip-render", "--strict"], `pre-flight QA ${id}`);
   const full = JSON.parse(fs.readFileSync(path.resolve(root, fullTl), "utf8")), cut = makePreviewCut(full, { duration, output: video });
   fs.writeFileSync(path.resolve(root, timelinePath), JSON.stringify(cut, null, 2) + "\n"); run(["scripts/fitTextInTimeline.mjs", timelinePath], `fit ${id}`);
   const qa = qaGate(fullTl, dir); // gate the full film, not the trimmed preview cut
@@ -79,4 +84,4 @@ if (update && !dryRun) { fs.mkdirSync(path.dirname(path.resolve(root, baselinePa
 console.log(`Regression gallery: ${entries.length} variants -> ${outDir} ${JSON.stringify(report.summary)}`);
 // The QA gate fails --strict even on a dry run: text_safe_area/closing_card are provable from
 // the timeline alone, so a geometry regression must break CI without waiting for a render.
-if (strict && (qaFailures.length || entries.some((e) => e.comparison.verdict === "changed"))) process.exit(1);
+if (strict && (qaFailures.length || entries.some((e) => ["changed", "new"].includes(e.comparison.verdict)))) process.exit(1);

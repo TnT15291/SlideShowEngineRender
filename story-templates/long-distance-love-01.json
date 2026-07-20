@@ -1,0 +1,367 @@
+{
+  "id": "long-distance-love-01",
+  "version": 1,
+  "name": "Across the Miles",
+  "tier": "smart_lite",
+  "libraryTheme": "modern_teal",
+  "storyArc": {
+    "sequence": [
+      "two_places",
+      "first_message",
+      "visits",
+      "distance",
+      "reunion",
+      "proposal",
+      "wedding",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "smooth_left",
+      "dissolve",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A clean geographic-feeling story for long-distance couples, moving from two separate places through messages and reunions to one home."
+  },
+  "fit": {
+    "bestFor": [
+      "long_distance",
+      "travel",
+      "international",
+      "couple_journey"
+    ],
+    "minPhotos": 24,
+    "idealPhotos": 60
+  },
+  "musicProfile": {
+    "moods": [
+      "hopeful",
+      "modern",
+      "cinematic"
+    ],
+    "energy": "medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "letters",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "journey",
+      "maxEnergy": 0.7,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "reunion",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.85
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "yearsTogether",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 6000,
+      "saturation": 1.04,
+      "contrast": 1.05,
+      "glow": 0.05
+    },
+    "audio": {
+      "fade_in": 1.5,
+      "fade_out": 3,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F3F1EC",
+      "ink": "#16232A",
+      "brown": "#2E6F6A",
+      "white": "#FFFFFF"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.2,
+      "calmSceneSec": 6.8,
+      "buildSceneSec": 4.2,
+      "montageSec": 9.5,
+      "closingSec": 8
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "crossfade",
+        "duration": 0.55
+      },
+      "calm": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.7
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.45
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 72
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_places",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s02_signal",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "gl_transition",
+      "params": {
+        "name": "DreamyZoom"
+      },
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "TỪ HAI THÀNH PHỐ · MỘT CUỘC TRÒ CHUYỆN"
+    },
+    {
+      "id": "s03_visits",
+      "effect": "layer_scene",
+      "layout": "journey_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "accent",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Những chuyến đi",
+        "caption": "Mỗi lần gặp là một lần khoảng cách ngắn lại."
+      },
+      "muteFallback": {
+        "layout": "photo_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "portrait",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "caption": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "caption": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s04_miles",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Across the Miles"
+      }
+    },
+    {
+      "id": "s05_reunion",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_in"
+        }
+      ],
+      "text": {
+        "quote": "Khoảng cách có điểm cuối · {{bride}} & {{groom}}"
+      }
+    },
+    {
+      "id": "s55_two_cities",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Hai thành phố · Một trái tim"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Khoảng cách chỉ là thử thách"
+            }
+          },
+          {
+            "text": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "s06_wedding",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 7,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07_close",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "Cùng một mái nhà",
+        "date": "{{bride}} & {{groom}} · {{date}}"
+      }
+    }
+  ]
+}

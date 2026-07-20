@@ -51,9 +51,17 @@ const VARIABLE_MAX = MONTAGE_MAX;
 const isVariable = (scene) => MONTAGE_EFFECTS.has(scene.effect);
 
 /** Strip a scene's authored words. Used when a scene recurs past the variants its author
- *  supplied: a wordless repeat is honest, and the same heading three times is not. */
+ *  supplied: a wordless repeat is honest, and the same heading three times is not.
+ *
+ *  A scene may declare `muteFallback` — scene fields (typically a layout swap) applied to
+ *  wordless recurrences. It exists because muting a HALF-TEXT layout (photo left, copy
+ *  right) does not produce a quiet repeat, it produces half an empty frame: the photo
+ *  keeps its 50% and the text's 50% becomes blank cream. The author names the balanced
+ *  stand-in (full_bleed_quote, photo_duo, ...) and the solver applies it here, so the
+ *  muted repeat is a different composition rather than a hole. */
 function mute(scene) {
-  const next = { ...scene };
+  const next = { ...scene, ...(scene.muteFallback || {}) };
+  delete next.muteFallback;
   delete next.captionPattern;
   if (next.text) next.text = Object.fromEntries(Object.keys(next.text).map((k) => [k, ""]));
   return next;
@@ -162,6 +170,30 @@ export function solveRecipeShotList({
   // And substitutes rotate by least-used rather than by modulo, so a 20-scene film is not
   // the same two layouts alternating for three minutes.
   const substitutes = body.filter((s) => !isVariable(s) && photoDemandOf(s) >= 1);
+
+  // How many times a scene may appear before the film should rather show LESS than show
+  // it again. A recipe whose only cheap scene is its signature mask (e.g. playful-
+  // scrapbook's brush_stroke, photoDemand 1) played that one 5.0s reveal ten times in a
+  // row once a photo-poor budget could afford nothing else — and the library's own note
+  // on the mask beats is "use at most once per video". A mask reveal is punctuation, not
+  // a paragraph, so it is capped at 1 regardless of what the recipe author wrote.
+  //
+  // Every OTHER scene honours only its OWN author's `repeatable.maxRepeats` — no invented
+  // default. A default cap here once looked harmless (photo-poor jobs rarely need more
+  // than a handful of repeats), until a "loop the music to cover more photos" film asked
+  // for 40+ scenes from a 7-scene palette: a blanket cap of 3 emptied the affordable pool
+  // at scene 10 and the shot list broke early, undershooting a target the album could
+  // actually reach. Uncapped scenes may still repeat consecutively when nothing else is
+  // affordable (preferDifferent already avoids it whenever an alternative exists) — that
+  // is honest scarcity, not the mask's "used up its one moment" bug.
+  const MASK_ONCE = new Set(["mask_reveal"]);
+  // A hybrid (Remotion/Blender) scene is the same punctuation class as the mask: the
+  // capability doc calls it "a SIGNATURE choice, not a palette member". Left uncapped,
+  // its 1-photo demand made it the only affordable scene at the tail of a photo-rich
+  // job and a real build closed on TWENTY-SEVEN filmstrip renders in a row.
+  const isHybrid = (s) => Boolean(s.renderer && s.template);
+  const repeatCapOf = (s) => (MASK_ONCE.has(s.effect) || isHybrid(s) ? 1 : (typeof s.repeatable === "object" && s.repeatable.maxRepeats) || Infinity);
+  const underCap = (pool) => pool.filter((s) => (timesUsed.get(s.id) ?? 0) < repeatCapOf(s));
   // Counted against the SOURCE scene, not the emitted one: `s05_breath` and `s05_breath_r2`
   // are the same layout on screen, and it is the layout the viewer gets tired of.
   const timesUsed = new Map();
@@ -195,11 +227,26 @@ export function solveRecipeShotList({
     // A photoless scene is authored punctuation — a title card, a video interlude. It
     // earns its place ONCE, where its author put it. Every recurrence after that is the
     // same clip again, so later rounds hand its slot to a scene that shows a photograph.
-    if (round > 0 && !isVariable(scene) && photoDemandOf(scene) === 0 && substitutes.length) {
-      const pick = leastUsed(preferDifferent(substitutes));
+    if (round > 0 && !isVariable(scene) && photoDemandOf(scene) === 0 && underCap(substitutes).length) {
+      const pick = leastUsed(preferDifferent(underCap(substitutes)));
       paletteSource = pick;
       scene = variantOf(pick, round);
       scene.id = `${pick.id}_r${round}`;
+    }
+
+    // The authored cycle honours repeat caps too. underCap() guards the SUBSTITUTES, but
+    // the palette itself kept cycling past the author's maxRepeats — and past the mask's
+    // once-per-video cap — whenever the budget could still afford the scene, so a photo-
+    // poor film replayed its mask reveal on every round. A capped beat goes to a different
+    // scene, or is dropped: showing less beats showing the same punctuation again.
+    if ((timesUsed.get(paletteSource.id) ?? 0) >= repeatCapOf(paletteSource)) {
+      const affordable = underCap(substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent)));
+      if (!affordable.length) continue;
+      const pick = leastUsed(preferDifferent(affordable));
+      paletteSource = pick;
+      const seen = timesUsed.get(pick.id) ?? 0;
+      scene = seen === 0 ? { ...pick } : variantOf(pick, seen);
+      scene.id = round === 0 && seen === 0 ? pick.id : `${pick.id}_r${round}`;
     }
 
     if (isVariable(scene)) {
@@ -212,7 +259,7 @@ export function solveRecipeShotList({
       // beat owns, substitute an affordable single-photo scene instead of overdrawing
       // the pool and failing much later during assignment.
       if (cost > want || spent + cost > storyPhotos) {
-        const affordable = substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent));
+        const affordable = underCap(substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent)));
         if (!affordable.length) break;
         const pick = leastUsed(preferDifferent(affordable));
         paletteSource = pick;
@@ -232,7 +279,7 @@ export function solveRecipeShotList({
       // no differing substitute keeps the authored scene.
       const unaffordable = need > want || spent + need > storyPhotos;
       if (unaffordable || layoutOf(scene) === prevLayout) {
-        const affordable = substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent));
+        const affordable = underCap(substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent)));
         if (!affordable.length && unaffordable) break;
         const differing = affordable.filter((s) => layoutOf(s) !== prevLayout);
         if (differing.length || (unaffordable && affordable.length)) {
@@ -255,6 +302,14 @@ export function solveRecipeShotList({
       delete scene.text;
       if (copy.captionPattern != null) scene.captionPattern = copy.captionPattern;
       if (copy.text != null) scene.text = copy.text;
+      // A muted recurrence may carry a muteFallback layout swap (see mute()). Adopt it
+      // only when the stand-in costs the same number of photos: this block runs AFTER
+      // the beat's photos were spent, so a cheaper/dearer layout here would desync the
+      // budget from the assignment.
+      if (copy.layout && copy.layout !== scene.layout && photoDemandOf(copy) === photoDemandOf(scene)) {
+        scene.layout = copy.layout;
+        if (copy.photoSlots) scene.photoSlots = copy.photoSlots;
+      }
     }
     bump(paletteSource.id);
     scene.id = uniqueId(scene.id);

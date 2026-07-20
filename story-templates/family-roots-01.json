@@ -1,0 +1,386 @@
+{
+  "id": "family-roots-01",
+  "version": 1,
+  "name": "Roots & Branches",
+  "tier": "smart_lite",
+  "libraryTheme": "warm_film",
+  "storyArc": {
+    "sequence": [
+      "roots",
+      "bride_family",
+      "groom_family",
+      "two_families",
+      "blessing",
+      "wedding",
+      "legacy",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "fade_slow",
+      "dissolve",
+      "crossfade",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 2,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A family-forward wedding story that gives parents, grandparents, childhood archives and the joining of two households equal emotional weight."
+  },
+  "fit": {
+    "bestFor": [
+      "family_archive",
+      "traditional",
+      "multi_generation",
+      "ceremony"
+    ],
+    "minPhotos": 23,
+    "idealPhotos": 75
+  },
+  "musicProfile": {
+    "moods": [
+      "warm",
+      "nostalgic",
+      "orchestral"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "ancestry",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.18
+    },
+    {
+      "id": "family",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "celebration",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.87
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 4600,
+      "saturation": 0.98,
+      "contrast": 1.04,
+      "grain": 6,
+      "glow": 0.12,
+      "vignette": true
+    },
+    "audio": {
+      "fade_in": 2.5,
+      "fade_out": 4,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/DancingScript.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F1E7D9",
+      "ink": "#3A2E22",
+      "brown": "#76543A",
+      "white": "#FFFBF4"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 6,
+      "calmSceneSec": 7.8,
+      "buildSceneSec": 5,
+      "montageSec": 11,
+      "closingSec": 9
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "dissolve",
+        "duration": 0.85
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 1
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 65
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_roots",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/particle_gather.mp4",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "ROOTS & BRANCHES",
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s02_bride_family",
+      "effect": "layer_scene",
+      "layout": "photo_left_text_right",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Nhà cô dâu",
+        "body": "Nơi {{bride}} lớn lên trong yêu thương."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_groom_family",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Nhà chú rể",
+        "body": "Nơi {{groom}} học cách yêu thương và chở che."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "floating_frame",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s04_archive",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "captionPattern": "ROOTS · LOVE PASSED DOWN",
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s05_blessing",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Lời chúc phúc",
+        "caption": "Hai gia đình · Một mái nhà mới"
+      }
+    },
+    {
+      "id": "s06_wedding",
+      "effect": "photo_strip_up",
+      "params": {
+        "position": "right"
+      },
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 8,
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07_legacy",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_out"
+        }
+      ],
+      "text": {
+        "quote": "Tình yêu là điều được trao lại qua nhiều thế hệ"
+      }
+    },
+    {
+      "id": "s08_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Với lòng biết ơn · {{date}}"
+      }
+    }
+  ]
+}

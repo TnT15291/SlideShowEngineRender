@@ -28,7 +28,7 @@ import path from "node:path";
 import { hasKey, provenance, defaultModel, callDeepSeekJSON, str, oneOf } from "./lib/deepseek.mjs";
 import { loadLedger, active, applyToDirectorNotes } from "./lib/directives.mjs";
 import {
-  describeCapabilities, SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS,
+  describeCapabilities, SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, HYBRID_SIGNATURE_TEMPLATES,
 } from "./lib/engineCapabilities.mjs";
 
 const root = process.cwd();
@@ -158,13 +158,14 @@ function buildSystem() {
     "- montageEffects: 2-3 effects for scenes that spend MANY photographs at once.",
     "- transitionPalette: 3-4 transitions, ordered [everyday, act-change, energy-peak]. Variety here is what stops the film feeling mechanical.",
     "- layoutMix: 0.15-0.5 — the fraction of scenes that are designed CARDS (layer_scene: photo + text). Cards are punctuation. A film made mostly of cards looks like a slideshow, not a film.",
+    "- signatureHybridScene: OPTIONAL, and usually null. If ONE moment in this film deserves a GPU/3D treatment richer than anything native (hybridScenes above), name its id here — it replaces the film's single peak-energy photo-scene with that template, nothing else changes. Only ids with assets=1 are eligible. Prefer a 'fast' one; a 'slow' one costs minutes of render time, so spend it only when the moment earns it.",
     "",
     "EASING must be one of: gentle, snap, bounce. OVERLAY must be one of: warm, soft, sunset, or null.",
     "",
     "Return ONE JSON object of exactly this shape:",
     '{"creative_brief":{"style":str,"emotionalArc":str,"colorMood":str,"captionPhilosophy":str,"pacing":"slow|medium|fast|dynamic","structure":str,"photoSelection":str},',
     '"director_notes":{"singlePhotoEffects":[effect,...],"montageEffects":[effect,...],"transitionPalette":[transition,...],"layoutMix":number,',
-    '"openingEffect":effect,"defaultTransition":transition,"endingTransition":transition,"montageEffect":montage,"heroEffect":effect,"portraitEffect":effect,"groupEffect":effect,"detailEffect":effect,"colorCurves":curves_or_null,"overlayVariant":overlay_or_null,"easingCalm":easing,"easingEnergetic":easing,"notes":[str,...]},',
+    '"openingEffect":effect,"defaultTransition":transition,"endingTransition":transition,"montageEffect":montage,"heroEffect":effect,"portraitEffect":effect,"groupEffect":effect,"detailEffect":effect,"colorCurves":curves_or_null,"overlayVariant":overlay_or_null,"easingCalm":easing,"easingEnergetic":easing,"signatureHybridScene":hybrid_id_or_null,"notes":[str,...]},',
     '"asset_choices":{"titleFontId":font_id_or_null,"bodyFontId":font_id_or_null,"overlayId":overlay_id_or_null,"openingBackgroundId":background_id_or_null,"endingBackgroundId":background_id_or_null,"frameId":frame_id_or_null}}',
   ].join("\n");
 }
@@ -247,6 +248,9 @@ function stubDoc() {
       overlayVariant: energetic ? "warm" : "soft",
       easingCalm: "gentle",
       easingEnergetic: energetic ? "snap" : "gentle",
+      // The STUB is the free, no-key path — it should not saddle a customer with a
+      // Blender-EEVEE render they never asked for. A real director may still choose one.
+      signatureHybridScene: null,
       notes: [
         `Hold hero frames a beat longer to honour the ${chosen.mood} tone.`,
         "Reserve bounce easing for at most one playful peak.",
@@ -322,6 +326,9 @@ function validateNotes(raw) {
     overlayVariant: overlay,
     easingCalm: oneOf(d.easingCalm, EASING, "gentle"),
     easingEnergetic: oneOf(d.easingEnergetic, EASING, "snap"),
+    // A signature choice, not a palette: null unless the model named one of the templates
+    // that actually take a single photo (the ones a lone scene can be substituted for).
+    signatureHybridScene: d.signatureHybridScene == null ? null : oneOf(d.signatureHybridScene, HYBRID_SIGNATURE_TEMPLATES, null),
     ...(notes.length ? { notes } : {}),
   };
 }

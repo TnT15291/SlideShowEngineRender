@@ -29,6 +29,8 @@ const schema = JSON.parse(
 export const ALL_EFFECTS = schema.$defs.effect.enum;
 export const ALL_TRANSITIONS = schema.$defs.transitionType.enum;
 export const ALL_CURVES = schema.$defs.curvesPreset.enum;
+export const ALL_REMOTION_TEMPLATES = schema.$defs.remotionTemplate.enum;
+export const ALL_BLENDER_TEMPLATES = schema.$defs.blenderTemplate.enum;
 
 /** Whole-slide effects that show ONE photograph, full frame.
  *
@@ -72,6 +74,9 @@ const MONTAGE = {
   film_roll_up: { slot: "film_roll", min: 4, max: 12, hint: "strip of frames scrolling up; a montage sweep" },
   film_roll_left: { slot: "film_roll", min: 4, max: 12, hint: "strip scrolling left; a montage sweep" },
   film_roll_right: { slot: "film_roll", min: 4, max: 12, hint: "strip scrolling right; a montage sweep" },
+  photo_strip_up: { slot: "film_roll", min: 4, max: 12, hint: "borderless connected photos scroll vertically; position left, center or right beside a hero background" },
+  photo_strip_left: { slot: "film_roll", min: 4, max: 12, hint: "borderless connected photos scroll left over a hero background" },
+  photo_strip_right: { slot: "film_roll", min: 4, max: 12, hint: "borderless connected photos scroll right over a hero background" },
   double_exposure: { slot: "pair", min: 2, max: 2, hint: "two frames blended; dreamlike, use once or twice" },
 };
 
@@ -83,8 +88,42 @@ const SPECIAL = {
   video_background: { photos: 0, asset: "scene.background", hint: "a stock video interlude; shows no photograph" },
 };
 
+/** GPU/3D scenes rendered by Remotion or Blender instead of native FFmpeg filters (see
+ *  docs/HYBRID-RENDERER.md). They use `renderer`+`template`+`assets`, not `effect` — a
+ *  structurally different shape, which is why they get their own table instead of a slot in
+ *  SINGLE. `assets` is the minimum photo count the template needs; `cost` is why the director
+ *  is told to spend these ONE at a time: Remotion templates render in seconds, but Blender's
+ *  EEVEE templates take minutes per scene, not seconds — using several in one film the way a
+ *  native effect gets reused would multiply a render job from minutes to hours by accident. */
+const HYBRID = {
+  // Remotion — renders in seconds, same order of magnitude as a native effect.
+  title: { renderer: "remotion", assets: 1, cost: "fast", hint: "title/opening card: blurred full-bleed backdrop behind the sharp photo, caption fades in from params.title" },
+  filmstrip: { renderer: "remotion", assets: 1, cost: "fast", hint: "endless scrolling filmstrip on a dashed film-reel background; give several assets for variety, one repeats" },
+  page_flip: { renderer: "remotion", assets: 2, cost: "fast", hint: "a page turns to reveal the next photo, like an album leaf" },
+  portrait_echo: { renderer: "remotion", assets: 1, cost: "fast", hint: "sharp centered portrait with blurred drifting echoes of itself behind" },
+  triptych: { renderer: "remotion", assets: 3, cost: "fast", hint: "three photos side by side, each sliding gently into place" },
+  card_gallery: { renderer: "remotion", assets: 3, cost: "fast", hint: "three photos fanned in 3D like cards on a table" },
+  paper_peel: { renderer: "remotion", assets: 2, cost: "fast", hint: "the top photo peels away like paper to reveal the one beneath" },
+  panel_reveal: { renderer: "remotion", assets: 1, cost: "fast", hint: "two panels slide open from the centre to reveal the photo" },
+  floating_frame: { renderer: "remotion", assets: 1, cost: "fast", hint: "a framed photo floats and gently sways over its own blurred backdrop" },
+  light_rays: { renderer: "remotion", assets: 1, cost: "fast", hint: "warm conic light rays pulse across the photo, like sun through a window" },
+  gl_transition: { renderer: "remotion", assets: 2, cost: "fast", hint: "GPU shader wipe between two photos (heart/kaleidoscope/cube/doorway/circleopen/ripple/windowslice/DreamyZoom/FilmBurn/morph via params.name); needs a pair, not a single hero shot" },
+  glass_frame: { renderer: "remotion", assets: 1, cost: "fast", hint: "glassmorphism reveal: frosted glass panel over a blurred backdrop, sharp photo inset, one light sweep" },
+  confetti_bloom: { renderer: "remotion", assets: 1, cost: "fast", hint: "blush/ivory/gold/sage petals drift in from the edges and settle around the photo while the camera dollies in" },
+  // Blender — a real headless render process per scene. page_flip_3d/camera_gallery_3d use
+  // Workbench (fake studio shading, no lighting setup) and are noticeably slower than
+  // Remotion but not minutes-slow; ring_spin_reveal/photo_frame_orbit use EEVEE for real
+  // lighting/depth-of-field/bokeh and cost minutes per scene, not seconds.
+  page_flip_3d: { renderer: "blender", assets: 2, cost: "slow", hint: "a real 3D page bends and turns to reveal the next photo" },
+  camera_gallery_3d: { renderer: "blender", assets: 1, cost: "slow", hint: "camera dollies across a row of 3D photo tiles; more assets = a longer row" },
+  ring_spin_reveal: { renderer: "blender", assets: 1, cost: "slow", hint: "3D gold ring with a glass gem spins in the foreground; camera racks focus back to the photo in soft bokeh — a wedding-ring / intro motif" },
+  photo_frame_orbit: { renderer: "blender", assets: 1, cost: "slow", hint: "camera orbits a single hanging photo frame with warm bokeh lights defocused behind it — a gallery/hero moment" },
+};
+
 // The guarantee. An effect the engine accepts but nobody classified would be invisible to
-// the director — exactly the failure this file exists to prevent.
+// the director — exactly the failure this file exists to prevent. Extended to hybrid
+// templates for the same reason: a template the renderers accept but this file does not
+// describe is invisible to the director in exactly the same way an unclassified effect is.
 const classified = new Set([...Object.keys(SINGLE), ...Object.keys(MONTAGE), ...Object.keys(SPECIAL)]);
 const unclassified = ALL_EFFECTS.filter((e) => !classified.has(e));
 if (unclassified.length) {
@@ -94,6 +133,27 @@ if (unclassified.length) {
       `Add ${unclassified.length === 1 ? "it" : "them"} to SINGLE, MONTAGE or SPECIAL so the AI director can use ${unclassified.length === 1 ? "it" : "them"}.`
   );
 }
+const classifiedHybrid = new Set(Object.keys(HYBRID));
+const unclassifiedHybrid = [...ALL_REMOTION_TEMPLATES, ...ALL_BLENDER_TEMPLATES].filter((t) => !classifiedHybrid.has(t));
+if (unclassifiedHybrid.length) {
+  throw new Error(
+    `scripts/lib/engineCapabilities.mjs is out of date: the renderers accept ${unclassifiedHybrid.join(", ")}, ` +
+      `but this file does not classify ${unclassifiedHybrid.length === 1 ? "it" : "them"} in HYBRID. ` +
+      `Add ${unclassifiedHybrid.length === 1 ? "it" : "them"} so the AI director can use ${unclassifiedHybrid.length === 1 ? "it" : "them"}.`
+  );
+}
+
+export const HYBRID_TEMPLATES = new Set(Object.keys(HYBRID));
+export const HYBRID_RENDERER = Object.fromEntries(Object.entries(HYBRID).map(([id, m]) => [id, m.renderer]));
+export const HYBRID_ASSET_MIN = Object.fromEntries(Object.entries(HYBRID).map(([id, m]) => [id, m.assets]));
+/** Hybrid templates that take exactly one photo — the ones a single existing scene can be
+ *  substituted for without disturbing the shot list's photo count or duration. `gl_transition`
+ *  needs a pair and is deliberately excluded: it stays reachable only by hand-authoring a
+ *  timeline (see docs/HYBRID-RENDERER.md) until something teaches the composer to solve for
+ *  a 2-photo hybrid beat. */
+export const HYBRID_SIGNATURE_TEMPLATES = new Set(
+  Object.entries(HYBRID).filter(([, m]) => m.assets === 1).map(([id]) => id)
+);
 
 export const SINGLE_PHOTO_EFFECTS = new Set(Object.keys(SINGLE));
 export const MONTAGE_EFFECTS = new Set(Object.keys(MONTAGE));
@@ -167,6 +227,13 @@ export function describeCapabilities({ library, assets = {} } = {}) {
       })),
       photoCountsAvailable: [...buckets.keys()].sort((a, b) => a - b),
     },
+    hybridScenes: Object.entries(HYBRID).map(([id, m]) => ({
+      id,
+      renderer: m.renderer,
+      assets: m.assets,
+      speed: m.cost === "slow" ? "slow — minutes per scene, not seconds" : "fast — seconds, like a native effect",
+      note: m.hint,
+    })),
     transitions: ALL_TRANSITIONS,
     colorCurves: ALL_CURVES,
     themes: Object.keys(library?.designTokens?.themes || {}),
@@ -176,6 +243,7 @@ export function describeCapabilities({ library, assets = {} } = {}) {
       "photoBudget = musicSeconds / photoCount is the number that governs everything. When it is high (>6s), each photograph must carry a long hold — choose effects that MOVE (slow_zoom_in, ken-burns, pans), because a static frame held for 8 seconds is dead air.",
       "When the budget is low (<3s), single-photo scenes waste the set — lean on montages, which spend many photographs in one beat.",
       "layer_scene is the only effect that can show TEXT. Use it for the opening, the closing and a few punctuation beats — not for the whole film.",
+      "hybridScenes are GPU/3D, richer than anything native — but they are a SIGNATURE choice, not a palette member. signatureHybridScene may name AT MOST ONE id from hybridScenes whose assets=1 (it replaces one existing single-photo scene, so it cannot take a pair). Prefer a 'fast' one; a 'slow' (Blender) one costs minutes of render time, so only spend it on a moment that earns it. null is the right answer for most films.",
     ],
   };
 }

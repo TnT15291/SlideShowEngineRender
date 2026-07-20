@@ -1,0 +1,350 @@
+{
+  "id": "afterparty-pulse-01",
+  "version": 1,
+  "name": "Afterparty Pulse",
+  "tier": "smart_lite",
+  "libraryTheme": "teal_orange_editorial",
+  "storyArc": {
+    "sequence": [
+      "entrance",
+      "toast",
+      "dinner",
+      "first_dance",
+      "dancefloor",
+      "friends",
+      "last_song",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "smooth_left",
+      "fade_to_black",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 2
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A reception-only template designed around toasts, first dance and escalating dance-floor energy, ending on a quiet last-song epilogue."
+  },
+  "fit": {
+    "bestFor": [
+      "reception_only",
+      "party",
+      "night",
+      "friends",
+      "dancefloor"
+    ],
+    "minPhotos": 25,
+    "idealPhotos": 65
+  },
+  "musicProfile": {
+    "moods": [
+      "funk",
+      "pop",
+      "celebratory",
+      "dance"
+    ],
+    "energy": "high"
+  },
+  "pacingVariants": [
+    {
+      "id": "cocktail",
+      "maxEnergy": 0.45,
+      "durationMultiplier": 1.08
+    },
+    {
+      "id": "reception",
+      "maxEnergy": 0.75,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "dancefloor",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.76
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "lut": "assets/luts/teal_orange_01.cube",
+      "contrast": 1.08,
+      "saturation": 1.08,
+      "grain": 3,
+      "glow": 0.08
+    },
+    "audio": {
+      "fade_in": 1,
+      "fade_out": 3.5,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#12191C",
+      "ink": "#F2EFE9",
+      "brown": "#D96F32",
+      "white": "#FBFCFB"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 4.2,
+      "calmSceneSec": 6,
+      "buildSceneSec": 3.3,
+      "montageSec": 8.5,
+      "closingSec": 7.5
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "crossfade",
+        "duration": 0.35
+      },
+      "calm": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "memory": {
+        "type": "fade_to_black",
+        "duration": 0.55
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.25
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "emotionScore",
+        "sharpness"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 52
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_entrance",
+      "effect": "moving_background_echo",
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "WELCOME TO THE PARTY"
+    },
+    {
+      "id": "s02_toasts",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "CHEERS!",
+        "caption": "Những lời chúc từ những người thân yêu nhất."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "caption": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "caption": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_dinner",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s04_firstdance",
+      "effect": "portrait_reflection",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "FIRST DANCE",
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "captionPattern": "Từng khoảnh khắc bên nhau là một món quà."
+          },
+          {
+            "captionPattern": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "confetti_bloom",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s05_floor",
+      "effect": "photo_strip_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 9,
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s06_friends",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 7,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07_last",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_out"
+        }
+      ],
+      "text": {
+        "quote": "One last song · One endless story"
+      }
+    },
+    {
+      "id": "s08_close",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Best night ever · {{date}}"
+      }
+    }
+  ]
+}

@@ -39,3 +39,17 @@ export const FACE_CONTAIN_MARGIN = 0.015; // slack when testing that a face box 
 
 // --- audio / video ---------------------------------------------------------------
 export const AUDIO_DRIFT_MAX_SEC = 0.25; // muxed audio and video stream durations may differ by this much
+
+// --- story-template authoring rules (lib/rules/templateRules.mjs) ---------------
+// Authoring-time floors for the recipe files themselves, born from watching real
+// renders: thin palettes loop, tiny slots read as empty frames, black canvases read
+// as "nothing around the photo", muted half-text layouts leave half a slide blank.
+export const TEMPLATE_MIN_SCENES = 8;                 // fewer scenes = the solver repeats the palette sooner
+export const TEMPLATE_MIN_DISTINCT_LOOKS = 6;         // distinct effect/layout/hybrid states across the film
+export const TEMPLATE_MIN_REPEATABLE_SCENES = 2;      // body scenes that carry authored repeat variants
+export const TEMPLATE_MAX_PHOTOLESS_SCENES = 2;       // video interludes; photoless repeats are the same clip again
+export const SLOT_AREA_FLOOR = 0.08;                  // per-photo-slot area fraction, layouts with <6 slots
+export const SLOT_AREA_FLOOR_GRID = 0.05;             // ...with >=6 slots (grid walls)
+export const SCENE_PHOTO_COVERAGE_MIN = 0.35;         // photo area per layer_scene without a full-bleed background
+export const SCENE_PHOTO_COVERAGE_MIN_TEXTED = 0.25;  // textRequired layouts: the copy carries the rest
+export const CANVAS_BG_MIN_LUMA = 20;                 // params.background may be dark, but never near-black (0..255)

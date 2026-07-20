@@ -33,11 +33,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { makeEnergy } from "./lib/pacing.mjs";
-import { composeStoryboard, DEFAULT_GRAMMAR } from "./lib/storyboard.mjs";
+import { composeStoryboard, DEFAULT_GRAMMAR, applySignatureHybridScene } from "./lib/storyboard.mjs";
 import { resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { loadLedger, active } from "./lib/directives.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_SLOT, MOTION_EFFECTS, ALL_TRANSITIONS,
+  HYBRID_SIGNATURE_TEMPLATES, HYBRID_RENDERER,
 } from "./lib/engineCapabilities.mjs";
 
 const root = process.cwd();
@@ -159,7 +160,7 @@ topUp("singlePhotoEffects", DEFAULT_GRAMMAR.singlePhotoEffects, 5);
 topUp("montageEffects", DEFAULT_GRAMMAR.montageEffects, 2);
 topUp("transitionPalette", DEFAULT_GRAMMAR.transitionPalette, 3);
 
-const { scenes, fit } = composeStoryboard({
+const { scenes: composedScenes, fit } = composeStoryboard({
   photoCount: photos.length,
   musicDuration: music.duration,
   energy: makeEnergy(music),
@@ -169,6 +170,27 @@ const { scenes, fit } = composeStoryboard({
   grammar,
   montageEffect: notes.montageEffect,
 });
+
+// Clamped again here, same reason as the palettes above: this file has to be safe to run
+// against a hand-edited director_notes.json, not just one generateDirectorNotes wrote.
+const hybridTemplate = notes.signatureHybridScene && HYBRID_SIGNATURE_TEMPLATES.has(notes.signatureHybridScene)
+  ? notes.signatureHybridScene
+  : null;
+if (notes.signatureHybridScene && !hybridTemplate) {
+  console.warn(`[composeStoryboard] signatureHybridScene "${notes.signatureHybridScene}" is not a single-photo hybrid template — ignored`);
+}
+const scenes = applySignatureHybridScene(
+  composedScenes,
+  hybridTemplate ? { template: hybridTemplate, renderer: HYBRID_RENDERER[hybridTemplate] } : {}
+);
+if (hybridTemplate) {
+  const swapped = scenes.find((s) => s.template === hybridTemplate);
+  console.log(
+    swapped
+      ? `[composeStoryboard] signature scene: ${swapped.id} -> ${HYBRID_RENDERER[hybridTemplate]}/${hybridTemplate}`
+      : `[composeStoryboard] signatureHybridScene "${hybridTemplate}" requested but no single-photo scene was available to carry it — skipped`
+  );
+}
 
 // --- emit a recipe -----------------------------------------------------------
 // Text slots are DECLARED (from the layout the code chose) but left empty. That is
@@ -253,6 +275,7 @@ const recipe = {
   scenes: scenes.map((s) => ({
     id: s.id,
     effect: s.effect,
+    ...(s.renderer ? { renderer: s.renderer, template: s.template } : {}),
     ...(s.layout ? { layout: s.layout } : {}),
     ...(s.act ? { act: s.act } : {}),
     durationSec: s.duration,

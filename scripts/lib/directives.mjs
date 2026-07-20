@@ -52,7 +52,12 @@ export const CURVES = new Set(tl.$defs.curvesPreset.enum);
 export const MAX_SLIDE_SEC = tl.$defs.slide.properties.duration?.maximum ?? 30;
 export const OVERLAYS = new Set(["warm", "soft", "sunset", "none"]);
 export const PACING = new Set(["slow", "medium", "fast", "dynamic"]);
-export const MUSIC_MODES = new Set(["auto", "highlight", "full_song"]);
+// playlist/loop extend a track that is too SHORT for the album — the mirror of highlight
+// (which trims a track too long for it). The engine already covers a video with whatever
+// music it is given (buildAudioMuxArgs: -stream_loop -1, or acrossfade across a playlist);
+// these two modes are the vocabulary that tells the build to reach for that instead of
+// stretching every scene past comfort.
+export const MUSIC_MODES = new Set(["auto", "highlight", "full_song", "playlist", "loop"]);
 export const ACTS = ["opening", "love_story", "ceremony", "family_friends", "ending"];
 export const ROLES = ["hero", "portrait", "group", "detail", "montage", "opening", "ending"];
 
@@ -694,7 +699,7 @@ function auditOne(d, timeline, artifacts) {
 
     case "music_mode": {
       const got = timeline.recipeDecisions?.musicEdit?.mode;
-      const honored = d.target === "auto" ? ["highlight", "full_song"].includes(got) : got === d.target;
+      const honored = d.target === "auto" ? ["highlight", "full_song", "playlist", "loop"].includes(got) : got === d.target;
       return { honored, evidence: `music edit mode is ${got || "not recorded"} (asked for ${d.target})` };
     }
 

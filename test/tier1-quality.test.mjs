@@ -262,6 +262,9 @@ test("deterministic QA reports overflow, adjacent reuse and unsafe crop", (t) =>
   assert.equal(report.checks.duplicates.flagged, 1);
   assert.equal(report.checks.crop.flagged, 1);
   assert.ok(report.checks.crop.layers[0].flags.includes("face_cropped"));
+  const cropFix = report.problems.find((problem) => problem.check === "crop").fix;
+  assert.ok(cropFix.focusX >= 0.08 && cropFix.focusX <= 0.92);
+  assert.ok(cropFix.focusY >= 0.08 && cropFix.focusY <= 0.92);
   assert.equal(report.checks.captionIntegrity.status, "ran");
   assert.equal(report.verdict, "review");
 });

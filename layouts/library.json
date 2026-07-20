@@ -7,7 +7,8 @@
       "height": 1080
     },
     "safeMargin": 70,
-    "coordinateNote": "Slot x/y/width/height are pixels on 1920x1080. Photo slots use fit=cover to fill the frame (crop, no letterbox). Negative x/y intentionally bleed a photo off-frame."
+    "coordinateNote": "Slot x/y/width/height are pixels on 1920x1080. Photo slots use fit=cover to fill the frame (crop, no letterbox). Negative x/y intentionally bleed a photo off-frame.",
+    "layoutRules": "textRequired:true marks layouts whose composition NEEDS copy — a dedicated text region balances the photos, so blank text leaves half the frame empty. Template rule (scripts/lib/rules/templateRules.mjs): a body scene on such a layout must keep non-empty text in every repeat variant and declare a muteFallback layout of equal photo demand. Photo-slot floors: <6 slots => each slot >=8% of canvas; >=6 slots (grid) => >=5%; per-scene photo coverage >=35% unless the background is a full-bleed photo or the layout is textRequired (>=25%)."
   },
   "designTokens": {
     "themes": {
@@ -421,6 +422,7 @@
       "kind": "layer_scene",
       "intent": "Chapter intro: title + paragraph on the left, one tall photo bleeding off the right edge.",
       "bestFor": "invitation, 'how we met', reflective narration",
+      "textRequired": true,
       "background": {
         "type": "cream"
       },
@@ -483,6 +485,7 @@
       "kind": "layer_scene",
       "intent": "Mirror of text_left_photo_right for variety across chapters.",
       "bestFor": "alternate every other chapter to avoid repetition",
+      "textRequired": true,
       "background": {
         "type": "cream"
       },
@@ -660,6 +663,7 @@
       "kind": "layer_scene",
       "intent": "Two-to-three photo cluster on one side, heading + longer paragraph on the other.",
       "bestFor": "the big day, closing chapter with a message",
+      "textRequired": true,
       "background": {
         "type": "cream"
       },
@@ -940,8 +944,8 @@
       "bestFor": "a soft 'breath' beat between chapters",
       "background": { "type": "tint", "color": "theme.blush_bg" },
       "photoSlots": [
-        { "id": "left", "x": 170, "y": 320, "width": 760, "height": 480, "fit": "cover", "suggestedAnimation": "slide_right" },
-        { "id": "right", "x": 990, "y": 320, "width": 760, "height": 480, "fit": "cover", "suggestedAnimation": "slide_left" }
+        { "id": "left", "x": 140, "y": 300, "width": 800, "height": 520, "fit": "cover", "suggestedAnimation": "slide_right" },
+        { "id": "right", "x": 980, "y": 300, "width": 800, "height": 520, "fit": "cover", "suggestedAnimation": "slide_left" }
       ],
       "textSlots": [
         { "id": "heading", "role": "heading", "x": 460, "y": 120, "width": 1000, "height": 90, "align": "center", "fontRole": "heading", "sizePx": 60 }
@@ -953,6 +957,7 @@
       "kind": "layer_scene",
       "intent": "Tall hero portrait on the left; 'welcome to the wedding of' + script names + date stacked on the right.",
       "bestFor": "an alternate opener or mid-film title card",
+      "textRequired": true,
       "background": { "type": "cream" },
       "photoSlots": [
         { "id": "hero", "x": 110, "y": 95, "width": 700, "height": 890, "fit": "cover", "suggestedAnimation": "slide_right" }
@@ -971,10 +976,10 @@
       "bestFor": "the formal invitation beat",
       "background": { "type": "cream" },
       "photoSlots": [
-        { "id": "p1", "x": 280, "y": 330, "width": 320, "height": 430, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p2", "x": 620, "y": 330, "width": 320, "height": 430, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p3", "x": 960, "y": 330, "width": 320, "height": 430, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p4", "x": 1300, "y": 330, "width": 320, "height": 430, "fit": "cover", "suggestedAnimation": "fade" }
+        { "id": "p1", "x": 195, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
+        { "id": "p2", "x": 585, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
+        { "id": "p3", "x": 975, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
+        { "id": "p4", "x": 1365, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" }
       ],
       "textSlots": [
         { "id": "names", "role": "display", "x": 350, "y": 130, "width": 1220, "height": 110, "align": "center", "fontRole": "heading", "sizePx": 64 },
@@ -987,10 +992,11 @@
       "kind": "layer_scene",
       "intent": "One wide landscape photo with a smaller portrait overlapping its corner; heading + caption bottom-left.",
       "bestFor": "'our journey', 'how we met' beats",
+      "textRequired": true,
       "background": { "type": "cream" },
       "photoSlots": [
         { "id": "wide", "x": 620, "y": 95, "width": 1000, "height": 570, "fit": "cover", "suggestedAnimation": "slide_up" },
-        { "id": "accent", "x": 1400, "y": 480, "width": 300, "height": 420, "fit": "cover", "suggestedAnimation": "fade", "role": "overlap accent" }
+        { "id": "accent", "x": 1360, "y": 450, "width": 380, "height": 520, "fit": "cover", "suggestedAnimation": "fade", "role": "overlap accent" }
       ],
       "textSlots": [
         { "id": "heading", "role": "heading", "x": 110, "y": 680, "width": 640, "height": 110, "align": "left", "fontRole": "heading", "sizePx": 72 },
@@ -1003,9 +1009,10 @@
       "kind": "layer_scene",
       "intent": "One large white-bordered polaroid photo on the right; heading + one line of copy on the left.",
       "bestFor": "'our future together', 'thank you' — a single emotional photo with a message",
+      "textRequired": true,
       "background": { "type": "cream" },
       "photoSlots": [
-        { "id": "feature", "x": 760, "y": 110, "width": 820, "height": 840, "fit": "cover", "frame": "card", "suggestedAnimation": "fade" }
+        { "id": "feature", "x": 740, "y": 105, "width": 900, "height": 870, "fit": "cover", "frame": "card", "suggestedAnimation": "fade" }
       ],
       "textSlots": [
         { "id": "heading", "role": "heading", "x": 110, "y": 300, "width": 520, "height": 260, "align": "left", "fontRole": "heading", "sizePx": 60 },
@@ -1023,7 +1030,7 @@
         { "id": "hero", "x": 110, "y": 400, "width": 560, "height": 580, "fit": "cover", "suggestedAnimation": "fade" },
         { "id": "top1", "x": 700, "y": 120, "width": 360, "height": 520, "fit": "cover", "suggestedAnimation": "fade" },
         { "id": "top2", "x": 1080, "y": 95, "width": 480, "height": 560, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "wide", "x": 700, "y": 690, "width": 520, "height": 290, "fit": "cover", "suggestedAnimation": "fade" }
+        { "id": "wide", "x": 700, "y": 670, "width": 520, "height": 330, "fit": "cover", "suggestedAnimation": "fade" }
       ],
       "textSlots": [
         { "id": "heading", "role": "heading", "x": 110, "y": 95, "width": 520, "height": 260, "align": "left", "fontRole": "heading", "sizePx": 58, "lineSpacing": 6 },

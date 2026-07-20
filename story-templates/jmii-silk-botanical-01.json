@@ -1,6 +1,6 @@
 {
   "id": "jmii-silk-botanical-01",
-  "version": 1,
+  "version": 2,
   "name": "Silk Botanical Wedding",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
@@ -8,7 +8,7 @@
     "arch": { "radius": 170, "border": 9, "borderColor": "#FFFDFC", "shadow": true }
   },
   "storyArc": {
-    "sequence": ["save_the_date", "title", "bride", "groom", "story", "couple", "vow", "memories", "celebration", "closing"]
+    "sequence": ["save_the_date", "title", "bride", "groom", "gallery", "meet", "signature", "story", "invitation", "moment", "together", "closing"]
   },
   "transitionGrammar": {
     "vocabulary": ["dissolve", "fade_slow", "crossfade", "none"],
@@ -19,7 +19,7 @@
     "origin": "reference_adaptation",
     "url": "https://www.youtube.com/watch?v=GxXVVbvJ6W8",
     "title": "Video slide ảnh trình chiếu ngày cưới đẹp, sang trọng | Họa tiết lá thanh lịch (Jmii Marketing)",
-    "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by a procedural champagne-silk + leaf-shadow interlude. Avoids the engine's noisy portrait fill effects and the black-bar layouts that all-portrait photos trigger."
+    "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once."
   },
   "fit": {
     "bestFor": ["wedding", "save_the_date", "studio", "elegant", "minimal", "white_wedding", "portrait_heavy"],
@@ -86,7 +86,7 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
-        { "slot": "bg", "orient": "any", "quality": "best", "motion": "zoom_in" },
+        { "slot": "bg", "orient": "any", "quality": "best" },
         { "slot": "strip_1", "orient": "portrait", "quality": "good", "frame": "arch" },
         { "slot": "strip_2", "orient": "portrait", "quality": "best", "frame": "arch" },
         { "slot": "strip_3", "orient": "portrait", "quality": "good", "frame": "arch" }
@@ -97,6 +97,7 @@
       "id": "s02_silk_title",
       "effect": "video_background",
       "background": "assets/backgrounds/silk_champagne_leaf.mp4",
+      "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [],
@@ -109,19 +110,33 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
-      "text": { "heading": { "value": "CÔ DÂU", "sizePx": 58 }, "body": "{{bride}}" }
+      "text": { "heading": { "value": "CÔ DÂU", "sizePx": 58 }, "body": "{{bride}}" },
+      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] }
     },
     {
       "id": "s04_groom",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
+      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
-      "text": { "heading": { "value": "CHÚ RỂ", "sizePx": 58 }, "body": "{{groom}}" }
+      "text": { "heading": { "value": "CHÚ RỂ", "sizePx": 58 }, "body": "{{groom}}" },
+      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] }
     },
     {
-      "id": "s05_we_meet",
+      "id": "s05_arch_gallery",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "left", "orient": "portrait", "quality": "good", "frame": "arch" },
+        { "slot": "centre", "orient": "portrait", "quality": "best", "frame": "arch" },
+        { "slot": "right", "orient": "portrait", "quality": "good", "frame": "arch" }
+      ]
+    },
+    {
+      "id": "s06_we_meet",
       "effect": "layer_scene",
       "layout": "text_left_photo_right",
       "durationRole": "normal",
@@ -131,6 +146,7 @@
         "heading": { "value": "WE MEET", "sizePx": 76 },
         "body": "Tình yêu là sự kết nối giữa hai trái tim, nơi mình cùng viết nên một câu chuyện thật dài."
       },
+      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
@@ -142,19 +158,19 @@
       }
     },
     {
-      "id": "s06_silk_vow",
-      "effect": "video_background",
-      "background": "assets/backgrounds/silk_champagne_leaf.mp4",
+      "id": "s07_signature_frame",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "floating_frame",
       "signature": true,
-      "durationRole": "calm",
+      "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [],
-      "captionPattern": "Hai trái tim · một câu chuyện"
+      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }]
     },
     {
-      "id": "s07_story",
+      "id": "s08_story",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
+      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
@@ -162,6 +178,7 @@
         "heading": { "value": "OUR STORY", "sizePx": 68 },
         "body": "Bên nhau, mọi điều giản dị đều trở nên đặc biệt."
       },
+      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
@@ -173,16 +190,24 @@
       }
     },
     {
-      "id": "s08_silk_breath",
-      "effect": "video_background",
-      "background": "assets/backgrounds/silk_champagne_leaf.mp4",
-      "durationRole": "calm",
-      "transitionRole": "memory",
-      "photoSlots": [],
-      "captionPattern": "{{bride}} & {{groom}}"
+      "id": "s09_invitation",
+      "effect": "layer_scene",
+      "layout": "invitation_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "p1", "orient": "portrait", "quality": "good", "frame": "arch" },
+        { "slot": "p2", "orient": "portrait", "quality": "best", "frame": "arch" },
+        { "slot": "p3", "orient": "portrait", "quality": "good", "frame": "arch" },
+        { "slot": "p4", "orient": "portrait", "quality": "good", "frame": "arch" }
+      ],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "invite": "Trân trọng kính mời · {{location}} · {{date}}"
+      }
     },
     {
-      "id": "s09_moment",
+      "id": "s10_moment",
       "effect": "layer_scene",
       "layout": "text_left_photo_right",
       "durationRole": "normal",
@@ -192,15 +217,27 @@
         "heading": { "value": "BEAUTIFUL", "sizePx": 68 },
         "body": "Every quiet moment becomes part of our forever."
       },
+      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
           { "text": { "heading": { "value": "MOMENTS", "sizePx": 68 }, "body": "Side by side, this is where our next chapter begins." } },
           { "text": { "heading": { "value": "LOVE", "sizePx": 68 }, "body": "A collection of moments we will keep close, always." } },
           { "text": { "heading": { "value": "YOU & ME", "sizePx": 68 }, "body": "One love, one lifetime, one beautiful beginning." } },
-          { "text": { "heading": { "value": "OUR DAY", "sizePx": 68 }, "body": "Here is to every day that comes after this one." } }
+          { "text": { "heading": { "value": "AFTER THIS DAY", "sizePx": 68 }, "body": "Here is to every day that comes after this one." } }
         ]
       }
+    },
+    {
+      "id": "s11_side_by_side",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        { "slot": "left", "orient": "portrait", "quality": "best", "frame": "arch" },
+        { "slot": "right", "orient": "portrait", "quality": "good", "frame": "arch" }
+      ]
     },
     {
       "id": "s12_closing",

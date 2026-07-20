@@ -62,7 +62,7 @@ import { ruleHits, recallNet } from "./lib/briefRules.mjs";
 import {
   validateDirective, loadLedger, saveLedger, appendRound, active, undoRound,
   blastRadius, widestRadius, applyToTimeline,
-  EFFECTS, TRANSITIONS, CURVES, OVERLAYS, PACING, ACTS, ROLES,
+  EFFECTS, TRANSITIONS, CURVES, OVERLAYS, PACING, ACTS, ROLES, MUSIC_MODES,
 } from "./lib/directives.mjs";
 import { arg, loadProject, root } from "./lib/project.mjs";
 import { revisionInvalidation, invalidateApproval } from "./lib/revisionInvalidation.mjs";
@@ -125,7 +125,7 @@ function buildSystem() {
     "nearest thing you can do: they will watch the next cut expecting what they asked for.",
     "",
     "Each directive is: {quote, kind, op, scope, target, strength, confidence}",
-    "  kind   : effect | transition | color | overlay | pacing | duration | caption | photo | structure | story",
+    "  kind   : effect | transition | color | overlay | pacing | duration | music_mode | caption | photo | structure | story",
     "  op     : set | forbid | require",
     '  scope  : {"global":true} | {"act":ACT} | {"scene":"s07"} | {"role":ROLE}',
     '  strength: "must" | "prefer"',
@@ -140,6 +140,7 @@ function buildSystem() {
     `  overlay    : ${[...OVERLAYS].join(", ")}`,
     `  pacing     : ${[...PACING].join(", ")}`,
     "  duration   : a NUMBER of seconds.   caption: the exact text for op=set, else null.   photo: a filename.",
+    `  music_mode : ${[...MUSIC_MODES].join(" | ")}  (playlist/loop EXTEND a track too short for the photos — "nối thêm bài" -> playlist, "lặp lại bài" -> loop; highlight/full_song apply when the track is too LONG — the engine CAN do both, do not report either as impossible)`,
     "",
     "Use kind=structure or kind=story ONLY if they want the film RE-TOLD (different order, different narrative).",
     "Asking to change a look, an effect, a length or some words is NOT a story change.",
@@ -359,6 +360,24 @@ if (preview) {
       `  This is a RE-TELLING, not a revision — it cannot be previewed as a diff.\n` +
         `  It re-runs the story nodes and returns a different film: different acts, different\n` +
         `  words, possibly different photos. Apply it with --confirm-restory when they know that.`
+    );
+    process.exit(0);
+  }
+
+  // Honest refusal, the same shape as the plan-radius one above. A music_mode change's real
+  // effect — the target duration solveRecipeShotList solves against, and therefore how many
+  // scenes exist at all — lives entirely in the shot-list/retime math, which this diff has no
+  // model of: it only compares PER-SCENE properties (layout, text, photo demand) on a fixed
+  // scene list. A music_mode directive touches no scene's layout or text, so the diff always
+  // comes back empty for it — "NOTHING WOULD CHANGE" would be exactly the confident lie this
+  // mode exists to prevent, since applying it can lengthen or shorten the film outright.
+  const musicModeChange = affected.find((d) => d.kind === "music_mode");
+  if (musicModeChange) {
+    console.log(
+      `  This changes how the TRACK is used ("${musicModeChange.target}") — the film's target\n` +
+        `  length and scene count are solved from that, not from any single scene's layout or\n` +
+        `  text, so this cannot be shown as a scene-by-scene diff. Apply it and compare the\n` +
+        `  rebuilt film's length/scene count to the current one.`
     );
     process.exit(0);
   }

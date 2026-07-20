@@ -4,52 +4,161 @@
   "name": "Modern Teal",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
-  "storyArc": { "sequence": ["hook", "establish", "connection", "build", "family", "peak", "breathe", "closing"] },
-  "transitionGrammar": { "vocabulary": ["crossfade", "smooth_up", "dissolve", "smooth_left", "none"], "specialRoles": ["memory", "peak"], "limits": { "memory": 1, "peak": 2 } },
+  "storyArc": {
+    "sequence": [
+      "hook",
+      "establish",
+      "connection",
+      "build",
+      "family",
+      "peak",
+      "breathe",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "smooth_up",
+      "dissolve",
+      "smooth_left",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 2
+    }
+  },
   "source": {
     "origin": "original",
     "notes": "Modern minimal, contemporary, lots of whitespace with a 2026 Color-of-the-Year 'Transformative Teal' accent. Clean crisp grade, no overlays. Original recipe."
   },
   "fit": {
-    "bestFor": ["modern_minimal", "prewedding", "editorial", "couple_journey"],
+    "bestFor": [
+      "modern_minimal",
+      "prewedding",
+      "editorial",
+      "couple_journey"
+    ],
     "minPhotos": 30,
     "idealPhotos": 60
   },
-  "musicProfile": { "moods": ["calm", "modern", "piano"], "energy": "low" },
+  "musicProfile": {
+    "moods": [
+      "calm",
+      "modern",
+      "piano"
+    ],
+    "energy": "low"
+  },
   "pacingVariants": [
-    { "id": "spacious", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
-    { "id": "balanced", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
-    { "id": "crisp", "maxEnergy": 1.0, "durationMultiplier": 0.86 }
+    {
+      "id": "spacious",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "balanced",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "crisp",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.86
+    }
   ],
   "briefFields": {
-    "required": ["bride", "groom"],
-    "optional": ["date", "location", "meetingPlace", "yearsTogether", "thankYouLine"]
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "yearsTogether",
+      "thankYouLine"
+    ]
   },
   "defaults": {
-    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 6000, "saturation": 1.06, "contrast": 1.05, "glow": 0.06 },
-    "audio": { "fade_in": 1.5, "fade_out": 3, "crossfade": 0 },
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 6000,
+      "saturation": 1.06,
+      "contrast": 1.05,
+      "glow": 0.06
+    },
+    "audio": {
+      "fade_in": 1.5,
+      "fade_out": 3,
+      "crossfade": 0
+    },
     "overlays": [],
     "fonts": {
       "title": "fonts/PlayfairDisplay.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
-    "palette": { "cream": "#F3F1EC", "ink": "#1C2B30", "brown": "#1C2B30", "white": "#FFFFFF" }
+    "palette": {
+      "cream": "#F3F1EC",
+      "ink": "#1C2B30",
+      "brown": "#1C2B30",
+      "white": "#FFFFFF"
+    }
   },
   "timelineRules": {
-    "durationStrategy": { "baseSceneSec": 5, "calmSceneSec": 6, "buildSceneSec": 4, "montageSec": 10, "closingSec": 7.5 },
+    "durationStrategy": {
+      "baseSceneSec": 5,
+      "calmSceneSec": 6,
+      "buildSceneSec": 4,
+      "montageSec": 10,
+      "closingSec": 7.5
+    },
     "transitionStrategy": {
-      "default": { "type": "crossfade", "duration": 0.5 },
-      "calm": { "type": "smooth_up", "duration": 0.6 },
-      "memory": { "type": "dissolve", "duration": 0.5 },
-      "peak": { "type": "smooth_left", "duration": 0.4 },
-      "final": { "type": "none", "duration": 0 }
+      "default": {
+        "type": "crossfade",
+        "duration": 0.5
+      },
+      "calm": {
+        "type": "smooth_up",
+        "duration": 0.6
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.5
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.4
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
     },
     "photoSelection": {
       "reusePolicy": "avoid_until_exhausted",
-      "heroPriority": ["qualityNorm", "heroScore", "emotionScore", "skinFrac"],
-      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore",
+        "skinFrac"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
       "darkPhotoMaxMeanLuma": 75
     }
   },
@@ -61,16 +170,30 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
-        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_in" }
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "fit": "cover",
+          "motion": "zoom_in"
+        }
       ],
-      "text": { "quote": "{{bride}} & {{groom}}" }
+      "text": {
+        "quote": "{{bride}} & {{groom}}"
+      }
     },
     {
       "id": "s02_duo",
       "repeatable": {
         "variants": [
-          { "text": { "body": "Không cần nhiều, chỉ cần đúng người." } },
-          { "text": {} }
+          {
+            "text": {
+              "body": "Không cần nhiều, chỉ cần đúng người."
+            }
+          },
+          {
+            "text": {}
+          }
         ]
       },
       "effect": "layer_scene",
@@ -78,28 +201,56 @@
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "portrait", "orient": "portrait", "quality": "best", "motion": "zoom_in" },
-        { "slot": "wide", "orient": "landscape", "quality": "best" }
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        }
       ],
-      "text": { "body": "Mình bắt đầu từ những điều giản dị nhất." }
+      "text": {
+        "body": "Mình bắt đầu từ những điều giản dị nhất."
+      }
     },
     {
       "id": "s03_circle",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/particle_gather.mp4",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "params": {
+        "tint": "220,242,238"
+      },
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "hero", "orient": "any", "quality": "best" }
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
       ]
     },
     {
       "id": "s04_journey",
       "repeatable": {
         "variants": [
-          { "text": { "heading": { "value": "Cùng nhau", "color": "#2E6F6A" }, "caption": "Chậm rãi mà chắc chắn, như cách mình yêu." } },
-          { "text": {} }
+          {
+            "text": {
+              "heading": {
+                "value": "Cùng nhau",
+                "color": "#2E6F6A"
+              },
+              "caption": "Chậm rãi mà chắc chắn, như cách mình yêu."
+            }
+          },
+          {
+            "text": {}
+          }
         ]
       },
       "effect": "layer_scene",
@@ -107,12 +258,28 @@
       "durationRole": "build",
       "transitionRole": "peak",
       "photoSlots": [
-        { "slot": "left", "orient": "any", "quality": "good" },
-        { "slot": "centre", "orient": "any", "quality": "best", "motion": "zoom_in" },
-        { "slot": "right", "orient": "any", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best",
+          "motion": "zoom_in"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
       ],
       "text": {
-        "heading": { "value": "Hành trình", "color": "#2E6F6A" },
+        "heading": {
+          "value": "Hành trình",
+          "color": "#2E6F6A"
+        },
         "caption": "Từng bước, từng nơi, đều có nhau bên cạnh."
       }
     },
@@ -120,9 +287,19 @@
       "id": "s05_breath",
       "repeatable": {
         "variants": [
-          { "text": { "quote": "Ít thôi, nhưng là tất cả." } },
-          { "text": { "quote": "Khoảng lặng cũng là một câu trả lời." } },
-          { "text": {} }
+          {
+            "text": {
+              "quote": "Ít thôi, nhưng là tất cả."
+            }
+          },
+          {
+            "text": {
+              "quote": "Khoảng lặng cũng là một câu trả lời."
+            }
+          },
+          {
+            "text": {}
+          }
         ]
       },
       "effect": "layer_scene",
@@ -130,9 +307,17 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "bg", "orient": "landscape", "quality": "best", "fit": "cover", "motion": "zoom_out" }
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "fit": "cover",
+          "motion": "zoom_out"
+        }
       ],
-      "text": { "quote": "Bình yên nằm trong những điều giản dị." }
+      "text": {
+        "quote": "Bình yên nằm trong những điều giản dị."
+      }
     },
     {
       "id": "s06_hero_zoom",
@@ -141,7 +326,11 @@
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "hero", "orient": "landscape", "quality": "best" }
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
       ]
     },
     {
@@ -150,7 +339,13 @@
       "durationRole": "build",
       "transitionRole": "peak",
       "photoSlots": [
-        { "slot": "grid", "count": 6, "orient": "any", "quality": "good", "preferVariety": true }
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
       ]
     },
     {

@@ -29,7 +29,7 @@ export const SCOPES = [
 
 // Every repair kind qaLoop.mjs knows how to execute. A rule (or a policy row)
 // may only reference these.
-export const REPAIR_KINDS = ["set_duration", "swap_hero", "set_focus", "fit_text"];
+export const REPAIR_KINDS = ["set_duration", "swap_hero", "set_focus", "set_fit", "fit_text"];
 
 export const RULES = {
   // -- timeline -----------------------------------------------------------------
@@ -40,7 +40,7 @@ export const RULES = {
   closing_card:      { scope: "timeline", repairs: [] },
 
   // -- asset ---------------------------------------------------------------------
-  crop:              { scope: "asset", repairs: ["set_focus"] },
+  crop:              { scope: "asset", repairs: ["set_focus", "set_fit"] },
 
   // -- editorial -------------------------------------------------------------------
   duplicate_photo:   { scope: "editorial", repairs: [] },

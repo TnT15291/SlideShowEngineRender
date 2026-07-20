@@ -55,8 +55,11 @@ test("repeatable template scenes scale with photos and music", (t) => {
   assert.ok(timeline.slides.some((slide) => /^s03_chapter_r\d+$/.test(slide.id)));
   assert.ok(timeline.slides.some((slide) => /^s05_breath_r\d+$/.test(slide.id)));
   assert.ok(timeline.slides.some((slide) => /^s06_family_r\d+$/.test(slide.id)));
-  assert.ok(timeline.slides.some((slide) => /^s08_instant_r\d+$/.test(slide.id)));
-  for (const base of ["s02_candid", "s03_chapter", "s05_breath", "s06_family", "s07_montage", "s08_instant"]) {
+  // s08_instant is a Blender signature scene. Hybrids are punctuation — capped at one
+  // appearance per film (a repeat costs minutes of render time and reads as the same
+  // set-piece twice) — so it must appear exactly once and never expand.
+  assert.equal(timeline.slides.filter((slide) => /^s08_instant(_r\d+)?$/.test(slide.id)).length, 1);
+  for (const base of ["s02_candid", "s03_chapter", "s05_breath", "s06_family", "s07_montage"]) {
     assert.ok(timeline.slides.filter((slide) => slide.id.startsWith(`${base}_r`)).length <= 3);
   }
   assert.equal(timeline.slides.at(-1).id, "s09_closing");

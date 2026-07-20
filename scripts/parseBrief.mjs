@@ -81,7 +81,7 @@ function buildSystem() {
     `  overlay    : ${[...OVERLAYS].join(", ")}`,
     `  pacing     : ${[...PACING].join(", ")}`,
     `  duration   : a NUMBER of seconds (3 phút -> 180)`,
-    `  music_mode : auto | highlight | full_song`,
+    `  music_mode : auto | highlight | full_song | playlist | loop  (playlist/loop EXTEND a track too short for the photos — "nối thêm bài" -> playlist, "lặp lại bài" -> loop; highlight/full_song apply when the track is too LONG)`,
     `  caption    : the exact text for op=set; null for op=forbid/require`,
     `  photo      : a filename`,
     "",

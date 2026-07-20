@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cull-suggestion.schema.json",
+  "title": "Cull suggestion — which photos to drop when an album overruns its song, and why",
+  "description": "Written by scripts/suggestCull.mjs. A REVIEWABLE proposal, never an action: each dropped photo carries the reason it was chosen, and locked photos (must-use, bookends, duplicate-group representatives) are listed so a person can see nothing important was on the block. Applying the cull is a separate consented step.",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "keep", "sourceCount", "drop", "locked"],
+  "properties": {
+    "generatedBy": { "const": "cull-advisor" },
+    "generatedAt": { "type": "string" },
+    "keep": { "type": "integer", "minimum": 1, "description": "How many photos this suggestion keeps." },
+    "sourceCount": { "type": "integer", "minimum": 1 },
+    "shortfall": { "type": "integer", "minimum": 1, "description": "Present only when the target could not be reached without dropping a locked photo." },
+    "note": { "type": "string", "maxLength": 300 },
+    "drop": {
+      "type": "array",
+      "description": "Photos proposed for removal, worst-first (near-duplicates ahead of low-quality).",
+      "items": {
+        "type": "object",
+        "required": ["file", "reason"],
+        "properties": {
+          "file": { "type": "string" },
+          "reason": { "type": "string", "maxLength": 200 },
+          "qualityNorm": { "type": ["number", "null"] },
+          "duplicateGroup": { "type": "string" }
+        }
+      }
+    },
+    "locked": {
+      "type": "array",
+      "description": "Photos that were held back from the cull, each with why.",
+      "items": {
+        "type": "object",
+        "required": ["file", "reason"],
+        "properties": {
+          "file": { "type": "string" },
+          "reason": { "type": "string", "maxLength": 200 }
+        }
+      }
+    }
+  }
+}

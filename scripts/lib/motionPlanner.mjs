@@ -6,9 +6,14 @@ export function createMotionPlanner() {
   const decisions = [];
   function plan(photo = {}, scene = {}, { isHero = false, isBackground = false } = {}) {
     const people = photo.subjectCount ?? photo.faces?.length ?? (photo.faceBoxEstimate ? 1 : 0);
+    // null subjectCount + no face box = the analyzer never looked, not "no faces".
+    // Those photos used to fall into the people===0 branch and receive the STRONGEST
+    // push — the one motion that decapitates an unanalysed portrait. Abstain instead.
+    const faceBlind = photo.subjectCount == null && !photo.faces && !photo.faceBoxEstimate;
     const target = { x: clamp(photo.focusX ?? 0.5, 0.12, 0.88), y: clamp(photo.focusY ?? 0.45, 0.12, 0.88) };
     let motion = "none", strength = 0, reason = "supporting image stays still";
     if (scene.arcBeat === "closing") reason = "closing holds still";
+    else if (faceBlind && (isHero || isBackground)) { motion = "zoom_in"; strength = 0.025; reason = "no face data — near-still motion, never a hard push"; }
     else if (people >= 3) { motion = isHero || isBackground ? "zoom_in" : "none"; strength = motion === "none" ? 0 : 0.025; reason = "group photo uses near-still motion"; }
     else if (people === 0 && (isHero || isBackground)) { motion = "zoom_in"; strength = 0.06; reason = "detail/context image gets a slow push"; }
     else if (isHero || isBackground) {

@@ -5,39 +5,105 @@
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
   "storyArc": {
-    "sequence": ["save_the_date", "establish", "couple", "details", "story", "memories", "celebration", "closing"]
+    "sequence": [
+      "save_the_date",
+      "establish",
+      "couple",
+      "details",
+      "story",
+      "memories",
+      "celebration",
+      "closing"
+    ]
   },
   "transitionGrammar": {
-    "vocabulary": ["dissolve", "crossfade", "fade_slow", "none"],
-    "specialRoles": ["memory", "peak"],
-    "limits": { "memory": 3, "peak": 1 }
+    "vocabulary": [
+      "dissolve",
+      "crossfade",
+      "fade_slow",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 3,
+      "peak": 1
+    }
   },
   "source": {
     "origin": "reference_adaptation",
     "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement."
   },
   "fit": {
-    "bestFor": ["pre_wedding", "save_the_date", "garden", "editorial", "minimal", "white_wedding"],
+    "bestFor": [
+      "pre_wedding",
+      "save_the_date",
+      "garden",
+      "editorial",
+      "minimal",
+      "white_wedding"
+    ],
     "minPhotos": 20,
     "idealPhotos": 55
   },
   "musicProfile": {
-    "moods": ["romantic", "elegant", "gentle", "acoustic"],
+    "moods": [
+      "romantic",
+      "elegant",
+      "gentle",
+      "acoustic"
+    ],
     "energy": "low_to_medium"
   },
   "pacingVariants": [
-    { "id": "vow", "maxEnergy": 0.38, "durationMultiplier": 1.14 },
-    { "id": "editorial", "maxEnergy": 0.68, "durationMultiplier": 1 },
-    { "id": "celebration", "maxEnergy": 1, "durationMultiplier": 0.88 }
+    {
+      "id": "vow",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.14
+    },
+    {
+      "id": "editorial",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "celebration",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.88
+    }
   ],
   "briefFields": {
-    "required": ["bride", "groom"],
-    "optional": ["date", "location", "thankYouLine"]
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
   },
   "defaults": {
-    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 5600, "saturation": 1.02, "contrast": 1.03, "glow": 0.08, "grain": 1 },
-    "audio": { "fade_in": 1.8, "fade_out": 3.5, "crossfade": 0 },
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5600,
+      "saturation": 1.02,
+      "contrast": 1.03,
+      "glow": 0.08,
+      "grain": 1
+    },
+    "audio": {
+      "fade_in": 1.8,
+      "fade_out": 3.5,
+      "crossfade": 0
+    },
     "overlays": [],
     "fonts": {
       "title": "fonts/GreatVibes-Regular.ttf",
@@ -60,16 +126,39 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": { "type": "dissolve", "duration": 0.8 },
-      "calm": { "type": "fade_slow", "duration": 1.1 },
-      "memory": { "type": "dissolve", "duration": 0.9 },
-      "peak": { "type": "crossfade", "duration": 0.6 },
-      "final": { "type": "none", "duration": 0 }
+      "default": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
     },
     "photoSelection": {
       "reusePolicy": "avoid_until_exhausted",
-      "heroPriority": ["qualityNorm", "heroScore", "emotionScore"],
-      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
       "darkPhotoMaxMeanLuma": 72
     }
   },
@@ -82,12 +171,31 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
-        { "slot": "bg", "orient": "landscape", "quality": "best" },
-        { "slot": "p1", "orient": "portrait", "quality": "good" },
-        { "slot": "p2", "orient": "portrait", "quality": "good" },
-        { "slot": "p3", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "p1",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "p3",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ],
-      "text": { "heading": "SAVE the DATE", "date": "{{date}}" }
+      "text": {
+        "heading": "SAVE the DATE",
+        "date": "{{date}}"
+      }
     },
     {
       "id": "s02_welcome_title",
@@ -95,11 +203,28 @@
       "layout": "welcome_title_page",
       "durationRole": "calm",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
         "eyebrow": "welcome to the wedding of",
         "names": "{{bride}} & {{groom}}",
-        "date": "{{date}}"
+        "date": "Date · {{date}}"
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
       }
     },
     {
@@ -108,8 +233,17 @@
       "layout": "full_bleed_quote",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "bg", "orient": "landscape", "quality": "best", "motion": "pan_right" }],
-      "text": { "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED" }
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "pan_right"
+        }
+      ],
+      "text": {
+        "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED"
+      }
     },
     {
       "id": "s04_about_bride",
@@ -117,10 +251,30 @@
       "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
-        "heading": { "value": "ABOUT THE\nBRIDE", "sizePx": 62 },
+        "heading": {
+          "value": "ABOUT THE\nBRIDE",
+          "sizePx": 62
+        },
         "body": "Cô dâu {{bride}} – dịu dàng, hay cười và luôn tin vào một tình yêu chân thật dành cho người mình chọn."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
       }
     },
     {
@@ -129,10 +283,30 @@
       "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
-        "heading": { "value": "ABOUT THE\nGROOM", "sizePx": 62 },
+        "heading": {
+          "value": "ABOUT THE\nGROOM",
+          "sizePx": 62
+        },
         "body": "Chú rể {{groom}} – trầm lặng nhưng luôn có cách khiến {{bride}} mỉm cười, âm thầm quan tâm bằng những điều nhỏ nhất."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
       }
     },
     {
@@ -142,10 +316,36 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "wide", "orient": "landscape", "quality": "best" },
-        { "slot": "accent", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "accent",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ],
-      "text": { "heading": "OUR JOURNEY", "caption": "From friendship to forever" }
+      "text": {
+        "heading": "OUR JOURNEY",
+        "caption": "From friendship to forever"
+      },
+      "muteFallback": {
+        "layout": "photo_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "portrait",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      }
     },
     {
       "id": "s07_fall_in_love",
@@ -155,9 +355,21 @@
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "good" },
-        { "slot": "centre", "orient": "portrait", "quality": "best" },
-        { "slot": "right", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ],
       "text": {
         "heading": "FALL IN LOVE",
@@ -166,9 +378,21 @@
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
-          { "text": { "heading": "THE BIG DAY", "caption": "Cheers to love, laughter, and happily ever after!" } },
-          { "text": { "heading": "SPECIAL DAY", "caption": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con." } },
-          { "text": {} }
+          {
+            "text": {
+              "heading": "THE BIG DAY",
+              "caption": "Cheers to love, laughter, and happily ever after!"
+            }
+          },
+          {
+            "text": {
+              "heading": "SPECIAL DAY",
+              "caption": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con."
+            }
+          },
+          {
+            "text": {}
+          }
         ]
       }
     },
@@ -179,10 +403,20 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "left", "orient": "landscape", "quality": "best" },
-        { "slot": "right", "orient": "landscape", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "landscape",
+          "quality": "good"
+        }
       ],
-      "text": { "heading": "LOVE IS IN THE AIR" }
+      "text": {
+        "heading": "LOVE IS IN THE AIR"
+      }
     },
     {
       "id": "s09_invitation",
@@ -191,13 +425,29 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "p1", "orient": "portrait", "quality": "good" },
-        { "slot": "p2", "orient": "portrait", "quality": "good" },
-        { "slot": "p3", "orient": "portrait", "quality": "good" },
-        { "slot": "p4", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "p1",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "p3",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "p4",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ],
       "text": {
-        "names": "{{bride}} & {{groom}}",
+        "names": "Together, {{bride}} & {{groom}}",
         "invite": "WE WOULD LIKE TO INVITE YOU TO OUR SPECIAL WEDDING DAY."
       }
     },
@@ -207,13 +457,49 @@
       "layout": "polaroid_feature",
       "durationRole": "calm",
       "transitionRole": "memory",
-      "photoSlots": [{ "slot": "feature", "orient": "portrait", "quality": "best" }],
-      "text": { "heading": "OUR FUTURE\nTOGETHER", "body": "Here's to a lifetime of love and laughter." },
+      "photoSlots": [
+        {
+          "slot": "feature",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "OUR FUTURE\nTOGETHER",
+        "body": "Here's to a lifetime of love and laughter."
+      },
       "repeatable": {
         "maxRepeats": 2,
         "variants": [
-          { "text": { "heading": "THANK YOU FOR\nCELEBRATING\nWITH US!", "body": "{{thankYouLine}}" } },
-          { "text": {} }
+          {
+            "text": {
+              "heading": "THANK YOU FOR\nCELEBRATING\nWITH US!",
+              "body": "{{thankYouLine}}"
+            }
+          },
+          {
+            "layout": "full_bleed_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "text": {}
+          }
+        ]
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
         ]
       }
     },
@@ -224,7 +510,16 @@
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "landscape", "quality": "best" }]
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#4A4139"
+      }
     },
     {
       "id": "s11_one_love_one_lifetime",
@@ -233,11 +528,46 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "tl", "orient": "landscape", "quality": "good" },
-        { "slot": "bl", "orient": "landscape", "quality": "good" },
-        { "slot": "hero", "orient": "portrait", "quality": "best" }
+        {
+          "slot": "tl",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bl",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
       ],
-      "text": { "heading": "ONE LOVE\nONE LIFETIME", "body": "Beautiful moments" }
+      "text": {
+        "heading": "ONE LOVE\nONE LIFETIME",
+        "body": "Beautiful moments"
+      },
+      "muteFallback": {
+        "layout": "paper_collage",
+        "photoSlots": [
+          {
+            "slot": "back",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "centre",
+            "orient": "portrait",
+            "quality": "best"
+          },
+          {
+            "slot": "front",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
+      }
     },
     {
       "id": "s12_arch_trio",
@@ -246,9 +576,21 @@
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "good" },
-        { "slot": "centre", "orient": "portrait", "quality": "good" },
-        { "slot": "right", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -258,9 +600,21 @@
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "hero", "orient": "landscape", "quality": "best" },
-        { "slot": "top", "orient": "landscape", "quality": "good" },
-        { "slot": "bottom", "orient": "landscape", "quality": "good" }
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -270,8 +624,16 @@
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "best" },
-        { "slot": "right", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -282,22 +644,66 @@
       "durationRole": "montage",
       "transitionRole": "peak",
       "photoSlots": [
-        { "slot": "g1", "orient": "any", "quality": "good" },
-        { "slot": "g2", "orient": "any", "quality": "good" },
-        { "slot": "g3", "orient": "any", "quality": "good" },
-        { "slot": "g4", "orient": "any", "quality": "good" },
-        { "slot": "g5", "orient": "any", "quality": "good" },
-        { "slot": "g6", "orient": "any", "quality": "good" },
-        { "slot": "g7", "orient": "any", "quality": "good" },
-        { "slot": "g8", "orient": "any", "quality": "good" }
+        {
+          "slot": "g1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g2",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g3",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g4",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g5",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g6",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g7",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g8",
+          "orient": "any",
+          "quality": "good"
+        }
       ],
-      "text": { "tile_text": "MEMORIES" },
+      "text": {
+        "tile_text": "MEMORIES"
+      },
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
-          { "text": { "tile_text": "{{date}}" } },
-          { "text": { "tile_text": "We are getting married" } },
-          { "text": {} }
+          {
+            "text": {
+              "tile_text": "{{date}}"
+            }
+          },
+          {
+            "text": {
+              "tile_text": "We are getting married"
+            }
+          },
+          {
+            "text": {}
+          }
         ]
       }
     },
@@ -308,12 +714,36 @@
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "a", "orient": "any", "quality": "good" },
-        { "slot": "b", "orient": "any", "quality": "good" },
-        { "slot": "c", "orient": "any", "quality": "good" },
-        { "slot": "d", "orient": "any", "quality": "good" },
-        { "slot": "e", "orient": "any", "quality": "good" },
-        { "slot": "f", "orient": "any", "quality": "good" }
+        {
+          "slot": "a",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "b",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "c",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "d",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "e",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "f",
+          "orient": "any",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -323,10 +753,20 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "portrait", "orient": "portrait", "quality": "best" },
-        { "slot": "wide", "orient": "landscape", "quality": "good" }
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
       ],
-      "text": { "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau." }
+      "text": {
+        "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."
+      }
     },
     {
       "id": "s18_paper_story",
@@ -335,11 +775,25 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "back", "orient": "any", "quality": "good" },
-        { "slot": "centre", "orient": "portrait", "quality": "best" },
-        { "slot": "front", "orient": "any", "quality": "good" }
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
+          "orient": "any",
+          "quality": "good"
+        }
       ],
-      "text": { "heading": "Our Journey" }
+      "text": {
+        "heading": "Written in Time"
+      }
     },
     {
       "id": "s19_polaroid_scatter",
@@ -348,11 +802,44 @@
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
-        { "slot": "p1", "orient": "any", "quality": "good", "frame": "polaroid" },
-        { "slot": "p2", "orient": "any", "quality": "best", "frame": "polaroid" },
-        { "slot": "p3", "orient": "any", "quality": "good", "frame": "polaroid" }
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good",
+          "frame": "polaroid"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best",
+          "frame": "polaroid"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good",
+          "frame": "polaroid"
+        }
       ],
-      "text": { "heading": "Love Is in the Air" }
+      "text": {
+        "heading": "A Little More Love"
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "camera_gallery_3d",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
     },
     {
       "id": "s20_closing",

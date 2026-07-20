@@ -1,0 +1,382 @@
+{
+  "id": "city-to-ceremony-01",
+  "version": 1,
+  "name": "City to Ceremony",
+  "tier": "smart_lite",
+  "libraryTheme": "editorial_bold",
+  "storyArc": {
+    "sequence": [
+      "city_hook",
+      "street_dates",
+      "everyday",
+      "proposal",
+      "getting_ready",
+      "ceremony",
+      "night",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "smooth_left",
+      "dissolve",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 2
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "Fashion-editorial urban romance: city geometry and street-life energy gradually soften into the ceremony and reception."
+  },
+  "fit": {
+    "bestFor": [
+      "urban",
+      "editorial",
+      "fashion",
+      "modern_wedding",
+      "night_reception"
+    ],
+    "minPhotos": 28,
+    "idealPhotos": 65
+  },
+  "musicProfile": {
+    "moods": [
+      "indie",
+      "modern",
+      "upbeat"
+    ],
+    "energy": "medium_to_high"
+  },
+  "pacingVariants": [
+    {
+      "id": "promenade",
+      "maxEnergy": 0.4,
+      "durationMultiplier": 1.1
+    },
+    {
+      "id": "editorial",
+      "maxEnergy": 0.72,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "nightlife",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.82
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5900,
+      "saturation": 1,
+      "contrast": 1.08,
+      "glow": 0.04
+    },
+    "audio": {
+      "fade_in": 1.2,
+      "fade_out": 3,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F5F2EC",
+      "ink": "#17171B",
+      "brown": "#8A7355",
+      "white": "#FFFDFC"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 4.8,
+      "calmSceneSec": 6.2,
+      "buildSceneSec": 3.8,
+      "montageSec": 9,
+      "closingSec": 7.5
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "crossfade",
+        "duration": 0.45
+      },
+      "calm": {
+        "type": "dissolve",
+        "duration": 0.7
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.6
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.35
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "sharpness"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 65
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_city",
+      "effect": "moving_background_echo",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "{{bride}} × {{groom}} · CITY LOVERS"
+    },
+    {
+      "id": "s02_street",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "{{meetingPlace}}",
+        "body": "Thành phố nơi câu chuyện bắt đầu."
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_dates",
+      "effect": "layer_scene",
+      "layout": "masonry_grid_wall",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "g1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g2",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g3",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g4",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g5",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g6",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g7",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "g8",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "tile_text": "US / EVERYDAY"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "tile_text": "Từng khoảnh khắc bên nhau là một món quà."
+            }
+          },
+          {
+            "text": {
+              "tile_text": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s04_proposal",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_in"
+        }
+      ],
+      "text": {
+        "quote": "Giữa triệu ánh đèn · mình chọn nhau"
+      }
+    },
+    {
+      "id": "s05_ready",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "build",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "GETTING READY"
+      }
+    },
+    {
+      "id": "s06_ceremony",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/particle_gather.mp4",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#34322E"
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07_night",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 7,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s08_close",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

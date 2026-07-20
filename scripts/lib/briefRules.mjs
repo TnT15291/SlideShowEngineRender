@@ -110,6 +110,10 @@ const DURATION_SEC = /(\d+(?:[.,]\d+)?)\s*(?:giây|giay|sec\b|seconds?\b|s\b)/i;
 const MUSIC_HIGHLIGHT = /(?:video\s*)?highlights?|phim ngắn|bản ngắn|đoạn cao trào/i;
 const MUSIC_FULL = /dùng (?:toàn bộ|hết|trọn)(?:\s+cả)? bài|toàn bộ bài hát|không cắt nhạc|không cúp nhạc|full song|use the whole song/i;
 const MUSIC_AUTO = /tự (?:chọn|quyết định).{0,24}(?:thời lượng|độ dài)|thời lượng phù hợp|auto(?:matic)? duration/i;
+// Extending a track that is too short for the album — the mirror of a highlight trim.
+// "nối" = splice another track in; "lặp/lặp lại/phát lại" = repeat the same one.
+const MUSIC_PLAYLIST = /nối (?:thêm |sang )?(?:bài|nhạc)|ghép (?:thêm )?(?:bài|nhạc)|thêm (?:một )?bài (?:nhạc|hát)( khác)?|dùng (?:2|hai|nhiều) bài|another (?:song|track)|add a (?:second|another) (?:song|track)/i;
+const MUSIC_LOOP = /lặp lại bài|lặp bài|phát lại (?:bài|nhạc)|loop (?:the )?(?:song|music|track)/i;
 
 // "khoảng 3 phút" is a preference; "đúng 3 phút" is a requirement. Same for looks:
 // a customer who writes "nếu được" is not issuing an order.
@@ -165,6 +169,8 @@ export function extractDirectives(prompt) {
 
       if (MUSIC_FULL.test(frag)) push({ kind: "music_mode", op: "set", scope: { global: true }, target: "full_song", strength }, sentence);
       else if (MUSIC_HIGHLIGHT.test(frag)) push({ kind: "music_mode", op: "set", scope: { global: true }, target: "highlight", strength }, sentence);
+      else if (MUSIC_PLAYLIST.test(frag)) push({ kind: "music_mode", op: "set", scope: { global: true }, target: "playlist", strength }, sentence);
+      else if (MUSIC_LOOP.test(frag)) push({ kind: "music_mode", op: "set", scope: { global: true }, target: "loop", strength }, sentence);
       else if (MUSIC_AUTO.test(frag)) push({ kind: "music_mode", op: "set", scope: { global: true }, target: "auto", strength }, sentence);
 
       for (const rule of RULES) {

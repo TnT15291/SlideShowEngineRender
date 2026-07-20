@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fit-decision.schema.json",
+  "title": "Fit decision — which fit-plan option was applied, and who chose it",
+  "description": "Written by scripts/decideFit.mjs. `source` says WHO decided (ledger = the customer's own prompt already answered it; auto = no interactive UI exists yet, so the recommended, non-destructive default was applied; user is reserved for the future interactive gate). A zero-length decisionWindow means nobody was asked — never dressed up as a deadline the customer was given.",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "regime", "optionId", "source", "reason", "decisionWindow"],
+  "properties": {
+    "generatedBy": { "const": "fit-decision" },
+    "generatedAt": { "type": "string" },
+    "regime": { "type": "string" },
+    "optionId": { "type": "string", "description": "The fit-plan option id that was applied (or \"balanced\" when there was nothing to decide)." },
+    "source": { "enum": ["user", "ledger", "natural", "auto"] },
+    "reason": { "type": "string", "maxLength": 300 },
+    "musicMode": { "enum": ["highlight", "full_song", "loop", "playlist"], "description": "Present when the decision changes how the track is used; absent when it does not (e.g. keep_all)." },
+    "decisionWindow": {
+      "type": "object",
+      "required": ["openedAt", "deadlineAt", "timeoutHours"],
+      "properties": {
+        "openedAt": { "type": "string" },
+        "deadlineAt": { "type": "string" },
+        "timeoutHours": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

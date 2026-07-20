@@ -1,0 +1,405 @@
+{
+  "id": "three-chapters-biography-01",
+  "version": 1,
+  "name": "Three Chapters · Two Lives, One Story",
+  "tier": "smart_lite",
+  "libraryTheme": "white_weddings",
+  "storyArc": {
+    "sequence": [
+      "bride_biography",
+      "groom_biography",
+      "meeting",
+      "connection",
+      "proposal",
+      "ceremony",
+      "celebration",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "fade_slow",
+      "dissolve",
+      "crossfade",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 2,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A clearly divided three-act wedding biography: two individual lives, the relationship, then the wedding day; visually informed by White Weddings' ivory editorial restraint."
+  },
+  "fit": {
+    "bestFor": [
+      "biography",
+      "love_story",
+      "full_wedding",
+      "family_archive"
+    ],
+    "minPhotos": 28,
+    "idealPhotos": 70
+  },
+  "musicProfile": {
+    "moods": [
+      "romantic",
+      "narrative",
+      "piano"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "memoir",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.16
+    },
+    {
+      "id": "story",
+      "maxEnergy": 0.7,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "highlights",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.86
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "yearsTogether",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5600,
+      "saturation": 1.02,
+      "contrast": 1.03,
+      "glow": 0.08,
+      "grain": 1
+    },
+    "audio": {
+      "fade_in": 2,
+      "fade_out": 3.5,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/GreatVibes-Regular.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#FBF6ED",
+      "ink": "#2D2D33",
+      "brown": "#806B50",
+      "white": "#FFFDFC"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.8,
+      "calmSceneSec": 7.5,
+      "buildSceneSec": 4.8,
+      "montageSec": 10,
+      "closingSec": 8.5
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "dissolve",
+        "duration": 0.8
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.55
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 72
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_prologue",
+      "effect": "layer_scene",
+      "layout": "welcome_title_page",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "eyebrow": "CHƯƠNG I · HAI CUỘC ĐỜI",
+        "names": "{{bride}} & {{groom}}",
+        "date": "Trước khi chúng mình gặp nhau"
+      }
+    },
+    {
+      "id": "s02_bride",
+      "effect": "layer_scene",
+      "layout": "photo_left_text_right",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Cô dâu · {{bride}}",
+        "body": "Những năm tháng, ước mơ và người thân đã làm nên cô ấy của hôm nay."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_groom",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Chú rể · {{groom}}",
+        "body": "Một hành trình riêng, trước khi tìm thấy người sẽ cùng mình đi tiếp."
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau",
+              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau",
+              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "light_rays",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s04_meeting",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "CHƯƠNG II · NGÀY TA GẶP NHAU"
+    },
+    {
+      "id": "s05_journey",
+      "effect": "layer_scene",
+      "layout": "journey_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "accent",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Từ {{meetingPlace}} đến hôm nay",
+        "caption": "{{yearsTogether}} năm của những chuyến đi, tiếng cười và trưởng thành bên nhau."
+      },
+      "muteFallback": {
+        "layout": "photo_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "portrait",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s06_memories",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 7,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "captionPattern": "OUR STORY",
+      "params": {
+        "background": "#4A4139"
+      }
+    },
+    {
+      "id": "s07_wedding",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "build",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "CHƯƠNG III · VỀ CHUNG MỘT NHÀ",
+        "caption": "Ngày hai hành trình trở thành một."
+      }
+    },
+    {
+      "id": "s08_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

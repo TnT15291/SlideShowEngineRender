@@ -15,6 +15,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const node = process.execPath;
+const photosFixture = "test/fixtures/photos.json";
 
 /** A mock DeepSeek that returns whatever object the test hands it. */
 async function withMock(reply, fn) {
@@ -63,7 +64,7 @@ test("pickRecipe refuses a recipe that does not exist", async () => {
     { recipeId: "super-luxury-9000", themeId: "neon_cyberpunk", reason: "trust me" },
     async (url) => {
       const r = await run(
-        ["scripts/pickRecipe.mjs", "--prompt", prompt, "--photos", "analysis/photos.json", "--out", out],
+        ["scripts/pickRecipe.mjs", "--prompt", prompt, "--photos", photosFixture, "--out", out],
         url
       );
       assert.equal(r.status, 0, r.stderr);
@@ -87,7 +88,7 @@ test("pickRecipe keeps a real recipe but drops an invented theme", async () => {
 
   await withMock({ recipeId: "warm-film-01", themeId: "not_a_theme", reason: "warm suits them" }, async (url) => {
     const r = await run(
-      ["scripts/pickRecipe.mjs", "--prompt", prompt, "--photos", "analysis/photos.json", "--out", out],
+      ["scripts/pickRecipe.mjs", "--prompt", prompt, "--photos", photosFixture, "--out", out],
       url
     );
     assert.equal(r.status, 0, r.stderr);

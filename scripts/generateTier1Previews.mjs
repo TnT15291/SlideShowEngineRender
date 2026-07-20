@@ -39,10 +39,14 @@ for (const pacing of ["gentle", "balanced", "lively"]) {
   const fullTimeline = `${timelineDir}/${pacing}.full.json`;
   const previewTimeline = `${timelineDir}/${pacing}.json`;
   const video = `${outDir}/${pacing}.mp4`;
+  // A previous preview must not make pre-flight QA inspect stale rendered frames.
+  fs.rmSync(path.resolve(root, video), { force: true });
   // The capacity clamp (photo set below the recipe's floor) lives in
   // chooseTier1Direction itself now, so previews and straight renders share it.
   run(["scripts/chooseTier1Direction.mjs", "--recipe", recipe, "--prompt", project.rel(project.manifest.promptFile || "prompt.txt"), "--photos", photos, "--music", musicAnalysis, "--pacing", pacing, "--out", direction], `direction ${pacing}`);
   run(["scripts/applyStoryTemplate.mjs", "--template", recipe, "--photos", photos, "--music", music, "--analysis-dir", analysis, "--direction", direction, "--out", fullTimeline, "--output", video, "--name", `${project.manifest.name} — ${pacing}`, "--quality", "draft", "--prompt", project.rel(project.manifest.promptFile || "prompt.txt")], `timeline ${pacing}`);
+  run(["scripts/qaLoop.mjs", "--timeline", fullTimeline, "--analysis-dir", analysis, "--job-dir", project.relDir,
+    "--tier", "template", "--max-revisions", "1", "--skip-render", "--strict"], `pre-flight QA ${pacing}`);
   const full = JSON.parse(fs.readFileSync(path.resolve(root, fullTimeline), "utf8"));
   const cut = makePreviewCut(full, { duration, output: video });
   fs.writeFileSync(path.resolve(root, previewTimeline), JSON.stringify(cut, null, 2) + "\n");

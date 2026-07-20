@@ -86,6 +86,9 @@ const plan = `${analysisDir}/story_plan.json`;
 const tierFile = `${analysisDir}/tier.json`;
 const recipeChoice = `${analysisDir}/recipe_choice.json`;
 const recipeCopy = `${analysisDir}/recipe_copy.json`;
+const fitPlan = `${analysisDir}/fit_plan.json`;
+const fitDecision = `${analysisDir}/fit_decision.json`;
+const cullSuggestion = `${analysisDir}/cull_suggestion.json`;
 const suppliedDirection = arg("--direction", "");
 if (suppliedDirection && tier !== "template") throw new Error("--direction applies only to --tier template");
 if (suppliedDirection && !fs.existsSync(path.resolve(root, suppliedDirection))) throw new Error(`direction not found: ${suppliedDirection}`);
@@ -215,6 +218,48 @@ function selectMusicWindow() {
   }
 }
 
+/** Does this album fit this song, in EITHER direction? Auto-cutting a highlight (too few
+ *  photos) is the established tier-1 rule and gate 4b already asks premium's customer
+ *  about it — this is the side that had NOTHING: too many photos silently dropped the
+ *  surplus with no word to anyone, and a track too short for the album had no way to
+ *  extend at all. Pure arithmetic, 0 AI calls, runs for EVERY tier so a cheap job is not
+ *  quietly worse-informed than an expensive one.
+ *
+ *  Writes fit_plan.json (the options, for a future UI to show) and fit_decision.json (what
+ *  was applied and why). There is no interactive pause here — the customer-facing surface
+ *  for this is separate, later work — so the decision is always the SAFE, non-destructive
+ *  default (never a silent cull; loop/playlist only when the customer's own prompt already
+ *  asked, via the directive ledger applyStoryTemplate already reads). suggestCull only runs
+ *  when the regime is genuinely crowded, and only ever produces a REVIEWABLE list. */
+function assessFitAndDecide() {
+  if (!musicAnalysis) return; // lite can run with no music at all — nothing to assess
+  console.log(`\n[runProject] fit advisor`);
+  run([
+    "scripts/assessFit.mjs",
+    "--music-analysis", musicAnalysis,
+    "--photos", photoPool(),
+    ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+    "--directives", directives,
+    "--out", fitPlan,
+  ], "fit plan");
+  run([
+    "scripts/decideFit.mjs",
+    "--fit-plan", fitPlan,
+    "--directives", directives,
+    "--out", fitDecision,
+  ], "fit decision");
+  const plan = JSON.parse(fs.readFileSync(path.resolve(root, fitPlan), "utf8"));
+  if (plan.regime === "many_photos" || plan.regime === "far_too_many_photos") {
+    run([
+      "scripts/suggestCull.mjs",
+      "--photos", photoPool(),
+      ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+      "--keep", String(plan.evidence.targetPhotos),
+      "--out", cullSuggestion,
+    ], "cull suggestion (advisory — nothing is dropped)");
+  }
+}
+
 /** Gate 4b's decision, read back at build time (the gate ran in the plan phase, and
  *  --resume can skip that phase entirely). Absent file = no gate ran (an old project,
  *  or another tier): "auto" — the tier-1 rule — which is also what the gate's own
@@ -311,6 +356,7 @@ try {
 
       run(["scripts/generateSelectionPolicy.mjs", "--project", projectArg], "selection policy");
       run(["scripts/selectProjectPhotos.mjs", "--project", projectArg], "photo selection");
+      assessFitAndDecide();
 
       if (tier === "template") {
         // Node A: let the model choose which recipe suits this couple, from the

@@ -1,0 +1,339 @@
+{
+  "id": "four-seasons-love-01",
+  "version": 1,
+  "name": "Four Seasons of Us",
+  "tier": "smart_lite",
+  "libraryTheme": "warm_film",
+  "storyArc": {
+    "sequence": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter",
+      "new_spring",
+      "wedding",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "dissolve",
+      "fade_slow",
+      "crossfade",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 2,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "A seasonal chapter structure where changes in light, color and pace mirror a relationship maturing toward marriage."
+  },
+  "fit": {
+    "bestFor": [
+      "multi_year",
+      "outdoor",
+      "travel",
+      "seasonal",
+      "love_story"
+    ],
+    "minPhotos": 28,
+    "idealPhotos": 68
+  },
+  "musicProfile": {
+    "moods": [
+      "acoustic",
+      "nostalgic",
+      "uplifting"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "seasons",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.15
+    },
+    {
+      "id": "album",
+      "maxEnergy": 0.7,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "festival",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.86
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "yearsTogether",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 4700,
+      "saturation": 1.05,
+      "contrast": 1.03,
+      "grain": 5,
+      "glow": 0.13,
+      "vignette": true
+    },
+    "audio": {
+      "fade_in": 2,
+      "fade_out": 3.5,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/DancingScript.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F4ECE0",
+      "ink": "#3A2E22",
+      "brown": "#A65F3B",
+      "white": "#FFFBF4"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.6,
+      "calmSceneSec": 7.2,
+      "buildSceneSec": 4.6,
+      "montageSec": 10,
+      "closingSec": 8
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "dissolve",
+        "duration": 0.75
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.5
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 68
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_spring",
+      "effect": "layer_scene",
+      "layout": "photo_left_text_right",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": "Xuân · Bắt đầu",
+        "body": "Một cuộc gặp dịu dàng như mùa đầu tiên."
+      }
+    },
+    {
+      "id": "s02_summer",
+      "effect": "floating_card_gallery",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": "HẠ · NHỮNG CHUYẾN ĐI",
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "captionPattern": "Từng khoảnh khắc bên nhau là một món quà."
+          },
+          {
+            "captionPattern": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_autumn",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Thu · Trưởng thành"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Ngày chung đôi"
+            }
+          },
+          {
+            "text": {
+              "heading": "Thương nhau"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s04_winter",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "body": "Đông · Học cách sưởi ấm cho nhau."
+      }
+    },
+    {
+      "id": "s05_newspring",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "motion": "zoom_in"
+        }
+      ],
+      "text": {
+        "quote": "Một mùa xuân mới · Một lời hẹn trăm năm"
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "filmstrip",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06_wedding",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 8,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "captionPattern": "{{yearsTogether}} NĂM · BỐN MÙA · MỘT TÌNH YÊU",
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s07_close",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{date}}"
+      }
+    }
+  ]
+}

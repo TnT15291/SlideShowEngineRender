@@ -1,0 +1,339 @@
+{
+  "id": "heritage-ceremony-01",
+  "version": 1,
+  "name": "Heritage Ceremony",
+  "tier": "smart_lite",
+  "libraryTheme": "dark_film",
+  "storyArc": {
+    "sequence": [
+      "invitation",
+      "ritual",
+      "family",
+      "vows",
+      "ceremony",
+      "banquet",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "fade_slow",
+      "dissolve",
+      "fade_to_black",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "Wedding-day-only template with an antique heirloom mood: deep lacquer, aged gold, formal symmetry and restrained film texture instead of modern white minimalism."
+  },
+  "fit": {
+    "bestFor": [
+      "ceremony_only",
+      "traditional_wedding",
+      "heritage",
+      "family",
+      "banquet"
+    ],
+    "minPhotos": 24,
+    "idealPhotos": 55
+  },
+  "musicProfile": {
+    "moods": [
+      "traditional",
+      "orchestral",
+      "solemn",
+      "warm"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "ritual",
+      "maxEnergy": 0.35,
+      "durationMultiplier": 1.18
+    },
+    {
+      "id": "heirloom",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "banquet",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.88
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 4800,
+      "saturation": 0.9,
+      "contrast": 1.1,
+      "grain": 7,
+      "vignette": true,
+      "glow": 0.04
+    },
+    "audio": {
+      "fade_in": 2.5,
+      "fade_out": 4,
+      "crossfade": 0
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/Italianno-Regular.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#170F0B",
+      "ink": "#E7D4A8",
+      "brown": "#8E2F27",
+      "white": "#F7EBD4"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 6.2,
+      "calmSceneSec": 8,
+      "buildSceneSec": 5,
+      "montageSec": 10,
+      "closingSec": 9
+    },
+    "transitionStrategy": {
+      "default": {
+        "type": "fade_slow",
+        "duration": 1
+      },
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.2
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "peak": {
+        "type": "fade_to_black",
+        "duration": 0.7
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 58
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_invite",
+      "effect": "dark_feather",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "captionPattern": "HỶ SỰ · {{bride}} & {{groom}}",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s02_details",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Gia lễ · {{date}}"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Bên nhau"
+            }
+          },
+          {
+            "text": {
+              "heading": "Ngày chung đôi"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "photo_frame_orbit",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s03_family",
+      "effect": "memory_wall",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "captionPattern": "Hai gia đình · Một niềm vui",
+      "params": {
+        "background": "#2B2B32"
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "captionPattern": "Cảm ơn vì đã cùng nhau đến tận đây."
+          },
+          {
+            "captionPattern": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "s04_vows",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s05_ritual",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Nghi lễ",
+        "caption": "Trước gia tiên và những người thương yêu nhất."
+      }
+    },
+    {
+      "id": "s06_banquet",
+      "effect": "film_roll_up",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 8,
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07_close",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

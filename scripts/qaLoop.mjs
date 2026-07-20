@@ -49,6 +49,8 @@ const TL = arg("--timeline", "timeline/quoc-nhi-full-v2.json");
 const siblingAnalysis = path.posix.join(path.dirname(path.dirname(TL.replace(/\\/g, "/"))), "analysis");
 const analysisDir = arg("--analysis-dir", siblingAnalysis).replace(/\\/g, "/").replace(/\/$/, "");
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
+const photosPath = arg("--photos", "");
+const musicPath = arg("--music", "");
 const jobDir = arg("--job-dir", "");
 const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
 // Which repairs this tier is ALLOWED to apply comes from lib/rules/policy.mjs.
@@ -79,7 +81,8 @@ function sh(args, label) {
 }
 
 const runProxy = () => {
-  sh(["scripts/qaProxy.mjs", TL, "--content", contentPath, "--out", proxyOut, "--analysis-dir", analysisDir], "qaProxy");
+  sh(["scripts/qaProxy.mjs", TL, "--content", contentPath, "--out", proxyOut, "--analysis-dir", analysisDir,
+    ...(photosPath ? ["--photos", photosPath] : []), ...(musicPath ? ["--music", musicPath] : [])], "qaProxy");
   return readJson(proxyOut);
 };
 const runClip = () => {
@@ -106,7 +109,7 @@ function applyProxyFixes(report) {
   for (const p of report.problems) {
     if (!p.fix) continue;                       // e.g. hero_not_in_content: needs re-analysis, not a swap
     if (actionFor(TIER, p.check) !== "repair") continue; // this tier reports the rule but may not touch the film for it
-    const key = `${p.id}:${p.check}`;
+    const key = `${p.id}:${p.check}${Number.isInteger(p.fix.layer) ? `:${p.fix.layer}` : ""}`;
     if (repaired.has(key)) continue;            // anti-oscillation
     const slide = tl.slides.find((s) => s.id === p.id);
     if (!slide) continue;
@@ -128,6 +131,12 @@ function applyProxyFixes(report) {
       if (!l || l.type !== "image") continue;
       l.focusX = p.fix.focusX; l.focusY = p.fix.focusY;
       applied.push(`${p.id}: focus -> ${p.fix.focusX.toFixed(3)},${p.fix.focusY.toFixed(3)} (${p.flags.join(",")})`);
+    } else if (p.fix.kind === "set_fit") {
+      const l = slide.layers?.[p.fix.layer];
+      if (!l || l.type !== "image") continue;
+      l.fit = p.fix.to;
+      l.focusX = 0.5; l.focusY = 0.5;
+      applied.push(`${p.id}: fit -> ${p.fix.to} (${p.flags.join(",")})`);
     } else if (p.fix.kind === "fit_text") {
       // The shared glyph fitter owns the actual rewrite; mark this pair so the
       // anti-oscillation guard still applies, then run it after writing.
