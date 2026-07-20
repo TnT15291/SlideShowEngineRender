@@ -32,6 +32,8 @@ test("caption language QA detects clear mismatches without flagging names", () =
   assert.equal(inspectCaptionLanguage(["Our wedding day", "Together with love forever"], "en").flagged, 0);
   assert.equal(inspectCaptionLanguage(["Ngày cưới của chúng ta", "Hạnh phúc bên nhau"], "en").flagged, 1);
   assert.equal(inspectCaptionLanguage(["Our wedding day and our love forever"], "vi").flagged, 1);
+  assert.equal(inspectCaptionLanguage(["Những lời chúc từ người thân yêu", "Our wedding day and our love forever"], "vi").flagged, 1);
+  assert.equal(inspectCaptionLanguage(["Những lời chúc từ những người thân yêu nhất", "WELCOME TO THE PARTY", "FIRST DANCE"], "vi").flagged, 0);
   assert.equal(inspectCaptionLanguage(["An & Bình"], "en").flagged, 0);
 });
 

@@ -11,9 +11,9 @@ export function inspectCaptionLanguage(texts, expected) {
   const enWords = tokens.filter((word) => EN_WORDS.has(word)).length;
   const viSignal = viMarks + viWords;
   const mismatch = expected === "en"
-    ? viMarks >= 2 || viWords >= 3
+    ? viSignal >= 3 && enWords === 0
     : enWords >= 4 && viSignal === 0;
-  const mixed = viSignal >= 2 && enWords >= 4;
+  const mixed = viSignal >= 4 && enWords >= 4 && Math.min(viSignal, enWords) / Math.max(viSignal, enWords) >= 0.6;
   const flags = [mismatch && "wrong_caption_language", mixed && "mixed_caption_languages"].filter(Boolean);
   return { status: "ran", expected, textCount: texts.length, signals: { viMarks, viWords, enWords }, flags, flagged: flags.length ? 1 : 0 };
 }
