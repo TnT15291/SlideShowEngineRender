@@ -57,6 +57,7 @@ const directivesPath = arg("--directives", "");
 const directionPath = arg("--direction", "");
 const musicModeArg = arg("--music-mode", "");
 const language = arg("--language", "vi");
+const languageEnforced = process.argv.includes("--language");
 const sequenceMode = arg("--sequence-mode", "editorial");
 // The second track for "playlist" mode (nối sang bài khác). Absent → playlist degrades to
 // loop (the engine's own -stream_loop already repeats a single track to cover any video
@@ -927,6 +928,7 @@ if (colorOrder) {
 
 const timeline = {
   language,
+  languageEnforced,
   sequenceMode,
   project: {
     name: projectName,

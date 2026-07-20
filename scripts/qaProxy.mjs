@@ -97,7 +97,7 @@ const visibleText = tl.slides.flatMap((slide) => [
   ...(slide.captions || []).map((caption) => caption.text),
   ...(slide.layers || []).filter((layer) => layer.type === "text").map((layer) => layer.text),
 ]).filter(Boolean);
-const captionLanguage = inspectCaptionLanguage(visibleText, tl.language);
+const captionLanguage = inspectCaptionLanguage(visibleText, tl.languageEnforced ? tl.language : null);
 if (captionLanguage.flagged) problems.push({ id: "project", check: "caption_language", flags: captionLanguage.flags,
   detail: `viewer-visible text does not consistently match timeline language ${tl.language}` });
 
