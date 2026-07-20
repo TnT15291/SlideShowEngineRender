@@ -26,6 +26,27 @@ run(["-f", "lavfi", "-i", "color=c=black:s=640x360:r=30", "-t", "1", "-pix_fmt",
 run(["-f", "lavfi", "-i", "color=c=white@0.1:s=640x360", "-frames:v", "1",
   "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png"]);
 
+const assetRefs = new Set();
+const collectAssets = (value) => {
+  if (typeof value === "string" && value.startsWith("assets/")) assetRefs.add(value);
+  else if (Array.isArray(value)) value.forEach(collectAssets);
+  else if (value && typeof value === "object") Object.values(value).forEach(collectAssets);
+};
+for (const file of fs.readdirSync("story-templates").filter((name) => name.endsWith(".json"))) {
+  collectAssets(JSON.parse(fs.readFileSync(path.join("story-templates", file), "utf8")));
+}
+collectAssets(JSON.parse(fs.readFileSync(path.join("layouts", "library.json"), "utf8")));
+for (const asset of assetRefs) {
+  if (fs.existsSync(asset)) continue;
+  fs.mkdirSync(path.dirname(asset), { recursive: true });
+  const source = /\.(mp4|mov|webm)$/i.test(asset)
+    ? "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4"
+    : /\.(png|webp)$/i.test(asset)
+      ? "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png"
+      : "input/001.jpg";
+  fs.copyFileSync(source, asset);
+}
+
 const tracks = [
   ["River Flows In You", 188.83],
   ["Perfect", 180],
