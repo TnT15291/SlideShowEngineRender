@@ -9,8 +9,6 @@ jobs:
   media-regression:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      FFMPEG_PATH: ./node_modules/ffmpeg-static/ffmpeg
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,14 +16,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Install media tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Create synthetic test album
-        run: |
-          mkdir -p input
-          "$FFMPEG_PATH" -v error -f lavfi -i color=c=0x8b3a3a:s=640x360 -frames:v 1 input/001.jpg
-          "$FFMPEG_PATH" -v error -f lavfi -i color=c=0x315b7d:s=360x640 -frames:v 1 input/002.jpg
-          for i in $(seq -w 3 130); do
-            if ((10#$i % 2)); then cp input/001.jpg "input/$i.jpg"; else cp input/002.jpg "input/$i.jpg"; fi
-          done
+        run: node test/fixtures/create-ci-media.mjs
       - run: npm run check
       - run: npm run test:release
       - run: npm run test:regression
