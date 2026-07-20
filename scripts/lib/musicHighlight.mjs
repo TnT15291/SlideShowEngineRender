@@ -12,7 +12,7 @@ export const needsExcerpt = (music, photoCount) =>
 
 /** Choose a contiguous, phrase-aligned music window when the full track would make
  * every photo carry more than FULL_SONG_MAX_SEC_PER_PHOTO seconds of film. */
-export function chooseMusicEdit(music, photoCount, { mode = "auto", targetDuration } = {}) {
+export function chooseMusicEdit(music, photoCount, { mode = "auto", targetDuration, maxDuration } = {}) {
   const sourceDuration = Number(music.duration) || 0;
   if (!["auto", "highlight", "full_song"].includes(mode)) throw new Error(`unknown music mode "${mode}"`);
   if (mode === "full_song" || sourceDuration <= 0 || photoCount <= 0) {
@@ -30,6 +30,7 @@ export function chooseMusicEdit(music, photoCount, { mode = "auto", targetDurati
     for (let j = i + 1; j < boundaries.length; j++) {
       const start = boundaries[i], end = boundaries[j], duration = end - start;
       if (duration < HIGHLIGHT_MIN_SEC || duration > HIGHLIGHT_MAX_SEC) continue;
+      if (maxDuration > 0 && duration > maxDuration) continue;
       const energy = meanEnergy(music, start, end);
       const early = meanEnergy(music, start, start + duration * 0.25);
       const late = meanEnergy(music, end - duration * 0.35, end);

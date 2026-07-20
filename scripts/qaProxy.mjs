@@ -210,7 +210,12 @@ for (const slide of tl.slides) {
     crop.layers.push(row);
     if (flags.length) {
       crop.flagged++;
-      const face = photo?.faceBoxEstimate;
+      const face = faces.length ? {
+        x: Math.min(...faces.map((box) => box.x)),
+        y: Math.min(...faces.map((box) => box.y)),
+        width: Math.max(...faces.map((box) => box.x + box.width)) - Math.min(...faces.map((box) => box.x)),
+        height: Math.max(...faces.map((box) => box.y + box.height)) - Math.min(...faces.map((box) => box.y)),
+      } : photo?.faceBoxEstimate;
       // A proposed focus must satisfy the same safe bounds this check enforces;
       // clamping to 0..1 produced fixes at 0 that were immediately flagged again.
       const clampFocus = (v) => Math.max(FOCUS_SAFE_MIN, Math.min(FOCUS_SAFE_MAX, v));

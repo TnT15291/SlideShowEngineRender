@@ -359,8 +359,8 @@
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
-        "names": "Cùng một mái nhà",
-        "date": "{{bride}} & {{groom}} · {{date}}"
+        "names": "{{bride}} & {{groom}}",
+        "date": "Cùng một mái nhà · {{date}}"
       }
     }
   ]

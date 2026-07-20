@@ -27,7 +27,7 @@ import { averageAdjustments, buildColorNormalization } from "./lib/colorNormaliz
 import { loadLedger, active, applyToStoryboard, applyToTimeline } from "./lib/directives.mjs";
 import { fitScale, describeFit, makeEnergy, MAX_SCENE } from "./lib/pacing.mjs";
 import { solveRecipeShotList } from "./lib/recipeShotList.mjs";
-import { resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
+import { chooseMusicEdit, resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
 import { NATURAL_SEC_PER_PHOTO } from "./lib/fitPlan.mjs";
 import {
@@ -201,7 +201,7 @@ if (requestedMusicMode === "playlist" || requestedMusicMode === "loop") {
 // sliceMusicAnalysis only knows highlight/full_song; loop/playlist keep every phrase/beat
 // the source track has (nothing to trim) but must still carry the EXTENDED duration so
 // downstream pacing solves the shot list against it, not the shorter source length.
-const music = (musicEdit.mode === "playlist" || musicEdit.mode === "loop")
+let music = (musicEdit.mode === "playlist" || musicEdit.mode === "loop")
   ? { ...sourceMusic, duration: musicEdit.duration }
   : sliceMusicAnalysis(sourceMusic, musicEdit);
 if (musicEdit.mode === "highlight") {
@@ -709,6 +709,9 @@ const reservedPhotos = new Set([
   ...(openingTakesHero ? [heroPhoto.file] : []),
   ...(closingTakesEnding ? [endingPhoto.file] : []),
 ]);
+const editorialPhotoCount = new Set(photos.map((photo) =>
+  photo.duplicateGroup ? `group:${photo.duplicateGroup}` : `file:${photo.file}`
+)).size;
 // What the bookends draw FROM THE POOL: their declared slots, minus the one frame each of
 // them takes from the reserved set instead.
 const bookendPoolCost =
@@ -729,11 +732,11 @@ const bookendPoolCost =
 const composed = template.source?.origin === "composed";
 const solveShotList = () => solveRecipeShotList({
   recipe: template,
-  photoCount: photos.length,
+  photoCount: editorialPhotoCount,
   musicDuration: Number(music.duration) || 0,
   durationOf: (scene, at) => durationFor(scene.durationRole, at),
   photoDemandOf: scenePhotoCount,
-  bodyPhotoBudget: photos.length - reservedPhotos.size - bookendPoolCost,
+  bodyPhotoBudget: editorialPhotoCount - reservedPhotos.size - bookendPoolCost,
   // The same sampler QA measures with — the solver bends body durations toward
   // the music instead of emitting the role table's uniform lengths.
   energy: makeEnergy(music),
@@ -761,6 +764,26 @@ if (!composed && (musicEdit.mode === "loop" || musicEdit.mode === "playlist")) {
       `A richer recipe or a less aggressive cull would use more of the extension.`);
     music.duration = +ceiling.toFixed(3);
     musicEdit.duration = +ceiling.toFixed(3);
+    shotList = solveShotList();
+  }
+}
+if (!composed && !["loop", "playlist"].includes(musicEdit.mode)) {
+  const ceiling = shotList.scenes.length > 0
+    ? (shotList.scenes.length - 1) * (MAX_SCENE - MAX_TRANSITION_SEC) + MAX_SCENE
+    : 0;
+  if (music.duration > ceiling) {
+    if (requestedMusicMode === "full_song") {
+      throw new Error(
+        `full-song was requested, but this recipe can sustain at most ${ceiling.toFixed(2)}s ` +
+        `with ${shotList.scenes.length} scenes. Choose highlight/auto or a richer recipe.`
+      );
+    }
+    musicEdit = chooseMusicEdit(sourceMusic, photos.length, {
+      mode: "highlight", targetDuration: ceiling, maxDuration: ceiling,
+    });
+    music = sliceMusicAnalysis(sourceMusic, musicEdit);
+    console.log(`[applyStoryTemplate] recipe capacity trims the music window to ${musicEdit.duration}s ` +
+      `(${shotList.scenes.length} scenes can sustain at most ${ceiling.toFixed(2)}s).`);
     shotList = solveShotList();
   }
 }
@@ -816,7 +839,18 @@ mustUse.forEach((file, i) => { flexibleRequests[i].preferred = file; });
 // The same reservation the budget was solved against — not a second, independently
 // derived one. Two places computing "which photos are held back" is how they drift.
 const reserved = [...reservedPhotos];
-const assignmentPlan = assignPhotos({ photos, requests, reserved });
+const lockedForAssignment = new Set([...reserved, ...mustUse]);
+const representativeByGroup = new Map();
+for (const photo of photos) {
+  if (!photo.duplicateGroup || lockedForAssignment.has(photo.file)) continue;
+  const current = representativeByGroup.get(photo.duplicateGroup);
+  if (!current || photo.duplicateRepresentative) representativeByGroup.set(photo.duplicateGroup, photo.file);
+}
+const assignmentPhotos = photos.filter((photo) =>
+  !photo.duplicateGroup || lockedForAssignment.has(photo.file) ||
+  representativeByGroup.get(photo.duplicateGroup) === photo.file
+);
+const assignmentPlan = assignPhotos({ photos: assignmentPhotos, requests, reserved });
 if (assignmentPlan.unfilled.length) {
   const demanded = requests.reduce((n, r) => n + r.count, 0);
   throw new Error(

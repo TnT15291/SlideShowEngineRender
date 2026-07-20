@@ -353,6 +353,21 @@ test("global assignment reserves scarce orientations before flexible slots", () 
   assert.equal(plan.unfilled.length, 0);
 });
 
+test("global assignment keeps perceptual duplicates out of neighbouring scenes", () => {
+  const photos = [
+    { file: "duplicate-a.jpg", orient: "landscape", qualityNorm: 1, duplicateGroup: "same-photo" },
+    { file: "duplicate-b.jpg", orient: "landscape", qualityNorm: 0.99, duplicateGroup: "same-photo" },
+    { file: "different.jpg", orient: "landscape", qualityNorm: 0.4 },
+  ];
+  const plan = assignPhotos({ photos, requests: [
+    { key: "scene-1:wide", order: 0, count: 1, orient: "landscape" },
+    { key: "scene-2:wide", order: 1, count: 1, orient: "landscape" },
+  ] });
+  const selected = [...plan.assignments.values()].flat();
+  assert.ok(!(selected.includes("duplicate-a.jpg") && selected.includes("duplicate-b.jpg")));
+  assert.equal(plan.unfilled.length, 0);
+});
+
 test("customer must-use preference outranks automatic quality", () => {
   const photos = [
     { file: "customer-choice.jpg", orient: "landscape", qualityNorm: 0.2 },
