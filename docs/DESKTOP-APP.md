@@ -69,7 +69,8 @@ Tab **Pipeline** đã có luồng Lite:
   - `scripts/analyzePhotos.mjs`
   - `scripts/analyzeMusic.mjs <music>`
 - **Generate Lite Timeline** chạy:
-  - `scripts/generateStoryClipV2.mjs --director none --plan none`
+  - `scripts/composeStoryboard.mjs --director none --plan none`
+  - `scripts/applyStoryTemplate.mjs`
   - `scripts/fitTextInTimeline.mjs`
 - **Dry Run** chạy engine ở chế độ `--dry-run` để validate/preflight/log FFmpeg command mà chưa render thật.
 
@@ -102,8 +103,9 @@ Tab **Director** đã nối các node AI Director hiện có:
 - **Director Notes** chạy `scripts/generateDirectorNotes.mjs --choice <A-D> --assets analysis/assets_catalog.ai.json`,
   nên Director có thể chọn `assetId` từ catalog thay vì tự bịa path.
 - **Story Plan** chạy `scripts/generateStoryPlan.mjs`.
-- **Generate Timeline** chạy `generateStoryClipV2` với `analysis/director_notes.json` và
-  `analysis/story_plan.json`, sau đó chạy `fitTextInTimeline`.
+- **Generate Timeline** chạy `composeStoryboard.mjs` với `analysis/director_notes.json` và
+  `analysis/story_plan.json`, dựng timeline qua `applyStoryTemplate.mjs`, sau đó chạy
+  `fitTextInTimeline.mjs`.
 
 UI hiển thị 4 story options và `asset_choices` hiện tại để biết AI Director đã chọn font/overlay/background/frame nào.
 

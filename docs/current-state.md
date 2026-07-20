@@ -489,7 +489,7 @@ JSON-Schema không cần thêm dep). Không key `DEEPSEEK_API_KEY` → mọi nod
   assert). Còn lại: cắm key thật + chốt model id V4 rồi chạy 1 lần kiểm chất lượng nội dung.
 
 ### Phase C — Sinh timeline theo đạo diễn (node 8) — ✅ xong + verify qua engine thật
-- ✅ `generateStoryClipV2.mjs` nhận thêm `director_notes.json` + `story_plan.json` (tự nạp từ
+- ✅ Generator Premium cũ (đã được thay bằng pipeline project hiện tại) từng nhận thêm `director_notes.json` + `story_plan.json` (tự nạp từ
   `analysis/` nếu có; `--director/--plan <path|none>`). Áp quyết định đạo diễn:
   `montageEffect` → effect montage; `defaultTransition` → transition giữa slide; `endingTransition`
   → transition vào slide kết; `colorCurves` → thêm preset `curves` vào grade tổng; `overlayVariant`

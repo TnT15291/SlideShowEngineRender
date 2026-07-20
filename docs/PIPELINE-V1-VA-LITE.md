@@ -184,7 +184,9 @@ Dựng cấu trúc phim: Opening → Love Story → Ceremony → Family & Friend
 Sinh `timeline.json` — tuân thủ schema engine, transition/effect hợp lệ, file tồn tại, duration hợp lệ, caption timing hợp lệ, chỉ dùng ảnh đã chọn.
 
 **✅ Giải pháp cho vướng mắc "chưa map script thực tế":**
-Node này chính là `generateStoryClipV2.mjs` + `fitTextInTimeline.mjs` đã có sẵn trong engine — không cần viết mới, chỉ cần feed thêm `director_notes.json` + `story_plan.json` làm input bổ sung (ngoài `analysis/photos.json` + `analysis/music/*.json` đã có) để 2 script này bám theo quyết định của "đạo diễn" thay vì chỉ theo rule mặc định.
+Node này do `runProject.mjs` điều phối: template dùng `applyStoryTemplate.mjs`, Lite dùng
+`generateProjectTimeline.mjs`, Premium dùng `renderWithRetry.mjs`; sau đó `fitTextInTimeline.mjs`
+giữ chữ trong khung. Các node đọc artifact trong project thay vì ghi output dùng chung ở root.
 
 `timeline.json` là **kế hoạch thực thi**, không phải bản thân tác phẩm sáng tạo.
 
@@ -282,7 +284,7 @@ Rule-Table Mapping               ← rule-based, KHÔNG tốn AI
         │
         ▼
 Timeline Generation              ← rule-based, KHÔNG tốn AI
-   (generateStoryClipV2.mjs đã có, ghép analysis + rule table)
+   (generateProjectTimeline.mjs ghép project analysis + rule table)
         │
         ▼
 Validate / Dry-run

@@ -50,7 +50,6 @@ không phải tác phẩm sáng tạo; nó là **ngôn ngữ kỹ thuật** chuy
 
 Schema máy đọc: [`schema/timeline.schema.json`](../schema/timeline.schema.json) ·
 Layout library: [`layouts/library.json`](../layouts/library.json) ·
-Story mẫu: [`quoc-nhi-input-story.txt`](quoc-nhi-input-story.txt) ·
 Sampler font: [`fonts-sampler.png`](fonts-sampler.png)
 
 ## Quick start

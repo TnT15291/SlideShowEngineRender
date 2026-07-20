@@ -333,7 +333,9 @@ Ngoài generator theo orientation, có pipeline sinh timeline giàu cảm xúc, 
 - `docs/generation-guide.md` — brief cho "Director": beat sheet → gán layout → điền slot → pace theo nhạc → emit.
 - `scripts/analyzeMusic.mjs` → `analysis/music/<name>.json` (RMS energy, đoạn calm/normal/build, BPM thô).
 - `scripts/analyzePhotos.mjs` → `analysis/photos.json` (orientation, độ nét, điểm chất lượng, focal point).
-- `scripts/generateStoryClipV2.mjs` — Director v2: chọn ảnh hero theo chất lượng, gắn focal point, pace theo năng lượng bài hát.
+- `scripts/composeStoryboard.mjs` — giải shot list theo số ảnh, nhạc và quyết định Director.
+- `scripts/generateProjectTimeline.mjs` — dựng timeline cho tier Lite từ project analysis.
+- `scripts/applyStoryTemplate.mjs` — dựng timeline recipe/template và gán ảnh vào slot.
 - `scripts/fitTextInTimeline.mjs` — đo bề rộng glyph thật để wrap/thu chữ vừa khung (chống tràn deterministically).
 - `scripts/qaClip.mjs` → `analysis/qa/<name>.json` — QA sau render: lấy 1 frame/scene, cờ too_dark/too_bright/flat.
 - `scripts/runProject.mjs` — orchestrator DUY NHẤT: analyze → plan → build → render → QA → deliver,
