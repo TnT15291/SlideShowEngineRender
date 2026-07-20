@@ -199,6 +199,7 @@ export function layoutsByPhotoCount(library) {
  *
  * It is DERIVED, so it cannot describe an engine we do not have. A hand-written capability
  * doc drifts the first time someone adds an effect and forgets the doc; this one throws.
+ * @param {{library?: any, assets?: {overlays?: unknown}}} [options]
  */
 export function describeCapabilities({ library, assets = {} } = {}) {
   const buckets = layoutsByPhotoCount(library);

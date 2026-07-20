@@ -37,9 +37,10 @@
     "test:integration": "node --test --test-concurrency=1 --test-timeout=180000 test/integration/*.test.mjs",
     "test:regression": "node --test --test-concurrency=1 --test-timeout=600000 test/regression/*.test.mjs",
     "test:project": "node --test test/project.test.mjs",
-    "typecheck": "npm run typecheck:core && npm run typecheck:gpu",
+    "typecheck": "npm run typecheck:core && npm run typecheck:gpu && npm run typecheck:scripts",
     "typecheck:core": "tsc --noEmit",
-    "typecheck:gpu": "tsc --noEmit -p tsconfig.gpu.json"
+    "typecheck:gpu": "tsc --noEmit -p tsconfig.gpu.json",
+    "typecheck:scripts": "tsc --noEmit -p tsconfig.scripts.json"
   },
   "dependencies": {
     "@react-three/fiber": "^9.6.1",

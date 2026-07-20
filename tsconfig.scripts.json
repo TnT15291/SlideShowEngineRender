@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "strict": false
+  },
+  "include": [
+    "scripts/lib/colorNormalizer.mjs",
+    "scripts/lib/diversityPlanner.mjs",
+    "scripts/lib/feedbackLedger.mjs",
+    "scripts/lib/motionPlanner.mjs",
+    "scripts/lib/musicAnalysis.mjs",
+    "scripts/lib/musicRetime.mjs",
+    "scripts/lib/pacing.mjs",
+    "scripts/lib/photoAssignment.mjs",
+    "scripts/lib/project.mjs",
+    "scripts/lib/regressionFrames.mjs",
+    "scripts/lib/retryPolicy.mjs",
+    "scripts/lib/revisionInvalidation.mjs",
+    "scripts/lib/socialRetarget.mjs",
+    "scripts/lib/textCache.mjs",
+    "scripts/lib/textMeasure.mjs",
+    "scripts/lib/tier1Editorial.mjs",
+    "scripts/lib/tier1QualityGate.mjs",
+    "scripts/lib/rules/**/*.mjs"
+  ]
+}
