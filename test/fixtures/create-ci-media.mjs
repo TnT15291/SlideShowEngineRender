@@ -10,11 +10,18 @@ const run = (args) => {
 fs.mkdirSync("input", { recursive: true });
 fs.mkdirSync("music", { recursive: true });
 fs.mkdirSync(path.join("analysis", "music"), { recursive: true });
-run(["-f", "lavfi", "-i", "color=c=0x8b3a3a:s=640x360", "-frames:v", "1", "input/001.jpg"]);
-run(["-f", "lavfi", "-i", "color=c=0x315b7d:s=360x640", "-frames:v", "1", "input/002.jpg"]);
-for (let index = 3; index <= 130; index++) {
-  fs.copyFileSync(index % 2 ? "input/001.jpg" : "input/002.jpg", `input/${String(index).padStart(3, "0")}.jpg`);
+fs.mkdirSync(path.join("assets", "backgrounds"), { recursive: true });
+for (let index = 1; index <= 6; index++) {
+  const size = index % 2 ? "640x360" : "360x640";
+  run(["-f", "lavfi", "-i", `testsrc2=size=${size}:rate=1`, "-vf", `hue=h=${index * 47}`,
+    "-frames:v", "1", `input/${String(index).padStart(3, "0")}.jpg`]);
 }
+for (let index = 7; index <= 130; index++) {
+  const source = String((index % 6) + 1).padStart(3, "0");
+  fs.copyFileSync(`input/${source}.jpg`, `input/${String(index).padStart(3, "0")}.jpg`);
+}
+run(["-f", "lavfi", "-i", "color=c=black:s=640x360:r=30", "-t", "1", "-pix_fmt", "yuv420p",
+  "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4"]);
 
 const tracks = [
   ["River Flows In You", 188.83],
