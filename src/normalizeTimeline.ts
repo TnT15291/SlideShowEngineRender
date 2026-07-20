@@ -73,6 +73,9 @@ const EFFECT_ALIASES: Record<string, string> = {
   film_roll_horizontal: "film_roll_left",
   photo_roll: "film_roll_up",
   photo_film_roll: "film_roll_up",
+  photo_strip_up: "photo_strip_up",
+  photo_strip_left: "photo_strip_left",
+  photo_strip_right: "photo_strip_right",
   video_background: "video_background",
   background_video: "video_background",
   title_card: "video_background",
@@ -275,6 +278,13 @@ function normalizeSlide(s: any): any {
     captions: rawCaptions.map((c) => normalizeCaption(c, s?.duration)),
   };
   if (s?.easing != null) out.easing = canonicalKey(s.easing);
+  // Normalize rebuilds the slide field by field, so anything not named here is DROPPED —
+  // silently, and after validation, which is the quietest place in the pipeline to lose
+  // something. focusX/focusY have to be carried explicitly or the face-safe crop reverts
+  // to dead centre with every part of the chain still reporting success.
+  if (Number.isFinite(s?.focusX)) out.focusX = s.focusX;
+  if (Number.isFinite(s?.focusY)) out.focusY = s.focusY;
+  if (s?.faceBox != null) out.faceBox = s.faceBox;
   if (s?.color != null) out.color = s.color;
   if (s?.technicalColor != null) out.technicalColor = s.technicalColor;
   if (effect === "tilt_shift") {
@@ -317,6 +327,7 @@ function normalizeLayer(l: any): any {
       frame: l?.frame,
       focusX: l?.focusX,
       focusY: l?.focusY,
+      faceBox: l?.faceBox,
     };
   }
   if (type === "rect") {

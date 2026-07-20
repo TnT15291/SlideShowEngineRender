@@ -15,10 +15,13 @@ test("tilt_shift normalizes defaults and compiles a native masked blur graph", (
     import { validateTimeline } from "./src/validateTimeline.ts";
     import { compileTimeline } from "./src/compileTimeline.ts";
     import { buildSlideArgs, isImplementedEffect } from "./src/buildFfmpegCommand.ts";
+    // 001.jpg is landscape (960x720, cover-crop loss 0.25 into 640x360). tilt_shift is in
+    // compileTimeline's CROPPING_EFFECTS, so a portrait source here would silently reroute
+    // to portrait_blur_background and this test would inspect THAT graph instead of tilt_shift's.
     const raw = {
       project: { name: "test", width: 640, height: 360, fps: 30, quality: "draft" },
       music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],
-      slides: [{ id: "s1", image: "input/008.jpg", duration: 3, effect: "tiltshift", transition: { type: "none", duration: 0 }, captions: [] }]
+      slides: [{ id: "s1", image: "input/001.jpg", duration: 3, effect: "tiltshift", transition: { type: "none", duration: 0 }, captions: [] }]
     };
     const normalized = normalizeTimeline(raw);
     const timeline = validateTimeline(normalized, process.cwd());
@@ -57,10 +60,13 @@ test("the native creative effects compile to their intended FFmpeg filters", () 
     import { compileTimeline } from "./src/compileTimeline.ts";
     import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
     const effects = ["dream_glow", "prism_split", "spotlight_focus", "mirror_split", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip"];
+    // dream_glow/prism_split/spotlight_focus/mirror_split are in compileTimeline's
+    // CROPPING_EFFECTS — 001.jpg (landscape, crop loss 0.25) keeps them off the
+    // portrait_blur_background reroute so this inspects each effect's own filter graph.
     const raw = {
       project: { name: "test", width: 640, height: 360, fps: 30, quality: "draft" },
       music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],
-      slides: effects.map((effect, i) => ({ id: "s" + i, image: "input/008.jpg", duration: 3, effect, transition: { type: "none", duration: 0 }, captions: [] }))
+      slides: effects.map((effect, i) => ({ id: "s" + i, image: "input/001.jpg", duration: 3, effect, transition: { type: "none", duration: 0 }, captions: [] }))
     };
     const timeline = validateTimeline(normalizeTimeline(raw), process.cwd());
     const graphs = compileTimeline(timeline, process.cwd(), "temp").steps.map((step) => {

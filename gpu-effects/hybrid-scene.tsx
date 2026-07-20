@@ -1,9 +1,12 @@
 import React from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { GlTransition } from "./gl-transition";
+import { ConfettiBloom } from "./confetti-bloom";
 
 export type HybridSceneProps = {
   template: "page_flip" | "filmstrip" | "title" | "portrait_echo" | "triptych" |
-    "card_gallery" | "paper_peel" | "panel_reveal" | "floating_frame" | "light_rays";
+    "card_gallery" | "paper_peel" | "panel_reveal" | "floating_frame" | "light_rays" |
+    "gl_transition" | "glass_frame" | "confetti_bloom";
   assets: string[];
   params?: Record<string, unknown>;
   durationInFrames?: number;
@@ -19,6 +22,9 @@ export const HybridScene = ({ template, assets, params = {} }: HybridSceneProps)
   if (template === "panel_reveal") return <PanelReveal assets={assets} />;
   if (template === "floating_frame") return <FloatingFrame assets={assets} />;
   if (template === "light_rays") return <LightRays assets={assets} />;
+  if (template === "gl_transition") return <GlTransition assets={assets} params={params} />;
+  if (template === "glass_frame") return <GlassFrame assets={assets} params={params} />;
+  if (template === "confetti_bloom") return <ConfettiBloom assets={assets} params={params} />;
   return <TitleCard assets={assets} params={params} />;
 };
 
@@ -124,6 +130,24 @@ const FloatingFrame = ({ assets }: { assets: string[] }) => {
     <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(9px) brightness(.72)", transform: "scale(1.1)" }} />
     <Img src={src} style={{ position: "absolute", width: "34%", height: "72%", objectFit: "contain", left: "33%", top: "14%", padding: 10, background: "white", transform: `translateX(${x}px) rotateY(${x / 8}deg)`, boxShadow: "0 22px 52px rgba(0,0,0,.35)" }} />
   </AbsoluteFill>;
+};
+
+const GlassFrame = ({ assets, params }: { assets: string[]; params: Record<string, unknown> }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const src = safeAsset(assets, 0);
+  const sweep = interpolate(frame, [durationInFrames * 0.1, durationInFrames * 0.45], [-60, 140], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const rise = interpolate(frame, [0, 20], [24, 0], { extrapolateRight: "clamp" });
+  const tint = String(params.tint ?? "255,255,255");
+  return (
+    <AbsoluteFill style={{ background: "#1c1a17", overflow: "hidden" }}>
+      <AbsoluteFill><Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(38px) brightness(.5) saturate(1.15)", transform: "scale(1.15)" }} /></AbsoluteFill>
+      <div style={{ position: "absolute", left: "24%", top: "10%", width: "52%", height: "80%", transform: `translateY(${rise}px)`, background: `rgba(${tint},.14)`, backdropFilter: "blur(22px) saturate(165%)", border: `1px solid rgba(${tint},.45)`, boxShadow: `0 30px 70px rgba(0,0,0,.4), inset 0 0 40px rgba(${tint},.15)`, padding: 16, overflow: "hidden" }}>
+        <Img src={src} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <div style={{ position: "absolute", top: 0, bottom: 0, left: `${sweep}%`, width: "22%", background: `linear-gradient(75deg, transparent, rgba(${tint},.5), transparent)`, mixBlendMode: "screen" }} />
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 const LightRays = ({ assets }: { assets: string[] }) => {

@@ -43,6 +43,9 @@ const IMPLEMENTED_EFFECTS: ReadonlySet<EffectPreset> = new Set([
   "film_roll_up",
   "film_roll_left",
   "film_roll_right",
+  "photo_strip_up",
+  "photo_strip_left",
+  "photo_strip_right",
   "video_background",
   "collage_grid",
   "double_exposure",
@@ -77,7 +80,7 @@ export function buildSlideArgs(step: RenderSlideStep): string[] {
   if (step.effect === "double_exposure") return buildDoubleExposureArgs(step);
   if (step.effect === "mask_reveal") return buildMaskRevealArgs(step);
   if (step.effect === "memory_wall") return buildMemoryWallArgs(step);
-  if (isFilmRollEffect(step.effect)) return buildFilmRollArgs(step);
+  if (isFilmRollEffect(step.effect) || isPhotoStripEffect(step.effect)) return buildFilmRollArgs(step);
 
   const vf = buildEffectFilter(step);
 
@@ -192,17 +195,17 @@ function buildLayerImageFilter(
   const innerW = Math.max(2, w - border * 2);
   const innerH = Math.max(2, h - border * 2);
 
-  // Base fill at inner size: continuous Ken-Burns motion, or a static fit.
+  // Layer-scene image layers use a static fit for FFmpeg compatibility.
+  // Motion-based Ken Burns expressions are intentionally disabled here to avoid
+  // filter-graph failures on older or narrower ffmpeg builds.
   const base =
-    layer.motion && layer.motion !== "none"
-      ? layerMotionFilter(layer.motion, innerW, innerH, fps, frames, layer.motionStrength, layer.focusX, layer.focusY, layer.easing)
-      : layer.fit === "stretch"
-        ? `scale=${innerW}:${innerH}`
-        : layer.fit === "contain"
-          ? `scale=${innerW}:${innerH}:force_original_aspect_ratio=decrease,` +
-            `pad=${innerW}:${innerH}:(ow-iw)/2:(oh-ih)/2:color=black@0`
-          : `scale=${innerW}:${innerH}:force_original_aspect_ratio=increase,` +
-            `crop=${innerW}:${innerH}:(iw-ow)*${clamp01(layer.focusX)}:(ih-oh)*${clamp01(layer.focusY)}`;
+    layer.fit === "stretch"
+      ? `scale=${innerW}:${innerH}`
+      : layer.fit === "contain"
+        ? `scale=${innerW}:${innerH}:force_original_aspect_ratio=decrease:force_divisible_by=2,` +
+          `pad=${innerW}:${innerH}:(ow-iw)/2:(oh-ih)/2:color=black@0`
+        : `scale=${innerW}:${innerH}:force_original_aspect_ratio=increase,` +
+          `crop=${innerW}:${innerH}:(iw-ow)*${clamp01(layer.focusX)}:(ih-oh)*${clamp01(layer.focusY)}`;
 
   const parts = [base];
   const technical = buildTechnicalColorFilter(layer.technicalColor);
@@ -245,10 +248,20 @@ function layerMotionFilter(
   strength = 0.08,
   focusX = 0.5,
   focusY = 0.5,
-  easing?: MotionEasing
+  easing?: MotionEasing,
+  faceBox?: { x: number; y: number; width: number; height: number }
 ): string {
+  // Same crop, same rule as zoompanFilter: the aspect-ratio crop is the destructive one,
+  // so it takes the focus too. This function ALREADY had focusX/focusY and spent them only
+  // on the zoom target below — steering a 12% zoom inside a frame whose edges had already
+  // been thrown away at dead centre. Aiming carefully inside a photo that has already lost
+  // the head is not face-safe framing.
+  // The face-constrained offset contains commas (min/max/if); crop's expression
+  // arguments must be quoted or ffmpeg splits the graph at the first comma.
   const base =
-    `scale=${w * 2}:${h * 2}:force_original_aspect_ratio=increase,crop=${w * 2}:${h * 2}`;
+    `scale=${w * 2}:${h * 2}:force_original_aspect_ratio=increase,` +
+    `crop=${w * 2}:${h * 2}:'${faceSafeCropOffset("iw", "ow", focusX, faceBox?.x, faceBox?.width)}':` +
+    `'${faceSafeCropOffset("ih", "oh", focusY, faceBox?.y, faceBox?.height)}'`;
   const maxZoom = 1 + Math.min(0.12, Math.max(0.01, strength));
   const p = easedProgress(frames, easing);
   const targetX = `'(iw-iw/zoom)*${clamp01(focusX)}'`;
@@ -443,8 +456,20 @@ function buildMaskRevealArgs(step: RenderSlideStep): string[] {
 }
 
 /**
+ * The canvas colour behind effects that draw their own background (mask_reveal,
+ * memory_wall). Timelines opt out of the pure-black default with
+ * `params.background: "#RRGGBB"` — a full-black surround reads as "nothing
+ * around the photo", so recipes are expected to pass a theme-tinted colour.
+ */
+function canvasBackground(step: RenderSlideStep): string {
+  const raw = step.rendererParams?.background;
+  const m = typeof raw === "string" ? /^#?([0-9a-fA-F]{6})$/.exec(raw.trim()) : null;
+  return m ? `0x${m[1]}` : "black";
+}
+
+/**
  * mask_reveal: the photo appears through the luma of a grayscale mask video
- * (white = photo, black = hidden) over a black background. The mask plays
+ * (white = photo, black = hidden) over the canvas background. The mask plays
  * once; tpad clones its final frame so a 4s reveal simply holds fully-open
  * for the rest of a longer slide. Grade/letterbox/captions run after the
  * composite, same as the other filter_complex effects.
@@ -453,7 +478,7 @@ function buildMaskRevealFilter(step: RenderSlideStep): string {
   const { width: w, height: h, fps, duration } = step;
   const filters: string[] = [];
 
-  filters.push(`color=c=black:s=${w}x${h}:r=${fps}:d=${duration}[mrbg]`);
+  filters.push(`color=c=${canvasBackground(step)}:s=${w}x${h}:r=${fps}:d=${duration}[mrbg]`);
   filters.push(
     `[0:v]scale=${w}:${h}:force_original_aspect_ratio=increase,` +
       `crop=${w}:${h},setsar=1,format=rgba[mrph]`
@@ -675,28 +700,31 @@ function buildFramingFilter(step: RenderSlideStep): string {
       return mirrorSplitFilter(step);
 
     case "slow_zoom_in":
-      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), centerX(), centerY(), tail);
+      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), centerX(), centerY(), tail, step.focusX, step.focusY, step.faceBox);
 
     case "slow_zoom_out":
-      return zoompanFilter(w, h, fps, frames, zoomOutExpr(frames, step.easing), centerX(), centerY(), tail);
+      return zoompanFilter(w, h, fps, frames, zoomOutExpr(frames, step.easing, faceSafeMaxZoom(step)), centerX(), centerY(), tail, step.focusX, step.focusY, step.faceBox);
 
     case "pan_left":
-      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), panXExpr(frames, "left", step.easing), centerY(), tail);
+      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), panXExpr(frames, "left", step.easing), centerY(), tail, step.focusX, step.focusY);
     case "pan_right":
-      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), panXExpr(frames, "right", step.easing), centerY(), tail);
+      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), panXExpr(frames, "right", step.easing), centerY(), tail, step.focusX, step.focusY);
     case "pan_up":
-      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), centerX(), panYExpr(frames, "up", step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), centerX(), panYExpr(frames, "up", step.easing), tail, step.focusX, step.focusY);
     case "pan_down":
-      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), centerX(), panYExpr(frames, "down", step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, String(PAN_ZOOM), centerX(), panYExpr(frames, "down", step.easing), tail, step.focusX, step.focusY);
 
+    // Ken-burns gets the same face-safe treatment as slow_zoom: the diagonal drift
+    // ends zoomed-in at a corner, which is exactly where it used to push a face out
+    // of frame — the zoom cap and the face-aware crop keep the group visible.
     case "kenburns_tl":
-      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), kenburnsExpr(frames, "iw", 0, step.easing), kenburnsExpr(frames, "ih", 0, step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), kenburnsExpr(frames, "iw", 0, step.easing), kenburnsExpr(frames, "ih", 0, step.easing), tail, step.focusX, step.focusY, step.faceBox);
     case "kenburns_tr":
-      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), kenburnsExpr(frames, "iw", 1, step.easing), kenburnsExpr(frames, "ih", 0, step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), kenburnsExpr(frames, "iw", 1, step.easing), kenburnsExpr(frames, "ih", 0, step.easing), tail, step.focusX, step.focusY, step.faceBox);
     case "kenburns_bl":
-      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), kenburnsExpr(frames, "iw", 0, step.easing), kenburnsExpr(frames, "ih", 1, step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), kenburnsExpr(frames, "iw", 0, step.easing), kenburnsExpr(frames, "ih", 1, step.easing), tail, step.focusX, step.focusY, step.faceBox);
     case "kenburns_br":
-      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing), kenburnsExpr(frames, "iw", 1, step.easing), kenburnsExpr(frames, "ih", 1, step.easing), tail);
+      return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), kenburnsExpr(frames, "iw", 1, step.easing), kenburnsExpr(frames, "ih", 1, step.easing), tail, step.focusX, step.focusY, step.faceBox);
 
     case "still":
     default:
@@ -778,14 +806,54 @@ function zoompanFilter(
   z: string,
   x: string,
   y: string,
-  tail: string
+  tail: string,
+  focusX = 0.5,
+  focusY = 0.5,
+  faceBox?: { x: number; y: number; width: number; height: number }
 ): string {
+  // THE CROP THAT DECIDES WHETHER A FACE SURVIVES is this one, not the zoompan below.
+  // Cover-scaling a 3:4 portrait into a 16:9 frame throws away the top and bottom thirds,
+  // and heads live at the top — so an un-offset crop beheads the couple before any pan
+  // expression gets a say. It used to read `crop=${w*2}:${h*2}`: dead centre, always.
+  //
+  // Meanwhile analyzePhotos was running YuNet over every photo and writing a face-derived
+  // focusX/focusY that reached nothing: the slide schema had no field for it, so the whole
+  // face pipeline terminated in the analysis file. Measured on a real 130-photo album at
+  // 16:9 — 59 principal faces cut in half or worse; honouring focus leaves 3.
+  //
+  // The pan/zoom exprs are unaffected: they address `iw`/`ih` of the CROPPED frame, so they
+  // still travel the same distance, they just travel it across the right part of the photo.
+  const cropX = faceSafeCropOffset("iw", "ow", focusX, faceBox?.x, faceBox?.width);
+  const cropY = faceSafeCropOffset("ih", "oh", focusY, faceBox?.y, faceBox?.height);
+  // Quoted: the face-constrained offset contains commas (min/max/if), and an
+  // unquoted comma inside crop's expression splits the filter graph — the render
+  // died with "No such filter: 'min(iw-ow'" the first time a face-bearing photo
+  // landed on a zoompan slide.
   const base =
     `scale=${w * 2}:${h * 2}:force_original_aspect_ratio=increase,` +
-    `crop=${w * 2}:${h * 2}`;
+    `crop=${w * 2}:${h * 2}:'${cropX}':'${cropY}'`;
   const zp =
     `zoompan=z=${z}:x=${x}:y=${y}:d=${frames}:s=${w}x${h}:fps=${fps}`;
   return `${base},${zp},${tail}`;
+}
+
+// Clamp the cover crop so the complete detected face group remains visible. A focal
+// point alone cannot do this: its centre may be visible while a forehead or second face
+// is outside the frame. The 4% source-space guard also absorbs the later 12% zoom.
+function faceSafeCropOffset(
+  input: "iw" | "ih",
+  output: "ow" | "oh",
+  focus: number,
+  start?: number,
+  size?: number
+): string {
+  const desired = `(${input}-${output})*${clamp01(focus)}`;
+  if (!Number.isFinite(start) || !Number.isFinite(size)) return desired;
+  const margin = 0.04;
+  const near = Math.max(0, (start as number) - margin);
+  const far = Math.min(1, (start as number) + (size as number) + margin);
+  const constrained = `min(max(${desired},${far.toFixed(4)}*${input}-${output}),${near.toFixed(4)}*${input})`;
+  return `max(0,min(${input}-${output},if(lte(${(far - near).toFixed(4)}*${input},${output}),${constrained},${desired})))`;
 }
 
 // Motion progress 0..1 driven by the output frame number `on` (0..frames-1) so
@@ -814,13 +882,26 @@ function easedProgress(frames: number, easing?: MotionEasing): string {
   }
 }
 
-function zoomInExpr(frames: number, easing?: MotionEasing): string {
+function zoomInExpr(frames: number, easing?: MotionEasing, maxZoom = ZOOM_MAX): string {
   const p = easedProgress(frames, easing);
-  return `'min(1.0+${(ZOOM_MAX - 1).toFixed(4)}*${p},${ZOOM_MAX})'`;
+  return `'min(1.0+${(maxZoom - 1).toFixed(4)}*${p},${maxZoom.toFixed(4)})'`;
 }
-function zoomOutExpr(frames: number, easing?: MotionEasing): string {
+function zoomOutExpr(frames: number, easing?: MotionEasing, maxZoom = ZOOM_MAX): string {
   const p = easedProgress(frames, easing);
-  return `'max(${ZOOM_MAX}-${(ZOOM_MAX - 1).toFixed(4)}*${p},1.0)'`;
+  return `'max(${maxZoom.toFixed(4)}-${(maxZoom - 1).toFixed(4)}*${p},1.0)'`;
+}
+
+function faceSafeMaxZoom(step: RenderSlideStep): number {
+  const box = step.faceBox;
+  if (!box || !step.srcWidth || !step.srcHeight) return ZOOM_MAX;
+  const sourceAspect = step.srcWidth / step.srcHeight;
+  const frameAspect = step.width / step.height;
+  const visibleWidth = sourceAspect > frameAspect ? frameAspect / sourceAspect : 1;
+  const visibleHeight = sourceAspect > frameAspect ? 1 : sourceAspect / frameAspect;
+  // Match faceSafeCropOffset's 4% guard on each side. If the face group is large,
+  // reduce the motion rather than letting the final frames cut it.
+  return Math.max(1, Math.min(ZOOM_MAX,
+    visibleWidth / (box.width + 0.08), visibleHeight / (box.height + 0.08)));
 }
 
 // Center the crop window on both axes (used when that axis isn't panning).
@@ -1211,31 +1292,12 @@ function wallCardFilter(slot: WallSlot, h: number): { chain: string; outerW: num
 
   let outerW: number;
   let outerH: number;
-  if (!slot.film) {
-    const b = Math.round(ih * 0.05);
-    outerW = iw + b * 2;
-    outerH = ih + b * 2;
-    parts.push(`pad=${outerW}:${outerH}:${b}:${b}:color=white`);
-  } else if (slot.ar >= 1) {
-    // 35mm-style landscape negative: sprocket rails top and bottom.
-    const rail = Math.round(ih * 0.16);
-    const side = Math.round(ih * 0.05);
-    outerW = iw + side * 2;
-    outerH = ih + rail * 2;
-    parts.push(`pad=${outerW}:${outerH}:${side}:${rail}:color=0x111111`);
-    parts.push(sprocketHoles(outerW, outerH, rail, "horizontal"));
-  } else {
-    // Portrait negative: rails left and right.
-    const rail = Math.round(iw * 0.16);
-    const side = Math.round(iw * 0.05);
-    outerW = iw + rail * 2;
-    outerH = ih + side * 2;
-    parts.push(`pad=${outerW}:${outerH}:${rail}:${side}:color=0x111111`);
-    parts.push(sprocketHoles(outerW, outerH, rail, "vertical"));
-  }
-  if (slot.film) {
-    parts.push(`drawbox=x=0:y=0:w=${outerW}:h=${outerH}:color=0x3a3a3a@0.7:t=2`);
-  }
+  // Every small archive photo uses the same slim ivory matte. Mixing white prints
+  // and branded negative frames inside one wall made one template look like two kits.
+  const b = Math.max(6, Math.round(ih * 0.025));
+  outerW = iw + b * 2;
+  outerH = ih + b * 2;
+  parts.push(`pad=${outerW}:${outerH}:${b}:${b}:color=0xfaf6ed`);
 
   const rad = (slot.deg * Math.PI) / 180;
   parts.push(
@@ -1294,7 +1356,7 @@ function buildMemoryWallFilter(step: RenderSlideStep): string {
   const filters: string[] = [];
 
   filters.push(
-    `color=c=black:s=${w}x${h}:r=${fps}:d=${duration}[wbgbase]`,
+    `color=c=${canvasBackground(step)}:s=${w}x${h}:r=${fps}:d=${duration}[wbgbase]`,
     `[wbgbase]${lockupLineFilter(w, h, true)}[wbg]`,
     `color=c=black@0.0:s=${w}x${h}:r=${fps}:d=${duration},format=rgba[wcv0]`
   );
@@ -1468,6 +1530,7 @@ function buildCollageGridFilter(step: RenderSlideStep): string {
 }
 
 function buildFilmRollFilter(step: RenderSlideStep): string {
+  if (isPhotoStripEffect(step.effect)) return buildPhotoStripFilter(step);
   if (step.effect === "film_roll_left" || step.effect === "film_roll_right") {
     return buildHorizontalFilmRollFilter(step, step.effect === "film_roll_left" ? "left" : "right");
   }
@@ -1475,9 +1538,9 @@ function buildFilmRollFilter(step: RenderSlideStep): string {
   const { width: w, height: h, fps, duration } = step;
   const cardW = Math.round(w * 0.52);
   const cardH = Math.round(h * 0.45);
-  const sideRail = Math.round(cardW * 0.1);
-  const framePadX = 18;
-  const framePadY = 28;
+  const sideRail = Math.round(cardW * 0.052);
+  const framePadX = 10;
+  const framePadY = 12;
   const imageX = sideRail + framePadX;
   const imageY = framePadY;
   const innerW = cardW - sideRail * 2 - framePadX * 2;
@@ -1510,7 +1573,7 @@ function buildFilmRollFilter(step: RenderSlideStep): string {
   filters.push(`${stackInputs}vstack=inputs=${step.inputs.length}[strip]`);
   filters.push(
     `[bg][strip]overlay=x=(W-w)/2:` +
-      `y='H-(t/${duration.toFixed(4)})*(H+h)':shortest=1,` +
+      `y='(H-h)/2+(0.5-t/${duration.toFixed(4)})*H*0.62':shortest=1,` +
       `fps=${fps},format=yuv420p[roll0]`
   );
 
@@ -1537,9 +1600,9 @@ function buildHorizontalFilmRollFilter(
   const { width: w, height: h, fps, duration } = step;
   const cardW = Math.round(w * 0.38);
   const cardH = Math.round(h * 0.58);
-  const railH = Math.round(cardH * 0.12);
-  const framePadX = 28;
-  const framePadY = 18;
+  const railH = Math.round(cardH * 0.055);
+  const framePadX = 12;
+  const framePadY = 10;
   const imageX = framePadX;
   const imageY = railH + framePadY;
   const innerW = cardW - framePadX * 2;
@@ -1574,8 +1637,8 @@ function buildHorizontalFilmRollFilter(
   const y = `(H-h)/2`;
   const x =
     direction === "left"
-      ? `'W-(t/${duration.toFixed(4)})*(W+w)'`
-      : `'-w+(t/${duration.toFixed(4)})*(W+w)'`;
+      ? `'(W-w)/2+(0.5-t/${duration.toFixed(4)})*W*0.68'`
+      : `'(W-w)/2+(-0.5+t/${duration.toFixed(4)})*W*0.68'`;
   filters.push(
     `[bg][strip]overlay=x=${x}:y=${y}:shortest=1,` +
       `fps=${fps},format=yuv420p[roll0]`
@@ -1594,6 +1657,64 @@ function buildHorizontalFilmRollFilter(
   });
   filters.push(`[${current}]format=yuv420p[vout]`);
 
+  return filters.join(";");
+}
+
+/** A clean editorial ribbon: photos touch edge-to-edge with only a hairline gap.
+ * The first image also supplies the full-frame hero backdrop, so a vertical strip can
+ * sit left/centre/right while the couple remains visible in the unused space. */
+function buildPhotoStripFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, fps, duration } = step;
+  const vertical = step.effect === "photo_strip_up";
+  const gap = 4;
+  const cellW = vertical ? Math.round(w * 0.31) : Math.round(w * 0.32);
+  const cellH = vertical ? Math.round(h * 0.42) : Math.round(h * 0.64);
+  const filters: string[] = [];
+
+  filters.push(
+    `[0:v]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
+      `gblur=sigma=10,eq=brightness=-0.12:contrast=0.94:saturation=0.82,` +
+      `setsar=1,fps=${fps},format=yuv420p[bg]`
+  );
+  for (let i = 0; i < step.inputs.length; i++) {
+    filters.push(
+      `[${i}:v]scale=${cellW}:${cellH}:force_original_aspect_ratio=increase,` +
+        `crop=${cellW}:${cellH},pad=${cellW + (vertical ? 0 : gap)}:${cellH + (vertical ? gap : 0)}:0:0:color=0xf7f2e8,` +
+        `setsar=1,fps=${fps},format=yuv420p[ps${i}]`
+    );
+  }
+  const stackInputs = step.inputs.map((_, i) => `[ps${i}]`).join("");
+  filters.push(`${stackInputs}${vertical ? "vstack" : "hstack"}=inputs=${step.inputs.length}[strip]`);
+
+  if (vertical) {
+    const position = String(step.rendererParams.position ?? "center");
+    const x = position === "left" ? Math.round(w * 0.06) : position === "right" ? `W-w-${Math.round(w * 0.06)}` : `(W-w)/2`;
+    filters.push(
+      `[bg][strip]overlay=x=${x}:y='(H-h)/2+(0.5-t/${duration.toFixed(4)})*H*0.58':shortest=1,` +
+        `fps=${fps},format=yuv420p[strip0]`
+    );
+  } else {
+    const progress = step.effect === "photo_strip_left"
+      ? `(0.5-t/${duration.toFixed(4)})`
+      : `(-0.5+t/${duration.toFixed(4)})`;
+    filters.push(
+      `[bg][strip]overlay=x='(W-w)/2+${progress}*W*0.62':y=(H-h)/2:shortest=1,` +
+        `fps=${fps},format=yuv420p[strip0]`
+    );
+  }
+
+  const post = [
+    buildColorFilter(step.color),
+    buildLetterboxFilter(step.color, w, h),
+    ...step.captions.map((c) => buildCaptionFilter(c, h)),
+  ].filter((f): f is string => Boolean(f));
+  let current = "strip0";
+  post.forEach((filter, i) => {
+    const next = `strippost${i}`;
+    filters.push(`[${current}]${filter}[${next}]`);
+    current = next;
+  });
+  filters.push(`[${current}]format=yuv420p[vout]`);
   return filters.join(";");
 }
 
@@ -1622,10 +1743,7 @@ function buildFilmFrameDecorations(
     parts.push(`drawbox=x=${holeXRight}:y=${y}:w=${holeW}:h=${holeH}:color=0xf4eee0:t=fill`);
   }
 
-  parts.push(
-    `drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='FUJIFILM 400':fontcolor=0xf6d36f:fontsize=22:x=${sideRail + 22}:y=${cardH - 26}`,
-    `drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='${String(index + 1).padStart(2, "0")}':fontcolor=0xf6d36f:fontsize=22:x=${cardW - sideRail - 54}:y=${cardH - 26}`
-  );
+  parts.push(`drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='${String(index + 1).padStart(2, "0")}':fontcolor=0xd8c9a8:fontsize=14:x=${sideRail + 8}:y=${cardH - 18}`);
 
   return parts.join(",");
 }
@@ -1655,16 +1773,17 @@ function buildHorizontalFilmFrameDecorations(
     parts.push(`drawbox=x=${x}:y=${holeYBottom}:w=${holeW}:h=${holeH}:color=0xf4eee0:t=fill`);
   }
 
-  parts.push(
-    `drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='FUJIFILM 400':fontcolor=0xf6d36f:fontsize=20:x=24:y=${railH - 26}`,
-    `drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='${String(index + 1).padStart(2, "0")}':fontcolor=0xf6d36f:fontsize=20:x=${cardW - 54}:y=${cardH - railH + 8}`
-  );
+  parts.push(`drawtext=fontfile=${quoteFilterPath(toFfmpegPath(DECOR_FONT))}:text='${String(index + 1).padStart(2, "0")}':fontcolor=0xd8c9a8:fontsize=14:x=${cardW - 28}:y=${cardH - railH + 3}`);
 
   return parts.join(",");
 }
 
 function isFilmRollEffect(effect: EffectPreset): boolean {
   return effect === "film_roll_up" || effect === "film_roll_left" || effect === "film_roll_right";
+}
+
+function isPhotoStripEffect(effect: EffectPreset): boolean {
+  return effect === "photo_strip_up" || effect === "photo_strip_left" || effect === "photo_strip_right";
 }
 
 // Font size per caption role, as a fraction of frame height.

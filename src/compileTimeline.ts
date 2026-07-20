@@ -168,6 +168,9 @@ export function compileTimeline(
       effect,
       requestedEffect,
       easing: slide.easing,
+      focusX: slide.focusX,
+      focusY: slide.focusY,
+      faceBox: slide.faceBox,
       autoPortrait,
       transition: slide.transition,
       captions,
@@ -225,6 +228,9 @@ function isMultiImageEffect(effect: EffectPreset): boolean {
     effect === "film_roll_up" ||
     effect === "film_roll_left" ||
     effect === "film_roll_right" ||
+    effect === "photo_strip_up" ||
+    effect === "photo_strip_left" ||
+    effect === "photo_strip_right" ||
     effect === "collage_grid" ||
     effect === "double_exposure" ||
     effect === "memory_wall"

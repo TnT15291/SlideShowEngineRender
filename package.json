@@ -30,11 +30,15 @@
     "project:policy": "node scripts/generateSelectionPolicy.mjs",
     "project:generate": "node scripts/generateProjectTimeline.mjs",
     "project:run": "node scripts/runProject.mjs",
-    "test": "npm run test:unit",
-    "test:unit": "node --test test/*.test.mjs",
-    "test:integration": "node --test --test-concurrency=1 test/integration/project-pipeline.test.mjs",
+    "test": "npm run check",
+    "check": "npm run typecheck && npm run test:unit && npm run test:integration",
+    "test:unit": "node --test --test-timeout=30000 test/*.test.mjs",
+    "test:integration": "node --test --test-concurrency=1 --test-timeout=180000 test/integration/*.test.mjs",
+    "test:regression": "node --test --test-concurrency=1 --test-timeout=600000 test/regression/*.test.mjs",
     "test:project": "node --test test/project.test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "npm run typecheck:core && npm run typecheck:gpu",
+    "typecheck:core": "tsc --noEmit",
+    "typecheck:gpu": "tsc --noEmit -p tsconfig.gpu.json"
   },
   "dependencies": {
     "@react-three/fiber": "^9.6.1",
@@ -53,6 +57,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
+    "@types/react": "^19.2.17",
+    "@types/three": "^0.185.1",
     "electron": "^43.1.0",
     "ffmpeg-static": "^5.3.0",
     "tsx": "^4.19.2",

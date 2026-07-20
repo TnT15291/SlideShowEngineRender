@@ -28,6 +28,11 @@ const colorGradeSchema = z.object({
   letterbox: z.union([z.boolean(), z.number().min(1).max(4)]).optional(),
 });
 const technicalColorSchema = z.object({ brightness: z.number().min(-0.12).max(0.12), saturation: z.number().min(0.9).max(1.1), redBalance: z.number().min(-0.08).max(0.08), blueBalance: z.number().min(-0.08).max(0.08) });
+const normalizedBoxSchema = z.object({
+  x: z.number().min(0).max(1), y: z.number().min(0).max(1),
+  width: z.number().positive().max(1), height: z.number().positive().max(1),
+}).refine((b) => b.x + b.width <= 1.0001 && b.y + b.height <= 1.0001,
+  "faceBox must stay inside the source image");
 const tiltShiftSchema = z.object({
   focusY: z.number().min(0).max(1),
   bandHeight: z.number().min(0.05).max(0.8),
@@ -60,6 +65,9 @@ const effectEnum = z.enum([
   "film_roll_up",
   "film_roll_left",
   "film_roll_right",
+  "photo_strip_up",
+  "photo_strip_left",
+  "photo_strip_right",
   "video_background",
   "collage_grid",
   "double_exposure",
@@ -128,6 +136,7 @@ const layerSchema = z.discriminatedUnion("type", [
       .optional(),
     focusX: z.number().min(0).max(1).optional(),
     focusY: z.number().min(0).max(1).optional(),
+    faceBox: normalizedBoxSchema.optional(),
     ...baseLayerSchema,
   }),
   z.object({
@@ -226,6 +235,9 @@ const timelineSchema = z.object({
         duration: z.number().min(2).max(30),
         effect: effectEnum,
         easing: z.enum(MOTION_EASINGS).optional(),
+        focusX: z.number().min(0).max(1).optional(),
+        focusY: z.number().min(0).max(1).optional(),
+        faceBox: normalizedBoxSchema.optional(),
         transition: z.object({
           type: transitionTypeEnum,
           duration: z.number().min(0).max(2),
@@ -447,6 +459,9 @@ function isMultiImageEffect(effect: string): boolean {
     effect === "film_roll_up" ||
     effect === "film_roll_left" ||
     effect === "film_roll_right" ||
+    effect === "photo_strip_up" ||
+    effect === "photo_strip_left" ||
+    effect === "photo_strip_right" ||
     effect === "collage_grid" ||
     effect === "double_exposure" ||
     effect === "memory_wall"

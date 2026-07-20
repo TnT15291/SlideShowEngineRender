@@ -1,0 +1,83 @@
+{
+  "project": {
+    "name": "New Film Roll and Photo Strip Effects",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "quality": "draft"
+  },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "overlays": [],
+  "color": { "temperature": 5400, "saturation": 1.02, "contrast": 1.03 },
+  "output": { "path": "output/new-strip-effects-sample.mp4" },
+  "slides": [
+    {
+      "id": "film-roll-up-slow",
+      "images": ["input/002.jpg", "input/003.jpg", "input/004.jpg", "input/005.jpg", "input/006.jpg"],
+      "duration": 5,
+      "effect": "film_roll_up",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "FILM ROLL · UP · SLOW", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "film-roll-left-slow",
+      "images": ["input/007.jpg", "input/008.jpg", "input/009.jpg", "input/010.jpg", "input/012.jpg"],
+      "duration": 5,
+      "effect": "film_roll_left",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "FILM ROLL · LEFT · THIN FRAME", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "film-roll-right-slow",
+      "images": ["input/013.jpg", "input/014.jpg", "input/015.jpg", "input/016.jpg", "input/017.jpg"],
+      "duration": 5,
+      "effect": "film_roll_right",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "FILM ROLL · RIGHT · UNBRANDED", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "photo-strip-up-left",
+      "images": ["input/018.jpg", "input/019.jpg", "input/020.jpg", "input/021.jpg", "input/022.jpg"],
+      "params": { "position": "left" },
+      "duration": 5,
+      "effect": "photo_strip_up",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "PHOTO STRIP · UP · LEFT", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "photo-strip-up-center",
+      "images": ["input/023.jpg", "input/024.jpg", "input/025.jpg", "input/026.jpg", "input/027.jpg"],
+      "params": { "position": "center" },
+      "duration": 5,
+      "effect": "photo_strip_up",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "PHOTO STRIP · UP · CENTER", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "photo-strip-up-right",
+      "images": ["input/028.jpg", "input/029.jpg", "input/030.jpg", "input/031.jpg", "input/032.jpg"],
+      "params": { "position": "right" },
+      "duration": 5,
+      "effect": "photo_strip_up",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "PHOTO STRIP · UP · RIGHT", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "photo-strip-left",
+      "images": ["input/033.jpg", "input/034.jpg", "input/035.jpg", "input/036.jpg", "input/037.jpg"],
+      "duration": 5,
+      "effect": "photo_strip_left",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "PHOTO STRIP · LEFT", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    },
+    {
+      "id": "photo-strip-right",
+      "images": ["input/038.jpg", "input/039.jpg", "input/040.jpg", "input/041.jpg", "input/042.jpg"],
+      "duration": 5,
+      "effect": "photo_strip_right",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [{ "text": "PHOTO STRIP · RIGHT", "role": "title", "position": "top_center", "start": 0.3, "duration": 4.2 }]
+    }
+  ]
+}

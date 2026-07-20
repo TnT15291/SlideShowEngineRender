@@ -25,6 +25,9 @@ export type EffectPreset =
   | "film_roll_up"
   | "film_roll_left"
   | "film_roll_right"
+  | "photo_strip_up"
+  | "photo_strip_left"
+  | "photo_strip_right"
   | "video_background"
   | "collage_grid"
   | "double_exposure"
@@ -288,6 +291,7 @@ export interface ImageSceneLayer extends BaseSceneLayer {
   frame?: LayerFrame; // rounded/bordered/shadowed card
   focusX?: number; // 0..1 cover-crop focal point (default 0.5 = center)
   focusY?: number; // 0..1
+  faceBox?: { x: number; y: number; width: number; height: number };
 }
 
 export interface TechnicalColor { brightness: number; saturation: number; redBalance: number; blueBalance: number; }
@@ -374,6 +378,16 @@ export interface Slide {
   duration: number;
   effect: EffectPreset;
   easing?: MotionEasing; // zoom/pan/kenburns effects only; default smoothstep
+  // Where the subject is, 0..1 of the ORIGINAL image. Steers the aspect-ratio crop that
+  // every cover-fitting effect performs — the crop that decides whether a face survives.
+  // Absent = dead centre, which is what every slide did before this existed: analyzePhotos
+  // computed a face-derived focus for all 130 photos of a real album and the renderer threw
+  // every one of them away. Measured on that album at 16:9: 59 principal faces cut in half
+  // or worse, 3 once these are honoured.
+  focusX?: number;
+  focusY?: number;
+  /** Union of all detected faces, normalized to the original image. */
+  faceBox?: { x: number; y: number; width: number; height: number };
   transition: Transition;
   captions: Caption[]; // normalize folds a legacy single `caption` into this
   color?: ColorGrade; // per-slide grade, merged over the timeline-level one
@@ -424,6 +438,7 @@ export interface CompiledImageSceneLayer extends CompiledBaseSceneLayer {
   frame?: LayerFrame;
   focusX?: number;
   focusY?: number;
+  faceBox?: { x: number; y: number; width: number; height: number };
 }
 
 export interface CompiledRectSceneLayer extends CompiledBaseSceneLayer {
@@ -464,6 +479,9 @@ export interface RenderSlideStep {
   effect: EffectPreset; // the preset actually rendered (may differ from requested)
   requestedEffect: EffectPreset; // what the timeline asked for
   easing?: MotionEasing; // motion easing for zoompan effects; default smoothstep
+  focusX?: number; // subject position 0..1 of the source image; steers the cover crop
+  focusY?: number; // ...undefined = dead centre, which is what beheads portraits at 16:9
+  faceBox?: { x: number; y: number; width: number; height: number };
   autoPortrait: boolean; // true when a portrait image was rerouted to blur-bg
   transition: Transition; // how this slide transitions INTO the next one
   captions: CompiledCaption[]; // baked into the slide video via drawtext

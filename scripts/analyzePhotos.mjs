@@ -85,6 +85,17 @@ function isSkin(R, G, B) {
   return R > 95 && G > 40 && B > 20 && (mx - mn) > 15 && Math.abs(R - G) > 15 && R > G && R > B;
 }
 
+/** Constrain a normalized box to the unit square, then round. Width/height shrink to fit
+ *  so x+width and y+height never exceed 1 — the invariant the engine validates. */
+function clampBox({ x, y, width, height }) {
+  const cx = Math.min(Math.max(x, 0), 1), cy = Math.min(Math.max(y, 0), 1);
+  return {
+    x: +cx.toFixed(3), y: +cy.toFixed(3),
+    width: +Math.min(Math.max(width, 0), 1 - cx).toFixed(3),
+    height: +Math.min(Math.max(height, 0), 1 - cy).toFixed(3),
+  };
+}
+
 function dHash(buf) {
   // 9x8 samples from the already decoded 96x96 frame. Adjacent brightness
   // comparisons survive resize/compression and produce a 64-bit fingerprint.
@@ -154,11 +165,15 @@ for (const name of files) {
   // quality: sharpness, penalize very dark/bright frames
   const exposurePenalty = Math.abs(meanLuma - 128) / 128; // 0 good, 1 bad
   const quality = +(sharpness * (1 - 0.5 * exposurePenalty)).toFixed(3);
-  const faceBoxEstimate = skinFrac > 0.02 ? {
-    x: +(skinMinX / N).toFixed(3), y: +(skinMinY / N).toFixed(3),
-    width: +((skinMaxX - skinMinX + 1) / N).toFixed(3),
-    height: +((skinMaxY - skinMinY + 1) / N).toFixed(3),
-  } : null;
+  // Clamp to the image before rounding. The inclusive +1 pixel and independent 3-decimal
+  // rounding of x and width let a box whose skin touches the right/bottom edge come out at
+  // x+width = 1.0102 — past the frame — which the engine rejects outright ("faceBox must
+  // stay inside the source image"), taking the whole render down over a 1% overflow.
+  const faceBoxEstimate = skinFrac > 0.02 ? clampBox({
+    x: skinMinX / N, y: skinMinY / N,
+    width: (skinMaxX - skinMinX + 1) / N,
+    height: (skinMaxY - skinMinY + 1) / N,
+  }) : null;
   let realFaces = null, realFaceError = null;
   if (detector) {
     const hash = crypto.createHash("sha256").update(fs.readFileSync(abs)).digest("hex");
@@ -167,7 +182,7 @@ for (const name of files) {
     catch (error) { realFaceError = error.message; }
   }
   const primaryReal = realFaces?.length ? [...realFaces].sort((a, b) => b.confidence * b.box.width * b.box.height - a.confidence * a.box.width * a.box.height)[0].box : null;
-  const groupBox = realFaces?.length ? (() => { const x = Math.min(...realFaces.map((f) => f.box.x)), y = Math.min(...realFaces.map((f) => f.box.y)); const right = Math.max(...realFaces.map((f) => f.box.x + f.box.width)), bottom = Math.max(...realFaces.map((f) => f.box.y + f.box.height)); return { x, y, width: right - x, height: bottom - y }; })() : null;
+  const groupBox = realFaces?.length ? (() => { const x = Math.min(...realFaces.map((f) => f.box.x)), y = Math.min(...realFaces.map((f) => f.box.y)); const right = Math.max(...realFaces.map((f) => f.box.x + f.box.width)), bottom = Math.max(...realFaces.map((f) => f.box.y + f.box.height)); return clampBox({ x, y, width: right - x, height: bottom - y }); })() : null;
   const effectiveBox = groupBox || faceBoxEstimate;
   if (groupBox) { focusX = +(groupBox.x + groupBox.width / 2).toFixed(3); focusY = +(groupBox.y + groupBox.height / 2).toFixed(3); }
   photos.push({

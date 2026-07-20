@@ -28,6 +28,12 @@ export function applyFaceSafeFraming(
       const hasMotion = layer.motion !== undefined && layer.motion !== "none";
       if (layer.fit !== "cover" && !hasMotion) return layer;
 
+      // The whole point of this pass is protecting a face from an aspect-ratio
+      // crop. Photo analysis (analyzePhotos.mjs) only sets faceBox when it found
+      // a face or skin region; no faceBox means no face was detected in this
+      // image, so there is nothing here for the crop-loss threshold to protect.
+      if (!layer.faceBox) return layer;
+
       const size = readImageSize(path.resolve(baseDir, layer.path));
       const loss = coverCropLoss(size, layer.width, layer.height);
       if (loss <= maxCropLoss) return layer;

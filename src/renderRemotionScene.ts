@@ -4,19 +4,20 @@ import path from "node:path";
 import { Logger, ValidationError, ensureDir } from "./fileUtils";
 import { runCommand } from "./runCommand";
 import type { RenderSlideStep } from "./types";
+import schema from "../schema/timeline.schema.json";
 
-const TEMPLATES = new Set([
-  "page_flip", "filmstrip", "title", "portrait_echo", "triptych",
-  "card_gallery", "paper_peel", "panel_reveal", "floating_frame", "light_rays",
-]);
+// Single source of truth: schema/$defs.remotionTemplate, also what the AI director and
+// engineCapabilities.mjs read. A template accepted here but not there (or vice versa) is
+// exactly the drift this repo's capability system exists to prevent.
+const TEMPLATES = new Set(schema.$defs.remotionTemplate.enum);
 
 export async function renderRemotionScene(step: RenderSlideStep, logger: Logger, dryRun: boolean): Promise<void> {
   const template = step.rendererTemplate ?? "";
   if (!TEMPLATES.has(template)) {
     throw new ValidationError(`slide ${step.slideId}: unknown Remotion template "${template}"`);
   }
-  if (template === "page_flip" && step.rendererAssets.length < 2) {
-    throw new ValidationError(`slide ${step.slideId}: Remotion page_flip requires at least 2 assets`);
+  if ((template === "page_flip" || template === "gl_transition") && step.rendererAssets.length < 2) {
+    throw new ValidationError(`slide ${step.slideId}: Remotion ${template} requires at least 2 assets`);
   }
 
   const publicDir = path.resolve("public", "hybrid-scenes", safeName(step.slideId));

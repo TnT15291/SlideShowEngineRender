@@ -110,6 +110,7 @@
         "portrait_blur_background", "portrait_reflection", "floating_card_gallery", "moving_background_echo", "panel_flip", "polaroid", "circle_focus",
         "memory_wall", "dark_feather",
         "film_roll_up", "film_roll_left", "film_roll_right",
+        "photo_strip_up", "photo_strip_left", "photo_strip_right",
         "video_background", "collage_grid", "double_exposure",
         "mask_reveal", "tilt_shift", "dream_glow", "prism_split", "spotlight_focus", "mirror_split",
         "layer_scene"
@@ -136,6 +137,16 @@
     "curvesPreset": {
       "enum": ["color_negative", "cross_process", "darker", "increase_contrast", "lighter",
         "linear_contrast", "medium_contrast", "negative", "strong_contrast", "vintage"]
+    },
+    "remotionTemplate": {
+      "enum": [
+        "title", "filmstrip", "page_flip", "portrait_echo", "triptych",
+        "card_gallery", "paper_peel", "panel_reveal", "floating_frame", "light_rays",
+        "gl_transition", "glass_frame", "confetti_bloom"
+      ]
+    },
+    "blenderTemplate": {
+      "enum": ["page_flip_3d", "camera_gallery_3d", "ring_spin_reveal", "photo_frame_orbit"]
     },
     "colorGrade": {
       "type": "object",
@@ -264,7 +275,7 @@
       "properties": {
         "id": { "type": "string", "minLength": 1, "description": "Unique across the timeline." },
         "renderer": { "enum": ["ffmpeg", "remotion", "blender"], "default": "ffmpeg", "description": "Backend for this scene. FFmpeg is the backward-compatible default." },
-        "template": { "type": "string", "minLength": 1, "description": "Required by Remotion and Blender scenes." },
+        "template": { "type": "string", "minLength": 1, "description": "Required by Remotion and Blender scenes. One of $defs.remotionTemplate or $defs.blenderTemplate depending on renderer — see the conditionals below." },
         "assets": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Ordered media inputs for a Remotion or Blender template." },
         "params": { "type": "object", "additionalProperties": true, "description": "Template-specific renderer parameters." },
         "image": { "type": "string", "minLength": 1, "description": "One photo for single-image effects." },
@@ -277,6 +288,24 @@
         "easing": {
           "enum": ["gentle", "snap", "bounce"],
           "description": "Motion easing for zoom/pan/kenburns effects ONLY (the engine rejects it elsewhere). Omitted = house smoothstep. gentle = extra-soft start/stop (calm, portrait, emotional beats) · snap = fast, decisive ease-out (party/dance/peak beats) · bounce = small overshoot that settles back (easy to overuse — max 1-2 slides per video)."
+        },
+        "focusX": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Where the subject is horizontally, 0..1 of the ORIGINAL image. Steers the aspect-ratio crop every cover-fitting effect performs — the crop that decides whether a face survives. Omitted = dead centre. Set it from analysis/photos.json focusX (face-derived); do NOT invent it, a wrong focus crops worse than no focus."
+        },
+        "focusY": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Where the subject is vertically, 0..1 of the ORIGINAL image. Matters most: portrait photos into a 16:9 frame are cropped top-and-bottom, and heads are at the top. Omitted = dead centre."
+        },
+        "faceBox": {
+          "type": "object", "required": ["x", "y", "width", "height"], "additionalProperties": false,
+          "properties": {
+            "x": { "type": "number", "minimum": 0, "maximum": 1 },
+            "y": { "type": "number", "minimum": 0, "maximum": 1 },
+            "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+            "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+          },
+          "description": "Union bounding box of all detected faces in normalized source-image coordinates. Used to keep every face edge inside zoom crops."
         },
         "transition": {
           "type": "object",
@@ -293,15 +322,19 @@
       },
       "allOf": [
         {
-          "if": { "required": ["renderer"], "properties": { "renderer": { "enum": ["remotion", "blender"] } } },
-          "then": { "required": ["template", "assets"], "properties": { "assets": { "minItems": 1 } } }
+          "if": { "required": ["renderer"], "properties": { "renderer": { "const": "remotion" } } },
+          "then": { "required": ["template", "assets"], "properties": { "template": { "$ref": "#/$defs/remotionTemplate" }, "assets": { "minItems": 1 } } }
+        },
+        {
+          "if": { "required": ["renderer"], "properties": { "renderer": { "const": "blender" } } },
+          "then": { "required": ["template", "assets"], "properties": { "template": { "$ref": "#/$defs/blenderTemplate" }, "assets": { "minItems": 1 } } }
         },
         {
           "if": { "properties": { "effect": { "const": "layer_scene" } } },
           "then": { "required": ["layers"], "properties": { "layers": { "minItems": 1 } } }
         },
         {
-          "if": { "properties": { "effect": { "enum": ["film_roll_up", "film_roll_left", "film_roll_right", "collage_grid", "double_exposure"] } } },
+          "if": { "properties": { "effect": { "enum": ["film_roll_up", "film_roll_left", "film_roll_right", "photo_strip_up", "photo_strip_left", "photo_strip_right", "collage_grid", "double_exposure"] } } },
           "then": { "required": ["images"], "properties": { "images": { "minItems": 2 } } }
         },
         {

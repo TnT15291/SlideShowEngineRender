@@ -1,0 +1,70 @@
+{
+  "project": {
+    "name": "Hybrid GPU Trending Effects Example",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "quality": "draft"
+  },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "overlays": [],
+  "output": { "path": "temp/hybrid-gpu-trending-example.mp4" },
+  "slides": [
+    {
+      "id": "gl-transition-heart",
+      "renderer": "remotion",
+      "template": "gl_transition",
+      "assets": ["public/gpu-effects/page-a.jpg", "public/gpu-effects/page-b.jpg"],
+      "params": { "name": "heart" },
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    },
+    {
+      "id": "glass-frame-reveal",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "assets": ["public/gpu-effects/page-a.jpg"],
+      "params": { "tint": "255,244,224" },
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    },
+    {
+      "id": "confetti-bloom-hero",
+      "renderer": "remotion",
+      "template": "confetti_bloom",
+      "assets": ["public/gpu-effects/page-b.jpg"],
+      "params": {},
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    },
+    {
+      "id": "ring-spin-reveal",
+      "renderer": "blender",
+      "template": "ring_spin_reveal",
+      "assets": ["public/gpu-effects/page-a.jpg"],
+      "params": {},
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    },
+    {
+      "id": "photo-frame-orbit",
+      "renderer": "blender",
+      "template": "photo_frame_orbit",
+      "assets": ["public/gpu-effects/page-b.jpg"],
+      "params": {},
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": []
+    }
+  ]
+}

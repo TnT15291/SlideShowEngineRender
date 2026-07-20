@@ -3,8 +3,10 @@ import path from "node:path";
 import { Logger, runFfmpeg, ValidationError } from "./fileUtils";
 import { runCommand } from "./runCommand";
 import type { RenderSlideStep } from "./types";
+import schema from "../schema/timeline.schema.json";
 
-const TEMPLATES = new Set(["page_flip_3d", "camera_gallery_3d"]);
+// Single source of truth: schema/$defs.blenderTemplate — see renderRemotionScene.ts.
+const TEMPLATES = new Set(schema.$defs.blenderTemplate.enum);
 
 export async function renderBlenderScene(step: RenderSlideStep, logger: Logger, dryRun: boolean): Promise<void> {
   const template = step.rendererTemplate ?? "";

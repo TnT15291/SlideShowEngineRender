@@ -1,6 +1,6 @@
 import { Composition } from "remotion";
 import { PageFlipDemo } from "./page-flip";
-import { HybridScene, type HybridSceneProps } from "./hybrid-scene";
+import { HybridScene } from "./hybrid-scene";
 
 export const GpuEffectsRoot = () => (
   <>
@@ -12,7 +12,7 @@ export const GpuEffectsRoot = () => (
       width={1920}
       height={1080}
     />
-    <Composition<HybridSceneProps>
+    <Composition
       id="HybridScene"
       component={HybridScene}
       durationInFrames={300}
