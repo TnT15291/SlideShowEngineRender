@@ -1,4 +1,6 @@
 import { toFfmpegPath } from "./fileUtils";
+import { buildCaptionFilter } from "./captionFilter";
+import { cssColor, quoteFilterPath } from "./ffmpegFilterUtils";
 import { audioEncodeArgs, videoEncodeArgs } from "./quality";
 import type { QualityProfile } from "./quality";
 import { XFADE_BY_TRANSITION } from "./types";
@@ -1784,87 +1786,6 @@ function isFilmRollEffect(effect: EffectPreset): boolean {
 
 function isPhotoStripEffect(effect: EffectPreset): boolean {
   return effect === "photo_strip_up" || effect === "photo_strip_left" || effect === "photo_strip_right";
-}
-
-// Font size per caption role, as a fraction of frame height.
-const ROLE_SIZE_DIVISOR: Record<CompiledCaption["role"], number> = {
-  title: 13,
-  subtitle: 26,
-  caption: 22,
-};
-
-/**
- * One drawtext filter for one caption. Text is read from a UTF-8 text file so
- * arbitrary content (Vietnamese, punctuation) needs no escaping. Supports role
- * sizing, custom font/size/color, outline, shadow, and fade / slide-up entrance.
- * Times are slide-local seconds (the slide video starts at t=0).
- */
-function buildCaptionFilter(c: CompiledCaption, frameHeight: number): string {
-  const fontSize = c.size ?? Math.round(frameHeight / ROLE_SIZE_DIVISOR[c.role]);
-  const start = c.start;
-  const end = c.start + c.duration;
-  const fade = Math.min(0.5, c.duration / 2);
-
-  const baseY =
-    c.position === "center"
-      ? "(h-text_h)/2"
-      : c.position === "top_center"
-        ? "h/12"
-        : "h-text_h-h/12";
-
-  // ffmpeg filtergraph quoting (verified against this build): a Windows path
-  // needs BOTH single quotes AND a backslash-escaped drive colon
-  // (fontfile='C\:/...'); value expressions only need single quotes to protect
-  // their commas. Single-quoting alone (unescaped colon) fails.
-  const parts = [
-    `drawtext=fontfile=${quoteFilterPath(toFfmpegPath(c.fontFile))}`,
-    `textfile=${quoteFilterPath(toFfmpegPath(c.textFile))}`,
-    `fontcolor=${cssColor(c.color)}`,
-    `fontsize=${fontSize}`,
-    `x=(w-text_w)/2`,
-  ];
-
-  // Entrance/exit animation.
-  if (c.animation === "none") {
-    parts.push(`y=${baseY}`, `enable='between(t,${start},${end})'`);
-  } else {
-    const alpha =
-      `if(lt(t,${start}),0,` +
-      `if(lt(t,${start + fade}),(t-${start})/${fade},` +
-      `if(lt(t,${end - fade}),1,` +
-      `if(lt(t,${end}),(${end}-t)/${fade},0))))`;
-    parts.push(`alpha='${alpha}'`);
-
-    if (c.animation === "slide_up") {
-      // Rise ~h/20 px while fading in, then rest at baseY.
-      const rise = 0.6;
-      const yExpr = `${baseY}+(h/20)*(1-min((t-${start})/${rise},1))`;
-      parts.push(`y='${yExpr}'`);
-    } else {
-      parts.push(`y=${baseY}`);
-    }
-  }
-
-  if (c.shadow) {
-    parts.push("shadowcolor=black@0.6", "shadowx=2", "shadowy=2");
-  }
-  if (c.outline && c.outline.width > 0) {
-    parts.push(
-      `bordercolor=${cssColor(c.outline.color)}`,
-      `borderw=${c.outline.width}`
-    );
-  }
-
-  return parts.join(":");
-}
-
-/** "#rrggbb" -> "0xrrggbb" (ffmpeg syntax); named colors pass through. */
-function cssColor(color: string): string {
-  return color.startsWith("#") ? `0x${color.slice(1)}` : color;
-}
-
-function quoteFilterPath(p: string): string {
-  return `'${p.replace(/:/g, "\\:")}'`;
 }
 
 // --- Transitions (xfade) ---
