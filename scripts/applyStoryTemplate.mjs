@@ -27,6 +27,7 @@ import { averageAdjustments, buildColorNormalization } from "./lib/colorNormaliz
 import { loadLedger, active, applyToStoryboard, applyToTimeline } from "./lib/directives.mjs";
 import { fitScale, describeFit, makeEnergy, MAX_SCENE } from "./lib/pacing.mjs";
 import { solveRecipeShotList } from "./lib/recipeShotList.mjs";
+import { scenePhotoCount } from "./lib/scenePhotoCount.mjs";
 import { chooseMusicEdit, resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
 import { NATURAL_SEC_PER_PHOTO } from "./lib/fitPlan.mjs";
@@ -104,12 +105,12 @@ const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
 const orders = active(ledger);
 const appliedIds = new Set();
 if (orders.length) {
-  // scenePhotoCount is hoisted and knows what each LAYOUT consumes — which is the only
-  // way a montage can absorb its neighbours without over-drawing the photo budget the
-  // storyboard was solved against. Without it the directive layer would be guessing.
+  // scenePhotoCount knows what each LAYOUT consumes — which is the only way a montage
+  // can absorb its neighbours without over-drawing the photo budget the storyboard was
+  // solved against. Without it the directive layer would be guessing.
   for (const id of applyToStoryboard(template, orders, {
     availablePhotos: photosDoc.photos?.length ?? 0,
-    photoDemand: scenePhotoCount,
+    photoDemand: (scene) => scenePhotoCount(scene, { library, direction }),
   })) appliedIds.add(id);
 }
 // Optional AI-written copy (scripts/writeRecipeCopy.mjs). Absent → the recipe's
@@ -370,16 +371,6 @@ const transitionGrammar = createTransitionGrammar(template.timelineRules.transit
 function transitionFor(role, isLast) {
   const selected = transitionGrammar.select(role, isLast);
   return { ...selected, duration: +Math.min(2, selected.duration * (direction?.pacing?.controls?.transitionMultiplier ?? 1)).toFixed(2) };
-}
-
-function scenePhotoCount(scene) {
-  if (scene.effect === "video_background") return 0;
-  if (scene.effect === "layer_scene") {
-    const layout = (library.layouts || []).find((l) => l.id === scene.layout);
-    return layout?.photoSlots?.length || 0;
-  }
-  const multiplier = direction?.pacing?.controls?.montagePhotoMultiplier ?? 1;
-  return (scene.photoSlots || []).reduce((sum, slot) => sum + Math.max(1, Math.round((slot.count || 1) * multiplier)), 0);
 }
 
 // expandScenes() used to live here: it repeated the scenes an author had marked
@@ -718,8 +709,8 @@ const editorialPhotoCount = new Set(photos.map((photo) =>
 // What the bookends draw FROM THE POOL: their declared slots, minus the one frame each of
 // them takes from the reserved set instead.
 const bookendPoolCost =
-  Math.max(0, (openingSource ? scenePhotoCount(openingSource) : 0) - (openingTakesHero ? 1 : 0)) +
-  Math.max(0, (closingSource ? scenePhotoCount(closingSource) : 0) - (closingTakesEnding ? 1 : 0));
+  Math.max(0, (openingSource ? scenePhotoCount(openingSource, { library, direction }) : 0) - (openingTakesHero ? 1 : 0)) +
+  Math.max(0, (closingSource ? scenePhotoCount(closingSource, { library, direction }) : 0) - (closingTakesEnding ? 1 : 0));
 
 // A COMPOSED STORYBOARD IS ALREADY SOLVED. Re-solving it here threw the whole thing away.
 //
@@ -738,7 +729,7 @@ const solveShotList = () => solveRecipeShotList({
   photoCount: editorialPhotoCount,
   musicDuration: Number(music.duration) || 0,
   durationOf: (scene, at) => durationFor(scene.durationRole, at),
-  photoDemandOf: scenePhotoCount,
+  photoDemandOf: (scene) => scenePhotoCount(scene, { library, direction }),
   bodyPhotoBudget: editorialPhotoCount - reservedPhotos.size - bookendPoolCost,
   // The same sampler QA measures with — the solver bends body durations toward
   // the music instead of emitting the role table's uniform lengths.

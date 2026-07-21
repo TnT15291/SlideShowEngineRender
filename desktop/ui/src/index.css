@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-soft: var(--card-soft);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+}
+
+:root {
+  color-scheme: light;
+  font-family: Inter, "Segoe UI", sans-serif;
+  --background: oklch(0.973 0.011 79);
+  --foreground: oklch(0.21 0.015 60);
+  --card: oklch(0.995 0.005 80);
+  --card-foreground: oklch(0.21 0.015 60);
+  --card-soft: oklch(0.982 0.01 79);
+  --primary: oklch(0.57 0.12 65);
+  --primary-foreground: oklch(0.99 0.006 80);
+  --secondary: oklch(0.93 0.025 75);
+  --secondary-foreground: oklch(0.29 0.025 58);
+  --muted: oklch(0.94 0.012 78);
+  --muted-foreground: oklch(0.51 0.025 62);
+  --accent: oklch(0.92 0.035 72);
+  --accent-foreground: oklch(0.28 0.02 58);
+  --border: oklch(0.875 0.018 74);
+  --input: oklch(0.875 0.018 74);
+  --ring: oklch(0.57 0.12 65);
+  --success: oklch(0.58 0.12 145);
+  --sidebar: oklch(0.19 0.012 55);
+  --sidebar-foreground: oklch(0.97 0.008 78);
+  --sidebar-muted: oklch(0.72 0.018 72);
+}
+
+* { border-color: var(--border); }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+.field { margin-top: .5rem; height: 2.5rem; width: 100%; appearance: none; border-radius: .5rem; border: 1px solid var(--input); background: var(--background); padding: 0 .75rem; color: var(--foreground); font-size: .875rem; outline: none; }
+.field:focus { box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 35%, transparent); }

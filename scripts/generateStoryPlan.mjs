@@ -146,10 +146,14 @@ function validateSegments(raw) {
 const model = defaultModel;
 let raw;
 if (hasKey()) {
-  process.stdout.write("  DeepSeek story-plan call... ");
-  const parsed = await callDeepSeekJSON({ system: buildSystem(), user: buildUser(), temperature: 0.5 });
+  const parsed = await callDeepSeekJSON({
+    system: buildSystem(),
+    user: buildUser(),
+    temperature: 0.5,
+    label: "generateStoryPlan",
+    onCall: (real) => console.log(real ? "  DeepSeek story-plan call... ok" : "  story-plan: cached (same request as before — same answer, no call)"),
+  });
   raw = Array.isArray(parsed) ? parsed : parsed.segments ?? parsed.results ?? [];
-  console.log("ok");
 } else {
   raw = stubSegments();
 }

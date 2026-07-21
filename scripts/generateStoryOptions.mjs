@@ -166,10 +166,14 @@ function validateStoryOptions(raw) {
 const model = defaultModel;
 let rawOptions;
 if (hasKey()) {
-  process.stdout.write("  DeepSeek story-options call... ");
-  const parsed = await callDeepSeekJSON({ system: buildSystem(), user: buildUser(), temperature: 0.7 });
+  const parsed = await callDeepSeekJSON({
+    system: buildSystem(),
+    user: buildUser(),
+    temperature: 0.7,
+    label: "generateStoryOptions",
+    onCall: (real) => console.log(real ? "  DeepSeek story-options call... ok" : "  story-options: cached (same request as before — same answer, no call)"),
+  });
   rawOptions = Array.isArray(parsed) ? parsed : parsed.options ?? parsed.results ?? [];
-  console.log("ok");
 } else {
   rawOptions = stubOptions();
 }

@@ -23,6 +23,7 @@
 // what the engine WILL do, by asking the engine, rather than by re-deriving its rules
 // and drifting away from them.
 import { applyToStoryboard } from "./directives.mjs";
+import { scenePhotoCount } from "./scenePhotoCount.mjs";
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
@@ -88,28 +89,14 @@ export function diffStoryboard(before, after) {
   };
 }
 
-/** How many photos a scene consumes, given the layout library.
- *
- *  A montage absorbs neighbours until it hits the photo cap, so the report's "which
- *  scenes disappear" IS this number. Get it wrong and the preview warns about the wrong
- *  scenes, which is worse than not warning at all.
- *
- *  DUPLICATED, KNOWINGLY, from scenePhotoCount() in applyStoryTemplate.mjs — which is
- *  not exported and is mid-edit in another session. This is the drift risk this codebase
- *  otherwise refuses to take (see how the directive whitelists load from timeline.schema
- *  .json), so it is a debt, not a pattern: when applyStoryTemplate settles, export its
- *  version and delete this one. The `montagePhotoMultiplier` from a tier-1 direction is
- *  deliberately NOT read here — a preview does not know which direction a rebuild will
- *  pick, and inventing one would make the report authoritative about a guess. */
+/** How many photos a scene consumes, given the layout library. Delegates to the same
+ *  scenePhotoCount() applyStoryTemplate.mjs builds the real timeline against, so the
+ *  report's "which scenes disappear" can never drift from what the engine will actually
+ *  do. `direction` is deliberately omitted — a preview does not know which direction a
+ *  rebuild will pick, and inventing one would make the report authoritative about a
+ *  guess; omitting it just falls back to scenePhotoCount's neutral multiplier of 1. */
 export function photoDemandFrom(library) {
-  return (scene) => {
-    if (scene.effect === "video_background") return 0;
-    if (scene.effect === "layer_scene") {
-      const layout = (library?.layouts || []).find((l) => l.id === scene.layout);
-      return layout?.photoSlots?.length || 0;
-    }
-    return (scene.photoSlots || []).reduce((sum, slot) => sum + (slot.count || 1), 0);
-  };
+  return (scene) => scenePhotoCount(scene, { library });
 }
 
 /** Apply `before` and `after` directive sets to copies of the storyboard and diff them.

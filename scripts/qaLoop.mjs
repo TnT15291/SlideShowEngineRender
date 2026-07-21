@@ -9,7 +9,8 @@
 //
 //   PRE-FLIGHT (free)  proxy -> fix -> proxy ... until clean. Pacing and hero
 //       need no rendered frames, so these repairs cost nothing and do NOT spend
-//       the revision budget. Bounded by PREFLIGHT_PASSES and a fix-once rule.
+//       the revision budget. Bounded by a fix-once rule (structural — see below)
+//       and a generous PREFLIGHT_SAFETY_CAP passes, not by an aesthetic guess.
 //   RENDER
 //   REVISE (expensive) qaClip + proxy -> fix -> re-render. Each pass here spends
 //       one revision. Hard cap --max-revisions (default 2). On exhaustion we
@@ -57,7 +58,14 @@ const MAX_REVISIONS = Number(arg("--max-revisions", "2"));
 // Premium is the default because it matches the historical behavior of a direct
 // invocation: every deterministic fix may run.
 const TIER = arg("--tier", "premium");
-const PREFLIGHT_PASSES = 3; // free passes; the fix-once rule usually converges in 1
+// Fixing scene N's duration shifts every later scene's start time, which can surface a
+// pacing mismatch on a scene that measured clean a pass ago — a cascade, not oscillation
+// (the fix-once rule below still makes it terminate; a fixed small cap just cut it off
+// before it finished). Found on city-to-ceremony-01/lively: a 54-scene timeline cascaded
+// for 3 passes still finding new fixes, so a hard 3-pass cap left one genuinely fixable
+// s05_ready_r4:pacing finding unrepaired and reported as a false "review". This step is
+// free (no render, no AI), so the cap only needs to be generous, not tight.
+const PREFLIGHT_SAFETY_CAP = 30;
 const skipRender = process.argv.includes("--skip-render");
 const skipInitialRender = process.argv.includes("--skip-initial-render");
 const strict = process.argv.includes("--strict");
@@ -219,12 +227,16 @@ function writeSummary(manualReview = [], statusOverride = "") {
 
 // PRE-FLIGHT — proxy repairs are free (no video), so they don't spend the budget.
 console.log("\n— pre-flight (no render): pacing + hero —");
-for (let pass = 1; pass <= PREFLIGHT_PASSES; pass++) {
+for (let pass = 1; pass <= PREFLIGHT_SAFETY_CAP; pass++) {
   const preflight = runProxy();
   const applied = applyProxyFixes(preflight);
   if (!applied.length) { console.log(`  pass ${pass}: nothing left to repair (verdict=${preflight.verdict}).`); break; }
   for (const a of applied) console.log(`  pass ${pass} fix: ${a}`);
   journal.push(...applied.map((a) => `preflight: ${a}`));
+  // The fix-once rule (repaired, above) means a pass with zero new fixes is the only exit
+  // condition that means "actually clean" — hitting the cap instead means real problems
+  // are being left unrepaired, which is worth knowing about even though pre-flight is free.
+  if (pass === PREFLIGHT_SAFETY_CAP) console.warn(`[qaLoop] pre-flight hit the ${PREFLIGHT_SAFETY_CAP}-pass safety cap while still finding fixes — this timeline may need investigation, not just more passes.`);
 }
 
 // Do not spend an encode on a timeline that the tier is forbidden to ship.

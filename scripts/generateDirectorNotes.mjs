@@ -359,9 +359,13 @@ const orders = active(ledger);
 const model = defaultModel;
 let raw;
 if (hasKey()) {
-  process.stdout.write("  DeepSeek director-notes call... ");
-  raw = await callDeepSeekJSON({ system: buildSystem(), user: buildUser(), temperature: 0.5 });
-  console.log("ok");
+  raw = await callDeepSeekJSON({
+    system: buildSystem(),
+    user: buildUser(),
+    temperature: 0.5,
+    label: "generateDirectorNotes",
+    onCall: (real) => console.log(real ? "  DeepSeek director-notes call... ok" : "  director-notes: cached (same request as before — same answer, no call)"),
+  });
 } else {
   raw = stubDoc();
 }

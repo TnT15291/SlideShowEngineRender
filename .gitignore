@@ -1,4 +1,5 @@
 node_modules/
+desktop/renderer-v2/
 temp/
 tmp/
 output/
