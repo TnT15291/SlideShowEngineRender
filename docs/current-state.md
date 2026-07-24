@@ -379,6 +379,25 @@ chỉ-trỏ thì **chưa làm**.
   fill: s04_archive_r1:memories`; lần chạy sạch ghi `23/23`. Solver chọn lệch **một tấm ảnh**, không
   tái hiện được. Cùng mùi với `tier1-album-regression` (đỏ trong suite, xanh khi chạy riêng) — nghi là
   một quyết định chọn ảnh **không tất định**. Đó mới là chỗ cần đào.
+  - ✅ **Root-cause 2026-07-25: KHÔNG PHẢI bug ở solver.** Soát lại toàn bộ chuỗi:
+    `scripts/lib/photoAssignment.mjs` (`assignPhotos`) — mọi `.sort()` đều có tiebreak tường minh,
+    phổ biến nhất là `a.file.localeCompare(b.file, …, {numeric:true})`, nên thứ hạng ứng viên chỉ phụ
+    thuộc NỘI DUNG file, không phụ thuộc thứ tự mảng đầu vào; `scripts/analyzePhotos.mjs` (clustering
+    trùng ảnh) — `files` được `readdirSync` rồi `.sort(localeCompare)` **trước khi** vòng `for...of`
+    đồng bộ (toàn `spawnSync`, không `Promise.all`, không worker) đổ vào `photos[]`, và union-find thì
+    bất biến với thứ tự đỉnh/mảng theo định nghĩa toán học. Grep cả chuỗi (`photoAssignment.mjs`,
+    `analyzePhotos.mjs`, `diversityPlanner.mjs`) tìm `Math.random`/`Date.now`/concurrency — **không có
+    cái nào**. Chạy lại `test/tier1-album-regression.test.mjs` 3 lần riêng + `test:unit` đầy đủ 3 lần
+    → **262/262 xanh mọi lần**; đọc file xác nhận nó thuần fixture in-memory, không I/O, không state
+    chung — điều từng gây đỏ ở phiên 07-17 không tái hiện trên cây hiện tại (và git log cho thấy file
+    này chỉ có ĐÚNG MỘT phiên bản từ lúc tạo `60039ea` 07-13, nên cũng không phải do một bản sửa sau
+    này âm thầm vá nó). **Kết luận**: cho cùng input (`photos.json`/`photo_content.json`), solver
+    LUÔN ra cùng kết quả. Vụ "22/23 vs 23/23" nhiều khả năng là do **input khác nhau giữa hai lần chạy**
+    (đúng mẫu hình root-scoped-state-bị-đè đã xảy ra ít nhất 3 lần khác trong repo này — job-manifest,
+    decision-window, qaLoop report — rất có thể do phiên Claude song song ghi đè `face_detection.cache.json`
+    hoặc `photos.json`/`photo_content.json` giữa hai lần chạy). **Lần sau nếu tái hiện: diff byte
+    3 file input đó trước, đừng soát lại solver.** Job `the-20-best` gốc không còn trong `projects/`
+    để chạy lại trực tiếp.
 - ✅ **`test/recipe-engine-contract.test.mjs` — 2 test, không phải 6.** Bốn test montage (count/slot/min)
   đã bỏ: engine ghi đè hết, nên chúng chỉ dạy người sau sửa một con số chưa từng có tác dụng. Giữ đúng
   hai thứ engine **không** ghi đè và vẫn chết được vì chúng: **layout id** (`buildLayerSceneFromLayout`
