@@ -102,7 +102,15 @@
       "fade_out": 4,
       "crossfade": 0
     },
-    "overlays": [],
+    "overlays": [
+      {
+        "path": "overlays/vintage_projector.mp4",
+        "position": "fullscreen",
+        "opacity": 0.14,
+        "blend": "screen",
+        "start": 0
+      }
+    ],
     "fonts": {
       "title": "fonts/Italianno-Regular.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
@@ -339,6 +347,40 @@
           "count": 8,
           "orient": "any",
           "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s06b_stained_glass",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/stained_glass_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Như ánh sáng xuyên qua ô kính màu, từng khoảnh khắc đều rực rỡ.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s06c_spotlight",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Sang trọng không cần phô trương, chỉ cần đúng người, đúng khoảnh khắc.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
         }
       ]
     },

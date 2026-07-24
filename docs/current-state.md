@@ -9,7 +9,7 @@
 > **2026-07-24**: tầng web/server (`apps/web` + `server/`) đã vượt xa mô tả cũ ở tài liệu này —
 > một account model duy nhất (owner-scoped project, Stripe billing, admin incident tracker) thay
 > cho hai app Studio/Couple. Bảng dưới đây vẫn nói về **engine/pipeline CLI**, không phải web UI;
-> xem [WebUIPlan.md](../WebUIPlan.md) cho tầng đó — 14/14 bước ở §7 tài liệu đó đã "hoàn thành".
+> roadmap web 14 bước đã hoàn thành; hiện trạng web được phản ánh trực tiếp bởi `apps/web` + `server`.
 > Thanh toán Stripe đã **wired** (checkout + webhook) nhưng **chưa live** (cần key thật).
 
 Bảng này theo dõi khoảng cách giữa **thiết kế** ([PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md))
@@ -28,7 +28,7 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 | **Render engine** | ✅ Core ổn định | **29 effect** (gồm 5 effect native nâng cao mới), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Các hạng mục production/QA còn lại được ghi riêng bên dưới. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
 | **Project isolation** | ✅ Xong + có test | Mỗi video sống trong `projects/<id>/` (ảnh/nhạc/analysis/timeline/logs/output riêng). `analysis/job-manifest.json` ghi phase state; `--resume` chỉ tái dùng phase còn tươi. Xem [PROJECTS.md](PROJECTS.md) |
 | **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier template\|lite\|premium`. Ba tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
-| **Tier template (Rẻ)** | ✅ Recipe-driven, 8 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code** |
+| **Tier template (Rẻ)** | ✅ Recipe-driven, 22 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. 2026-07-24: cả 22 recipe được nâng cấp thêm cảnh + hiệu ứng hiện đại trước đó chưa dùng (`tilt_shift`/`dream_glow`/`prism_split`/`spotlight_focus`/`mirror_split`, 6 mask reveal petal/ink/watercolor/torn_paper/stained_glass/geometric_teal_wipe, overlay film_burn/vintage_projector/light_sweep/floral_frame, LUT `moody_earth_01`) — lint 22/22 sạch, test 262/262 xanh |
 | **Tier Template (Rẻ)** | ✅ Chạy end-to-end, **0 call AI** | Recipe + engine đầy đủ (layer_scene/LUT/mask/frame). `npm run template` |
 | **Tier Lite** | ✅ Chạy end-to-end | Rule-based + AI viết lời. `npm run lite -- --project <p>`. Pacing **bám nhạc** (`retimeSlidesToMusic`, chung lib với template) khi phân tích đủ phrase/downbeat, không thì chia đều; bookend chọn theo `openingScore`/`closingScore`, thân phim tránh kề nhau cùng orient+nhóm-người (lookahead có giới hạn) |
 | **Tier Premium** | 🟡 Chạy đủ node, chờ key thật | Node 2 vision · 3/5+6/7 AI Director · 4 chọn story · **4b chọn highlight/full song** · 8+9 validate→retry→fallback Lite · 10+11 QA loop · 12 deliver. Chạy end-to-end bằng STUB; còn smoke test với key thật + điều phối production |
@@ -90,7 +90,7 @@ npm run template -- --project projects/x --auto-recipe --ai-copy
 
 - **Node A `pickRecipe.mjs`** (`--auto-recipe`) — chọn recipe nào hợp đôi này, đọc **chính câu khách
   viết** + hình dạng nhạc + số ảnh. **Không cần vision**: "một đám cưới ấm áp, mộc mạc" là lời tuyên bố
-  ý định — AI phục vụ ý định đó, không cãi lại (đúng `token-saving-plan.md`). Thực đơn nạp sống từ
+  ý định — AI phục vụ ý định đó, không cãi lại. Thực đơn nạp sống từ
   `story-templates/` + theme trong library → không drift, không bịa được recipe.
 - **Node B `writeRecipeCopy.mjs`** (`--ai-copy`) — viết lại lời recipe cho đôi này.
   **Bán kính sát thương chính là thiết kế**: chỉ trả **chuỗi**, chỉ vào cặp `(sceneId, slotId)` mà recipe

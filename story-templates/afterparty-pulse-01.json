@@ -103,7 +103,15 @@
       "fade_out": 3.5,
       "crossfade": 0
     },
-    "overlays": [],
+    "overlays": [
+      {
+        "path": "overlays/light_sweep.mp4",
+        "position": "fullscreen",
+        "opacity": 0.16,
+        "blend": "screen",
+        "start": 0
+      }
+    ],
     "fonts": {
       "title": "fonts/PlayfairDisplay.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
@@ -202,21 +210,21 @@
       ],
       "text": {
         "heading": "CHEERS!",
-        "caption": "Những lời chúc từ những người thân yêu nhất."
+        "caption": "Nâng ly, chúc mừng cô dâu chú rể giữa những người thân yêu nhất."
       },
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau",
-              "caption": "Chuyện chúng mình, viết tiếp mỗi ngày."
+              "heading": "Nâng ly",
+              "caption": "Từng lời chúc, từng nụ cười — tất cả đều là yêu thương gửi trao."
             }
           },
           {
             "text": {
-              "heading": "Thương nhau",
-              "caption": "Hạnh phúc là được nắm tay nhau thật lâu."
+              "heading": "Chúc mừng",
+              "caption": "Bạn bè, gia đình cùng nâng ly cho một khởi đầu mới."
             }
           }
         ]
@@ -313,6 +321,52 @@
           "orient": "any",
           "quality": "good",
           "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s06b_prism",
+      "effect": "prism_split",
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "default",
+      "captionPattern": "DANCEFLOOR ON FIRE",
+      "repeatable": {
+        "maxRepeats": 2,
+        "variants": [
+          {
+            "captionPattern": ""
+          }
+        ]
+      },
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s06c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "default",
+      "captionPattern": "ONE NIGHT, ALL IN",
+      "repeatable": {
+        "maxRepeats": 2,
+        "variants": [
+          {
+            "captionPattern": ""
+          }
+        ]
+      },
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

@@ -188,6 +188,7 @@ function sourceHint(rel) {
   if (s.includes("mixkit")) return { source: "Mixkit", license: "see assets/licenses" };
   if (s.includes("openclipart")) return { source: "OpenClipart", license: "public-domain/source" };
   if (s.includes("cutestock")) return { source: "Cute Stock Footage", license: "free-with-credit-hint" };
+  if (rel.startsWith("assets/backgrounds/editorial/")) return { source: "local-ai-generated", license: "project-owned" };
   if (rel.startsWith("overlays/light_leak_")) return { source: "local-procedural", license: "repo-generated" };
   if (rel.startsWith("fonts/")) return { source: "Google Fonts/local", license: "see font upstream" };
   return { source: "local", license: "unknown/local" };

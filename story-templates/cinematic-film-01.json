@@ -98,7 +98,8 @@
       "grain": 6,
       "letterbox": 2.39,
       "vignette": true,
-      "glow": 0.06
+      "glow": 0.06,
+      "lut": "assets/luts/moody_earth_01.cube"
     },
     "audio": {
       "fade_in": 2,
@@ -381,6 +382,33 @@
       "params": {
         "background": "#2B2B32"
       }
+    },
+    {
+      "id": "s08b_spotlight",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Ánh sáng chỉ cần đủ, để thấy rõ một người.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s08c_breather",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "left", "orient": "portrait", "quality": "good" },
+        { "slot": "centre", "orient": "portrait", "quality": "good" },
+        { "slot": "right", "orient": "portrait", "quality": "good" }
+      ]
     },
     {
       "id": "s09_closing",

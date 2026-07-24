@@ -210,12 +210,12 @@
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau"
+              "heading": "Nét chữ đầu tiên"
             }
           },
           {
             "text": {
-              "heading": "Ngày chung đôi"
+              "heading": "Dòng thư thứ hai"
             }
           }
         ]
@@ -248,6 +248,15 @@
       }
     },
     {
+      "id": "s03b_paper_interlude",
+      "effect": "video_background",
+      "background": "assets/backgrounds/editorial/cotton-rag-botanical-ivory.png",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "captionPattern": "Có những lời không phai theo năm tháng.",
+      "photoSlots": []
+    },
+    {
       "id": "s04_promise",
       "effect": "layer_scene",
       "layout": "two_photo_story",
@@ -275,6 +284,7 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
+      "captionPattern": "Lời hứa hôm nay, là lá thư dài nhất mình từng viết cho nhau.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -326,6 +336,35 @@
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06b_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06c_detail",
+      "effect": "tilt_shift",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Và lá thư này, sẽ không bao giờ có dấu chấm hết.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

@@ -111,6 +111,13 @@
         "opacity": 0.12,
         "blend": "screen",
         "start": 0
+      },
+      {
+        "path": "overlays/light_sweep.mp4",
+        "position": "fullscreen",
+        "opacity": 0.16,
+        "blend": "screen",
+        "start": 0
       }
     ],
     "fonts": {
@@ -437,6 +444,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
+      "captionPattern": "Một nét vẽ, một con người, không thể nhầm lẫn.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -447,6 +455,36 @@
       "params": {
         "background": "#34322E"
       }
+    },
+    {
+      "id": "s08b_prism",
+      "effect": "prism_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Một khung hình, nghìn sắc màu — như câu chuyện chỉ riêng hai người.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s08c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Đối xứng hoàn hảo, khi hai người đã tìm thấy nhau.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
     },
     {
       "id": "s09_closing",

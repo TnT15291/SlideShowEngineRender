@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-10T15:37:15.822Z",
+  "generatedAt": "2026-07-24T15:55:39.480Z",
   "version": 1,
   "purpose": "Short asset menu for AI Director. Choose ids only; timeline generator maps ids to local paths.",
   "counts": {
     "fonts": 10,
-    "overlays": 36,
-    "backgrounds": 5,
+    "overlays": 41,
+    "backgrounds": 11,
     "frames": 20
   },
   "fonts": [
@@ -180,6 +180,58 @@
   ],
   "overlays": [
     {
+      "id": "ov_film_burn",
+      "label": "Film Burn",
+      "summary": "Film Burn; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_film_damage",
+      "label": "Film Damage",
+      "summary": "Film Damage; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_floral_frame_animation",
+      "label": "Floral Frame Animation",
+      "summary": "Floral Frame Animation; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
       "id": "ov_light_leak_soft",
       "label": "Soft cinematic light leak",
       "summary": "Soft cinematic light leak; use as a soft fullscreen screen blend.",
@@ -246,6 +298,23 @@
       "recommendedOpacity": 0.55
     },
     {
+      "id": "ov_light_sweep",
+      "label": "Light Sweep",
+      "summary": "Light Sweep; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
       "id": "ov_particles",
       "label": "Particles",
       "summary": "Particles; local overlay asset.",
@@ -253,6 +322,22 @@
       "mood": [
         "sparkle",
         "luxury"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_vintage_projector",
+      "label": "Vintage Projector",
+      "summary": "Vintage Projector; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "wedding"
       ],
       "bestFor": [
         "memory",
@@ -1002,6 +1087,86 @@
   ],
   "backgrounds": [
     {
+      "id": "bg_blush_organza_floral_shadow",
+      "label": "Blush Organza Floral Shadow",
+      "summary": "Blush Organza Floral Shadow; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_champagne_silk_shadow",
+      "label": "Champagne Silk Shadow",
+      "summary": "Champagne Silk Shadow; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_cotton_rag_botanical_ivory",
+      "label": "Cotton Rag Botanical Ivory",
+      "summary": "Cotton Rag Botanical Ivory; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_deep_teal_glass_caustics",
+      "label": "Deep Teal Glass Caustics",
+      "summary": "Deep Teal Glass Caustics; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ]
+    },
+    {
+      "id": "bg_midnight_lacquer_aged_gold",
+      "label": "Midnight Lacquer Aged Gold",
+      "summary": "Midnight Lacquer Aged Gold; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "warm"
+      ]
+    },
+    {
       "id": "bg_mixkit_blurred_bokeh_effect_720",
       "label": "Mixkit Blurred Bokeh Effect 720",
       "summary": "Mixkit Blurred Bokeh Effect 720; use for title cards, chapter cards, or soft interludes.",
@@ -1091,6 +1256,21 @@
       "colors": [
         "gold",
         "pink"
+      ]
+    },
+    {
+      "id": "bg_silk_champagne_leaf",
+      "label": "Silk Champagne Leaf",
+      "summary": "Silk Champagne Leaf; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
       ]
     }
   ],

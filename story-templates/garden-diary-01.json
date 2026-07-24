@@ -279,14 +279,14 @@
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau",
-              "caption": "Chuyện chúng mình, viết tiếp mỗi ngày."
+              "heading": "Dạo bước",
+              "caption": "Từng bước chân giữa vườn hoa, chỉ có hai người và nắng sớm."
             }
           },
           {
             "text": {
-              "heading": "Thương nhau",
-              "caption": "Hạnh phúc là được nắm tay nhau thật lâu."
+              "heading": "Cùng nhau bước tiếp",
+              "caption": "Con đường nào cũng đẹp, khi có người mình thương sánh bước."
             }
           }
         ]
@@ -298,6 +298,7 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
+      "captionPattern": "Lời thề nguyện, cất lên giữa hương hoa và nắng sớm.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -367,6 +368,34 @@
       "params": {
         "background": "#4A4139"
       }
+    },
+    {
+      "id": "s06b_detail",
+      "effect": "tilt_shift",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s06c_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
     },
     {
       "id": "s07_close",

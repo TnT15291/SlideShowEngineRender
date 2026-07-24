@@ -350,6 +350,40 @@
       ]
     },
     {
+      "id": "s08b_watercolor",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/watercolor_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Soft edges, softer hearts.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#4A4139"
+      }
+    },
+    {
+      "id": "s08c_detail",
+      "effect": "tilt_shift",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Every little detail, remembered forever.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ]
+    },
+    {
       "id": "s09_closing",
       "effect": "layer_scene",
       "layout": "closing_names",

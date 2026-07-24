@@ -284,6 +284,15 @@
       }
     },
     {
+      "id": "s04b_teal_glass",
+      "effect": "video_background",
+      "background": "assets/backgrounds/editorial/deep-teal-glass-caustics.png",
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "captionPattern": "Giữa muôn vàn chuyển động, mình vẫn tìm thấy nhau.",
+      "photoSlots": []
+    },
+    {
       "id": "s05_breath",
       "repeatable": {
         "variants": [
@@ -345,6 +354,40 @@
           "orient": "any",
           "quality": "good",
           "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07b_geometric",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/geometric_teal_wipe.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Rõ ràng và giản đơn — như cách mình chọn nhau.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#1C2B30"
+      }
+    },
+    {
+      "id": "s07c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Không cần nhiều lời, chỉ cần có nhau.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

@@ -185,6 +185,7 @@
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
+      "captionPattern": "Cứ để ánh nhìn ấy nói thay mọi lời.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -273,6 +274,15 @@
       }
     },
     {
+      "id": "s04b_blush_pause",
+      "effect": "video_background",
+      "background": "assets/backgrounds/editorial/blush-organza-floral-shadow.png",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "captionPattern": "Một khoảng dịu dàng, vừa đủ cho hai chúng mình.",
+      "photoSlots": []
+    },
+    {
       "id": "s05_story",
       "effect": "layer_scene",
       "layout": "photo_left_text_right",
@@ -358,6 +368,36 @@
           "orient": "any",
           "quality": "good",
           "preferEmotion": true
+        }
+      ]
+    },
+    {
+      "id": "s06b_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Nhẹ nhàng như cách mình đã thương nhau.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06c_spotlight",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Chỉ cần một ánh nhìn, là đủ ấm áp cả một đời.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
         }
       ]
     },

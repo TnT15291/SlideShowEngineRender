@@ -237,12 +237,12 @@
         "variants": [
           {
             "text": {
-              "heading": "Ngày chung đôi"
+              "heading": "Mùa chín"
             }
           },
           {
             "text": {
-              "heading": "Thương nhau"
+              "heading": "Vững vàng hơn"
             }
           }
         ]
@@ -322,6 +322,40 @@
       "params": {
         "background": "#3B332B"
       }
+    },
+    {
+      "id": "s06b_petal",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/petal_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Một mùa xuân mới, nở cùng lời hẹn ước.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s06c_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Và dù là mùa nào, có nhau là đủ đầy.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
     },
     {
       "id": "s07_close",

@@ -102,7 +102,15 @@
       "fade_out": 3,
       "crossfade": 0
     },
-    "overlays": [],
+    "overlays": [
+      {
+        "path": "overlays/light_sweep.mp4",
+        "position": "fullscreen",
+        "opacity": 0.16,
+        "blend": "screen",
+        "start": 0
+      }
+    ],
     "fonts": {
       "title": "fonts/PlayfairDisplay.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
@@ -198,14 +206,14 @@
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau",
-              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+              "heading": "Những buổi hẹn",
+              "body": "Cà phê vỉa hè, con phố quen, và một người luôn chờ."
             }
           },
           {
             "text": {
-              "heading": "Thương nhau",
-              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+              "heading": "Dạo phố",
+              "body": "Cứ đi cùng nhau, đường nào cũng hoá thành kỷ niệm."
             }
           }
         ]
@@ -324,6 +332,7 @@
       "mask": "assets/masks/particle_gather.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
+      "captionPattern": "Lễ cưới, nơi một lời hứa trở thành mãi mãi.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -363,6 +372,34 @@
           "orient": "any",
           "quality": "good",
           "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07b_prism",
+      "effect": "prism_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

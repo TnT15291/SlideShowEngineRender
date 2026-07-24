@@ -252,6 +252,7 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "normal",
       "transitionRole": "peak",
+      "captionPattern": "Nhẫn cưới, lời hứa không cần nói thành lời.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -268,6 +269,15 @@
       "effect": "slow_zoom_in",
       "durationRole": "calm",
       "transitionRole": "default",
+      "captionPattern": "Một nụ hôn, khép lại hành trình này để mở ra hành trình khác.",
+      "repeatable": {
+        "maxRepeats": 2,
+        "variants": [
+          {
+            "captionPattern": ""
+          }
+        ]
+      },
       "photoSlots": [
         {
           "slot": "hero",
@@ -317,6 +327,34 @@
           }
         ]
       }
+    },
+    {
+      "id": "s07b_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07c_spotlight",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
     },
     {
       "id": "s08_closing",

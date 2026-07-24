@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-10T15:37:15.822Z",
+  "generatedAt": "2026-07-24T15:55:39.480Z",
   "version": 1,
   "counts": {
     "fonts": 10,
-    "overlays": 36,
-    "backgrounds": 5,
+    "overlays": 41,
+    "backgrounds": 11,
     "frames": 20
   },
   "fonts": [
@@ -209,6 +209,85 @@
   ],
   "overlays": [
     {
+      "id": "ov_film_burn",
+      "type": "overlay",
+      "path": "overlays/film_burn.mp4",
+      "mediaType": "video",
+      "label": "Film Burn",
+      "summary": "Film Burn; local overlay asset.",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35,
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "fps": "30/1",
+      "source": "local",
+      "license": "unknown/local"
+    },
+    {
+      "id": "ov_film_damage",
+      "type": "overlay",
+      "path": "overlays/film_damage.mp4",
+      "mediaType": "video",
+      "label": "Film Damage",
+      "summary": "Film Damage; local overlay asset.",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35,
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "fps": "30/1",
+      "source": "local",
+      "license": "unknown/local"
+    },
+    {
+      "id": "ov_floral_frame_animation",
+      "type": "overlay",
+      "path": "overlays/floral_frame_animation.mp4",
+      "mediaType": "video",
+      "label": "Floral Frame Animation",
+      "summary": "Floral Frame Animation; local overlay asset.",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "portrait",
+        "title"
+      ],
+      "colors": [],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35,
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "fps": "30/1",
+      "source": "local",
+      "license": "unknown/local"
+    },
+    {
       "id": "ov_light_leak_soft",
       "type": "overlay",
       "path": "overlays/light_leak_soft.mp4",
@@ -300,6 +379,32 @@
       "license": "repo-generated"
     },
     {
+      "id": "ov_light_sweep",
+      "type": "overlay",
+      "path": "overlays/light_sweep.mp4",
+      "mediaType": "video",
+      "label": "Light Sweep",
+      "summary": "Light Sweep; local overlay asset.",
+      "mood": [
+        "soft",
+        "dreamy"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35,
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "fps": "30/1",
+      "source": "local",
+      "license": "unknown/local"
+    },
+    {
       "id": "ov_particles",
       "type": "overlay",
       "path": "overlays/particles.mp4",
@@ -322,6 +427,31 @@
       "height": 360,
       "duration": 4,
       "fps": "25/1",
+      "source": "local",
+      "license": "unknown/local"
+    },
+    {
+      "id": "ov_vintage_projector",
+      "type": "overlay",
+      "path": "overlays/vintage_projector.mp4",
+      "mediaType": "video",
+      "label": "Vintage Projector",
+      "summary": "Vintage Projector; local overlay asset.",
+      "mood": [
+        "wedding"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending"
+      ],
+      "colors": [],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.35,
+      "width": 1920,
+      "height": 1080,
+      "duration": 6,
+      "fps": "30/1",
       "source": "local",
       "license": "unknown/local"
     },
@@ -1308,6 +1438,130 @@
   ],
   "backgrounds": [
     {
+      "id": "bg_blush_organza_floral_shadow",
+      "type": "video_background",
+      "path": "assets/backgrounds/editorial/blush-organza-floral-shadow.png",
+      "mediaType": "image",
+      "label": "Blush Organza Floral Shadow",
+      "summary": "Blush Organza Floral Shadow; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "wedding",
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [],
+      "loopable": false,
+      "width": 1920,
+      "height": 1080,
+      "fps": "25/1",
+      "source": "local-ai-generated",
+      "license": "project-owned"
+    },
+    {
+      "id": "bg_champagne_silk_shadow",
+      "type": "video_background",
+      "path": "assets/backgrounds/editorial/champagne-silk-shadow.png",
+      "mediaType": "image",
+      "label": "Champagne Silk Shadow",
+      "summary": "Champagne Silk Shadow; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [],
+      "loopable": false,
+      "width": 1920,
+      "height": 1080,
+      "fps": "25/1",
+      "source": "local-ai-generated",
+      "license": "project-owned"
+    },
+    {
+      "id": "bg_cotton_rag_botanical_ivory",
+      "type": "video_background",
+      "path": "assets/backgrounds/editorial/cotton-rag-botanical-ivory.png",
+      "mediaType": "image",
+      "label": "Cotton Rag Botanical Ivory",
+      "summary": "Cotton Rag Botanical Ivory; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [],
+      "loopable": false,
+      "width": 1920,
+      "height": 1080,
+      "fps": "25/1",
+      "source": "local-ai-generated",
+      "license": "project-owned"
+    },
+    {
+      "id": "bg_deep_teal_glass_caustics",
+      "type": "video_background",
+      "path": "assets/backgrounds/editorial/deep-teal-glass-caustics.png",
+      "mediaType": "image",
+      "label": "Deep Teal Glass Caustics",
+      "summary": "Deep Teal Glass Caustics; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [],
+      "loopable": false,
+      "width": 1920,
+      "height": 1080,
+      "fps": "25/1",
+      "source": "local-ai-generated",
+      "license": "project-owned"
+    },
+    {
+      "id": "bg_midnight_lacquer_aged_gold",
+      "type": "video_background",
+      "path": "assets/backgrounds/editorial/midnight-lacquer-aged-gold.png",
+      "mediaType": "image",
+      "label": "Midnight Lacquer Aged Gold",
+      "summary": "Midnight Lacquer Aged Gold; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [
+        "gold",
+        "warm"
+      ],
+      "loopable": false,
+      "width": 1920,
+      "height": 1080,
+      "fps": "25/1",
+      "source": "local-ai-generated",
+      "license": "project-owned"
+    },
+    {
       "id": "bg_mixkit_blurred_bokeh_effect_720",
       "type": "video_background",
       "path": "assets/backgrounds/mixkit_blurred_bokeh_effect_720.mp4",
@@ -1446,6 +1700,31 @@
       "fps": "24/1",
       "source": "Mixkit",
       "license": "see assets/licenses"
+    },
+    {
+      "id": "bg_silk_champagne_leaf",
+      "type": "video_background",
+      "path": "assets/backgrounds/silk_champagne_leaf.mp4",
+      "mediaType": "video",
+      "label": "Silk Champagne Leaf",
+      "summary": "Silk Champagne Leaf; use for title cards, chapter cards, or soft interludes.",
+      "mood": [
+        "romantic",
+        "soft"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending"
+      ],
+      "colors": [],
+      "loopable": true,
+      "width": 1920,
+      "height": 1080,
+      "duration": 10,
+      "fps": "30/1",
+      "source": "local",
+      "license": "unknown/local"
     }
   ],
   "frames": [

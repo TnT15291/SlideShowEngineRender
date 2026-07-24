@@ -39,6 +39,13 @@ assets/*
 !assets/models/
 !assets/models/**
 
+# Original AI-generated editorial still backgrounds used by the asset catalog.
+# Unlike the licensed Mixkit clips above, these are project-owned source assets.
+!assets/backgrounds/
+assets/backgrounds/*
+!assets/backgrounds/editorial/
+!assets/backgrounds/editorial/*.png
+
 # The couple's photographs. Irreplaceable, but binary and private: back these up
 # somewhere real, not in git. The pipeline reads them from input/ on disk.
 input/

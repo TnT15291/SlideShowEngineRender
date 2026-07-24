@@ -826,6 +826,35 @@
       }
     },
     {
+      "id": "s19b_grid_recap",
+      "effect": "layer_scene",
+      "layout": "quad_grid_caption",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top2",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "wide",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
       "id": "s71_signature",
       "effect": "still",
       "renderer": "blender",

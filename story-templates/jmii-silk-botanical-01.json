@@ -96,7 +96,7 @@
     {
       "id": "s02_silk_title",
       "effect": "video_background",
-      "background": "assets/backgrounds/silk_champagne_leaf.mp4",
+      "background": "assets/backgrounds/editorial/champagne-silk-shadow.png",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
@@ -237,6 +237,28 @@
       "photoSlots": [
         { "slot": "left", "orient": "portrait", "quality": "best", "frame": "arch" },
         { "slot": "right", "orient": "portrait", "quality": "good", "frame": "arch" }
+      ]
+    },
+    {
+      "id": "s11b_petal_reveal",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/petal_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "portrait", "quality": "best" }
+      ],
+      "params": { "background": "#4A4139" }
+    },
+    {
+      "id": "s11c_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        { "slot": "hero", "orient": "portrait", "quality": "best" }
       ]
     },
     {

@@ -574,6 +574,21 @@
       }
     },
     {
+      "id": "s10b_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "EVERY STEP LED HERE.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
       "id": "s11_closing",
       "effect": "layer_scene",
       "layout": "closing_names",

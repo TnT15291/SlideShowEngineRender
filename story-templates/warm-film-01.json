@@ -114,6 +114,13 @@
         "opacity": 0.22,
         "blend": "screen",
         "start": 0
+      },
+      {
+        "path": "overlays/film_burn.mp4",
+        "position": "fullscreen",
+        "opacity": 0.08,
+        "blend": "screen",
+        "start": 0
       }
     ],
     "fonts": {
@@ -480,6 +487,40 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s08b_ink",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/ink_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Như mực loang trên giấy, tình yêu cũng lặng lẽ thấm sâu theo năm tháng.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s08c_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Ánh nắng cuối ngày, vẫn ấm như ngày đầu mình gặp nhau.",
       "photoSlots": [
         {
           "slot": "hero",

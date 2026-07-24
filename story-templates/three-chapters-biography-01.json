@@ -214,14 +214,14 @@
         "variants": [
           {
             "text": {
-              "heading": "Chương của anh",
-              "body": "Những năm tháng riêng đã đưa anh đến đúng ngày hai người gặp nhau."
+              "heading": "Những năm trước đó",
+              "body": "Trước khi gặp {{groom}}, {{bride}} đã có một hành trình rất riêng của mình."
             }
           },
           {
             "text": {
-              "heading": "Trước ngày gặp em",
-              "body": "Mỗi lựa chọn lặng thầm đều trở thành một phần của câu chuyện chung."
+              "heading": "Cô gái ấy",
+              "body": "Những lựa chọn nhỏ mỗi ngày, đã dần dẫn cô đến đúng người, đúng lúc."
             }
           }
         ]
@@ -260,14 +260,14 @@
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau",
-              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+              "heading": "Những năm trước đó",
+              "body": "Trước khi gặp {{bride}}, {{groom}} cũng đã đi qua một chặng đường của riêng mình."
             }
           },
           {
             "text": {
-              "heading": "Thương nhau",
-              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+              "heading": "Chàng trai ấy",
+              "body": "Ai rồi cũng có một hành trình riêng, trước khi tìm thấy người đi cùng phần đời còn lại."
             }
           }
         ]
@@ -388,6 +388,40 @@
         "heading": "CHƯƠNG III · VỀ CHUNG MỘT NHÀ",
         "caption": "Ngày hai hành trình trở thành một."
       }
+    },
+    {
+      "id": "s07b_torn_paper",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/torn_paper_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Lật sang một trang mới, cùng nhau viết tiếp.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#4A4139"
+      }
+    },
+    {
+      "id": "s07c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Và trang cuối cùng, mới chỉ là khởi đầu của một chương mới.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
     },
     {
       "id": "s08_closing",

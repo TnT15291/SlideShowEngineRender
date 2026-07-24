@@ -259,14 +259,14 @@
         "variants": [
           {
             "text": {
-              "heading": "Bên nhau",
-              "body": "Chuyện chúng mình, viết tiếp mỗi ngày."
+              "heading": "Nếp nhà",
+              "body": "Từ mái nhà nhỏ ấy, {{groom}} học được cách yêu thương một cách lặng lẽ."
             }
           },
           {
             "text": {
-              "heading": "Thương nhau",
-              "body": "Hạnh phúc là được nắm tay nhau thật lâu."
+              "heading": "Người thân",
+              "body": "Những bữa cơm, những lời dặn dò — hành trang theo {{groom}} đến hôm nay."
             }
           }
         ]
@@ -369,6 +369,34 @@
       "text": {
         "quote": "Tình yêu là điều được trao lại qua nhiều thế hệ"
       }
+    },
+    {
+      "id": "s07b_spotlight",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07c_glow",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
     },
     {
       "id": "s08_closing",

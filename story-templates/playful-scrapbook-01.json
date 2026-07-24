@@ -407,6 +407,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
+      "captionPattern": "Nét vẽ nào cũng đẹp, khi có nhau trong khung hình.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -417,6 +418,36 @@
       "params": {
         "background": "#34322E"
       }
+    },
+    {
+      "id": "s07b_prism",
+      "effect": "prism_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Cuộc sống nhiều màu sắc hơn, từ ngày có nhau.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07c_mirror",
+      "effect": "mirror_split",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": "Nhìn đâu cũng thấy hình bóng của người kia.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
     },
     {
       "id": "s08_closing",
