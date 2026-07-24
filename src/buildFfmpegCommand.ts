@@ -758,14 +758,22 @@ function tiltShiftFilter(step: RenderSlideStep): string {
   );
 }
 
-function coverFilter(w: number, h: number): string {
-  return `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},setsar=1`;
+// Whole-slide static effects (no zoompan motion) used dead-centre `crop=w:h` here even
+// though every RenderSlideStep already carries focusX/focusY/faceBox (compileTimeline.ts
+// sets them unconditionally) — mirror_split in particular would slice straight through an
+// off-centre face at the split line. Reuses the same faceSafeCropOffset the zoompan/kenburns
+// effects use so a subject-detected photo behaves the same way here.
+function coverFilter(step: RenderSlideStep): string {
+  const { width: w, height: h, focusX = 0.5, focusY = 0.5, faceBox } = step;
+  const cropX = faceSafeCropOffset("iw", "ow", focusX, faceBox?.x, faceBox?.width);
+  const cropY = faceSafeCropOffset("ih", "oh", focusY, faceBox?.y, faceBox?.height);
+  return `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h}:'${cropX}':'${cropY}',setsar=1`;
 }
 
 function dreamGlowFilter(step: RenderSlideStep): string {
-  const { width: w, height: h, fps } = step;
+  const { fps } = step;
   return (
-    `${coverFilter(w, h)},split=2[dg_base][dg_soft_src];` +
+    `${coverFilter(step)},split=2[dg_base][dg_soft_src];` +
     `[dg_soft_src]gblur=sigma=10,eq=brightness=0.06:saturation=1.12[dg_soft];` +
     `[dg_base][dg_soft]blend=all_mode=screen:all_opacity=0.32,` +
     `fps=${fps},format=yuv420p`
@@ -773,9 +781,9 @@ function dreamGlowFilter(step: RenderSlideStep): string {
 }
 
 function prismSplitFilter(step: RenderSlideStep): string {
-  const { width: w, height: h, fps } = step;
+  const { fps } = step;
   return (
-    `${coverFilter(w, h)},rgbashift=rh=7:bh=-7:edge=smear,` +
+    `${coverFilter(step)},rgbashift=rh=7:bh=-7:edge=smear,` +
     `eq=contrast=1.04:saturation=1.08,fps=${fps},format=yuv420p`
   );
 }
@@ -783,15 +791,15 @@ function prismSplitFilter(step: RenderSlideStep): string {
 function spotlightFocusFilter(step: RenderSlideStep): string {
   const { width: w, height: h, fps } = step;
   return (
-    `${coverFilter(w, h)},vignette=angle=PI/3:x0=w/2:y0=h*0.46:aspect=${w}/${h},` +
+    `${coverFilter(step)},vignette=angle=PI/3:x0=w/2:y0=h*0.46:aspect=${w}/${h},` +
     `eq=contrast=1.06:saturation=0.96,fps=${fps},format=yuv420p`
   );
 }
 
 function mirrorSplitFilter(step: RenderSlideStep): string {
-  const { width: w, height: h, fps } = step;
+  const { fps } = step;
   return (
-    `${coverFilter(w, h)},split=2[ms_left_src][ms_right_src];` +
+    `${coverFilter(step)},split=2[ms_left_src][ms_right_src];` +
     `[ms_left_src]crop=w=iw/2:h=ih:x=0:y=0[ms_left];` +
     `[ms_right_src]hflip,crop=w=iw/2:h=ih:x=0:y=0[ms_right];` +
     `[ms_left][ms_right]hstack=inputs=2,fps=${fps},format=yuv420p`

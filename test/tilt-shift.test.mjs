@@ -81,3 +81,39 @@ test("the native creative effects compile to their intended FFmpeg filters", () 
   assert.match(graphs[2], /vignette=/);
   assert.match(graphs[3], /hstack=inputs=2/);
 });
+
+test("dream_glow/prism_split/spotlight_focus/mirror_split follow a detected face instead of cropping dead-centre", () => {
+  const result = runTs(`
+    import { normalizeTimeline } from "./src/normalizeTimeline.ts";
+    import { validateTimeline } from "./src/validateTimeline.ts";
+    import { compileTimeline } from "./src/compileTimeline.ts";
+    import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
+    const effects = ["dream_glow", "prism_split", "spotlight_focus", "mirror_split"];
+    // Same 001.jpg as above (landscape, crop loss 0.25, stays off the portrait reroute).
+    // One slide per effect with no focus (dead centre, backward-compatible default) and one
+    // with an off-centre face so the two graphs can be diffed.
+    const raw = {
+      project: { name: "test", width: 640, height: 360, fps: 30, quality: "draft" },
+      music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],
+      slides: effects.flatMap((effect, i) => ([
+        { id: "center" + i, image: "input/001.jpg", duration: 3, effect, transition: { type: "none", duration: 0 }, captions: [] },
+        { id: "face" + i, image: "input/001.jpg", duration: 3, effect,
+          focusX: 0.82, focusY: 0.2, faceBox: { x: 0.7, y: 0.05, width: 0.24, height: 0.3 },
+          transition: { type: "none", duration: 0 }, captions: [] },
+      ]))
+    };
+    const timeline = validateTimeline(normalizeTimeline(raw), process.cwd());
+    const graphs = compileTimeline(timeline, process.cwd(), "temp").steps.map((step) => {
+      const args = buildSlideArgs(step); return args[args.indexOf("-vf") + 1];
+    });
+    console.log(JSON.stringify(graphs));
+  `);
+  assert.equal(result.status, 0, result.stderr);
+  const graphs = JSON.parse(result.stdout.trim());
+  for (let i = 0; i < 4; i++) {
+    const [centerGraph, faceGraph] = [graphs[i * 2], graphs[i * 2 + 1]];
+    assert.match(centerGraph, /crop=640:360:'\(iw-ow\)\*0\.5':'\(ih-oh\)\*0\.5'/);
+    assert.notEqual(faceGraph, centerGraph);
+    assert.match(faceGraph, /0\.82/);
+  }
+});

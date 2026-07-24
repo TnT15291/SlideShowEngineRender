@@ -693,7 +693,14 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
 
 ## 4. Backlog nâng cấp engine (tùy chọn, không chặn v1)
 
-- ⬜ Face/subject detection thật cho crop-safe `cover` (nay chỉ theo tỉ lệ).
+- ✅ Face/subject detection cho crop-safe `cover`. `coverFilter()` (dùng bởi 4 native effect
+  whole-slide `dream_glow`/`prism_split`/`spotlight_focus`/`mirror_split`) từng crop dead-centre
+  dù `RenderSlideStep` đã mang sẵn `focusX`/`focusY`/`faceBox` từ `compileTimeline.ts` — không đọc
+  gì hết. Nay dùng chung `faceSafeCropOffset()` với đường zoompan/kenburns đã có từ 07-17.
+  `mirror_split` là ca rõ nhất: đường chia đôi trước đây có thể cắt ngay giữa mặt lệch tâm.
+  Mặc định (không có focus) vẫn dead-centre — tương thích ngược. Test:
+  `dream_glow/prism_split/spotlight_focus/mirror_split follow a detected face instead of
+  cropping dead-centre` (`test/tilt-shift.test.mjs`).
 - ⬜ QA bằng vision (đo chính xác chữ vừa khung, crop chủ thể, overlap nghệ thuật).
 - ⬜ Easing cho `layer_scene` `motion` (whole-slide effect đã có `gentle/snap/bounce`).
 - ⬜ Keyframe reveal **per-layer**, photo-stack shuffle (`mask_reveal` whole-slide đã có — §4b).
