@@ -203,7 +203,7 @@
         }
       ],
       "text": {
-        "heading": "Lá thư đầu tiên"
+        "heading": ["Lá thư đầu tiên", "Trang thư mở đầu"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -234,7 +234,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "CHAPTERS OF US",
+      "captionPattern": ["CHAPTERS OF US", "PAGES OF OUR STORY"],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -253,7 +253,7 @@
       "background": "assets/backgrounds/editorial/cotton-rag-botanical-ivory.png",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Có những lời không phai theo năm tháng.",
+      "captionPattern": ["Có những lời không phai theo năm tháng.", "Có những lời hứa, năm tháng không thể xoá nhoà."],
       "photoSlots": []
     },
     {
@@ -275,7 +275,10 @@
         }
       ],
       "text": {
-        "body": "Mình đã viết nên rất nhiều ngày bình thường, để hôm nay cùng ký tên vào một lời hứa."
+        "body": [
+          "Mình đã viết nên rất nhiều ngày bình thường, để hôm nay cùng ký tên vào một lời hứa.",
+          "Bao ngày bình thường mình đã viết cùng nhau, để hôm nay ký tên vào một lời hứa."
+        ]
       }
     },
     {
@@ -284,7 +287,10 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Lời hứa hôm nay, là lá thư dài nhất mình từng viết cho nhau.",
+      "captionPattern": [
+        "Lời hứa hôm nay, là lá thư dài nhất mình từng viết cho nhau.",
+        "Lời hứa hôm nay, chính là lá thư dài nhất mình dành cho nhau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -320,7 +326,7 @@
         }
       ],
       "text": {
-        "heading": "P.S. · Và câu chuyện vẫn tiếp tục"
+        "heading": ["P.S. · Và câu chuyện vẫn tiếp tục", "P.S. · Chuyện của mình chưa bao giờ dừng lại"]
       }
     },
     {
@@ -359,7 +365,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Và lá thư này, sẽ không bao giờ có dấu chấm hết.",
+      "captionPattern": [
+        "Và lá thư này, sẽ không bao giờ có dấu chấm hết.",
+        "Và câu chuyện này, sẽ chẳng bao giờ khép lại."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

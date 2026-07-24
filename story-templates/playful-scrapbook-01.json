@@ -220,8 +220,11 @@
         }
       ],
       "text": {
-        "heading": "Chuyện tụi mình",
-        "body": "Một hành trình có thật nhiều tiếng cười và những chuyến đi."
+        "heading": ["Chuyện tụi mình", "Câu chuyện của tụi mình"],
+        "body": [
+          "Một hành trình có thật nhiều tiếng cười và những chuyến đi.",
+          "Một hành trình đầy ắp tiếng cười và những chuyến đi bất chợt."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -334,7 +337,7 @@
         }
       ],
       "text": {
-        "body": "Đi đâu cũng được, miễn là đi cùng nhau."
+        "body": ["Đi đâu cũng được, miễn là đi cùng nhau.", "Đi đâu không quan trọng, quan trọng là có nhau."]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -384,7 +387,10 @@
           "preferEmotion": true
         }
       ],
-      "captionPattern": "Thêm thật nhiều kỷ niệm vào cuốn album của chúng mình.",
+      "captionPattern": [
+        "Thêm thật nhiều kỷ niệm vào cuốn album của chúng mình.",
+        "Cuốn album của tụi mình, ngày càng dày thêm kỷ niệm."
+      ],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -407,7 +413,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Nét vẽ nào cũng đẹp, khi có nhau trong khung hình.",
+      "captionPattern": [
+        "Nét vẽ nào cũng đẹp, khi có nhau trong khung hình.",
+        "Khung hình nào cũng đẹp, khi có nhau trong đó."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -425,7 +434,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Cuộc sống nhiều màu sắc hơn, từ ngày có nhau.",
+      "captionPattern": [
+        "Cuộc sống nhiều màu sắc hơn, từ ngày có nhau.",
+        "Từ ngày có nhau, cuộc sống rực rỡ hẳn lên."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -440,7 +452,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Nhìn đâu cũng thấy hình bóng của người kia.",
+      "captionPattern": [
+        "Nhìn đâu cũng thấy hình bóng của người kia.",
+        "Ở đâu cũng thấp thoáng bóng dáng của người kia."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

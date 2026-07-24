@@ -189,7 +189,7 @@
         }
       ],
       "text": {
-        "heading": "GARDEN DIARY",
+        "heading": ["GARDEN DIARY", "OUR GARDEN STORY"],
         "date": "{{date}}"
       }
     },
@@ -235,7 +235,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "LITTLE BOTANICAL MOMENTS"
+      "captionPattern": ["LITTLE BOTANICAL MOMENTS", "SMALL MOMENTS AMONG THE FLOWERS"]
     },
     {
       "id": "s04_walk",
@@ -256,8 +256,11 @@
         }
       ],
       "text": {
-        "heading": "A walk to remember",
-        "caption": "Trong khu vườn, giữa những người mình thương."
+        "heading": ["A walk to remember", "A moment to remember"],
+        "caption": [
+          "Trong khu vườn, giữa những người mình thương.",
+          "Giữa khu vườn, cùng những người mình yêu thương nhất."
+        ]
       },
       "muteFallback": {
         "layout": "photo_duo",
@@ -298,7 +301,10 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Lời thề nguyện, cất lên giữa hương hoa và nắng sớm.",
+      "captionPattern": [
+        "Lời thề nguyện, cất lên giữa hương hoa và nắng sớm.",
+        "Giữa hương hoa và nắng sớm, một lời thề nguyện cất lên."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -334,7 +340,7 @@
         }
       ],
       "text": {
-        "heading": "Trang nhật ký của mình"
+        "heading": ["Trang nhật ký của mình", "Nhật ký của hai đứa"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -364,7 +370,7 @@
           "preferVariety": true
         }
       ],
-      "captionPattern": "GOLDEN HOUR · {{bride}} & {{groom}}",
+      "captionPattern": ["GOLDEN HOUR · {{bride}} & {{groom}}", "SUNSET LIGHT · {{bride}} & {{groom}}"],
       "params": {
         "background": "#4A4139"
       }

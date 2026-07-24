@@ -175,7 +175,7 @@
       ],
       "text": {
         "heading": "{{bride}} & {{groom}}",
-        "body": "Một câu chuyện dịu dàng, bắt đầu từ hai người."
+        "body": ["Một câu chuyện dịu dàng, bắt đầu từ hai người.", "Một câu chuyện nhẹ nhàng, chỉ thuộc về hai người."]
       }
     },
     {
@@ -185,7 +185,7 @@
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Cứ để ánh nhìn ấy nói thay mọi lời.",
+      "captionPattern": ["Cứ để ánh nhìn ấy nói thay mọi lời.", "Chỉ một ánh nhìn, đã đủ để hiểu hết."],
       "photoSlots": [
         {
           "slot": "hero",
@@ -216,7 +216,10 @@
         }
       ],
       "text": {
-        "body": "Từ những điều rất nhỏ, mình dần trở thành bình yên của nhau."
+        "body": [
+          "Từ những điều rất nhỏ, mình dần trở thành bình yên của nhau.",
+          "Từng điều nhỏ bé, dần dà lại thành chốn bình yên của nhau."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -252,7 +255,7 @@
         }
       ],
       "text": {
-        "quote": "Thương nhau theo cách thật nhẹ nhàng."
+        "quote": ["Thương nhau theo cách thật nhẹ nhàng.", "Yêu nhau, theo cách dịu dàng nhất."]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -296,8 +299,8 @@
         }
       ],
       "text": {
-        "heading": "Bên nhau",
-        "body": "Mỗi ngày bình thường đều trở nên đáng nhớ."
+        "heading": ["Bên nhau", "Có nhau"],
+        "body": ["Mỗi ngày bình thường đều trở nên đáng nhớ.", "Ngày nào bình thường cũng hoá thành đáng nhớ, khi có nhau."]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -377,7 +380,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Nhẹ nhàng như cách mình đã thương nhau.",
+      "captionPattern": ["Nhẹ nhàng như cách mình đã thương nhau.", "Dịu dàng, đúng như cách mình đã yêu nhau."],
       "photoSlots": [
         {
           "slot": "hero",
@@ -392,7 +395,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Chỉ cần một ánh nhìn, là đủ ấm áp cả một đời.",
+      "captionPattern": [
+        "Chỉ cần một ánh nhìn, là đủ ấm áp cả một đời.",
+        "Một ánh nhìn thôi, cũng đủ sưởi ấm một đời."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

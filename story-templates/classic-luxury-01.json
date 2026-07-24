@@ -240,8 +240,11 @@
         }
       ],
       "text": {
-        "heading": "Ngày trọng đại",
-        "caption": "Khoảnh khắc hai gia đình cùng chứng kiến một lời hẹn ước."
+        "heading": ["Ngày trọng đại", "Ngày hai họ nên duyên"],
+        "caption": [
+          "Khoảnh khắc hai gia đình cùng chứng kiến một lời hẹn ước.",
+          "Giây phút thiêng liêng, có đủ hai bên gia đình chứng kiến."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -317,7 +320,10 @@
           "quality": "good"
         }
       ],
-      "captionPattern": "Niềm vui được sẻ chia cùng những người thân yêu.",
+      "captionPattern": [
+        "Niềm vui được sẻ chia cùng những người thân yêu.",
+        "Hạnh phúc trọn vẹn hơn khi có người thân bên cạnh."
+      ],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -357,7 +363,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Như ánh sáng xuyên qua ô kính màu, từng khoảnh khắc đều rực rỡ.",
+      "captionPattern": [
+        "Như ánh sáng xuyên qua ô kính màu, từng khoảnh khắc đều rực rỡ.",
+        "Mỗi khoảnh khắc lấp lánh, như ánh sáng xuyên qua ô kính màu."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -375,7 +384,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Sang trọng không cần phô trương, chỉ cần đúng người, đúng khoảnh khắc.",
+      "captionPattern": [
+        "Sang trọng không cần phô trương, chỉ cần đúng người, đúng khoảnh khắc.",
+        "Không cần phô trương — chỉ cần đúng người, đúng thời khắc."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

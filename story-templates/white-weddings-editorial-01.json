@@ -234,10 +234,13 @@
       ],
       "text": {
         "heading": {
-          "value": "The Beginning",
+          "value": ["The Beginning", "Where It Started"],
           "sizePx": 78
         },
-        "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
+        "body": [
+          "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới.",
+          "Một ngày thật đẹp để bắt đầu hành trình mới của hai đứa."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -310,8 +313,11 @@
         }
       ],
       "text": {
-        "heading": "Special Day",
-        "caption": "Những khoảnh khắc dịu dàng làm nên ngày đáng nhớ nhất."
+        "heading": ["Special Day", "Our Special Day"],
+        "caption": [
+          "Những khoảnh khắc dịu dàng làm nên ngày đáng nhớ nhất.",
+          "Những khoảnh khắc nhẹ nhàng nhất, lại làm nên ngày đáng nhớ nhất."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -381,8 +387,11 @@
         }
       ],
       "text": {
-        "heading": "Fall in Love",
-        "body": "Không cần lời hứa trăm năm, chỉ cần hôm nay ta cùng nắm tay nhau."
+        "heading": ["Fall in Love", "In Love"],
+        "body": [
+          "Không cần lời hứa trăm năm, chỉ cần hôm nay ta cùng nắm tay nhau.",
+          "Chẳng cần lời hứa xa xôi, chỉ cần hôm nay có nhau là đủ."
+        ]
       },
       "muteFallback": {
         "layout": "paper_collage",
@@ -480,7 +489,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "OUR LOVE STORY"
+      "captionPattern": ["OUR LOVE STORY", "THE STORY OF US"]
     },
     {
       "id": "s08c_background_echo",
@@ -494,7 +503,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "TOGETHER · ALWAYS"
+      "captionPattern": ["TOGETHER · ALWAYS", "SIDE BY SIDE · ALWAYS"]
     },
     {
       "id": "s08d_album_panel",
@@ -579,7 +588,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "EVERY STEP LED HERE.",
+      "captionPattern": ["EVERY STEP LED HERE.", "EVERY PATH LED US HERE."],
       "photoSlots": [
         {
           "slot": "hero",

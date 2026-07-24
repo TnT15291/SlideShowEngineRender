@@ -101,7 +101,10 @@
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [],
-      "captionPattern": "Save the Date · {{bride}} & {{groom}} · {{date}}"
+      "captionPattern": [
+        "Save the Date · {{bride}} & {{groom}} · {{date}}",
+        "We're Getting Married · {{bride}} & {{groom}} · {{date}}"
+      ]
     },
     {
       "id": "s03_bride",
@@ -143,8 +146,11 @@
       "transitionRole": "memory",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
       "text": {
-        "heading": { "value": "WE MEET", "sizePx": 76 },
-        "body": "Tình yêu là sự kết nối giữa hai trái tim, nơi mình cùng viết nên một câu chuyện thật dài."
+        "heading": { "value": ["WE MEET", "OUR PATH"], "sizePx": 76 },
+        "body": [
+          "Tình yêu là sự kết nối giữa hai trái tim, nơi mình cùng viết nên một câu chuyện thật dài.",
+          "Tình yêu là nơi hai trái tim gặp nhau, để cùng viết tiếp một câu chuyện dài."
+        ]
       },
       "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {
@@ -175,8 +181,8 @@
       "transitionRole": "default",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
       "text": {
-        "heading": { "value": "OUR STORY", "sizePx": 68 },
-        "body": "Bên nhau, mọi điều giản dị đều trở nên đặc biệt."
+        "heading": { "value": ["OUR STORY", "OUR JOURNEY"], "sizePx": 68 },
+        "body": ["Bên nhau, mọi điều giản dị đều trở nên đặc biệt.", "Khi có nhau, điều bình dị nhất cũng thành đặc biệt."]
       },
       "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {
@@ -214,8 +220,8 @@
       "transitionRole": "default",
       "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
       "text": {
-        "heading": { "value": "BEAUTIFUL", "sizePx": 68 },
-        "body": "Every quiet moment becomes part of our forever."
+        "heading": { "value": ["BEAUTIFUL", "TENDER"], "sizePx": 68 },
+        "body": ["Every quiet moment becomes part of our forever.", "Every small moment quietly becomes part of us."]
       },
       "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
       "repeatable": {

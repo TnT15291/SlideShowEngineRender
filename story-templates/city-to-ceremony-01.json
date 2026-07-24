@@ -182,7 +182,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "{{bride}} × {{groom}} · CITY LOVERS"
+      "captionPattern": ["{{bride}} × {{groom}} · CITY LOVERS", "A CITY LOVE STORY: {{bride}} × {{groom}}"]
     },
     {
       "id": "s02_street",
@@ -199,7 +199,7 @@
       ],
       "text": {
         "heading": "{{meetingPlace}}",
-        "body": "Thành phố nơi câu chuyện bắt đầu."
+        "body": ["Thành phố nơi câu chuyện bắt đầu.", "Nơi những con đường quen thuộc trở thành một phần câu chuyện."]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -268,7 +268,7 @@
         }
       ],
       "text": {
-        "tile_text": "US / EVERYDAY"
+        "tile_text": ["US / EVERYDAY", "JUST US, EVERY DAY"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -301,7 +301,7 @@
         }
       ],
       "text": {
-        "quote": "Giữa triệu ánh đèn · mình chọn nhau"
+        "quote": ["Giữa triệu ánh đèn · mình chọn nhau", "Giữa phố xá đông người · chỉ cần tìm thấy nhau"]
       }
     },
     {
@@ -323,7 +323,7 @@
         }
       ],
       "text": {
-        "heading": "GETTING READY"
+        "heading": ["GETTING READY", "THE FINAL TOUCHES"]
       }
     },
     {
@@ -332,7 +332,10 @@
       "mask": "assets/masks/particle_gather.mp4",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Lễ cưới, nơi một lời hứa trở thành mãi mãi.",
+      "captionPattern": [
+        "Lễ cưới, nơi một lời hứa trở thành mãi mãi.",
+        "Một lời thề, và một hành trình mãi mãi bắt đầu."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

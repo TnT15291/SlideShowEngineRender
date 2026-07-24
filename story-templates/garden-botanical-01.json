@@ -209,8 +209,11 @@
         }
       ],
       "text": {
-        "heading": "Ngày nở hoa",
-        "body": "Giữa thiên nhiên, mình cùng viết nên một ngày thật đẹp."
+        "heading": ["Ngày nở hoa", "Ngày rực nở"],
+        "body": [
+          "Giữa thiên nhiên, mình cùng viết nên một ngày thật đẹp.",
+          "Giữa cỏ cây và nắng gió, mình có một ngày thật đẹp bên nhau."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -277,7 +280,10 @@
       "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4",
       "durationRole": "normal",
       "transitionRole": "memory",
-      "captionPattern": "Một khoảng lặng dành cho những điều dịu dàng.",
+      "captionPattern": [
+        "Một khoảng lặng dành cho những điều dịu dàng.",
+        "Một khoảnh khắc lặng yên, chỉ để cảm nhận nhau."
+      ],
       "photoSlots": []
     },
     {
@@ -304,8 +310,11 @@
         }
       ],
       "text": {
-        "heading": "Người thương",
-        "caption": "Ngày vui trọn vẹn khi có gia đình và bạn bè ở bên."
+        "heading": ["Người thương", "Người thân yêu"],
+        "caption": [
+          "Ngày vui trọn vẹn khi có gia đình và bạn bè ở bên.",
+          "Niềm vui nhân đôi khi có gia đình, bạn bè cùng chung vui."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -335,7 +344,10 @@
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Một trái tim vẽ nên giữa khu vườn, chỉ để dành cho hai người.",
+      "captionPattern": [
+        "Một trái tim vẽ nên giữa khu vườn, chỉ để dành cho hai người.",
+        "Giữa khu vườn, một trái tim vẽ nên chỉ dành riêng cho hai người."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -398,7 +410,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Từng chi tiết nhỏ, đều mang một phần của khu vườn ấy.",
+      "captionPattern": [
+        "Từng chi tiết nhỏ, đều mang một phần của khu vườn ấy.",
+        "Mỗi chi tiết nhỏ, đều giữ lại chút hương của khu vườn ấy."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

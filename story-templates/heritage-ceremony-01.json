@@ -168,7 +168,7 @@
       "effect": "dark_feather",
       "durationRole": "calm",
       "transitionRole": "calm",
-      "captionPattern": "HỶ SỰ · {{bride}} & {{groom}}",
+      "captionPattern": ["HỶ SỰ · {{bride}} & {{groom}}", "LỄ CƯỚI · {{bride}} & {{groom}}"],
       "photoSlots": [
         {
           "slot": "hero",
@@ -201,7 +201,7 @@
         }
       ],
       "text": {
-        "heading": "Gia lễ · {{date}}"
+        "heading": ["Gia lễ · {{date}}", "Ngày trọng đại · {{date}}"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -225,7 +225,7 @@
       "background": "assets/backgrounds/editorial/midnight-lacquer-aged-gold.png",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Nếp nhà trao lại · Duyên lành tiếp nối.",
+      "captionPattern": ["Nếp nhà trao lại · Duyên lành tiếp nối.", "Gia phong được giữ gìn · Duyên lành được nối dài."],
       "photoSlots": []
     },
     {
@@ -257,7 +257,7 @@
           "quality": "good"
         }
       ],
-      "captionPattern": "Hai gia đình · Một niềm vui",
+      "captionPattern": ["Hai gia đình · Một niềm vui", "Hai họ sum vầy · Một niềm hạnh phúc"],
       "params": {
         "background": "#2B2B32"
       },
@@ -280,7 +280,10 @@
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Lời thề nguyện, gói trọn tình yêu và trách nhiệm của một đời người.",
+      "captionPattern": [
+        "Lời thề nguyện, gói trọn tình yêu và trách nhiệm của một đời người.",
+        "Một lời thề, gói trọn cả tình yêu và trách nhiệm của một đời."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -316,8 +319,11 @@
         }
       ],
       "text": {
-        "heading": "Nghi lễ",
-        "caption": "Trước gia tiên và những người thương yêu nhất."
+        "heading": ["Nghi lễ", "Nghi thức"],
+        "caption": [
+          "Trước gia tiên và những người thương yêu nhất.",
+          "Trước bàn thờ gia tiên, có đủ những người mình thương yêu."
+        ]
       }
     },
     {
@@ -354,7 +360,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Truyền thống hôm nay, sẽ là ký ức đẹp của ngày mai.",
+      "captionPattern": [
+        "Truyền thống hôm nay, sẽ là ký ức đẹp của ngày mai.",
+        "Nghi lễ hôm nay, rồi sẽ là ký ức đẹp của ngày sau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

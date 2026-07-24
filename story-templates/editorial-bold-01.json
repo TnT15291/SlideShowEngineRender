@@ -253,8 +253,11 @@
         }
       ],
       "text": {
-        "heading": "Khởi đầu",
-        "body": "Câu chuyện của mình bắt đầu thật khẽ, rồi lớn dần theo năm tháng."
+        "heading": ["Khởi đầu", "Điểm bắt đầu"],
+        "body": [
+          "Câu chuyện của mình bắt đầu thật khẽ, rồi lớn dần theo năm tháng.",
+          "Bắt đầu từ một điều rất nhỏ, rồi trở thành cả một câu chuyện."
+        ]
       },
       "muteFallback": {
         "layout": "paper_collage",
@@ -315,8 +318,11 @@
         }
       ],
       "text": {
-        "heading": "Chuyện mình",
-        "caption": "Mỗi khung hình là một chương mình đã cùng nhau viết nên."
+        "heading": ["Chuyện mình", "Câu chuyện của mình"],
+        "caption": [
+          "Mỗi khung hình là một chương mình đã cùng nhau viết nên.",
+          "Từng khung hình, một trang trong câu chuyện của riêng mình."
+        ]
       }
     },
     {
@@ -352,7 +358,7 @@
         }
       ],
       "text": {
-        "quote": "Bình yên là khi có nhau."
+        "quote": ["Bình yên là khi có nhau.", "Chỉ cần có nhau, là đủ bình yên."]
       }
     },
     {
@@ -410,7 +416,10 @@
       "effect": "collage_grid",
       "durationRole": "build",
       "transitionRole": "peak",
-      "captionPattern": "Mình đi qua bao nhiêu nơi, điều đáng nhớ nhất vẫn là đi cùng nhau.",
+      "captionPattern": [
+        "Mình đi qua bao nhiêu nơi, điều đáng nhớ nhất vẫn là đi cùng nhau.",
+        "Đi qua bao nhiêu nơi, nhớ nhất vẫn là có nhau trên đường."
+      ],
       "photoSlots": [
         {
           "slot": "grid",
@@ -426,7 +435,7 @@
       "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "peak",
-      "captionPattern": "Và rồi, ngày trọng đại cũng đến.",
+      "captionPattern": ["Và rồi, ngày trọng đại cũng đến.", "Và rồi, ngày mong đợi cũng đã tới."],
       "photoSlots": [
         {
           "slot": "film_roll",
@@ -462,7 +471,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Một khung hình, nghìn sắc màu — như câu chuyện chỉ riêng hai người.",
+      "captionPattern": [
+        "Một khung hình, nghìn sắc màu — như câu chuyện chỉ riêng hai người.",
+        "Nghìn sắc màu trong một khung hình, như câu chuyện của riêng hai người."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

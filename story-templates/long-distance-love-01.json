@@ -199,7 +199,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "TỪ HAI THÀNH PHỐ · MỘT CUỘC TRÒ CHUYỆN"
+      "captionPattern": ["TỪ HAI THÀNH PHỐ · MỘT CUỘC TRÒ CHUYỆN", "HAI NƠI CÁCH XA · MỘT TRÁI TIM CHUNG"]
     },
     {
       "id": "s03_visits",
@@ -220,8 +220,11 @@
         }
       ],
       "text": {
-        "heading": "Những chuyến đi",
-        "caption": "Mỗi lần gặp là một lần khoảng cách ngắn lại."
+        "heading": ["Những chuyến đi", "Những lần bay đến bên nhau"],
+        "caption": [
+          "Mỗi lần gặp là một lần khoảng cách ngắn lại.",
+          "Mỗi lần gặp lại, khoảng cách như ngắn thêm một chút."
+        ]
       },
       "muteFallback": {
         "layout": "photo_duo",
@@ -280,7 +283,7 @@
         }
       ],
       "text": {
-        "heading": "Across the Miles"
+        "heading": ["Across the Miles", "Closer Than the Distance"]
       }
     },
     {
@@ -298,7 +301,10 @@
         }
       ],
       "text": {
-        "quote": "Khoảng cách có điểm cuối · {{bride}} & {{groom}}"
+        "quote": [
+          "Khoảng cách có điểm cuối · {{bride}} & {{groom}}",
+          "Mọi khoảng cách rồi cũng có hồi kết · {{bride}} & {{groom}}"
+        ]
       }
     },
     {
@@ -320,7 +326,7 @@
         }
       ],
       "text": {
-        "heading": "Hai thành phố · Một trái tim"
+        "heading": ["Hai thành phố · Một trái tim", "Hai nơi xa · Một tình yêu"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -358,7 +364,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Khoảng cách nhoè đi, chỉ còn lại hai ta.",
+      "captionPattern": ["Khoảng cách nhoè đi, chỉ còn lại hai ta.", "Mọi khoảng cách mờ dần, chỉ còn lại hai ta bên nhau."],
       "photoSlots": [
         {
           "slot": "hero",
@@ -376,7 +382,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Mọi hành trình xa xôi, cuối cùng cũng dẫn về một nơi — bên nhau.",
+      "captionPattern": [
+        "Mọi hành trình xa xôi, cuối cùng cũng dẫn về một nơi — bên nhau.",
+        "Dù hành trình có xa đến đâu, điểm đến cuối cùng vẫn là bên nhau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

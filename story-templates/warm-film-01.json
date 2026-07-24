@@ -330,8 +330,11 @@
         }
       ],
       "text": {
-        "heading": "Ngày đầu",
-        "body": "Mình gặp nhau thật tình cờ, rồi thương nhau lúc nào chẳng hay."
+        "heading": ["Ngày đầu", "Lần đầu gặp gỡ"],
+        "body": [
+          "Mình gặp nhau thật tình cờ, rồi thương nhau lúc nào chẳng hay.",
+          "Gặp nhau như một sự tình cờ, rồi thương nhau tự lúc nào không hay."
+        ]
       },
       "muteFallback": {
         "layout": "paper_collage",
@@ -360,7 +363,7 @@
       "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4",
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Ngày mình nói lời đồng ý.",
+      "captionPattern": ["Ngày mình nói lời đồng ý.", "Ngày mình gật đầu, và bắt đầu một hành trình mới."],
       "photoSlots": []
     },
     {
@@ -397,7 +400,7 @@
         }
       ],
       "text": {
-        "quote": "Nắng của mình, là nhau."
+        "quote": ["Nắng của mình, là nhau.", "Ánh nắng đẹp nhất, là khi có nhau."]
       }
     },
     {
@@ -445,8 +448,11 @@
         }
       ],
       "text": {
-        "heading": "Gia đình",
-        "caption": "Tình yêu hôm nay có thêm lời chúc phúc của những người thương."
+        "heading": ["Gia đình", "Người thân"],
+        "caption": [
+          "Tình yêu hôm nay có thêm lời chúc phúc của những người thương.",
+          "Tình yêu hôm nay được vun đắp bằng lời chúc phúc của người thân."
+        ]
       }
     },
     {
@@ -468,7 +474,10 @@
       "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "peak",
-      "captionPattern": "Và hôm nay, mình chính thức về chung một nhà.",
+      "captionPattern": [
+        "Và hôm nay, mình chính thức về chung một nhà.",
+        "Kể từ hôm nay, mình chính thức là một nhà."
+      ],
       "photoSlots": [
         {
           "slot": "film_roll",
@@ -502,7 +511,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Như mực loang trên giấy, tình yêu cũng lặng lẽ thấm sâu theo năm tháng.",
+      "captionPattern": [
+        "Như mực loang trên giấy, tình yêu cũng lặng lẽ thấm sâu theo năm tháng.",
+        "Tình yêu thấm dần theo năm tháng, như mực lặng lẽ loang trên giấy."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

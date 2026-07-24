@@ -253,7 +253,10 @@
       "effect": "memory_wall",
       "durationRole": "normal",
       "transitionRole": "memory",
-      "captionPattern": "Những ngày bình thường, giữ lại thành ký ức.",
+      "captionPattern": [
+        "Những ngày bình thường, giữ lại thành ký ức.",
+        "Không cần dịp gì đặc biệt, chỉ cần có nhau."
+      ],
       "photoSlots": [
         {
           "slot": "memories",
@@ -300,7 +303,7 @@
         }
       ],
       "text": {
-        "quote": "Yêu là chọn nhau, mỗi ngày."
+        "quote": ["Yêu là chọn nhau, mỗi ngày.", "Không phải một khoảnh khắc, mà là một lựa chọn mỗi ngày."]
       }
     },
     {
@@ -342,7 +345,10 @@
       "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "peak",
-      "captionPattern": "Và hôm nay, câu chuyện bước sang một chương mới.",
+      "captionPattern": [
+        "Và hôm nay, câu chuyện bước sang một chương mới.",
+        "Từ đây, một hành trình mới bắt đầu."
+      ],
       "photoSlots": [
         {
           "slot": "film_roll",
@@ -370,7 +376,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "calm",
-      "captionPattern": "Từ hôm nay, mình gọi nhau là nhà.",
+      "captionPattern": [
+        "Từ hôm nay, mình gọi nhau là nhà.",
+        "Từ hôm nay, đi đâu cũng là về nhà nếu có nhau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -389,7 +398,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Ánh sáng chỉ cần đủ, để thấy rõ một người.",
+      "captionPattern": [
+        "Ánh sáng chỉ cần đủ, để thấy rõ một người.",
+        "Chỉ cần một ánh nhìn, cũng đủ nhận ra nhau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

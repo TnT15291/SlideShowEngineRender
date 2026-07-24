@@ -56,9 +56,15 @@ const hexLuma = (hex) => {
   return 0.2126 * ((v >> 16) & 255) + 0.7152 * ((v >> 8) & 255) + 0.0722 * (v & 255);
 };
 
+// A slot value may be an ARRAY of 2-3 per-customer variants (see pickVariant in
+// applyStoryTemplate.mjs) instead of a single string/object — take the first
+// entry as representative; the rule only asks "does this scene supply copy at
+// all", not which variant a given render picks.
+const first = (v) => (Array.isArray(v) ? v[0] : v);
 const textOf = (text) =>
   Object.values(text ?? {}).some((v) => {
-    const s = v && typeof v === "object" ? v.value : v;
+    const outer = first(v);
+    const s = outer && typeof outer === "object" ? first(outer.value) : outer;
     return typeof s === "string" && s.trim() !== "";
   });
 

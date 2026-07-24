@@ -166,7 +166,7 @@
       "effect": "dark_feather",
       "durationRole": "calm",
       "transitionRole": "calm",
-      "captionPattern": "A FILM ABOUT {{bride}} & {{groom}}",
+      "captionPattern": ["A FILM ABOUT {{bride}} & {{groom}}", "THE STORY OF {{bride}} & {{groom}}"],
       "photoSlots": [
         {
           "slot": "hero",
@@ -228,7 +228,7 @@
         }
       ],
       "text": {
-        "quote": "Hôm nay · và mọi ngày về sau"
+        "quote": ["Hôm nay · và mọi ngày về sau", "Từ hôm nay, mãi mãi có nhau"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -252,7 +252,10 @@
       "mask": "assets/masks/gold_dust_reveal.mp4",
       "durationRole": "normal",
       "transitionRole": "peak",
-      "captionPattern": "Nhẫn cưới, lời hứa không cần nói thành lời.",
+      "captionPattern": [
+        "Nhẫn cưới, lời hứa không cần nói thành lời.",
+        "Một chiếc nhẫn, một lời hứa trọn đời."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -269,7 +272,10 @@
       "effect": "slow_zoom_in",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": "Một nụ hôn, khép lại hành trình này để mở ra hành trình khác.",
+      "captionPattern": [
+        "Một nụ hôn, khép lại hành trình này để mở ra hành trình khác.",
+        "Một nụ hôn, và một chương mới bắt đầu."
+      ],
       "repeatable": {
         "maxRepeats": 2,
         "variants": [
@@ -315,7 +321,10 @@
           "quality": "good"
         }
       ],
-      "captionPattern": "Và hôm nay, mình chính thức thuộc về nhau.",
+      "captionPattern": [
+        "Và hôm nay, mình chính thức thuộc về nhau.",
+        "Kể từ hôm nay, mình là của nhau."
+      ],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [

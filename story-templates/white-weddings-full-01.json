@@ -193,7 +193,7 @@
         }
       ],
       "text": {
-        "heading": "SAVE the DATE",
+        "heading": ["SAVE the DATE", "WE'RE GETTING MARRIED"],
         "date": "{{date}}"
       }
     },
@@ -260,10 +260,13 @@
       ],
       "text": {
         "heading": {
-          "value": "ABOUT THE\nBRIDE",
+          "value": ["ABOUT THE\nBRIDE", "MEET THE\nBRIDE"],
           "sizePx": 62
         },
-        "body": "Cô dâu {{bride}} – dịu dàng, hay cười và luôn tin vào một tình yêu chân thật dành cho người mình chọn."
+        "body": [
+          "Cô dâu {{bride}} – dịu dàng, hay cười và luôn tin vào một tình yêu chân thật dành cho người mình chọn.",
+          "Cô dâu {{bride}} – nhẹ nhàng, hay cười, và luôn tin vào một tình yêu chân thành."
+        ]
       },
       "muteFallback": {
         "layout": "full_bleed_quote",
@@ -292,10 +295,13 @@
       ],
       "text": {
         "heading": {
-          "value": "ABOUT THE\nGROOM",
+          "value": ["ABOUT THE\nGROOM", "MEET THE\nGROOM"],
           "sizePx": 62
         },
-        "body": "Chú rể {{groom}} – trầm lặng nhưng luôn có cách khiến {{bride}} mỉm cười, âm thầm quan tâm bằng những điều nhỏ nhất."
+        "body": [
+          "Chú rể {{groom}} – trầm lặng nhưng luôn có cách khiến {{bride}} mỉm cười, âm thầm quan tâm bằng những điều nhỏ nhất.",
+          "Chú rể {{groom}} – ít nói nhưng luôn biết cách làm {{bride}} mỉm cười, quan tâm từ những điều nhỏ nhất."
+        ]
       },
       "muteFallback": {
         "layout": "full_bleed_quote",
@@ -328,8 +334,8 @@
         }
       ],
       "text": {
-        "heading": "OUR JOURNEY",
-        "caption": "From friendship to forever"
+        "heading": ["OUR JOURNEY", "OUR PATH"],
+        "caption": ["From friendship to forever", "From two strangers to forever"]
       },
       "muteFallback": {
         "layout": "photo_duo",
@@ -415,7 +421,7 @@
         }
       ],
       "text": {
-        "heading": "LOVE IS IN THE AIR"
+        "heading": ["LOVE IS IN THE AIR", "LOVE ALL AROUND"]
       }
     },
     {
@@ -545,8 +551,8 @@
         }
       ],
       "text": {
-        "heading": "ONE LOVE\nONE LIFETIME",
-        "body": "Beautiful moments"
+        "heading": ["ONE LOVE\nONE LIFETIME", "ONE HEART\nONE JOURNEY"],
+        "body": ["Beautiful moments", "Quiet moments"]
       },
       "muteFallback": {
         "layout": "paper_collage",
@@ -792,7 +798,7 @@
         }
       ],
       "text": {
-        "heading": "Written in Time"
+        "heading": ["Written in Time", "A Moment in Time"]
       }
     },
     {

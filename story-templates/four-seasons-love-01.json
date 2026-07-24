@@ -176,8 +176,11 @@
         }
       ],
       "text": {
-        "heading": "Xuân · Bắt đầu",
-        "body": "Một cuộc gặp dịu dàng như mùa đầu tiên."
+        "heading": ["Xuân · Bắt đầu", "Xuân · Khởi đầu"],
+        "body": [
+          "Một cuộc gặp dịu dàng như mùa đầu tiên.",
+          "Gặp nhau nhẹ nhàng, như cách mùa xuân đến."
+        ]
       }
     },
     {
@@ -193,7 +196,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "HẠ · NHỮNG CHUYẾN ĐI",
+      "captionPattern": ["HẠ · NHỮNG CHUYẾN ĐI", "HẠ · NHỮNG NGÀY RONG RUỔI"],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -230,7 +233,7 @@
         }
       ],
       "text": {
-        "heading": "Thu · Trưởng thành"
+        "heading": ["Thu · Trưởng thành", "Thu · Chín chắn hơn"]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -267,7 +270,7 @@
         }
       ],
       "text": {
-        "body": "Đông · Học cách sưởi ấm cho nhau."
+        "body": ["Đông · Học cách sưởi ấm cho nhau.", "Đông · Học cách giữ ấm cho nhau qua từng mùa lạnh."]
       }
     },
     {
@@ -285,7 +288,7 @@
         }
       ],
       "text": {
-        "quote": "Một mùa xuân mới · Một lời hẹn trăm năm"
+        "quote": ["Một mùa xuân mới · Một lời hẹn trăm năm", "Một mùa xuân mới bắt đầu · Một lời hẹn ước dài lâu"]
       }
     },
     {
@@ -330,7 +333,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Một mùa xuân mới, nở cùng lời hẹn ước.",
+      "captionPattern": [
+        "Một mùa xuân mới, nở cùng lời hẹn ước.",
+        "Lời hẹn ước nở cùng một mùa xuân mới."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -348,7 +354,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Và dù là mùa nào, có nhau là đủ đầy.",
+      "captionPattern": [
+        "Và dù là mùa nào, có nhau là đủ đầy.",
+        "Bốn mùa có thể đổi thay, chỉ có nhau là mãi vẹn nguyên."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

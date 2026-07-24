@@ -183,7 +183,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "WELCOME TO THE PARTY"
+      "captionPattern": ["WELCOME TO THE PARTY", "LET THE NIGHT BEGIN"]
     },
     {
       "id": "s02_toasts",
@@ -209,8 +209,11 @@
         }
       ],
       "text": {
-        "heading": "CHEERS!",
-        "caption": "Nâng ly, chúc mừng cô dâu chú rể giữa những người thân yêu nhất."
+        "heading": ["CHEERS!", "TO US"],
+        "caption": [
+          "Nâng ly, chúc mừng cô dâu chú rể giữa những người thân yêu nhất.",
+          "Lời chúc chân thành nhất, giữa vòng tay người thân."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -266,7 +269,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "FIRST DANCE",
+      "captionPattern": ["FIRST DANCE", "JUST THE TWO OF US"],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -330,7 +333,7 @@
       "signature": true,
       "durationRole": "build",
       "transitionRole": "default",
-      "captionPattern": "DANCEFLOOR ON FIRE",
+      "captionPattern": ["DANCEFLOOR ON FIRE", "TURN IT UP"],
       "repeatable": {
         "maxRepeats": 2,
         "variants": [
@@ -353,7 +356,7 @@
       "signature": true,
       "durationRole": "build",
       "transitionRole": "default",
-      "captionPattern": "ONE NIGHT, ALL IN",
+      "captionPattern": ["ONE NIGHT, ALL IN", "GO ALL OUT TONIGHT"],
       "repeatable": {
         "maxRepeats": 2,
         "variants": [
@@ -385,7 +388,7 @@
         }
       ],
       "text": {
-        "quote": "One last song · One endless story"
+        "quote": ["One last song · One endless story", "The music fades, the story doesn't"]
       }
     },
     {

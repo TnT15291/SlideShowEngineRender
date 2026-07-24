@@ -213,7 +213,10 @@
         }
       ],
       "text": {
-        "body": "Mình bắt đầu từ những điều giản dị nhất."
+        "body": [
+          "Mình bắt đầu từ những điều giản dị nhất.",
+          "Không ồn ào, chỉ cần đúng nhịp của nhau."
+        ]
       }
     },
     {
@@ -277,10 +280,13 @@
       ],
       "text": {
         "heading": {
-          "value": "Hành trình",
+          "value": ["Hành trình", "Chặng đường"],
           "color": "#2E6F6A"
         },
-        "caption": "Từng bước, từng nơi, đều có nhau bên cạnh."
+        "caption": [
+          "Từng bước, từng nơi, đều có nhau bên cạnh.",
+          "Mỗi chặng đường đều có nhau đồng hành."
+        ]
       }
     },
     {
@@ -289,7 +295,10 @@
       "background": "assets/backgrounds/editorial/deep-teal-glass-caustics.png",
       "durationRole": "calm",
       "transitionRole": "memory",
-      "captionPattern": "Giữa muôn vàn chuyển động, mình vẫn tìm thấy nhau.",
+      "captionPattern": [
+        "Giữa muôn vàn chuyển động, mình vẫn tìm thấy nhau.",
+        "Giữa bộn bề, vẫn chỉ tìm về phía nhau."
+      ],
       "photoSlots": []
     },
     {
@@ -325,7 +334,10 @@
         }
       ],
       "text": {
-        "quote": "Bình yên nằm trong những điều giản dị."
+        "quote": [
+          "Bình yên nằm trong những điều giản dị.",
+          "Hạnh phúc không cần to tát."
+        ]
       }
     },
     {
@@ -364,7 +376,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Rõ ràng và giản đơn — như cách mình chọn nhau.",
+      "captionPattern": [
+        "Rõ ràng và giản đơn — như cách mình chọn nhau.",
+        "Đơn giản thôi, vì đó là mình."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -382,7 +397,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Không cần nhiều lời, chỉ cần có nhau.",
+      "captionPattern": [
+        "Không cần nhiều lời, chỉ cần có nhau.",
+        "Ít lời, nhiều thấu hiểu."
+      ],
       "photoSlots": [
         {
           "slot": "hero",

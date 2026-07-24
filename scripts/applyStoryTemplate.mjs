@@ -31,6 +31,7 @@ import { scenePhotoCount } from "./lib/scenePhotoCount.mjs";
 import { chooseMusicEdit, resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
 import { NATURAL_SEC_PER_PHOTO } from "./lib/fitPlan.mjs";
+import { hashSeed, pickVariant as pickVariantFor } from "./lib/copyVariants.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_MAX, EASING_EFFECTS,
 } from "./lib/engineCapabilities.mjs";
@@ -134,6 +135,17 @@ const tokens = {
 
 function fill(text = "") {
   return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) => tokens[key] || "");
+}
+
+// Two couples buying the same recipe must not receive byte-identical wording.
+// A scene may author `text`/`captionPattern` as an ARRAY of 2-3 equivalent lines;
+// which one ships is picked deterministically off the couple's own identity (see
+// lib/copyVariants.mjs) — stable across re-renders of the SAME brief, different
+// across different couples. A plain string/object value (every scene authored
+// before this existed) passes through unchanged.
+const customerSeed = hashSeed(`${tokens.bride}|${tokens.groom}|${tokens.date}`);
+function pickVariant(value, key = "") {
+  return pickVariantFor(value, customerSeed, key);
 }
 
 const contentFile = path.resolve(root, `${analysisDir}/photo_content.json`);
@@ -597,11 +609,12 @@ function buildLayerSceneFromLayout(scene) {
     // ONLY for a slot the layout already has. Keys it does not have are never
     // looked up, so an invented scene or slot cannot conjure a text layer.
     const override = copyMap[scene.id]?.[slot.id];
+    const slotKey = `${scene.id}:${slot.id}`;
     const raw = typeof override === "string" && override
       ? override
-      : scene.text ? scene.text[slot.id] : undefined;
+      : pickVariant(scene.text ? scene.text[slot.id] : undefined, slotKey);
     const obj = raw && typeof raw === "object" ? raw : null;
-    const value = fill(obj ? obj.value : raw);
+    const value = fill(obj ? pickVariant(obj.value, `${slotKey}:value`) : raw);
     if (!value) continue;
     const role = obj?.fontRole || slot.fontRole || "body";
     layers.push(txt(
@@ -624,8 +637,8 @@ function buildLayerSceneFromLayout(scene) {
 
 // Emit a caption only when the scene actually supplies copy — recipes that want
 // "photos only" montage beats just omit captionPattern.
-const capsFor = (pattern, role = "caption") => {
-  const t = fill(pattern);
+const capsFor = (pattern, role = "caption", key = "") => {
+  const t = fill(pickVariant(pattern, key ? `${key}:captionPattern` : ""));
   return t ? [cap(t, role)] : [];
 };
 
@@ -652,25 +665,25 @@ function buildScene(scene) {
       template: scene.template,
       assets: hybridAssets,
       params: scene.params || {},
-      captions: capsFor(scene.captionPattern),
+      captions: capsFor(scene.captionPattern, "caption", scene.id),
     };
   }
   if (scene.effect === "layer_scene") return buildLayerSceneFromLayout(scene);
   if (scene.effect === "memory_wall") {
-    return { effect: "memory_wall", images: photosFor("memories", scene, 5), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
+    return { effect: "memory_wall", images: photosFor("memories", scene, 5), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
   }
   if (scene.effect === "collage_grid") {
-    return { effect: "collage_grid", images: photosFor("grid", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
+    return { effect: "collage_grid", images: photosFor("grid", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
   }
   if (["film_roll_left", "film_roll_up", "film_roll_right", "photo_strip_up", "photo_strip_left", "photo_strip_right"].includes(scene.effect)) {
-    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), params: scene.params || {}, captions: capsFor(scene.captionPattern) };
+    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
   }
   if (scene.effect === "double_exposure") {
-    return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern) };
+    return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern, "caption", scene.id) };
   }
   if (scene.effect === "video_background") {
     if (!scene.background) throw new Error(`Scene ${scene.id}: video_background needs a 'background' video path`);
-    return { effect: "video_background", background: scene.background, captions: capsFor(scene.captionPattern) };
+    return { effect: "video_background", background: scene.background, captions: capsFor(scene.captionPattern, "caption", scene.id) };
   }
   if (scene.effect === "mask_reveal") {
     const isOpening = scene === expandedScenes?.[0];
@@ -681,7 +694,7 @@ function buildScene(scene) {
       image: maskImage,
       mask: scene.mask || "assets/masks/particle_gather.mp4",
       params: scene.params || {},
-      captions: capsFor(scene.captionPattern),
+      captions: capsFor(scene.captionPattern, "caption", scene.id),
       ...focusOf(maskImage),
     };
   }
@@ -693,7 +706,7 @@ function buildScene(scene) {
     // and the build died on an unrelated scene. Same bug, second door.
     const image = scene === expandedScenes?.[0] ? heroPhoto.file : photo("hero", scene);
     if (scene === expandedScenes?.[0]) { used.add(image); lastPhoto = heroPhoto; }
-    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role), ...focusOf(image) };
+    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role, scene.id), ...focusOf(image) };
     if (scene.easing && EASING_EFFECTS.has(scene.effect)) slide.easing = scene.easing;
     return slide;
   }

@@ -64,7 +64,15 @@ const prompt = exists(promptPath) ? fs.readFileSync(path.resolve(root, promptPat
 // problem, it is the wrong film. So token slots are withheld from the model
 // entirely: they are never offered, and never accepted back.
 const TOKEN = /\{\{\s*\w+\s*\}\}/;
-const rawValue = (v) => (v && typeof v === "object" ? String(v.value ?? "") : String(v ?? ""));
+// A slot value may be an ARRAY of per-customer variants (see pickVariant in
+// applyStoryTemplate.mjs). Show the model the first one as "the current line" —
+// it only needs a representative baseline to personalize, not every option.
+const first = (v) => (Array.isArray(v) ? v[0] : v);
+const rawValue = (v) => {
+  const outer = first(v);
+  const inner = outer && typeof outer === "object" ? first(outer.value) : outer;
+  return String(inner ?? "");
+};
 
 const slots = {};
 const factSlots = {};
