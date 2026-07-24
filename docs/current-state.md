@@ -727,8 +727,17 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
   full-song hoặc highlight có chủ đích; có regression cho album ít ảnh/lắm ảnh.
 - ⬜ Tier template: tiêu thụ `photo_content.json` khi có (match slot theo tag family/couple thay vì
   chỉ orient/quality — scene "Gia đình" hiện có thể nhận ảnh couple selfie).
-- ⬜ Recipe copy: 2–3 biến thể câu chữ mỗi scene (2 khách cùng mua 1 template không nhận video
-  giống hệt câu chữ).
+- ✅ **Recipe copy: 2–3 biến thể câu chữ mỗi scene (2026-07-25).** `scene.text`/`captionPattern` có
+  thể khai là MẢNG 2-3 dòng thay vì 1 chuỗi cố định; `scripts/lib/copyVariants.mjs` chọn xác định
+  (hash `bride|groom|date`, salt theo từng scene/slot để các field không lật cùng lúc theo 1 bit
+  toàn cục) → cùng brief render lại y hệt, khác cặp đôi thì khác chữ. 0 thay đổi engine/schema —
+  resolve gọn trong `applyStoryTemplate.mjs` trước khi dựng timeline. **Bug thật bắt được lúc chứng
+  minh cơ chế**: FNV-1a thường bit thấp nhất chỉ là parity XOR của chuỗi input (nhân hằng số lẻ giữ
+  nguyên bit đó), và `% 2` (trường hợp phổ biến nhất: mảng 2 lựa chọn) đọc đúng cái bit yếu đó — hai
+  cặp đôi khác nhau có thể trùng lựa chọn ở TẤT CẢ field cùng lúc (đã quan sát thật). Sửa bằng
+  finalizer kiểu murmur3; test khoá đúng cặp seed đã gây trùng. Đã rollout cả 22 recipe (không chỉ
+  proof-of-concept modern-teal-01), mỗi recipe viết theo đúng giọng riêng. Verify: lint 22/22,
+  test:unit 268/268, quét cả 22 recipe qua `applyStoryTemplate` + engine dry-run thật — sạch hết.
 
 ## 4b. Lộ trình hiệu ứng (nguồn: `Downloads/hieu-ung-slideshow-cuoi.md`)
 
