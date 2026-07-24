@@ -4,8 +4,10 @@
   "title": "Web slideshow job request",
   "type": "object",
   "additionalProperties": false,
-  "required": ["webLanguage", "sequenceMode", "tier", "prompt", "photos"],
+  "required": ["brideName", "groomName", "webLanguage", "sequenceMode", "tier", "prompt", "photos"],
   "properties": {
+    "brideName": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "groomName": { "type": "string", "minLength": 1, "maxLength": 100 },
     "language": { "enum": ["vi", "en"] },
     "webLanguage": { "enum": ["vi", "en"] },
     "sequenceMode": { "enum": ["editorial", "chronological"] },

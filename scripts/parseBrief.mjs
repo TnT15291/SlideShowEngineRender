@@ -30,6 +30,7 @@ import {
   validateDirective, loadLedger, saveLedger, blastRadius, stampIds,
   EFFECTS, TRANSITIONS, CURVES, OVERLAYS, PACING, ACTS, ROLES,
 } from "./lib/directives.mjs";
+import { TAG_LIST } from "./lib/vocab.mjs";
 
 const root = process.cwd();
 const arg = (flag, def = "") => {
@@ -65,7 +66,7 @@ function buildSystem() {
     "substitute the nearest thing you can do — an unhonoured request must be visible, not disguised.",
     "",
     "Each directive is: {quote, kind, op, scope, target, strength, confidence}",
-    `  kind   : effect | transition | color | overlay | pacing | duration | music_mode | caption | photo | structure | story`,
+    `  kind   : effect | transition | color | overlay | pacing | duration | music_mode | caption | photo | moment | structure | story`,
     `  op     : set | forbid | require`,
     `  scope  : {"global":true} | {"act":ACT} | {"scene":"s07"} | {"role":ROLE}`,
     `  strength: "must" (an order) | "prefer" ("khoảng", "nếu được", "ưu tiên")`,
@@ -84,6 +85,7 @@ function buildSystem() {
     `  music_mode : auto | highlight | full_song | playlist | loop  (playlist/loop EXTEND a track too short for the photos — "nối thêm bài" -> playlist, "lặp lại bài" -> loop; highlight/full_song apply when the track is too LONG)`,
     `  caption    : the exact text for op=set; null for op=forbid/require`,
     `  photo      : a filename`,
+    `  moment     : one of ${TAG_LIST.join(", ")} — op is require or forbid ONLY, never set (a moment names a CONTENT TAG, not a specific photo the customer has not seen). Use it only when the customer explicitly demands or bans a moment appearing ("phải có cảnh trao nhẫn" -> require rings). A moment merely mentioned while telling their story ("chúng tôi trao nhẫn dưới hoàng hôn") is NOT a directive — it belongs in \`story\`.`,
     "",
     "Mood words are directives too when they name a look the engine has: \"hoài niệm\" -> color=vintage.",
     "But a pure story sentence (\"họ gặp nhau ở Nhật\") is NOT a directive — it belongs in `story`.",

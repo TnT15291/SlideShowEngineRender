@@ -75,6 +75,7 @@ if (!fs.existsSync(tlAbs)) { console.error(`[qaLoop] FAILED: timeline not found:
 const base = path.basename(TL).replace(/\.[^.]+$/, "");
 const proxyOut = `${analysisDir}/qa/${base}.proxy.json`;
 const clipOut = `${analysisDir}/qa/${base}.json`;
+const stateOut = `${analysisDir}/qa/${base}.loop-state.json`;
 
 const readJson = (p) => JSON.parse(fs.readFileSync(path.resolve(root, p), "utf8"));
 const writeTl = (tl) => fs.writeFileSync(tlAbs, JSON.stringify(tl, null, 2));
@@ -201,6 +202,17 @@ console.log(`[qaLoop] ${TL} — max ${MAX_REVISIONS} revision(s) after the first
 
 let revisions = 0;
 const journal = [];
+let preflightPasses = 0;
+let preflightFixes = 0;
+let preflightCapped = false;
+
+function writeState(stage, status = "running", extra = {}) {
+  const out = { status, stage, preflightPasses, preflightFixes, preflightCapped, revisions, maxRevisions: MAX_REVISIONS, updatedAt: new Date().toISOString(), ...extra };
+  fs.mkdirSync(path.dirname(path.resolve(root, stateOut)), { recursive: true });
+  fs.writeFileSync(path.resolve(root, stateOut), JSON.stringify(out, null, 2));
+}
+
+writeState("preflight");
 
 function writeSummary(manualReview = [], statusOverride = "") {
   const tl = readJson(TL);
@@ -209,6 +221,9 @@ function writeSummary(manualReview = [], statusOverride = "") {
     video: tl.output?.path ?? null,
     revisions,
     maxRevisions: MAX_REVISIONS,
+    preflightPasses,
+    preflightFixes,
+    preflightCapped,
     journal,
     manualReview,
     status: statusOverride || (manualReview.length ? "delivered_with_flags" : "clean"),
@@ -216,6 +231,7 @@ function writeSummary(manualReview = [], statusOverride = "") {
   const loopOut = `${analysisDir}/qa/${base}.loop.json`;
   fs.mkdirSync(path.dirname(path.resolve(root, loopOut)), { recursive: true });
   fs.writeFileSync(path.resolve(root, loopOut), JSON.stringify(summary, null, 2));
+  writeState(manualReview.length ? "manual_review" : "complete", "completed", { result: summary.status, manualReview });
   appendFeedback({ root, analysisDir, projectId: tl.project?.name || TL, type: "qa_completed",
     recipeId: tl.recipeDecisions?.recipeId || tl.recipeDecisions?.recipe || null, pacing: tl.recipeDecisions?.pacingVariant,
     data: { revisions, openIssues: manualReview.length, clean: !manualReview.length } });
@@ -228,15 +244,22 @@ function writeSummary(manualReview = [], statusOverride = "") {
 // PRE-FLIGHT — proxy repairs are free (no video), so they don't spend the budget.
 console.log("\n— pre-flight (no render): pacing + hero —");
 for (let pass = 1; pass <= PREFLIGHT_SAFETY_CAP; pass++) {
+  preflightPasses = pass;
   const preflight = runProxy();
   const applied = applyProxyFixes(preflight);
+  preflightFixes += applied.length;
+  writeState("preflight");
   if (!applied.length) { console.log(`  pass ${pass}: nothing left to repair (verdict=${preflight.verdict}).`); break; }
   for (const a of applied) console.log(`  pass ${pass} fix: ${a}`);
   journal.push(...applied.map((a) => `preflight: ${a}`));
   // The fix-once rule (repaired, above) means a pass with zero new fixes is the only exit
   // condition that means "actually clean" — hitting the cap instead means real problems
   // are being left unrepaired, which is worth knowing about even though pre-flight is free.
-  if (pass === PREFLIGHT_SAFETY_CAP) console.warn(`[qaLoop] pre-flight hit the ${PREFLIGHT_SAFETY_CAP}-pass safety cap while still finding fixes — this timeline may need investigation, not just more passes.`);
+  if (pass === PREFLIGHT_SAFETY_CAP) {
+    preflightCapped = true;
+    writeState("preflight");
+    console.warn(`[qaLoop] pre-flight hit the ${PREFLIGHT_SAFETY_CAP}-pass safety cap while still finding fixes — this timeline may need investigation, not just more passes.`);
+  }
 }
 
 // Do not spend an encode on a timeline that the tier is forbidden to ship.
@@ -267,6 +290,7 @@ if (skipRender) {
 }
 
 // RENDER + REVISE
+writeState("render");
 if (skipInitialRender) console.log("  using the render already produced by the render phase.");
 else { render(); console.log("  rendered."); }
 
@@ -294,6 +318,7 @@ while (true) {
     break;
   }
   revisions++;
+  writeState("revising");
   for (const a of applied) console.log(`  revision ${revisions} fix: ${a}`);
   journal.push(...applied.map((a) => `revision ${revisions}: ${a}`));
   render();
@@ -301,7 +326,30 @@ while (true) {
 }
 
 writeSummary(manualReview);
-sh(["scripts/generateContactSheet.mjs", TL, "--analysis-dir", analysisDir], "contactSheet");
+const contactWarning = `${analysisDir}/qa/${base}.contact.warning.json`;
+let contactError = "";
+let contactSheetReady = false;
+for (let attempt = 1; attempt <= 2; attempt++) {
+  const result = spawnSync(node, ["scripts/generateContactSheet.mjs", TL, "--analysis-dir", analysisDir],
+    { cwd: root, encoding: "utf8", maxBuffer: 1 << 26 });
+  if (result.status === 0) {
+    contactSheetReady = true;
+    fs.rmSync(path.resolve(root, contactWarning), { force: true });
+    break;
+  }
+  contactError = `${result.stdout || ""}${result.stderr || ""}`.trim();
+  console.warn(`[qaLoop] contact sheet attempt ${attempt}/2 failed; ${attempt < 2 ? "retrying without re-rendering video." : "continuing with the completed video."}`);
+}
+if (!contactSheetReady) {
+  fs.writeFileSync(path.resolve(root, contactWarning), JSON.stringify({
+    code: "CONTACT_SHEET_GENERATION_FAILED",
+    phase: "qa",
+    message: "Video and QA are complete, but the review contact sheet could not be created.",
+    artifact: `${analysisDir}/qa/${base}.contact.jpg`,
+    attempts: 2,
+    technicalDetail: contactError.slice(-2000),
+  }, null, 2) + "\n");
+}
 if (strict && manualReview.length) {
   console.error(`[qaLoop] QUALITY GATE FAILED: ${manualReview.length} issue(s) remain after ${revisions} revision(s).`);
   process.exit(1);

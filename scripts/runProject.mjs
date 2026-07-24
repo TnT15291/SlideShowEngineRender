@@ -25,6 +25,7 @@ import { spawnSync } from "node:child_process";
 import { createJobTracker } from "./lib/jobManifest.mjs";
 import { arg, loadProject, root } from "./lib/project.mjs";
 import { inspectResume } from "./lib/resumeProject.mjs";
+import { recordIncident } from "./lib/incidents.mjs";
 
 const projectArg = arg("--project");
 const project = loadProject(projectArg);
@@ -114,6 +115,7 @@ const compliance = `${analysisDir}/compliance.json`;
 const visionSample = arg("--vision-sample", "24");
 const qaDir = `${analysisDir}/qa`;
 const base = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
+const contactWarning = `${qaDir}/${base}.contact.warning.json`;
 const music = project.manifest.music[0];
 const musicPath = music ? project.rel(music) : "";
 const musicAnalysis = music ? `${analysisDir}/music/${path.parse(music).name}.json` : "";
@@ -487,6 +489,7 @@ try {
         "--timeline", timeline,
         "--directives", directives,
         ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
+        "--content", content,
         "--out", compliance,
         "--report-only",
       ], "node 0b: brief compliance (report)");
@@ -545,9 +548,20 @@ try {
         "--timeline", timeline,
         "--directives", directives,
         ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
+        "--content", content,
         "--out", compliance,
         ...(acceptBriefGaps ? ["--report-only"] : []),
-      ], `node 0b: brief compliance (${acceptBriefGaps ? "report, gaps accepted" : "gate"})`);
+        ], `node 0b: brief compliance (${acceptBriefGaps ? "report, gaps accepted" : "gate"})`);
+      if (fs.existsSync(path.resolve(root, contactWarning))) {
+        const warning = JSON.parse(fs.readFileSync(path.resolve(root, contactWarning), "utf8"));
+        tracker.warn({
+          code: warning.code,
+          phase: "qa",
+          message: warning.message,
+          artifact: warning.artifact,
+          attempts: warning.attempts,
+        });
+      }
     });
   }
 
@@ -561,13 +575,36 @@ try {
       "--tier", tier === "premium" ? survivingTier() : tier,
       "--analysis-dir", analysisDir,
       "--out-dir", project.rel("output/deliver"),
+      "--preview-seconds", "60",
+      "--watermark", "StoReel Preview",
     ], "node 12: deliver"));
   }
 
   tracker.finish();
+  if (fs.existsSync(path.resolve(root, contactWarning))) {
+    const warning = JSON.parse(fs.readFileSync(path.resolve(root, contactWarning), "utf8"));
+    await recordIncident({
+      code: warning.code,
+      projectId: project.manifest.id,
+      userId: project.manifest.ownerId,
+      phase: "qa",
+      message: warning.message,
+      technicalDetail: warning.technicalDetail,
+      customerImpact: "Review contact sheet unavailable; video remains available.",
+    });
+  }
   console.log(`\n[runProject] SUCCESS (${tier}): ${dryRun ? timeline : videoOut}`);
 } catch (error) {
   tracker.fail(currentPhase, error);
+  await recordIncident({
+    code: `PIPELINE_${currentPhase.toUpperCase()}_FAILED`,
+    projectId: project.manifest.id,
+    userId: project.manifest.ownerId,
+    phase: currentPhase,
+    message: error.message || String(error),
+    technicalDetail: error.stack,
+    customerImpact: currentPhase === "render" ? "Video was not completed." : `Pipeline stopped during ${currentPhase}.`,
+  });
   console.error(`\n[runProject] FAILED in ${currentPhase}: ${error.message}`);
   process.exit(error.exitCode || 1);
 }

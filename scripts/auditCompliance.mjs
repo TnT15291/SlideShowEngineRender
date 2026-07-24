@@ -18,7 +18,7 @@
 //
 // Usage: node scripts/auditCompliance.mjs --timeline <tl.json> --directives <dir.json>
 //        [--notes analysis/director_notes.json] [--plan analysis/story_plan.json]
-//        [--out analysis/compliance.json] [--report-only]
+//        [--content analysis/photo_content.json] [--out analysis/compliance.json] [--report-only]
 import fs from "node:fs";
 import path from "node:path";
 import { loadLedger, active, audit, formatReport } from "./lib/directives.mjs";
@@ -32,6 +32,7 @@ const timelinePath = arg("--timeline");
 const directivesPath = arg("--directives");
 const notesPath = arg("--notes", "");
 const planPath = arg("--plan", "");
+const contentPath = arg("--content", "");
 const outPath = arg("--out", "");
 const reportOnly = process.argv.includes("--report-only");
 
@@ -59,9 +60,17 @@ if (!orders.length && !(ledger.unmapped || []).length) {
   process.exit(0);
 }
 
+// `moment` directives are audited against CONTENT TAGS, not the timeline alone — build
+// a filename -> tags lookup the same shape applyStoryTemplate's photo pool already has.
+const contentDoc = readIf(contentPath);
+const photoTags = contentDoc
+  ? Object.fromEntries((contentDoc.photos || []).map((p) => [p.file, p.tags || []]))
+  : null;
+
 const report = audit(orders, timeline, {
   directorNotes: readIf(notesPath),
   storyPlan: readIf(planPath),
+  photoTags,
 });
 
 const doc = {

@@ -77,8 +77,12 @@ export function createJobTracker(project) {
       document.phases[phase] = { ...document.phases[phase], status: "pending", reason };
       write();
     },
+    warn(warning) {
+      document.warnings = [...(document.warnings || []), warning];
+      write();
+    },
     finish() {
-      document.status = "completed";
+      document.status = document.warnings?.length ? "completed_with_warning" : "completed";
       delete document.currentPhase;
       delete document.error;
       write();

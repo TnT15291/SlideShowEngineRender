@@ -67,6 +67,7 @@ import {
 import { arg, loadProject, root } from "./lib/project.mjs";
 import { revisionInvalidation, invalidateApproval } from "./lib/revisionInvalidation.mjs";
 import { previewChange, formatDiff, photoDemandFrom } from "./lib/revisionDiff.mjs";
+import { TAG_LIST } from "./lib/vocab.mjs";
 
 const has = (flag) => process.argv.includes(flag);
 const die = (msg) => { console.error(`[reviseProject] FAILED: ${msg}`); process.exit(1); };
@@ -125,7 +126,7 @@ function buildSystem() {
     "nearest thing you can do: they will watch the next cut expecting what they asked for.",
     "",
     "Each directive is: {quote, kind, op, scope, target, strength, confidence}",
-    "  kind   : effect | transition | color | overlay | pacing | duration | music_mode | caption | photo | structure | story",
+    "  kind   : effect | transition | color | overlay | pacing | duration | music_mode | caption | photo | moment | structure | story",
     "  op     : set | forbid | require",
     '  scope  : {"global":true} | {"act":ACT} | {"scene":"s07"} | {"role":ROLE}',
     '  strength: "must" | "prefer"',
@@ -141,6 +142,7 @@ function buildSystem() {
     `  pacing     : ${[...PACING].join(", ")}`,
     "  duration   : a NUMBER of seconds.   caption: the exact text for op=set, else null.   photo: a filename.",
     `  music_mode : ${[...MUSIC_MODES].join(" | ")}  (playlist/loop EXTEND a track too short for the photos — "nối thêm bài" -> playlist, "lặp lại bài" -> loop; highlight/full_song apply when the track is too LONG — the engine CAN do both, do not report either as impossible)`,
+    `  moment     : one of ${TAG_LIST.join(", ")} — op is require or forbid ONLY (a moment is a CONTENT TAG, not a filename). "phải có cảnh trao nhẫn" -> require rings.`,
     "",
     "Use kind=structure or kind=story ONLY if they want the film RE-TOLD (different order, different narrative).",
     "Asking to change a look, an effect, a length or some words is NOT a story change.",

@@ -117,26 +117,44 @@ function fmtCounts(obj) {
   return entries.length ? entries.map(([k, v]) => `${k}=${v}`).join(", ") : "(none tagged)";
 }
 
-// --- STUB: four house archetypes (deterministic) ---------------------------
+// --- STUB: four house archetypes, RANKED against this photo set ------------
+// Each archetype already carries a `fitReason` describing which photo profile it
+// suits — but nothing ever read it, so a no-key run recommended "Luxury Wedding
+// Film" (options[0]) for every couple regardless of what was actually in their
+// photos. `score` below is that same fitReason, made computable: the numbers it
+// reads are exactly the ones `buildProfile` already derives from photo_content.json,
+// so a candid-and-group-heavy set now genuinely recommends "Family & Friends"
+// instead of a luxury edit it has no hero frames to support.
+const tagCount = (...tags) => tags.reduce((n, t) => n + (profile.tags[t] || 0), 0);
 function stubOptions() {
-  return [
+  const archetypes = [
     { title: "Luxury Wedding Film", mood: "elegant, refined, unhurried", pacing: "slow",
       emotionalArc: "quiet awe that swells to a graceful, glowing finale",
       summary: "A minimal, cinematic edit that lets the strongest images breathe with sparse, tasteful text.",
-      captionTone: "minimal and poetic", fitReason: "suits sets with several strong hero-worthy frames." },
+      captionTone: "minimal and poetic", fitReason: "suits sets with several strong hero-worthy frames.",
+      score: profile.heroCount },
     { title: "A Day To Remember", mood: "warm, heartfelt, chronological", pacing: "medium",
       emotionalArc: "gentle beginning, rising warmth, tearful-happy peak, soft landing",
       summary: "Tells the day in order, leaning into candid, emotional moments and family warmth.",
-      captionTone: "warm and personal", fitReason: "works when the set spans getting-ready through celebration." },
+      captionTone: "warm and personal", fitReason: "works when the set spans getting-ready through celebration.",
+      score: ["getting_ready", "ceremony", "reception", "party"].filter((t) => profile.tags[t]).length * 3 },
     { title: "Korean Romance", mood: "dreamy, soft, bright", pacing: "medium",
       emotionalArc: "airy and tender throughout, blooming at the couple moments",
       summary: "A light, romantic mood board of close, tender couple frames with a delicate feel.",
-      captionTone: "gentle and sparse", fitReason: "flatters portrait-heavy, tender couple photography." },
+      captionTone: "gentle and sparse", fitReason: "flatters portrait-heavy, tender couple photography.",
+      score: tagCount("portrait", "couple") + (profile.orient.portrait || 0) * 0.5 },
     { title: "Family & Friends", mood: "joyful, lively, connected", pacing: "dynamic",
       emotionalArc: "playful energy building to a big, joyful group finale",
       summary: "Centres the people around the couple — laughter, groups and celebration.",
-      captionTone: "warm and upbeat", fitReason: "shines when there are many group and candid photos." },
+      captionTone: "warm and upbeat", fitReason: "shines when there are many group and candid photos.",
+      score: tagCount("group", "candid", "family", "friends") },
   ];
+  // Stable sort (ties keep the house order above) so a flat/empty profile — no photo_content
+  // yet, or every score landing at 0 — still returns the same sensible default it always did.
+  return archetypes
+    .map((a, i) => ({ ...a, i }))
+    .sort((a, b) => b.score - a.score || a.i - b.i)
+    .map(({ score, i, ...a }) => a);
 }
 
 // --- guardrail: coerce raw options onto the contract -----------------------

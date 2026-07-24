@@ -35,6 +35,7 @@
 //              so it is the only one that requires explicit confirmation.
 import fs from "node:fs";
 import path from "node:path";
+import { TAG_VOCAB } from "./vocab.mjs";
 
 const root = process.cwd();
 
@@ -63,7 +64,7 @@ export const ROLES = ["hero", "portrait", "group", "detail", "montage", "opening
 
 export const KINDS = new Set([
   "effect", "transition", "color", "overlay", "pacing", "duration", "music_mode",
-  "caption", "photo", "structure", "story",
+  "caption", "photo", "moment", "structure", "story",
 ]);
 
 // Montage effects read a POOL of photos; single-image effects read one. The
@@ -163,6 +164,16 @@ export function validateDirective(raw, index = 0) {
     case "photo":
       target = str(target, 300);
       if (!target) return { ok: false, reason: "photo directive with no filename", quote };
+      break;
+    case "moment":
+      // A moment is matched by CONTENT TAG ("phải có cảnh trao nhẫn"), not a filename —
+      // the customer cannot name a file they have not seen yet. It can only be required
+      // or forbidden: "set" has no meaning for a tag the pipeline does not choose a
+      // single photo for on the customer's behalf.
+      if (op !== "forbid" && op !== "require") {
+        return { ok: false, reason: `a moment can only be required or forbidden, not "${d.op}"`, quote };
+      }
+      if (!TAG_VOCAB.has(target)) return { ok: false, reason: `"${target}" is not a known photo-content tag`, quote };
       break;
     case "structure":
     case "story":
@@ -753,6 +764,24 @@ function auditOne(d, timeline, artifacts) {
       const present = used.has(d.target);
       if (d.op === "forbid") return { honored: !present, evidence: present ? `${d.target} is still in the film` : `${d.target} is not used` };
       return { honored: present, evidence: present ? `${d.target} is in the film` : `${d.target} never made the cut` };
+    }
+
+    // A moment is a CONTENT fact ("does a rings photo appear"), so its evidence needs
+    // the tag data applyToStoryboard's photo pool had — artifacts.photoTags, keyed by
+    // filename. Without it this cannot be told from a photo that was never analysed.
+    case "moment": {
+      if (!scoped.length) return { honored: false, evidence: `${where} has no slides` };
+      const tagsOf = artifacts.photoTags;
+      if (!tagsOf) return { honored: null, evidence: "no photo_content.json to check against" };
+      const hasTag = (slide) => photoFilesOf(slide).some((f) => (tagsOf[f] || []).includes(d.target));
+      const carriers = scoped.filter(hasTag);
+      if (d.op === "forbid") {
+        return { honored: carriers.length === 0, evidence: `${carriers.length} slide(s) in ${where} still show a "${d.target}" photo` };
+      }
+      return {
+        honored: carriers.length > 0,
+        evidence: carriers.length ? `"${d.target}" appears in ${where}: ${carriers.map((s) => s.id).join(", ")}` : `no "${d.target}" photo appears in ${where}`,
+      };
     }
 
     // Pacing is a feeling, not a number the timeline can be cross-examined about;

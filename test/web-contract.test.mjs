@@ -9,7 +9,7 @@ import { inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
 import { normalizeWebJobRequest } from "../scripts/lib/webJobRequest.mjs";
 
 const schema = JSON.parse(fs.readFileSync("schema/web-job-request.schema.json", "utf8"));
-const valid = { webLanguage: "vi", sequenceMode: "editorial", tier: "template", prompt: "Ngày cưới", photos: [{ file: "001.jpg", uploadIndex: 0 }] };
+const valid = { brideName: "Linh", groomName: "Nam", webLanguage: "vi", sequenceMode: "editorial", tier: "template", prompt: "Ngày cưới", photos: [{ file: "001.jpg", uploadIndex: 0 }] };
 
 test("web job contract requires the UI language and explicit photo order", () => {
   assert.deepEqual(validate(schema, valid), []);
@@ -18,6 +18,8 @@ test("web job contract requires the UI language and explicit photo order", () =>
   assert.ok(validate(schema, { ...valid, language: "fr" }).length);
   assert.ok(validate(schema, { ...valid, photos: [{ file: "001.jpg" }] }).length);
   assert.ok(validate(schema, { ...valid, sequenceMode: "filename" }).length);
+  assert.ok(validate(schema, { ...valid, brideName: "" }).length);
+  assert.ok(validate(schema, { ...valid, groomName: undefined }).length);
 });
 
 test("video language selection overrides the web language and otherwise falls back to it", () => {

@@ -88,6 +88,28 @@ test("the customer can explicitly choose highlight, full song, or automatic leng
   assert.equal(compile("Hãy tự chọn thời lượng phù hợp").find((d) => d.kind === "music_mode")?.target, "auto");
 });
 
+test("a moment is matched by CONTENT TAG, not a filename the customer cannot know yet", () => {
+  const d = compile("Phải có cảnh trao nhẫn trong phim.");
+  const moment = d.find((x) => x.kind === "moment");
+  assert.equal(moment?.op, "require");
+  assert.equal(moment?.target, "rings");
+});
+
+test("forbidding a moment reads the negation the same way effects do", () => {
+  const d = compile("Không muốn cảnh tiệc chiêu đãi.");
+  const moment = d.find((x) => x.kind === "moment");
+  assert.equal(moment?.op, "forbid");
+  assert.equal(moment?.target, "reception");
+});
+
+test("a moment tag mentioned while telling the story is not an order", () => {
+  // "Chúng tôi trao nhẫn dưới ánh hoàng hôn" is narrating the wedding, not commanding
+  // the render — MOMENT_MUST_HAVE gates on an explicit ask, exactly like caption's
+  // require/forbid gates. Mentioning "nhẫn" alone must not fire the rule.
+  const d = compile("Chúng tôi trao nhẫn dưới ánh hoàng hôn.");
+  assert.equal(d.some((x) => x.kind === "moment"), false);
+});
+
 // ---------------------------------------------------------------------------
 // Clamping: what cannot be done is said, not substituted
 // ---------------------------------------------------------------------------
@@ -107,6 +129,18 @@ test("an off-vocabulary target is rejected, never rounded to a default", () => {
 test("layer_scene cannot be ordered — it needs a layout nobody supplied", () => {
   const r = validateDirective({ quote: "x", kind: "effect", op: "set", target: "layer_scene" });
   assert.equal(r.ok, false);
+});
+
+test("a moment can only be required or forbidden — 'set' names no single photo", () => {
+  const r = validateDirective({ quote: "x", kind: "moment", op: "set", target: "rings" });
+  assert.equal(r.ok, false);
+  assert.match(r.reason, /required or forbidden/);
+});
+
+test("a moment target must be a real photo-content tag, not an invented one", () => {
+  const r = validateDirective({ quote: "x", kind: "moment", op: "require", target: "proposal" });
+  assert.equal(r.ok, false);
+  assert.match(r.reason, /not a known photo-content tag/);
 });
 
 // ---------------------------------------------------------------------------
@@ -256,6 +290,34 @@ test("what cannot be verified is never counted as honoured", () => {
   assert.equal(report.honored, 0);
   assert.equal(report.unverifiable, 1);
   assert.equal(report.pass, true, "unverifiable must not FAIL the gate either — only false does");
+});
+
+test("a moment is audited against CONTENT TAGS, keyed by the same filenames the timeline carries", () => {
+  const d = validateDirective({ quote: "x", kind: "moment", op: "require", target: "rings", scope: { global: true } }).directive;
+  const timeline = { slides: [
+    { id: "s1", layers: [{ type: "image", path: "a.jpg" }] },
+    { id: "s2", layers: [{ type: "image", path: "b.jpg" }] },
+  ] };
+  const present = audit([d], timeline, { photoTags: { "a.jpg": ["rings", "ceremony"], "b.jpg": ["couple"] } });
+  assert.equal(present.results[0].honored, true);
+  const absent = audit([d], timeline, { photoTags: { "a.jpg": ["couple"], "b.jpg": ["couple"] } });
+  assert.equal(absent.results[0].honored, false);
+});
+
+test("a forbidden moment is honoured only when NO slide carries the tag", () => {
+  const d = validateDirective({ quote: "x", kind: "moment", op: "forbid", target: "party", scope: { global: true } }).directive;
+  const timeline = { slides: [{ id: "s1", layers: [{ type: "image", path: "a.jpg" }] }] };
+  const clean = audit([d], timeline, { photoTags: { "a.jpg": ["ceremony"] } });
+  assert.equal(clean.results[0].honored, true);
+  const broken = audit([d], timeline, { photoTags: { "a.jpg": ["party"] } });
+  assert.equal(broken.results[0].honored, false);
+});
+
+test("without photo_content data a moment is unverifiable, not silently passed", () => {
+  const d = validateDirective({ quote: "x", kind: "moment", op: "require", target: "rings", scope: { global: true } }).directive;
+  const timeline = { slides: [{ id: "s1", layers: [{ type: "image", path: "a.jpg" }] }] };
+  const report = audit([d], timeline, {});
+  assert.equal(report.results[0].honored, null);
 });
 
 test("a `prefer` order that is missed does not fail the gate; a `must` does", () => {

@@ -11,7 +11,7 @@ import { buildDiversityReport } from "../scripts/lib/diversityPlanner.mjs";
 import { createMotionPlanner } from "../scripts/lib/motionPlanner.mjs";
 import { buildColorNormalization } from "../scripts/lib/colorNormalizer.mjs";
 import { makePreviewCut } from "../scripts/lib/previewCut.mjs";
-import { buildContactSheetReport } from "../scripts/lib/contactSheetReport.mjs";
+import { buildContactSheetReport, contactSheetSampleTime } from "../scripts/lib/contactSheetReport.mjs";
 import { retargetTimeline } from "../scripts/lib/socialRetarget.mjs";
 import { compareRegression, hammingHex } from "../scripts/lib/regressionFrames.mjs";
 import { aggregateFeedback, anonymousProjectId } from "../scripts/lib/feedbackLedger.mjs";
@@ -353,6 +353,12 @@ test("global assignment reserves scarce orientations before flexible slots", () 
   assert.equal(plan.unfilled.length, 0);
 });
 
+test("contact sheet clamps timeline samples to the rendered video", () => {
+  assert.equal(contactSheetSampleTime(12, 20), 12);
+  assert.equal(contactSheetSampleTime(22, 20), 19.95);
+  assert.equal(contactSheetSampleTime(-1, 20), 0);
+});
+
 test("chronological assignment follows uploadIndex instead of editorial quality", () => {
   const photos = [
     { file: "late-best.jpg", orient: "landscape", qualityNorm: 1, uploadIndex: 2 },
@@ -527,5 +533,11 @@ test("qaLoop --skip-render honours --strict on an unresolved manual-review findi
   const runLoop = (extra) => spawnSync(process.execPath, ["scripts/qaLoop.mjs", "--timeline", timeline,
     "--analysis-dir", analysisDir, "--tier", "template", "--skip-render", ...extra], { cwd: root, encoding: "utf8" });
   assert.equal(runLoop([]).status, 0, "without --strict the finding is delivered with flags, not failed");
+  const loopSummary = JSON.parse(fs.readFileSync(path.join(analysisDir, "qa", "timeline.loop.json"), "utf8"));
+  const loopState = JSON.parse(fs.readFileSync(path.join(analysisDir, "qa", "timeline.loop-state.json"), "utf8"));
+  assert.ok(loopSummary.preflightPasses >= 1, "the report records how many free pre-flight passes actually ran");
+  assert.equal(typeof loopSummary.preflightFixes, "number");
+  assert.equal(loopState.status, "completed");
+  assert.equal(loopState.stage, "manual_review");
   assert.equal(runLoop(["--strict"]).status, 1, "with --strict an open manual-review finding must fail the gate");
 });

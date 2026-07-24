@@ -82,6 +82,12 @@ test("loads a valid project manifest", (t) => {
   assert.equal(loadProject(f.rel).manifest.id, "test-project");
 });
 
+test("accepts the owner id added by the authenticated web project creator", (t) => {
+  const f = fixture({ ownerId: "d534077f-e597-4aca-8efd-a64375b2c987" });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  assert.equal(loadProject(f.rel).manifest.ownerId, "d534077f-e597-4aca-8efd-a64375b2c987");
+});
+
 test("accepts only supported project languages", (t) => {
   const valid = fixture({ language: "en" });
   const invalid = fixture({ language: "fr" });
@@ -135,6 +141,27 @@ test("writes a schema-valid completed job manifest", (t) => {
   assert.equal(job.phases.analyze.status, "completed");
   assert.equal(job.phases.render.status, "skipped");
   assert.equal(job.currentPhase, undefined);
+});
+
+test("finishes with a warning when an optional review artifact fails", (t) => {
+  const f = fixture();
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  const tracker = createJobTracker(loadProject(f.rel));
+  tracker.initialize();
+  for (const phase of ["analyze", "plan", "build", "render", "qa", "deliver"]) tracker.skip(phase, "test fixture");
+  tracker.warn({
+    code: "CONTACT_SHEET_GENERATION_FAILED",
+    phase: "qa",
+    message: "Video and QA are complete, but the review contact sheet could not be created.",
+    artifact: "analysis/qa/timeline.contact.jpg",
+    attempts: 2,
+  });
+  tracker.finish();
+
+  const job = JSON.parse(fs.readFileSync(tracker.path, "utf8"));
+  assert.equal(job.status, "completed_with_warning");
+  assert.equal(job.warnings[0].code, "CONTACT_SHEET_GENERATION_FAILED");
+  assert.equal(job.phases.qa.status, "skipped");
 });
 
 test("records the failed phase and exit code", (t) => {

@@ -1,4 +1,6 @@
 node_modules/
+apps/web/dist/
+dist/server/
 desktop/renderer-v2/
 temp/
 tmp/
@@ -46,6 +48,10 @@ music/
 
 # Every generated video job owns private inputs, analysis, timeline, logs and output.
 projects/
+
+# Account auth state (password hashes, session tokens, billing plans).
+# Runtime state, not source — see server/services/auth.ts.
+server/data/
 
 # Root-level runtime output from legacy/demo commands. Keep only the shared engine
 # asset catalogs; every customer/job analysis belongs outside source control.

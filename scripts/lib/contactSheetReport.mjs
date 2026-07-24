@@ -44,3 +44,8 @@ export function buildContactSheetReport({ timeline, proxy, clip, diversity, colo
       : projectFlags.some((f) => f.severity === "manual-review") || scenes.some((s) => s.status === "manual-review") ? "manual-review"
         : projectFlags.length || scenes.some((s) => s.status === "warning") ? "warning" : "pass" };
 }
+
+export function contactSheetSampleTime(sceneMid, videoDuration) {
+  const lastDecodableFrame = Math.max(0, videoDuration - 0.05);
+  return Math.max(0, Math.min(sceneMid, lastDecodableFrame));
+}

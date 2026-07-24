@@ -20,6 +20,9 @@ export const GpuEffectsRoot = () => (
       width={1920}
       height={1080}
       defaultProps={{ template: "title", assets: ["gpu-effects/page-a.jpg"], params: {}, durationInFrames: 300 }}
+      calculateMetadata={({ props }) => ({
+        durationInFrames: Math.max(1, Math.round(props.durationInFrames ?? 300)),
+      })}
     />
   </>
 );

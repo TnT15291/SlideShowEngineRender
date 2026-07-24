@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { buildContactSheetReport } from "./lib/contactSheetReport.mjs";
+import { buildContactSheetReport, contactSheetSampleTime } from "./lib/contactSheetReport.mjs";
 
 const root = process.cwd();
 const arg = (flag, def = "") => { const i = process.argv.indexOf(flag); return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def; };
@@ -23,6 +23,12 @@ if (process.argv.includes("--json-only")) { console.log(`Contact-sheet QA JSON -
 const video = path.resolve(root, timeline.output.path);
 if (!fs.existsSync(video)) throw new Error(`Rendered video not found: ${timeline.output.path}`);
 const ffmpeg = process.env.FFMPEG_PATH || "ffmpeg";
+const ffprobe = process.env.FFPROBE_PATH || ffmpeg.replace(/ffmpeg(\.exe)?$/i, (_, ext) => `ffprobe${ext || ""}`);
+const probe = spawnSync(ffprobe, ["-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", video], { encoding: "utf8" });
+const videoDuration = Number(probe.stdout);
+if (probe.status !== 0 || !Number.isFinite(videoDuration) || videoDuration <= 0) {
+  throw new Error(`Could not determine rendered video duration: ${(probe.stderr || probe.stdout || "").trim()}`);
+}
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-contact-"));
 try {
   const cards = [];
@@ -34,8 +40,10 @@ try {
     const esc = (p) => p.replace(/\\/g, "/").replace(/:/g, "\\:").replace(/'/g, "\\'");
     const font = path.resolve(root, "fonts/BeVietnamPro-Regular.ttf");
     const vf = `scale=480:270:force_original_aspect_ratio=decrease,pad=480:270:(ow-iw)/2:(oh-ih)/2:black,pad=480:320:0:0:${color},drawtext=fontfile='${esc(font)}':textfile='${esc(labelFile)}':fontcolor=white:fontsize=16:x=10:y=282`;
-    const r = spawnSync(ffmpeg, ["-v", "error", "-y", "-ss", String(scene.mid), "-i", video, "-frames:v", "1", "-vf", vf, "-q:v", "3", card], { encoding: "utf8" });
+    const sampleTime = contactSheetSampleTime(scene.mid, videoDuration);
+    const r = spawnSync(ffmpeg, ["-v", "error", "-y", "-ss", String(sampleTime), "-i", video, "-frames:v", "1", "-vf", vf, "-q:v", "3", card], { encoding: "utf8" });
     if (r.status !== 0) throw new Error(`frame ${scene.id}: ${r.stderr}`);
+    if (!fs.existsSync(card)) throw new Error(`frame ${scene.id}: ffmpeg produced no image at ${sampleTime}s`);
     cards.push(card);
   }
   const cols = Math.min(4, cards.length), rows = Math.ceil(cards.length / cols);

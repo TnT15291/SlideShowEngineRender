@@ -8,7 +8,7 @@
   "properties": {
     "schemaVersion": { "const": 1 },
     "projectId": { "type": "string", "minLength": 1 },
-    "status": { "enum": ["running", "completed", "failed", "paused"] },
+    "status": { "enum": ["running", "completed", "completed_with_warning", "failed", "paused"] },
     "startedAt": { "type": "string", "minLength": 1 },
     "updatedAt": { "type": "string", "minLength": 1 },
     "currentPhase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },
@@ -20,6 +20,21 @@
         "phase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },
         "message": { "type": "string", "minLength": 1 },
         "exitCode": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "phase", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "phase": { "enum": ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] },
+          "message": { "type": "string", "minLength": 1 },
+          "artifact": { "type": "string", "minLength": 1 },
+          "attempts": { "type": "integer", "minimum": 1 }
+        }
       }
     },
     "phases": {

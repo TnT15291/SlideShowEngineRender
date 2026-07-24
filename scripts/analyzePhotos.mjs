@@ -118,10 +118,10 @@ function hamming(a, b) {
 }
 
 const files = fs.readdirSync(inputDir)
-  .filter((n) => /\.(jpe?g|png)$/i.test(n))
+  .filter((n) => /\.(jpe?g|png|webp|heic|heif)$/i.test(n))
   .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-if (!files.length) { console.error(`[analyzePhotos] FAILED: no .jpg/.png found in ${inputDir}`); process.exit(1); }
+if (!files.length) { console.error(`[analyzePhotos] FAILED: no supported photo files found in ${inputDir}`); process.exit(1); }
 
 const photos = [];
 const failures = [];

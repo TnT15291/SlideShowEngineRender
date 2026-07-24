@@ -11,7 +11,7 @@ backend hiện tại:
 | Mảnh | Vị trí | Thực trạng |
 |---|---|---|
 | Electron renderer cũ | `desktop/renderer/` + `desktop/main.cjs` | **Có IPC thật**, chạy được: `analyze` → `director:{semantics,options,notes,plan,timeline}` → `dryRun` → `preview:{generate,select,approve,renderFull}` → `render:start`. Nhưng đây là đường **Premium/Lite node-by-node cũ** — không gọi `applyStoryTemplate.mjs` (tier template/recipe), không gọi `qaLoop.mjs`, không gọi `reviseProject.mjs`, không gọi `deliver.mjs`. |
-| `desktop/ui/` ("StoReel") | React + Vite + Tailwind, bạn vừa mở `App.tsx` | **Mockup tĩnh 100%** — `projects`, `moods`, metric số, "Proposed story flow" đều hardcode trong component, không có `fetch`/IPC nào. Nav mới phác 5 mục: AI Director, Projects, Assets, Timeline, Render queue. Footer ghi "Studio Admin / Local production workspace" → đây là **công cụ vận hành của studio**, không phải trang khách tự đặt hàng. |
+| `apps/web/` ("StoReel") | React + Vite + Tailwind web app | UI đang chuyển từ mockup sang dữ liệu HTTP API. Nav mới phác các mục AI Director, Projects, Recipe Library, Assets, Timeline và Render queue. Đây là **công cụ vận hành studio trên web**, không phải renderer Electron hay trang khách tự đặt hàng. |
 | `schema/web-job-request.schema.json` | mới thêm 2026-07-20 | Hợp đồng cho một **intake nhẹ** (webLanguage, sequenceMode, tier, prompt, photos[], musicMode?, recipe?) — validate xong bằng `test/web-contract.test.mjs`, nhưng **chưa có server nào đọc nó**. Đây là chữ ký của một web đặt hàng tự phục vụ trong tương lai, tách biệt khỏi StoReel. |
 
 **Giả định của tài liệu này**: bạn đang hỏi về mảnh thứ hai — kế thừa/mở rộng StoReel thành web UI
@@ -191,9 +191,8 @@ là kết quả sau khi khách yêu cầu sửa** (`reviseProject.mjs`, xem comm
   `deliver.mjs`, `suggestCull.mjs`, `selectStoryOption.mjs`/`selectMusicEdit.mjs` (cửa sổ quyết
   định). `desktop/main.cjs` hiện chỉ bọc đường Premium/Lite node-rời cũ — đây là khối việc backend
   lớn nhất trước khi bất kỳ tab nào ở §3.3/3.5/3.6/3.7 chạy thật thay vì mockup.
-- **`desktop/renderer-v2/`** là bundle đã build (chỉ có `dist`, không thấy source trong repo) — cần
-  xác nhận nó build từ đâu trước khi quyết định StoReel (`desktop/ui/`) có thay thế nó hay chạy song
-  song.
+- **`desktop/renderer-v2/`** là bundle Electron cũ; source StoReel đã được chuẩn hóa ở `apps/web/`
+  và build độc lập ra `apps/web/dist/`. Hai sản phẩm không dùng chung IPC contract.
 
 ## 6. Nhánh riêng: customer self-serve (web-job-request.schema.json)
 
@@ -207,11 +206,45 @@ cùng dữ liệu.
 
 ---
 
-## 7. Thứ tự làm hợp lý (không phải cam kết, chỉ là gợi ý theo phụ thuộc)
+## 7. Thứ tự triển khai web
 
-1. Recipe Library (§2.3) — chặn Intake nếu thiếu, mà lại rẻ nhất (đọc file tĩnh, không cần IPC mới).
-2. IPC cho `applyStoryTemplate.mjs` + `qaLoop.mjs` + `deliver.mjs` — mở khoá toàn bộ nhánh tier
-   template chạy thật trong UI (rẻ nhất về AI, nhiều test nhất, rủi ro thấp nhất).
-3. Revisions (§3.6) — đây là sản phẩm thật theo đúng góc nhìn đã chốt, ưu tiên hơn hoàn thiện nốt
-   nhánh Premium 4 hướng/music-window (vốn đã có IPC một phần, chỉ thiếu UI).
-4. Cửa sổ quyết định thật (gửi khách qua kênh thật) — phụ thuộc Settings (§2.5) có kênh trước.
+1. **Chuẩn hóa cấu trúc web — hoàn thành.** StoReel sống tại `apps/web/`, dùng React + Vite +
+   shadcn/ui và không phụ thuộc Electron IPC.
+2. **HTTP API nền tảng — hoàn thành.** API có health check, response envelope, CORS, Zod validation,
+   error boundary, build production và proxy dev/preview.
+3. **Recipe Library — hoàn thành.** API đọc `story-templates/*.json` + `layouts/library.json`; UI có danh sách,
+   tìm kiếm/lọc, chi tiết recipe và dữ liệu fit/pacing/story arc thật.
+4. **Projects và Dashboard — hoàn thành.** API đọc `project.json` + `analysis/job-manifest.json`; Dashboard và
+   trang Projects dùng status/currentPhase/progress/error thật, phân biệt paused với failed.
+5. **Create New Film — Intake — hoàn thành.** Tên project/cặp đôi, language, sequenceMode, tier; tier template
+   bắt buộc chọn recipe và không có fallback ngầm.
+6. **Upload ảnh và nhạc — hoàn thành.** Upload theo project workspace, giữ `uploadIndex`, validate MIME/size,
+   progress/retry và không nhận filesystem path từ browser.
+7. **Job Runner — hoàn thành.** Tạo/cancel job, khóa xung đột theo project, stream log/progress qua SSE và dùng
+   chung state pending/running/paused/failed/completed.
+8. **Photos & Music Analysis — hoàn thành.** Nối analyze photo/music, hiện lỗi probe rõ ràng, ước tính phí vision
+   trước khi chạy và thêm cull suggestion có bước Apply riêng.
+9. **Tier Template end-to-end — hoàn thành.** Job Runner có chế độ Template MVP nối recipe → timeline →
+   render → rule-based QA → preview → delivery; dry-run vẫn là gate riêng trước render. Web đọc artifact qua
+   allowlist API, phát preview bằng HTTP Range và cho tải master/summary nội bộ.
+10. **Timeline Viewer — hoàn thành.** Danh sách scene/slot/effect/layout/transition/duration, story flow
+    và tổng thời lượng thật; thumbnail từng scene, preview 2,5 giây cuối của render để kiểm tra reveal,
+    thay một slot bằng ảnh đã upload, schema validation + atomic write và invalidate render/QA/delivery.
+    Chưa làm canvas kéo-thả.
+11. **Revisions — hoàn thành.** Prompt sửa nằm trên story flow và gọi `reviseProject.mjs`; preview giữ nguyên
+    diff scene/text chính xác, cảnh báo montage phá huỷ, confirm riêng cho restory, ledger/undo hai bước,
+    budget mặc định hai vòng và invalidate preview/delivery cũ. Apply chỉ đưa job về `paused` để người dùng
+    chủ động chạy lại pipeline, không giả trạng thái đang render.
+12. **AI Director Lite/Premium — hoàn thành.** Workflow thật nằm trong từng project và ẩn với Template:
+    Lite tạo một story từ brief; Premium tạo bốn direction A–D, mở decision window 24 giờ, ghi lựa chọn
+    người dùng, music highlight/full-song, bảng director notes đã guardrail và story plan năm màn. Mọi thay
+    đổi đưa plan/build/render/QA/delivery về pending; Job Runner dry-run + Resume tạo timeline director-aware.
+13. **QA nâng cao — hoàn thành.** `qaLoop.mjs` ghi live stage riêng (`preflight`/`render`/`revising`),
+    số pass và free fixes; web đọc proxy/clip/loop reports để hiện revision budget, repair journal, verdict
+    `ok`/`review`/`unknown` và exact manual-review reasons. `unknown` là bookend vision chưa có kết luận,
+    không bị hiển thị như pipeline failure.
+14. **Delivery và vận hành — hoàn thành.** Mọi tier có chế độ Render + QA + Delivery; preview tối đa 60 giây
+    mang watermark StoReel, phát/tải qua request có xác thực. Approval gắn với exact preview và tự invalidated
+    khi timeline đổi; operator release là bước thủ công riêng trước khi tải master, không giả trạng thái thanh toán.
+    UI hiển thị/tải deliverables và các trường audit thật: tier, photo-content provenance, QA verdict,
+    thumbnail chosenBy. Settings, kênh khách hàng mở rộng và payment gateway vẫn ngoài phạm vi v1.

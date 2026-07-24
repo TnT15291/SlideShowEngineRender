@@ -225,7 +225,18 @@
             "motion": { "enum": ["none", "zoom_in", "zoom_out", "pan_left", "pan_right", "pan_up", "pan_down"], "description": "Continuous Ken-Burns over the whole slide (implies cover)." },
             "motionStrength": { "type": "number", "minimum": 0.01, "maximum": 0.12, "description": "Conservative travel/zoom amount for layer motion." },
             "easing": { "enum": ["gentle", "snap", "bounce"] },
-            "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 } }, "additionalProperties": false },
+            "focusX": { "type": "number", "minimum": 0, "maximum": 1 },
+            "focusY": { "type": "number", "minimum": 0, "maximum": 1 },
+            "faceBox": {
+              "type": "object", "required": ["x", "y", "width", "height"], "additionalProperties": false,
+              "properties": {
+                "x": { "type": "number", "minimum": 0, "maximum": 1 },
+                "y": { "type": "number", "minimum": 0, "maximum": 1 },
+                "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+                "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+              }
+            },
+            "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "file": { "type": "string", "minLength": 1 }, "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "confidence": { "type": "number", "minimum": 0, "maximum": 1 }, "reason": { "type": "string" } }, "additionalProperties": false },
             "frame": {
               "type": "object",
               "description": "Card treatment: rounded corners, white matte border, soft drop shadow.",
@@ -317,7 +328,7 @@
         },
         "captions": { "type": "array", "items": { "$ref": "#/$defs/caption" }, "description": "Baked-in drawtext lines. For layer_scene prefer text layers instead." },
         "color": { "$ref": "#/$defs/colorGrade" },
-        "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 } }, "additionalProperties": false },
+        "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "file": { "type": "string", "minLength": 1 }, "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "confidence": { "type": "number", "minimum": 0, "maximum": 1 }, "reason": { "type": "string" } }, "additionalProperties": false },
         "tiltShift": { "type": "object", "required": ["focusY", "bandHeight", "blur"], "properties": { "focusY": { "type": "number", "minimum": 0, "maximum": 1 }, "bandHeight": { "type": "number", "minimum": 0.05, "maximum": 0.8 }, "blur": { "type": "number", "minimum": 1, "maximum": 40 } }, "additionalProperties": false, "description": "Native tilt_shift controls. focusY and bandHeight are normalized to frame height." }
       },
       "allOf": [

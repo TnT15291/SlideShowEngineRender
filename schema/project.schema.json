@@ -22,6 +22,7 @@
     "language": { "enum": ["vi", "en"] },
     "sequenceMode": { "enum": ["editorial", "chronological"] },
     "createdAt": { "type": "string", "minLength": 1 },
+    "ownerId": { "type": "string", "minLength": 1 },
     "promptFile": { "type": "string", "minLength": 1 },
     "inputDir": { "type": "string", "minLength": 1 },
     "music": {

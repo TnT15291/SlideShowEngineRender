@@ -148,6 +148,8 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   assert.equal(summary.tier, "lite");
   assert.equal(summary.qa.verdict, "ok");
   assert.equal(summary.provenance.photoContent, "stub");
+  assert.equal(summary.preview.watermark, "StoReel Preview");
+  assert.ok(summary.preview.durationSec <= 60.1);
 
   const proxyPath = path.join(qaDir, "timeline.proxy.json");
   fs.rmSync(proxyPath);

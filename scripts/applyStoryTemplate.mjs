@@ -136,13 +136,41 @@ function fill(text = "") {
   return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) => tokens[key] || "");
 }
 
-const excluded = new Set(brief.excludePhotos || []);
 const contentFile = path.resolve(root, `${analysisDir}/photo_content.json`);
 const contentDoc = fs.existsSync(contentFile) ? JSON.parse(fs.readFileSync(contentFile, "utf8")) : { photos: [] };
 const contentByFile = new Map((contentDoc.photos || []).map((p) => [p.file, p]));
+
+// `moment` directives ("phải có cảnh trao nhẫn") are matched by CONTENT TAG, not
+// filename — the customer cannot name a file they have not seen yet. Resolve them here,
+// into the SAME must-use/exclude locks a hand-typed brief.mustUsePhotos/excludePhotos
+// already drives (mustUse below, and audit() reads the same evidence either way), so
+// this is one enforcement mechanism, not a second one that could drift from the first.
+const momentOrders = orders.filter((d) => d.kind === "moment");
+const momentForbidFiles = [];
+for (const d of momentOrders) {
+  if (d.op !== "forbid") continue;
+  const matches = [...contentByFile.entries()].filter(([, p]) => (p.tags || []).includes(d.target)).map(([f]) => f);
+  if (matches.length) { momentForbidFiles.push(...matches); appliedIds.add(d.id); }
+}
+
+const excluded = new Set([...(brief.excludePhotos || []), ...momentForbidFiles]);
 const photos = (photosDoc.photos || []).filter((p) => !excluded.has(p.file))
   .map((p) => ({ ...p, ...contentByFile.get(p.file), file: p.file }));
 if (photos.length === 0) throw new Error(`${photosPath} has no photos`);
+
+// `require` picks the single BEST matching photo (highest heroScore) so "phải có cảnh
+// trao nhẫn" does not lock in the blurriest ring shot in the set — same reasoning as
+// mustUsePhotos, just resolved from a tag instead of typed by hand. No match → nothing
+// is locked, and audit() reports the miss honestly rather than this failing silently.
+const momentRequireFiles = momentOrders
+  .filter((d) => d.op === "require")
+  .map((d) => {
+    const matches = photos.filter((p) => (p.tags || []).includes(d.target));
+    if (!matches.length) return null;
+    appliedIds.add(d.id);
+    return [...matches].sort((a, b) => (b.heroScore ?? 0) - (a.heroScore ?? 0))[0].file;
+  })
+  .filter(Boolean);
 
 // Below the recipe's floor the film still ships — the solver substitutes what the pool
 // cannot afford — but layouts WILL recur, and that is worth a line in the log and a
@@ -826,7 +854,7 @@ function assignmentRequests(scenes) {
   return out;
 }
 const requests = assignmentRequests(expandedScenes);
-const mustUse = [...new Set(brief.mustUsePhotos || [])].filter((f) => f !== heroPhoto.file && f !== endingPhoto.file);
+const mustUse = [...new Set([...(brief.mustUsePhotos || []), ...momentRequireFiles])].filter((f) => f !== heroPhoto.file && f !== endingPhoto.file);
 const flexibleRequests = requests.filter((r) => !r.hero);
 if (mustUse.length > flexibleRequests.length) throw new Error(`brief has ${mustUse.length} must-use photos but only ${flexibleRequests.length} assignable slots`);
 mustUse.forEach((file, i) => { flexibleRequests[i].preferred = file; });
