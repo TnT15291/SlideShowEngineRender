@@ -32,10 +32,11 @@ function database(engineRoot) {
 async function notifyIncident(incident) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.STOREEL_ALERT_EMAIL;
-  if (!apiKey || !to) return;
-  const from = process.env.STOREEL_ALERT_FROM || "StoReel Alerts <onboarding@resend.dev>";
-  try {
-    await fetch("https://api.resend.com/emails", {
+  const slackWebhook = process.env.STOREEL_SLACK_WEBHOOK_URL;
+  const notifications = [];
+  if (apiKey && to) {
+    const from = process.env.STOREEL_ALERT_FROM || "StoReel Alerts <onboarding@resend.dev>";
+    notifications.push(fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -45,10 +46,22 @@ async function notifyIncident(incident) {
           `Phase: ${incident.phase}`, `Customer impact: ${incident.customerImpact}`,
         ].join("\n"),
       }),
-    });
-  } catch {
-    // Alert delivery must never turn a recoverable pipeline problem into another failure.
+    }));
   }
+  if (slackWebhook) {
+    notifications.push(fetch(slackWebhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: [
+          `:rotating_light: *StoReel technical incident*`, `*${incident.code}*`,
+          `Incident: \`${incident.id}\``, `Project: \`${incident.projectId}\``,
+          `Phase: \`${incident.phase}\``, `Customer impact: ${incident.customerImpact}`,
+        ].join("\n"),
+      }),
+    }));
+  }
+  await Promise.allSettled(notifications);
 }
 
 export async function recordIncident(input, engineRoot = root) {
