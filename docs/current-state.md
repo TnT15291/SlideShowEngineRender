@@ -1,10 +1,16 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-17**
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-24**
 > (`runProject.mjs` là orchestrator duy nhất cho cả ba tier; Premium có hai cổng quyết định
 > của khách: hướng câu chuyện và cách dùng bài nhạc).
 >
 > Legend: ✅ xong · 🟡 một phần · ⬜ chưa làm
+>
+> **2026-07-24**: tầng web/server (`apps/web` + `server/`) đã vượt xa mô tả cũ ở tài liệu này —
+> một account model duy nhất (owner-scoped project, Stripe billing, admin incident tracker) thay
+> cho hai app Studio/Couple. Bảng dưới đây vẫn nói về **engine/pipeline CLI**, không phải web UI;
+> xem [WebUIPlan.md](../WebUIPlan.md) cho tầng đó — 14/14 bước ở §7 tài liệu đó đã "hoàn thành".
+> Thanh toán Stripe đã **wired** (checkout + webhook) nhưng **chưa live** (cần key thật).
 
 Bảng này theo dõi khoảng cách giữa **thiết kế** ([PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md))
 và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài liệu pipeline đó.
@@ -711,7 +717,7 @@ filter engine.
 | 3 | Hạt sáng tích tụ | ✅ | `mask_reveal` + `assets/masks/particle_gather.mp4`. Demo: `output/demo-particle-reveal.mp4` |
 | 1 | Đũa phép quơ hình trái tim | ✅ | `mask_reveal` + `assets/masks/heart_wand.mp4` (generator `heart_wand`, 0 code engine — đúng như dự đoán). Library beat `heart_reveal`. Demo: `output/demo-heart-reveal.mp4` |
 | 2 | Bàn chải sơn | ✅ | `mask_reveal` + `assets/masks/brush_stroke.mp4` (generator `brush_stroke`, 0 code engine). Library beat `brush_reveal`. Demo: `output/demo-brush-reveal.mp4` |
-| 7 | Tilt-shift | ⬜ | Field grade mới `tiltShift` (split→gblur→trộn gradient dọc); nhớ: color field mới chỉ cần 4 điểm chạm |
+| 7 | Tilt-shift | ✅ | Native effect `tilt_shift` (split→gblur→trộn gradient dọc), guardrail riêng chặn control lạ trên effect khác. Test: `tilt_shift normalizes defaults and compiles a native masked blur graph` |
 | 5 | Speed ramping | ⬜ | ĐÍNH CHÍNH file gốc: cần **video-clip slide** trước (engine hiện render ảnh tĩnh; easing gentle/snap/bounce đã cover "nhanh chậm theo cảm xúc" cho ảnh) |
 | 8–10 | Neural relight / Gen expand / extend | ⬜ | Node tiền xử lý gọi API ngoài (ảnh vào→ảnh ra), engine core không đổi. Chờ giai đoạn Kling/Seedance |
 

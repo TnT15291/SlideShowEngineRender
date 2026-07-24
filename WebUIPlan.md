@@ -19,8 +19,11 @@ thật của studio, dùng backend đầy đủ hiện có (không chỉ 5 IPC c
 customer self-serve (web-job-request) vì nó là một sản phẩm khác, không trộn tab vào đây.
 
 Ba nợ đã biết, **không** giả vờ là đã có UI cho chúng:
-- **Không có cổng thanh toán/mở khoá** (bàn ở phiên trước, bạn chọn hoãn) → tab Delivery bên dưới
-  chỉ có "watermark preview + xuất bản đầy đủ", không có nút "Pay".
+- **Cổng thanh toán/mở khoá — cập nhật 2026-07-24: đã WIRED, chưa LIVE.** `server/services/billing.ts`
+  + `apps/web/src/BillingPage.tsx` đã có checkout Stripe (subscription/per-video) + webhook
+  (`checkout.session.completed`/`invoice.paid`/`customer.subscription.deleted`). Vẫn cần key Stripe
+  thật để chạy (`STRIPE_SECRET_KEY` rỗng → API trả 409 `STRIPE_NOT_CONFIGURED`, plan vẫn cấp qua CLI
+  `scripts/setUserPlan.mjs`). Giá trong `.env.example` là **placeholder**, chưa chốt.
 - **Chưa có sửa kiểu point-and-click** trên timeline — sửa hiện tại là qua câu chữ
   (`reviseProject.mjs`), nên tab Revisions là ô chat/prompt + diff, không phải canvas kéo-thả.
 - **`caption_language`/QA vision-bookend cần key thật** — verdict "unknown" là trạng thái hợp lệ
@@ -164,9 +167,9 @@ là kết quả sau khi khách yêu cầu sửa** (`reviseProject.mjs`, xem comm
 ### 3.7 Delivery
 `deliver.mjs` đóng gói `final.mp4`/`preview.mp4`/`thumbnail.jpg`/`project_summary.json`. Tab hiện:
 - Preview có watermark (`--watermark`, `--preview-seconds`) để khách duyệt trước — **đây chính là
-  điểm nối với mô hình giá "demo free, trả tiền mở khoá"**, nhưng vì cổng thanh toán/mở khoá thật
-  CHƯA XÂY (§0), nút "Xuất bản bản đầy đủ" ở v1 này nên là hành động thủ công của vận hành viên
-  (không giả vờ có nút Pay).
+  điểm nối với mô hình giá "demo free, trả tiền mở khoá"**. Cổng thanh toán (§0) nay đã wired
+  (Stripe checkout/webhook) nhưng chưa live thiếu key thật, nên nút "Xuất bản bản đầy đủ" ở v1 này
+  vẫn là hành động thủ công của vận hành viên cho tới khi bật Stripe thật.
 - `project_summary.json` hiện đúng những gì đã audit được: `tier` (không đoán — "unknown" là giá
   trị hợp lệ phải hiện), `provenance.photoContent` (stub vs vision thật — khách/vận hành cần biết
   hero score có phải AI thật chấm hay không), `qa.verdict`, `thumbnail.chosenBy`.
@@ -247,4 +250,12 @@ cùng dữ liệu.
     mang watermark StoReel, phát/tải qua request có xác thực. Approval gắn với exact preview và tự invalidated
     khi timeline đổi; operator release là bước thủ công riêng trước khi tải master, không giả trạng thái thanh toán.
     UI hiển thị/tải deliverables và các trường audit thật: tier, photo-content provenance, QA verdict,
-    thumbnail chosenBy. Settings, kênh khách hàng mở rộng và payment gateway vẫn ngoài phạm vi v1.
+    thumbnail chosenBy. Settings và kênh khách hàng mở rộng vẫn ngoài phạm vi v1; payment gateway
+    đã wired (xem §0) nhưng chưa live.
+
+15. **Billing + admin incident tracker — hoàn thành (2026-07-24), ngoài phạm vi kế hoạch gốc.**
+    Stripe checkout/webhook (`server/services/billing.ts`, `BillingPage.tsx`) và một trang admin
+    theo dõi lỗi pipeline (`server/services/incidents.ts`, `AdminIncidentsPage.tsx`, gate theo
+    `STOREEL_ADMIN_USERNAMES`, cảnh báo email qua Resend tùy chọn) đã land cùng lúc với pivot
+    account model. Không nằm trong 14 bước ban đầu ở trên — ghi lại vì tài liệu này lẽ ra phải
+    theo kịp, không phải vì có kế hoạch trước.
