@@ -19,6 +19,7 @@ const definitions = [
   { id: "thumbnail", label: "Thumbnail", kind: "image", mimeType: "image/jpeg" },
   { id: "summary", label: "Project summary", kind: "json", mimeType: "application/json; charset=utf-8" },
 ] as const
+const deliveryPackageIds = new Set<ProjectArtifactId>(["preview", "delivery", "thumbnail", "summary"])
 
 export type ProjectArtifactId = (typeof definitions)[number]["id"]
 export type ProjectArtifact = {
@@ -79,7 +80,19 @@ export function createArtifactService(engineRoot = process.cwd()) {
       if (definition.id !== "timeline") {
         try {
           const timelineMetadata = await stat(path.resolve(project.projectDir, project.relativePaths.timeline))
-          stale = metadata.mtimeMs < timelineMetadata.mtimeMs
+          if (deliveryPackageIds.has(definition.id)) {
+            // deliver.mjs may copy the encoded master while preserving its old
+            // mtime. The summary is written last, so it is the freshness marker
+            // for the package as a whole, including preview/master/thumbnail.
+            try {
+              const packageMetadata = await stat(path.resolve(project.projectDir, project.relativePaths.summary))
+              stale = packageMetadata.mtimeMs < timelineMetadata.mtimeMs
+            } catch {
+              stale = metadata.mtimeMs < timelineMetadata.mtimeMs
+            }
+          } else {
+            stale = metadata.mtimeMs < timelineMetadata.mtimeMs
+          }
         } catch { /* a missing timeline cannot make another artifact stale */ }
       }
       return {

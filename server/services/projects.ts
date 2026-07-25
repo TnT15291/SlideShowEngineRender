@@ -172,6 +172,22 @@ export async function getProject(projectId: string, engineRoot = process.cwd()):
   return result.projects.find((project) => project.id === projectId) || null
 }
 
+export async function deleteProject(projectId: string, engineRoot = process.cwd()): Promise<{ id: string }> {
+  const parsed = projectSchema.shape.id.safeParse(projectId)
+  if (!parsed.success) throw new Error("Invalid project id")
+  const projectsDir = path.resolve(engineRoot, "projects")
+  const projectDir = path.resolve(projectsDir, projectId)
+  if (path.dirname(projectDir) !== projectsDir) throw new Error("Project path resolves outside the projects directory")
+  try {
+    await stat(path.join(projectDir, "project.json"))
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") throw new Error(`Project not found: ${projectId}`)
+    throw error
+  }
+  await rm(projectDir, { recursive: true, force: false })
+  return { id: projectId }
+}
+
 export async function createProject(input: CreateProjectInput, ownerId?: string, engineRoot = process.cwd()): Promise<ProjectSummary> {
   const validated = createProjectInputSchema.parse(input)
   const baseId = slug(validated.name)

@@ -48,3 +48,22 @@ test("artifact service marks render outputs stale when the timeline changes", as
   assert.equal(preview.ready, false)
   assert.equal(preview.stale, true)
 })
+
+test("delivery summary marks copied package files fresh even when the master preserves an older mtime", async (context) => {
+  const { root } = await fixture()
+  context.after(() => rm(root, { recursive: true, force: true }))
+  const project = path.join(root, "projects", "linh-nam")
+  const master = path.join(project, "output", "deliver", "final.mp4")
+  const summary = path.join(project, "output", "deliver", "project_summary.json")
+  const timeline = path.join(project, "timeline", "timeline.json")
+  await writeFile(master, "master")
+  await writeFile(summary, "{}")
+  const now = Date.now()
+  await utimes(master, new Date(now - 10_000), new Date(now - 10_000))
+  await utimes(timeline, new Date(now - 5_000), new Date(now - 5_000))
+  await utimes(summary, new Date(now), new Date(now))
+
+  const delivery = (await createArtifactService(root).list("linh-nam")).find((artifact) => artifact.id === "delivery")!
+  assert.equal(delivery.ready, true)
+  assert.equal(delivery.stale, false)
+})

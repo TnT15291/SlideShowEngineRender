@@ -438,6 +438,26 @@ test("project job routes validate start, cancel, and open an SSE snapshot stream
   })
 })
 
+test("DELETE project cancels a running job before removing its workspace", async () => {
+  const calls: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam`, { method: "DELETE" })
+    assert.equal(response.status, 200)
+    assert.deepEqual(await response.json(), { ok: true, data: { id: "linh-nam" } })
+    assert.deepEqual(calls, ["cancel", "delete"])
+  }, {
+    getProject: async () => ({ ...OWNED_PROJECT, status: "running", currentPhase: "render" }),
+    getJob: async () => ({
+      projectId: "linh-nam", status: "running", currentPhase: "render", progress: 57, error: null,
+      warnings: [], startedAt: "2026-07-25T10:00:00.000Z", updatedAt: "2026-07-25T10:01:00.000Z",
+      mode: "render", deliver: false,
+      phases: { validate: "completed", analyze: "completed", plan: "completed", build: "completed", render: "running", qa: "pending", deliver: "pending" },
+    }),
+    cancelJob: async () => { calls.push("cancel"); return { projectId: "linh-nam", status: "paused" } as JobSnapshot },
+    deleteProject: async () => { calls.push("delete"); return { id: "linh-nam" } },
+  })
+})
+
 test("render jobs are metered by plan entitlement, dry runs are not", async () => {
   const snapshot: JobSnapshot = {
     projectId: "linh-nam", status: "running", currentPhase: "render", progress: 60, error: null,

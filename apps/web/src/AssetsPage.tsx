@@ -113,8 +113,10 @@ export function AssetsPage({ project, onBack, onRenderStarted }: { project: Proj
   const hasPhotos = Boolean(assets?.photos.length)
   const hasMusic = Boolean(assets?.music.length)
   const mediaReady = hasPhotos && hasMusic
-  const renderReady = currentProject.phases.render === "completed" || currentProject.phases.render === "skipped"
-  const reviewReady = renderReady && (currentProject.phases.qa === "completed" || currentProject.phases.qa === "skipped")
+  // A dry run marks render/QA/delivery as skipped. Skipped proves the timeline
+  // contract, but it does not create the preview/master that Steps 4–5 consume.
+  const renderReady = currentProject.phases.render === "completed"
+  const reviewReady = renderReady && currentProject.phases.qa === "completed"
   const deliveryReady = currentProject.phases.deliver === "completed"
   const completed: Record<WorkspaceStep, boolean> = { setup: true, media: mediaReady, direct: currentProject.tier === "template" || currentProject.phases.plan === "completed" || currentProject.phases.build === "completed", review: reviewReady, deliver: deliveryReady }
 
@@ -156,12 +158,11 @@ export function AssetsPage({ project, onBack, onRenderStarted }: { project: Proj
         <InstantPreviewPlayer project={currentProject} music={assets?.music || []} refreshKey={currentProject.updatedAt} />
         {!mediaReady ? <BlockedNotice message="Add photos and a soundtrack in Media before running the pipeline." onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} onRenderStarted={onRenderStarted} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: job.status === "pending" ? "running" : job.status, currentPhase: job.currentPhase, progress: job.progress, error: job.error, phases: job.phases, updatedAt: job.updatedAt }))} />}
         <details className="mt-6 rounded-xl border bg-card"><summary className="cursor-pointer list-none px-6 py-5 text-sm font-medium">Advanced QA details <span className="ml-2 text-xs font-normal text-muted-foreground">Rules, repairs, and manual review</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
-        <NextAction title={reviewReady ? "Review is complete" : renderReady ? "Render is ready; check QA" : "Render a preview first"} detail="Delivery becomes available after the film and QA artifacts are generated." action="Continue to Deliver" disabled={!renderReady} onClick={() => goToStep("deliver")} />
+        <NextAction title={deliveryReady ? "Delivery package is ready" : reviewReady ? "Render and QA are complete; package delivery" : renderReady ? "Render is ready; finish QA and delivery" : "Render a preview first"} detail={deliveryReady ? "Continue to approve the exact preview and release the master." : "Choose “Render, QA & delivery” in Job Runner to generate the preview and full master required by Step 5."} action="Continue to Deliver" disabled={!deliveryReady} onClick={() => goToStep("deliver")} />
       </WorkspaceSection>}
 
       {step === "deliver" && <WorkspaceSection eyebrow="Step 5 of 5" title="Approve and deliver" description="Review the current preview, approve its exact version, then release the final files.">
-        {!renderReady && <BlockedNotice message="Render a fresh preview before approval and delivery." onClick={() => goToStep("review")} />}
-        <DeliveryPanel project={currentProject} />
+        {!deliveryReady ? <BlockedNotice message="Run “Render, QA & delivery” in Step 4 to generate the preview and full master." onClick={() => goToStep("review")} /> : <DeliveryPanel project={currentProject} />}
       </WorkspaceSection>}
     </div>
   </main>

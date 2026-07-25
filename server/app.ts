@@ -15,7 +15,7 @@ import { deliveryService, DeliveryRequestError, type DeliverySnapshot } from "./
 import { artifactService, ArtifactRequestError, type ProjectArtifact, type ProjectArtifactFile } from "./services/artifacts.js"
 import { jobRunner, JobRequestError, startJobInputSchema, type JobEvent, type JobSnapshot, type StartJobInput } from "./services/jobs.js"
 import { incidentService, IncidentRequestError, updateIncidentSchema, type Incident, type IncidentStatus } from "./services/incidents.js"
-import { createProject, createProjectInputSchema, getProject, listProjects, listSharedProjects, ProjectAlreadyExistsError, setProjectShared, type CreateProjectInput, type ProjectListResult, type ProjectSummary, UnknownRecipeError } from "./services/projects.js"
+import { createProject, createProjectInputSchema, deleteProject, getProject, listProjects, listSharedProjects, ProjectAlreadyExistsError, setProjectShared, type CreateProjectInput, type ProjectListResult, type ProjectSummary, UnknownRecipeError } from "./services/projects.js"
 import { qaService, QaRequestError, type QaSnapshot } from "./services/qa.js"
 import { getRecipe, listRecipes, type RecipeSummary } from "./services/recipes.js"
 import { revisionInputSchema, revisionService, revisionUndoSchema, RevisionRequestError, type RevisionInput, type RevisionResult, type RevisionSnapshot, type RevisionUndoInput } from "./services/revisions.js"
@@ -35,6 +35,7 @@ type Services = {
   listProjects: () => Promise<ProjectListResult>
   getProject: (projectId: string) => Promise<ProjectSummary | null>
   createProject: (input: CreateProjectInput, ownerId?: string) => Promise<ProjectSummary>
+  deleteProject: (projectId: string) => Promise<{ id: string }>
   setProjectShared: (projectId: string, shared: boolean) => Promise<ProjectSummary>
   listSharedProjects: () => Promise<ProjectSummary[]>
   listProjectAssets: (projectId: string) => Promise<ProjectAssets>
@@ -79,7 +80,7 @@ const defaultServices: Services = {
   createUser: (input) => createUser(input.username, input.password),
   changePassword: (userId, input) => changePassword(userId, input.currentPassword, input.newPassword),
   createSession, deleteSession, getSession, getUserById, consumeRenderEntitlement,
-  listRecipes, getRecipe, listProjects, getProject, createProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, deleteProjectAsset,
+  listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, deleteProjectAsset,
   getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, subscribeToJob: jobRunner.subscribe,
   getAnalysis: analysisService.get, startAnalysis: analysisService.start, suggestCull: analysisService.suggestCull, applyCull: analysisService.applyCull,
   listProjectArtifacts: artifactService.list, getProjectArtifact: artifactService.get,
@@ -732,11 +733,21 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
 
   const projectMatch = url.pathname.match(/^\/api\/projects\/([^/]+)$/)
   if (projectMatch) {
-    if (request.method !== "GET") return methodNotAllowed(response)
     const projectId = parseResourceId(projectMatch[1])
-    const project = await services.getProject(projectId)
-    if (!project) throw new HttpError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)
-    sendJson(response, 200, { ok: true, data: project })
+    if (request.method === "GET") {
+      const project = await services.getProject(projectId)
+      if (!project) throw new HttpError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)
+      sendJson(response, 200, { ok: true, data: project })
+      return
+    }
+    if (request.method === "DELETE") {
+      const job = await services.getJob(projectId)
+      if (job.status === "running" || job.status === "pending") await services.cancelJob(projectId)
+      sendJson(response, 200, { ok: true, data: await services.deleteProject(projectId) })
+      return
+    }
+    response.setHeader("Allow", "GET, DELETE, OPTIONS")
+    sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports GET and DELETE")
     return
   }
 

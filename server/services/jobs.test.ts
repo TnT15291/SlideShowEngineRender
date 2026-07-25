@@ -71,3 +71,27 @@ test("job runner reports completed dry runs and missing projects", async (contex
   await waitFor(async () => (await runner.get("linh-nam")).status === "completed")
   assert.equal((await runner.get("linh-nam")).progress, 100)
 })
+
+test("job runner cancels a stale running manifest after a server restart", async (context) => {
+  const { root } = await workspace()
+  const runner = createJobRunner(root)
+  context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
+  const phase = (status: string) => ({ status })
+  await writeFile(path.join(root, "projects", "linh-nam", "analysis", "job-manifest.json"), JSON.stringify({
+    schemaVersion: 1,
+    projectId: "linh-nam",
+    status: "running",
+    startedAt: "2026-07-24T10:00:00.000Z",
+    updatedAt: "2026-07-24T10:01:00.000Z",
+    currentPhase: "render",
+    phases: {
+      validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"),
+      build: phase("completed"), render: phase("running"), qa: phase("pending"), deliver: phase("pending"),
+    },
+    artifacts: {},
+  }))
+
+  const cancelled = await runner.cancel("linh-nam")
+  assert.equal(cancelled.status, "paused")
+  assert.equal(cancelled.phases.render, "pending")
+})

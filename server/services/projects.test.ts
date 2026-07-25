@@ -4,7 +4,7 @@ import os from "node:os"
 import path from "node:path"
 import test from "node:test"
 
-import { createProject, createProjectInputSchema, listProjects, listSharedProjects, setProjectShared, UnknownRecipeError } from "./projects.js"
+import { createProject, createProjectInputSchema, deleteProject, getProject, listProjects, listSharedProjects, setProjectShared, UnknownRecipeError } from "./projects.js"
 
 test("project service reports real status, progress, paused state, and invalid manifests", async (context) => {
   const root = await mkdtemp(path.join(os.tmpdir(), "storeel-projects-"))
@@ -127,4 +127,20 @@ test("template creation contract requires a recipe and rejects recipes on other 
     name: "Lite film", bride: "A", groom: "B", language: "vi", sequenceMode: "editorial",
     tier: "lite", recipe: "warm-film-01", quality: "share", musicMode: "auto", creativeBrief: "A story",
   }).success, false)
+})
+
+test("deleteProject removes exactly one project workspace", async (context) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "storeel-delete-"))
+  context.after(() => rm(root, { recursive: true, force: true }))
+  await mkdir(path.join(root, "story-templates"), { recursive: true })
+  await mkdir(path.join(root, "layouts"), { recursive: true })
+  await writeFile(path.join(root, "layouts", "library.json"), JSON.stringify({ designTokens: { themes: { warm_film: { background: "#fff", palette: { accent: "#a65" } } } } }))
+  await writeFile(path.join(root, "story-templates", "warm-film-01.json"), JSON.stringify({ id: "warm-film-01", name: "Warm Film", libraryTheme: "warm_film", scenes: [] }))
+  const created = await createProject({
+    name: "Delete me", bride: "A", groom: "B", language: "vi", sequenceMode: "editorial",
+    tier: "template", recipe: "warm-film-01", quality: "share", musicMode: "auto", creativeBrief: "",
+  }, "owner-1", root)
+
+  assert.equal((await deleteProject(created.id, root)).id, created.id)
+  assert.equal(await getProject(created.id, root), null)
 })

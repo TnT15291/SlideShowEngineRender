@@ -320,8 +320,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
     })
     child.once("close", async (code) => {
       clearInterval(job.manifestTimer)
-      if (job.cancelRequested) await markCancelled(projectId).catch(() => undefined)
-      else if (code !== 0) {
+      // cancel()/shutdown() own the paused-manifest write. Writing it here too
+      // races the caller's atomic rename on Windows after taskkill completes.
+      if (!job.cancelRequested && code !== 0) {
         const snapshot = await snapshotFromDisk(projectId).catch(() => null)
         if (snapshot?.status === "running") await markRunnerFailure(projectId, `Pipeline process exited with code ${code ?? 1}`).catch(() => undefined)
       }
@@ -338,7 +339,17 @@ export function createJobRunner(engineRoot = process.cwd()) {
   async function cancel(projectId: string) {
     await loadProject(projectId)
     const job = active.get(projectId)
-    if (!job) throw new JobRequestError(409, "JOB_NOT_RUNNING", `No active job is running for ${projectId}`)
+    if (!job) {
+      const snapshot = await snapshotFromDisk(projectId)
+      if (snapshot.status !== "running" && snapshot.status !== "pending") {
+        throw new JobRequestError(409, "JOB_NOT_RUNNING", `No active job is running for ${projectId}`)
+      }
+      // A server restart can leave a manifest at "running" after its child is
+      // already gone. Treat that state as a stale job and make it resumable.
+      await markCancelled(projectId)
+      await publishSnapshot(projectId)
+      return snapshotFromDisk(projectId)
+    }
     job.cancelRequested = true
     await terminate(job.child)
     await markCancelled(projectId)

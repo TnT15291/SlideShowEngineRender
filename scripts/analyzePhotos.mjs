@@ -117,6 +117,7 @@ function hamming(a, b) {
   return n;
 }
 
+
 const files = fs.readdirSync(inputDir)
   .filter((n) => /\.(jpe?g|png|webp|heic|heif)$/i.test(n))
   .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
