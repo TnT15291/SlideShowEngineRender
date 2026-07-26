@@ -16,18 +16,19 @@ function formatPrice(unitAmountCents: number, currency: string): string {
 
 export function BillingPage({ onBack }: { onBack: () => void }) {
   const [catalog, setCatalog] = useState<BillingCatalog | null>(null)
-  const [busy, setBusy] = useState<"subscription" | "per_video" | null>(null)
+  const [busy, setBusy] = useState<"stripe_subscription" | "stripe_per_video" | "momo_per_video" | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     apiGet<BillingCatalog>("/billing/plans").catch((reason: unknown) => setError(messageOf(reason))).then((data) => { if (data) setCatalog(data) })
   }, [])
 
-  async function checkout(plan: "subscription" | "per_video") {
-    setBusy(plan)
+  async function checkout(plan: "subscription" | "per_video", provider: "stripe" | "momo") {
+    const key = `${provider}_${plan}` as typeof busy
+    setBusy(key)
     setError(null)
     try {
-      const { url } = await apiPost<{ url: string }>("/billing/checkout", { plan })
+      const { url } = await apiPost<{ url: string }>("/billing/checkout", { plan, provider })
       // Payment happens on Stripe's hosted page — leaving the app here is expected.
       window.location.href = url
     } catch (reason) {
@@ -60,9 +61,21 @@ export function BillingPage({ onBack }: { onBack: () => void }) {
                 <CardTitle className="mt-4">Pay per video</CardTitle>
                 <CardDescription>{formatPrice(catalog.per_video.unitAmountCents, catalog.per_video.currency)} — one finished film, no recurring charge.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <Button className="w-full" onClick={() => void checkout("per_video")} disabled={busy !== null}>
-                  {busy === "per_video" ? "Redirecting…" : "Buy a video"}
+              <CardContent className="space-y-3">
+                <Button className="w-full" onClick={() => void checkout("per_video", "stripe")} disabled={busy !== null}>
+                  {busy === "stripe_per_video" ? "Redirecting…" : "Pay by card"}
+                </Button>
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={() => void checkout("per_video", "momo")}
+                  disabled={busy !== null || !catalog.momo.enabled}
+                >
+                  {busy === "momo_per_video"
+                    ? "Opening MoMo…"
+                    : catalog.momo.enabled
+                      ? `Pay ${new Intl.NumberFormat("vi-VN").format(catalog.momo.perVideoAmountVnd)} ₫ with MoMo`
+                      : "MoMo is not configured"}
                 </Button>
               </CardContent>
             </Card>
@@ -77,8 +90,8 @@ export function BillingPage({ onBack }: { onBack: () => void }) {
                   <li className="flex items-center gap-2"><Check className="size-4 text-success" /> {catalog.subscription.monthlyRenderQuota} renders every billing period</li>
                   <li className="flex items-center gap-2"><Check className="size-4 text-success" /> Cancel any time</li>
                 </ul>
-                <Button className="w-full" onClick={() => void checkout("subscription")} disabled={busy !== null}>
-                  {busy === "subscription" ? "Redirecting…" : "Subscribe"}
+                <Button className="w-full" onClick={() => void checkout("subscription", "stripe")} disabled={busy !== null}>
+                  {busy === "stripe_subscription" ? "Redirecting…" : "Subscribe with card"}
                 </Button>
               </CardContent>
             </Card>

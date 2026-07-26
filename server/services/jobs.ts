@@ -1,13 +1,13 @@
 import { spawn, type ChildProcessByStdio } from "node:child_process"
 import { createWriteStream } from "node:fs"
-import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises"
+import { mkdir, readFile, stat } from "node:fs/promises"
 import path from "node:path"
-import { randomUUID } from "node:crypto"
 import type { Readable } from "node:stream"
 
 import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
+import { writeJsonAtomic } from "./atomicFile.js"
 
 const phases = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 const phaseStatusSchema = z.enum(["pending", "running", "completed", "failed", "skipped"])
@@ -97,16 +97,6 @@ function progressOf(manifest: z.infer<typeof jobManifestSchema>) {
   return Math.round((completed / phases.length) * 100)
 }
 
-async function writeJsonAtomic(file: string, value: unknown) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-    await rename(temporary, file)
-  } finally {
-    await rm(temporary, { force: true })
-  }
-}
-
 export function createJobRunner(engineRoot = process.cwd()) {
   const active = new Map<string, ActiveJob>()
   const listeners = new Map<string, Set<(event: JobEvent) => void>>()
@@ -140,9 +130,10 @@ export function createJobRunner(engineRoot = process.cwd()) {
     const running = active.get(projectId)
     try {
       const raw = await readFile(project.jobManifest, "utf8")
-      const manifest = jobManifestSchema.parse(JSON.parse(raw))
+      let manifest = jobManifestSchema.parse(JSON.parse(raw))
       const belongsToCurrentRun = !running || Date.parse(manifest.startedAt) >= Date.parse(running.startedAt)
       if (running && !belongsToCurrentRun) throw new Error("previous run")
+      manifest = await healOrphanedRun(projectId, manifest)
       return {
         projectId,
         status: manifest.status,
@@ -241,6 +232,22 @@ export function createJobRunner(engineRoot = process.cwd()) {
     await writeJsonAtomic(project.jobManifest, document)
   }
 
+  // A crash, a forced kill (taskkill /F, Stop-Process -Force — neither lets
+  // shutdown() run), or a lost machine can all leave a manifest saying
+  // "running" forever: no child process anywhere will ever move it forward,
+  // so the UI would show a stuck percentage with no sign anything is wrong.
+  // "Is this run orphaned" has one true answer — no ActiveJob for it in THIS
+  // process's memory — so both readers below (snapshotFromDisk, which the UI
+  // polls, and start's pre-check, which must not refuse a retry because of a
+  // run nothing is actually running) go through this one function rather than
+  // re-deriving the same judgment call twice.
+  async function healOrphanedRun(projectId: string, manifest: z.infer<typeof jobManifestSchema>) {
+    if (manifest.status !== "running" || active.has(projectId)) return manifest
+    await markRunnerFailure(projectId, "Render process was interrupted (server restarted or crashed) — retry to resume from where it left off.")
+    const project = await loadProject(projectId)
+    return jobManifestSchema.parse(JSON.parse(await readFile(project.jobManifest, "utf8")))
+  }
+
   async function terminate(child: ChildProcessByStdio<null, Readable, Readable>) {
     if (!child.pid) return
     if (process.platform === "win32") {
@@ -267,7 +274,8 @@ export function createJobRunner(engineRoot = process.cwd()) {
       try { existingValue = JSON.parse(existingRaw) } catch { throw new JobRequestError(500, "INVALID_JOB_MANIFEST", "Job manifest is invalid") }
       const existing = jobManifestSchema.safeParse(existingValue)
       if (!existing.success) throw new JobRequestError(500, "INVALID_JOB_MANIFEST", "Job manifest is invalid")
-      if (existing.data.status === "running") throw new JobRequestError(409, "JOB_ALREADY_RUNNING", `The project manifest already reports a running job for ${projectId}`)
+      const healed = await healOrphanedRun(projectId, existing.data)
+      if (healed.status === "running") throw new JobRequestError(409, "JOB_ALREADY_RUNNING", `The project manifest already reports a running job for ${projectId}`)
     }
 
     const args = ["scripts/runProject.mjs", "--project", `projects/${projectId}`]

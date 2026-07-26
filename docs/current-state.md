@@ -11,6 +11,8 @@
 > cho hai app Studio/Couple. Bảng dưới đây vẫn nói về **engine/pipeline CLI**, không phải web UI;
 > roadmap web 14 bước đã hoàn thành; hiện trạng web được phản ánh trực tiếp bởi `apps/web` + `server`.
 > Thanh toán Stripe đã **wired** (checkout + webhook) nhưng **chưa live** (cần key thật).
+> MoMo AIO v2 đã wired cho gói **trả theo video** (`captureWallet` + IPN HMAC/idempotency);
+> subscription vẫn dùng Stripe vì MoMo recurring cần onboarding tokenization riêng.
 
 Bảng này theo dõi khoảng cách giữa **thiết kế** ([PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md))
 và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài liệu pipeline đó.

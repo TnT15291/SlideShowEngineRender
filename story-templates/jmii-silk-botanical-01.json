@@ -21,6 +21,12 @@
     "title": "Video slide ảnh trình chiếu ngày cưới đẹp, sang trọng | Họa tiết lá thanh lịch (Jmii Marketing)",
     "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once."
   },
+  "intro": {
+    "summary": "Phong cách save-the-date lụa ngà thanh lịch, dành cho bộ ảnh chân dung studio.",
+    "photos": "Cần bộ ảnh chân dung studio chất lượng cao (portrait-heavy), ít hoặc không có ảnh phóng sự đời thường — số ảnh không cần nhiều (18–40).",
+    "story": "Phù hợp cặp đôi muốn một video 'thiệp mời sống động' — giới thiệu cô dâu chú rể, lời mời, không kể chi tiết hành trình yêu.",
+    "music": "Hợp nhạc lãng mạn, thanh lịch, nhẹ nhàng, giàu cảm xúc, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": ["wedding", "save_the_date", "studio", "elegant", "minimal", "white_wedding", "portrait_heavy"],
     "minPhotos": 18,

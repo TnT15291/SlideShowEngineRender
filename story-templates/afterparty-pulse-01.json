@@ -36,6 +36,12 @@
     "origin": "original",
     "notes": "A reception-only template designed around toasts, first dance and escalating dance-floor energy, ending on a quiet last-song epilogue."
   },
+  "intro": {
+    "summary": "Video riêng cho phần tiệc — từ lời chúc mở tiệc đến sàn nhảy bùng nổ và khép lại nhẹ nhàng.",
+    "photos": "Hợp ảnh/khoảnh khắc tiệc cưới: nâng ly, tiệc tối, sàn nhảy, bạn bè hò reo — không cần ảnh lễ cưới hay ảnh cưới hỏi trang trọng.",
+    "story": "Dành cho đám cưới có phần tiệc tối sôi động, muốn kể câu chuyện từ lúc khách vào tiệc đến cao trào nhảy múa rồi lắng lại ở cuối.",
+    "music": "Hợp nhạc funk/pop sôi động, năng lượng cao, dồn dập, chỉ chậm lại ở đoạn kết."
+  },
   "fit": {
     "bestFor": [
       "reception_only",

@@ -50,6 +50,7 @@ export function GalleryPage({ onBack }: { onBack: () => void }) {
                 <video
                   controls
                   preload="none"
+                  poster={apiEventUrl(`/gallery/${encodeURIComponent(film.id)}/thumbnail`)}
                   className="aspect-video w-full bg-black"
                   src={apiEventUrl(`/gallery/${encodeURIComponent(film.id)}/video`)}
                 />

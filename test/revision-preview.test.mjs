@@ -12,6 +12,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { previewChange, diffStoryboard, formatDiff, photoDemandFrom } from "../scripts/lib/revisionDiff.mjs";
 import { recallNet } from "../scripts/lib/briefRules.mjs";
@@ -148,7 +149,7 @@ test("the net does not overrule a judgement the model actually made", () => {
 
 // --- the safety property --------------------------------------------------------------
 test("--preview writes nothing at all", async () => {
-  const dir = fs.mkdtempSync(path.join(root, "tmp-preview-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tmp-preview-test-"));
   const rel = path.relative(root, dir);
   try {
     fs.mkdirSync(path.join(dir, "input"));

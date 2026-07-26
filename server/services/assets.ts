@@ -1,8 +1,10 @@
-import { open, readFile, rename, rm, stat, unlink, writeFile } from "node:fs/promises"
+import { open, readFile, rename, rm, stat, unlink } from "node:fs/promises"
 import path from "node:path"
 import { randomUUID } from "node:crypto"
 
 import { z } from "zod"
+
+import { writeJsonAtomic } from "./atomicFile.js"
 
 export const PHOTO_MAX_BYTES = 50 * 1024 * 1024
 export const MUSIC_MAX_BYTES = 200 * 1024 * 1024
@@ -102,16 +104,6 @@ async function readUploads(uploadManifest: string) {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return { version: 1 as const, assets: [] }
     throw new AssetRequestError(500, "INVALID_UPLOAD_MANIFEST", "Project upload metadata is invalid")
-  }
-}
-
-async function writeJsonAtomic(file: string, value: unknown) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-    await rename(temporary, file)
-  } finally {
-    await rm(temporary, { force: true })
   }
 }
 

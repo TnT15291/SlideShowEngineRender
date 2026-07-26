@@ -26,5 +26,8 @@ export function formatDate(value: string) {
 }
 
 export function initials(name: string) {
-  return name.split(/\s*&\s*|\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "ST"
+  // Couples are often named "Bride - Groom" (a bare hyphen, not just "&") —
+  // without also splitting on it, "Vân - Tiến" reads the hyphen as its own
+  // word and produces "V-" instead of "VT".
+  return name.split(/\s*&\s*|\s+-\s+|\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "ST"
 }

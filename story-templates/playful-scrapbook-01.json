@@ -37,6 +37,12 @@
     "origin": "original",
     "notes": "Bright candid scrapbook: polaroids, asymmetric clusters and quick photo sweeps for travel and everyday memories."
   },
+  "intro": {
+    "summary": "Cuốn sổ tay ảnh vui nhộn — polaroid, cụm ảnh bất đối xứng, những chuyến đi và khoảnh khắc đời thường.",
+    "photos": "Cần NHIỀU ảnh (36–80), ưu tiên ảnh candid, ảnh du lịch, ảnh đời thường vui vẻ — càng đa dạng khoảnh khắc càng hợp.",
+    "story": "Phù hợp cặp đôi có nhiều kỷ niệm vui, năng động, thích du lịch/khám phá cùng nhau — muốn video vui tươi, ít trang trọng.",
+    "music": "Hợp nhạc vui nhộn, pop tươi sáng, tiết tấu vừa đến nhanh."
+  },
   "fit": {
     "bestFor": [
       "candid",

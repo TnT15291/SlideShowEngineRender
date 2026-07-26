@@ -5,6 +5,29 @@ import { root } from "./project.mjs";
 
 const PHASES = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"];
 
+// Windows can refuse rename() onto a path something else has open at that
+// exact instant — antivirus real-time scanning the freshly-written file, the
+// API server's 300ms poll of this same job-manifest.json — EPERM/EBUSY, and
+// it is almost always gone within milliseconds. POSIX rename has no such
+// restriction, so this only ever fires on win32. This whole tracker is
+// synchronous by design (called throughout runProject.mjs's linear pipeline),
+// so the backoff blocks the thread via Atomics.wait rather than spinning it.
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function renameWithRetry(from, to, attempts = 5, delayMs = 50) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      fs.renameSync(from, to);
+      return;
+    } catch (error) {
+      if (attempt >= attempts || (error.code !== "EPERM" && error.code !== "EBUSY")) throw error;
+      sleepSync(delayMs * attempt);
+    }
+  }
+}
+
 export function createJobTracker(project) {
   const manifestPath = project.abs(`${project.manifest.analysisDir}/job-manifest.json`);
   const schema = JSON.parse(fs.readFileSync(path.join(root, "schema", "job-manifest.schema.json"), "utf8"));
@@ -35,7 +58,7 @@ export function createJobTracker(project) {
     fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
     const tempPath = `${manifestPath}.tmp`;
     fs.writeFileSync(tempPath, JSON.stringify(document, null, 2) + "\n");
-    fs.renameSync(tempPath, manifestPath);
+    renameWithRetry(tempPath, manifestPath);
   }
 
   return {

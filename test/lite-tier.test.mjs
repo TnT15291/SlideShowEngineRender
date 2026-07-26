@@ -8,6 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 const root = process.cwd();
@@ -17,7 +18,7 @@ const bucket = (n) => (n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "s
 /** A Lite project on disk: manifest + photos + (optional) story, music, prompt. The
  *  generators never stat the image files, so the photo records are enough — no pixels. */
 function fixture({ photos, story, music, prompt, language }) {
-  const dir = fs.mkdtempSync(path.join(root, "tmp-lite-tier-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tmp-lite-tier-"));
   fs.mkdirSync(path.join(dir, "input"));
   fs.mkdirSync(path.join(dir, "music"));
   fs.mkdirSync(path.join(dir, "analysis", "music"), { recursive: true });

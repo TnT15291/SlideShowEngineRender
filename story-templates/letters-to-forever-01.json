@@ -35,6 +35,12 @@
     "origin": "original",
     "notes": "An intimate epistolary template built like exchanged letters, with paper collage pages and handwritten-feeling English accents over Vietnamese-safe body copy."
   },
+  "intro": {
+    "summary": "Kể chuyện tình như những lá thư trao nhau — trang giấy collage, chữ viết tay ấm áp.",
+    "photos": "Hợp đám cưới nhỏ, thân mật, ảnh ít nhưng có chiều sâu cảm xúc (20–48) — không cần số lượng lớn.",
+    "story": "Phù hợp cặp đôi muốn kể chuyện tình theo hướng nội tâm, riêng tư — như những bức thư, tập trung lời thề và khoảnh khắc thân mật thay vì đại tiệc.",
+    "music": "Hợp nhạc piano mộc mạc, gần gũi, nhẹ nhàng, tiết tấu rất chậm."
+  },
   "fit": {
     "bestFor": [
       "intimate",

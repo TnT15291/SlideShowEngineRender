@@ -36,6 +36,12 @@
     "origin": "original",
     "notes": "A family-forward wedding story that gives parents, grandparents, childhood archives and the joining of two households equal emotional weight."
   },
+  "intro": {
+    "summary": "Câu chuyện lấy gia đình làm trung tâm — ông bà, cha mẹ, ký ức tuổi thơ và sự hòa quyện hai gia đình.",
+    "photos": "Cần nhiều ảnh gia đình, ảnh tư liệu cũ (thời thơ ấu, cha mẹ/ông bà) bên cạnh ảnh cưới — số lượng ảnh nên rộng rãi (23–75) để đủ chỗ cho cả hai nhánh gia đình.",
+    "story": "Phù hợp khi gia đình hai bên đóng vai trò quan trọng, muốn tôn vinh cội nguồn và sự gắn kết hai họ, không chỉ riêng cặp đôi.",
+    "music": "Hợp nhạc ấm áp, hoài niệm, giao hưởng nhẹ, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "family_archive",

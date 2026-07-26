@@ -36,6 +36,12 @@
     "origin": "original",
     "notes": "A film-trailer treatment focused tightly on wedding-day anticipation, vows and emotional reaction shots, with a controlled teal/orange editorial grade."
   },
+  "intro": {
+    "summary": "Trailer điện ảnh tập trung vào khoảnh khắc hồi hộp ngày cưới, lời thề và phản ứng cảm xúc, tông teal/cam đặc trưng.",
+    "photos": "Hợp ảnh phong cảnh (landscape) nhiều, cận cảnh biểu cảm lúc trao nhẫn/thề nguyện; ảnh cần sắc nét vì đây là trọng tâm video.",
+    "story": "Dành cho video tập trung sát vào NGÀY CƯỚI: hồi hộp chuẩn bị, gặp mặt lần đầu, lời thề, trao nhẫn, nụ hôn, tiệc mừng — không kể chuyện tình trước đó.",
+    "music": "Hợp nhạc giao hưởng điện ảnh, cảm xúc dâng trào, năng lượng trung bình đến cao, có cao trào rõ rệt."
+  },
   "fit": {
     "bestFor": [
       "cinematic",

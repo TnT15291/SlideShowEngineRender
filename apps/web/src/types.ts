@@ -32,6 +32,7 @@ export interface IncidentList {
 export interface BillingCatalog {
   subscription: { name: string; unitAmountCents: number; monthlyRenderQuota: number; currency: string }
   per_video: { name: string; unitAmountCents: number; credits: number; currency: string }
+  momo: { enabled: boolean; perVideoAmountVnd: number }
 }
 
 export interface RecipeSummary {
@@ -40,6 +41,7 @@ export interface RecipeSummary {
   libraryTheme: string | null
   themeBackground: string | null
   themeAccent: string | null
+  intro: { summary: string; photos: string; story: string; music: string } | null
   bestFor: string[]
   minPhotos: number | null
   idealPhotos: number | null

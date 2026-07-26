@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises"
+import { readFile } from "node:fs/promises"
 import path from "node:path"
 import { createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from "node:crypto"
 import { promisify } from "node:util"
@@ -6,6 +6,7 @@ import { promisify } from "node:util"
 import { z } from "zod"
 
 import { withLock } from "./fileLock.js"
+import { writeJsonAtomic } from "./atomicFile.js"
 
 const scryptAsync = promisify(scrypt)
 
@@ -45,6 +46,9 @@ const userSchema = z.object({
   // events (which only carry Stripe ids) can be reconciled back to a user.
   stripeCustomerId: z.string().optional(),
   stripeSubscriptionId: z.string().optional(),
+  // Provider-neutral payment ids already applied to this account. This makes
+  // asynchronous IPN/webhook retries idempotent without trusting browser redirects.
+  processedPaymentIds: z.array(z.string()).optional(),
 })
 const userStoreSchema = z.object({ version: z.literal(1), users: z.array(userSchema) })
 
@@ -88,17 +92,6 @@ function usersFile(engineRoot: string) {
 
 function sessionsFile(engineRoot: string) {
   return path.join(dataDir(engineRoot), "studio-sessions.json")
-}
-
-async function writeJsonAtomic(file: string, value: unknown) {
-  await mkdir(path.dirname(file), { recursive: true })
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-    await rename(temporary, file)
-  } finally {
-    await rm(temporary, { force: true })
-  }
 }
 
 async function readUsers(engineRoot: string) {
@@ -298,6 +291,32 @@ export async function grantPerVideoCredits(stripeCustomerId: string, amount: num
     const users = [...store.users]
     users[userIndex] = { ...user, plan: { type: "per_video", creditsRemaining: plan.creditsRemaining + amount } }
     await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+  })
+}
+
+export async function grantPerVideoCreditsToUser(
+  userId: string,
+  amount: number,
+  paymentId: string,
+  engineRoot = process.cwd(),
+): Promise<boolean> {
+  return withLock(usersFile(engineRoot), async () => {
+    const store = await readUsers(engineRoot)
+    const userIndex = store.users.findIndex((candidate) => candidate.id === userId)
+    if (userIndex === -1) return false
+    const user = store.users[userIndex]
+    const processed = user.processedPaymentIds ?? []
+    if (processed.includes(paymentId)) return false
+    const plan = user.plan ?? defaultPlan()
+    if (plan.type !== "per_video") return false
+    const users = [...store.users]
+    users[userIndex] = {
+      ...user,
+      processedPaymentIds: [...processed, paymentId],
+      plan: { type: "per_video", creditsRemaining: plan.creditsRemaining + amount },
+    }
+    await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+    return true
   })
 }
 

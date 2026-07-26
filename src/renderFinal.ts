@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
+import { buildAudioMuxArgs } from "./buildAudioMuxCommand";
 import {
-  buildAudioMuxArgs,
   buildConcatArgs,
   buildOverlayArgs,
   buildXfadeArgs,
   hasTransitions,
-} from "./buildFfmpegCommand";
+} from "./buildFinalVideoCommand";
 import {
   ensureDir,
   FfmpegError,

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { createJobTracker } from "../scripts/lib/jobManifest.mjs";
@@ -7,7 +8,7 @@ import { loadProject, root } from "../scripts/lib/project.mjs";
 import { inspectResume } from "../scripts/lib/resumeProject.mjs";
 
 function fixture(overrides = {}) {
-  const dir = fs.mkdtempSync(path.join(root, "tmp-project-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tmp-project-test-"));
   fs.mkdirSync(path.join(dir, "input"));
   fs.mkdirSync(path.join(dir, "music"));
   fs.writeFileSync(path.join(dir, "prompt.txt"), "A story\n");

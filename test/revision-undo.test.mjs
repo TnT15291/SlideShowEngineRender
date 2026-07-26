@@ -13,6 +13,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import os from "node:os";
 import fs from "node:fs";
 import path from "node:path";
 import { appendRound, undoRound, active, recomputeSupersession } from "../scripts/lib/directives.mjs";
@@ -94,7 +95,7 @@ test("re-derived supersession reproduces appendRound exactly when nothing is und
 
 // --- end to end -----------------------------------------------------------------------
 function project(name) {
-  const dir = fs.mkdtempSync(path.join(root, `tmp-${name}-`));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `tmp-${name}-`));
   fs.mkdirSync(path.join(dir, "input"));
   fs.mkdirSync(path.join(dir, "music"));
   fs.mkdirSync(path.join(dir, "analysis"));

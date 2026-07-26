@@ -7,6 +7,12 @@ const recipeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   libraryTheme: z.string().optional(),
+  intro: z.object({
+    summary: z.string().optional(),
+    photos: z.string().optional(),
+    story: z.string().optional(),
+    music: z.string().optional(),
+  }).optional(),
   fit: z.object({
     bestFor: z.array(z.string()).optional(),
     minPhotos: z.number().optional(),
@@ -42,6 +48,12 @@ export const recipeSummarySchema = z.object({
   libraryTheme: z.string().nullable(),
   themeBackground: z.string().nullable(),
   themeAccent: z.string().nullable(),
+  intro: z.object({
+    summary: z.string(),
+    photos: z.string(),
+    story: z.string(),
+    music: z.string(),
+  }).nullable(),
   bestFor: z.array(z.string()),
   minPhotos: z.number().nullable(),
   idealPhotos: z.number().nullable(),
@@ -82,6 +94,12 @@ export async function listRecipes(engineRoot = process.cwd()): Promise<RecipeSum
       libraryTheme: recipe.libraryTheme || null,
       themeBackground: theme?.background || null,
       themeAccent: theme?.palette?.accent || null,
+      intro: recipe.intro ? {
+        summary: recipe.intro.summary || "",
+        photos: recipe.intro.photos || "",
+        story: recipe.intro.story || "",
+        music: recipe.intro.music || "",
+      } : null,
       bestFor: recipe.fit?.bestFor || [],
       minPhotos: recipe.fit?.minPhotos ?? null,
       idealPhotos: recipe.fit?.idealPhotos ?? null,

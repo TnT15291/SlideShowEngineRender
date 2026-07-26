@@ -35,6 +35,12 @@
     "origin": "original",
     "notes": "A botanical daybook inspired by White Weddings' warm ivory pages, but organized around garden light from morning preparation to golden hour."
   },
+  "intro": {
+    "summary": "Một cuốn nhật ký vườn hoa màu ngà ấm — theo ánh sáng từ sáng sớm chuẩn bị đến giờ vàng.",
+    "photos": "Hợp ảnh chụp ngoài trời ánh sáng tự nhiên đẹp — từ ảnh chuẩn bị buổi sáng, ảnh chi tiết (nhẫn, hoa, váy), ảnh dạo bước, đến ảnh giờ vàng.",
+    "story": "Phù hợp phóng sự cưới theo trình tự thời gian trong một ngày — sáng chuẩn bị, dạo bước, lời thề, đến khoảnh khắc giờ vàng.",
+    "music": "Hợp nhạc acoustic nhẹ nhàng, lãng mạn, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "garden",

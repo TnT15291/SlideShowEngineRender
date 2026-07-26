@@ -37,6 +37,12 @@
     "origin": "original",
     "notes": "Fashion-magazine editorial look (2026 trend: cursive out, big expressive serif headlines, clean sans companion, generous whitespace, high contrast). Original recipe, not copied from any marketplace timeline."
   },
+  "intro": {
+    "summary": "Phong cách tạp chí thời trang: tiêu đề chữ lớn, tối giản, tương phản cao.",
+    "photos": "Hợp ảnh prewedding chất lượng cao, bố cục đẹp, nhiều khoảng trống — ảnh cần sắc nét, chỉn chu như ảnh studio/editorial.",
+    "story": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tối giản — tập trung vào hai nhân vật chính, không đi sâu chi tiết gia đình.",
+    "music": "Hợp nhạc điện ảnh, thanh lịch, hiện đại, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "prewedding",

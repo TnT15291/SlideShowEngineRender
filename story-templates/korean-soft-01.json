@@ -36,6 +36,12 @@
     "origin": "original",
     "notes": "Bright Korean studio romance: airy whites, portrait-led cards, restrained motion and generous breathing room."
   },
+  "intro": {
+    "summary": "Phong cách studio Hàn Quốc tươi sáng — tông trắng nhẹ nhàng, nhịp chậm rãi, nhiều khoảng lặng.",
+    "photos": "Hợp bộ ảnh chân dung studio phong cách Hàn (tông sáng, nền trắng/pastel), ảnh mềm mại, ít ảnh phóng sự đời thường.",
+    "story": "Phù hợp video prewedding studio, không cần kể hành trình tình yêu chi tiết — tôn vinh vẻ đẹp và sự lãng mạn của cặp đôi.",
+    "music": "Hợp nhạc piano nhẹ nhàng, lãng mạn, tiết tấu rất chậm, sâu lắng."
+  },
   "fit": {
     "bestFor": [
       "soft_romance",

@@ -37,6 +37,12 @@
     "origin": "original",
     "notes": "Modern minimal, contemporary, lots of whitespace with a 2026 Color-of-the-Year 'Transformative Teal' accent. Clean crisp grade, no overlays. Original recipe."
   },
+  "intro": {
+    "summary": "Phong cách tối giản hiện đại, nhiều khoảng trắng, điểm nhấn màu teal thời thượng.",
+    "photos": "Hợp ảnh prewedding/couple hiện đại, bố cục sạch sẽ, ít chi tiết rườm rà — ảnh chất lượng cao quan trọng vì phong cách rất tối giản.",
+    "story": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tinh gọn — tập trung vào cặp đôi, không đi sâu gia đình hay lễ nghi.",
+    "music": "Hợp nhạc piano/hiện đại, điềm tĩnh, tiết tấu chậm, tối giản."
+  },
   "fit": {
     "bestFor": [
       "modern_minimal",

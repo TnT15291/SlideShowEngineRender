@@ -36,6 +36,12 @@
     "origin": "reference_adaptation",
     "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement."
   },
+  "intro": {
+    "summary": "Bộ sưu tập đầy đủ nhất của dòng White Weddings — nhiều 'trang' giai điệu ngà ấm, phù hợp video dài hơi.",
+    "photos": "Hợp đa dạng loại ảnh: chân dung, chi tiết, nhóm, phong cảnh — bộ layout phong phú nhất trong các recipe white_weddings (20–55 ảnh).",
+    "story": "Phù hợp khi muốn video save-the-date/prewedding dài, đầy đủ chi tiết hơn white-weddings-editorial-01, với nhiều 'trang' câu chuyện khác nhau.",
+    "music": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "pre_wedding",

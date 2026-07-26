@@ -6,7 +6,6 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { apiDelete, apiGet, apiUpload } from "@/lib/api"
 import { JobRunnerPanel } from "@/JobRunnerPanel"
-import { InstantPreviewPlayer } from "@/InstantPreviewPlayer"
 import { AnalysisPanel } from "@/AnalysisPanel"
 import { TimelineViewer } from "@/TimelineViewer"
 import { DirectorPanel } from "@/DirectorPanel"
@@ -155,7 +154,6 @@ export function AssetsPage({ project, onBack, onRenderStarted }: { project: Proj
       </WorkspaceSection>}
 
       {step === "review" && <WorkspaceSection eyebrow="Step 4 of 5" title="Render and review" description="Run the pipeline, follow progress, then inspect quality findings.">
-        <InstantPreviewPlayer project={currentProject} music={assets?.music || []} refreshKey={currentProject.updatedAt} />
         {!mediaReady ? <BlockedNotice message="Add photos and a soundtrack in Media before running the pipeline." onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} onRenderStarted={onRenderStarted} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: job.status === "pending" ? "running" : job.status, currentPhase: job.currentPhase, progress: job.progress, error: job.error, phases: job.phases, updatedAt: job.updatedAt }))} />}
         <details className="mt-6 rounded-xl border bg-card"><summary className="cursor-pointer list-none px-6 py-5 text-sm font-medium">Advanced QA details <span className="ml-2 text-xs font-normal text-muted-foreground">Rules, repairs, and manual review</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
         <NextAction title={deliveryReady ? "Delivery package is ready" : reviewReady ? "Render and QA are complete; package delivery" : renderReady ? "Render is ready; finish QA and delivery" : "Render a preview first"} detail={deliveryReady ? "Continue to approve the exact preview and release the master." : "Choose “Render, QA & delivery” in Job Runner to generate the preview and full master required by Step 5."} action="Continue to Deliver" disabled={!deliveryReady} onClick={() => goToStep("deliver")} />

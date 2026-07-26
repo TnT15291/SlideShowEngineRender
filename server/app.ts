@@ -6,8 +6,10 @@ import { z } from "zod"
 
 import { config } from "./config.js"
 import { HttpError, readJsonBody, readRawBody, sendError, sendJson } from "./http.js"
+import { bearerToken, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
 import { AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createSession, createUser, deleteSession, getSession, getUserById, loginInputSchema, registerInputSchema, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type LoginInput, type RegisterInput } from "./services/auth.js"
 import { BillingRequestError, createCheckoutSession, getPlanCatalog, handleWebhookEvent, type PlanId } from "./services/billing.js"
+import { createMomoCheckout, handleMomoIpn, MomoBillingError } from "./services/momoBilling.js"
 import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, listProjectAssets, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type UploadAssetInput } from "./services/assets.js"
 import { analysisService, AnalysisRequestError, cullInputSchema, startAnalysisInputSchema, type AnalysisSnapshot, type StartAnalysisInput } from "./services/analysis.js"
 import { directorGenerateSchema, directorMusicChoiceSchema, directorService, directorStoryChoiceSchema, DirectorRequestError, type DirectorGenerateInput, type DirectorMusicChoiceInput, type DirectorState, type DirectorStoryChoiceInput } from "./services/director.js"
@@ -69,6 +71,8 @@ type Services = {
   releaseDelivery: (projectId: string) => Promise<DeliverySnapshot>
   createCheckoutSession: (input: { userId: string; username: string; plan: PlanId; successUrl: string; cancelUrl: string }) => Promise<{ url: string }>
   handleWebhookEvent: (rawBody: Buffer, signature: string) => Promise<void>
+  createMomoCheckout: (input: { userId: string; username: string; redirectUrl: string }) => Promise<{ url: string }>
+  handleMomoIpn: (rawBody: Buffer) => Promise<void>
   getPlanCatalog: () => ReturnType<typeof getPlanCatalog>
   listIncidents: () => { incidents: Incident[]; openCount: number }
   updateIncident: (id: string, status: IncidentStatus) => Incident | null
@@ -89,39 +93,15 @@ const defaultServices: Services = {
   getDirector: directorService.get, generateDirector: directorService.generate, chooseDirectorStory: directorService.chooseStory, chooseDirectorMusic: directorService.chooseMusic,
   getQa: qaService.get,
   getDelivery: deliveryService.get, approveDelivery: deliveryService.approve, releaseDelivery: deliveryService.release,
-  createCheckoutSession, handleWebhookEvent, getPlanCatalog,
+  createCheckoutSession, handleWebhookEvent, createMomoCheckout, handleMomoIpn, getPlanCatalog,
   listIncidents: () => incidentService.list(),
   updateIncident: (id, status) => incidentService.update(id, status),
   retryIncident: (id) => incidentService.retry(id),
 }
-const checkoutInputSchema = z.object({ plan: z.enum(["subscription", "per_video"]) })
-const resourceIdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-
-function parseResourceId(encodedValue: string) {
-  let value: string
-  try { value = decodeURIComponent(encodedValue) } catch { throw new HttpError(400, "INVALID_RESOURCE_ID", "Resource id is not valid URL encoding") }
-  const result = resourceIdSchema.safeParse(value)
-  if (!result.success) throw new HttpError(400, "INVALID_RESOURCE_ID", "Resource id must use lowercase kebab-case")
-  return result.data
-}
-
-function setCorsHeaders(request: IncomingMessage, response: ServerResponse) {
-  const origin = request.headers.origin
-  if (origin && !config.webOrigins.has(origin)) {
-    throw new HttpError(403, "ORIGIN_DENIED", "Request origin is not allowed")
-  }
-  if (origin) response.setHeader("Access-Control-Allow-Origin", origin)
-  response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Range, Authorization")
-  response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-  response.setHeader("Vary", "Origin")
-}
-
-function bearerToken(request: IncomingMessage): string | null {
-  const header = request.headers.authorization
-  if (!header) return null
-  const match = /^Bearer\s+(.+)$/i.exec(header)
-  return match ? match[1].trim() : null
-}
+const checkoutInputSchema = z.object({
+  plan: z.enum(["subscription", "per_video"]),
+  provider: z.enum(["stripe", "momo"]).default("stripe"),
+})
 
 async function requireSession(request: IncomingMessage, services: Services) {
   const token = bearerToken(request)
@@ -135,53 +115,6 @@ async function requireAdmin(session: { userId: string }, services: Services) {
   const user = await services.getUserById(session.userId)
   const admins = new Set((process.env.STOREEL_ADMIN_USERNAMES || "storeel").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean))
   if (!user || !admins.has(user.username.toLowerCase())) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required")
-}
-
-function methodNotAllowed(response: ServerResponse) {
-  response.setHeader("Allow", "GET, OPTIONS")
-  sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports GET")
-}
-
-function sendArtifact(request: IncomingMessage, response: ServerResponse, artifact: ProjectArtifactFile) {
-  const baseHeaders = {
-    "Accept-Ranges": "bytes",
-    "Cache-Control": "no-store",
-    "Content-Type": artifact.mimeType,
-    "Content-Disposition": `${artifact.id === "delivery" || artifact.kind === "json" ? "attachment" : "inline"}; filename="${artifact.filename.replace(/["\\]/g, "_")}"`,
-  }
-  const range = request.headers.range
-  if (!range) {
-    response.writeHead(200, { ...baseHeaders, "Content-Length": artifact.size! })
-    createReadStream(artifact.absolutePath).pipe(response)
-    return
-  }
-  const match = /^bytes=(\d*)-(\d*)$/.exec(range)
-  if (!match || (!match[1] && !match[2])) {
-    response.writeHead(416, { "Content-Range": `bytes */${artifact.size}` })
-    response.end()
-    return
-  }
-  const size = artifact.size!
-  const suffix = !match[1]
-  const requestedStart = suffix ? Math.max(0, size - Number(match[2])) : Number(match[1])
-  const requestedEnd = suffix || !match[2] ? size - 1 : Number(match[2])
-  const start = requestedStart
-  const end = Math.min(requestedEnd, size - 1)
-  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start >= size || end < start) {
-    response.writeHead(416, { "Content-Range": `bytes */${size}` })
-    response.end()
-    return
-  }
-  response.writeHead(206, { ...baseHeaders, "Content-Length": end - start + 1, "Content-Range": `bytes ${start}-${end}/${size}` })
-  createReadStream(artifact.absolutePath, { start, end }).pipe(response)
-}
-
-function sendTimelineImage(response: ServerResponse, image: TimelineImageFile) {
-  response.writeHead(200, {
-    "Cache-Control": "no-store", "Content-Type": image.mimeType, "Content-Length": image.size,
-    "Content-Disposition": `inline; filename="${image.filename.replace(/["\\]/g, "_")}"`,
-  })
-  createReadStream(image.absolutePath).pipe(response)
 }
 
 async function routeRequest(request: IncomingMessage, response: ServerResponse, services: Services) {
@@ -285,6 +218,22 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     return
   }
 
+  // MoMo calls this server-to-server endpoint and authenticates through the
+  // HMAC signature in its JSON payload. Per MoMo's IPN contract, acknowledge
+  // a successfully verified notification with 204 and no response body.
+  if (url.pathname === "/api/billing/momo/ipn") {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    const rawBody = await readRawBody(request, 1024 * 1024)
+    await services.handleMomoIpn(rawBody)
+    response.writeHead(204)
+    response.end()
+    return
+  }
+
   let session: { userId: string } | null = null
   if (!url.pathname.startsWith("/api/gallery")) {
     session = await requireSession(request, services)
@@ -322,6 +271,20 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     const project = await services.getProject(projectId)
     if (!project || !project.shared) throw new HttpError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)
     sendArtifact(request, response, await services.getProjectArtifact(projectId, "delivery"))
+    return
+  }
+
+  // The representative photo for a finished film — the same hero frame
+  // deliver.mjs already picks (never a bookend slide) for the delivery
+  // package's thumbnail.jpg, reused here as the public gallery card's poster
+  // image instead of a blank rectangle before the visitor presses play.
+  const galleryThumbnailMatch = url.pathname.match(/^\/api\/gallery\/([^/]+)\/thumbnail$/)
+  if (galleryThumbnailMatch) {
+    if (request.method !== "GET") return methodNotAllowed(response)
+    const projectId = parseResourceId(galleryThumbnailMatch[1])
+    const project = await services.getProject(projectId)
+    if (!project || !project.shared) throw new HttpError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)
+    sendArtifact(request, response, await services.getProjectArtifact(projectId, "thumbnail"))
     return
   }
 
@@ -379,13 +342,22 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     if (input.plan === "per_video" && user.plan.type === "subscription") {
       throw new HttpError(400, "ALREADY_SUBSCRIBED", "You already have an active subscription — use it instead of buying a single video")
     }
-    const data = await services.createCheckoutSession({
-      userId: user.id,
-      username: user.username,
-      plan: input.plan,
-      successUrl: `${origin}/?view=dashboard&checkout=success`,
-      cancelUrl: `${origin}/?view=dashboard&checkout=cancelled`,
-    })
+    if (input.provider === "momo" && input.plan !== "per_video") {
+      throw new HttpError(400, "MOMO_PLAN_UNSUPPORTED", "MoMo currently supports pay-per-video checkout; subscriptions use Stripe")
+    }
+    const data = input.provider === "momo"
+      ? await services.createMomoCheckout({
+          userId: user.id,
+          username: user.username,
+          redirectUrl: `${origin}/?view=dashboard&checkout=success&provider=momo`,
+        })
+      : await services.createCheckoutSession({
+          userId: user.id,
+          username: user.username,
+          plan: input.plan,
+          successUrl: `${origin}/?view=dashboard&checkout=success&provider=stripe`,
+          cancelUrl: `${origin}/?view=dashboard&checkout=cancelled&provider=stripe`,
+        })
     sendJson(response, 200, { ok: true, data })
     return
   }
@@ -812,6 +784,10 @@ function handleFailure(response: ServerResponse, error: unknown) {
     return
   }
   if (error instanceof BillingRequestError) {
+    sendError(response, error.status, error.code, error.message)
+    return
+  }
+  if (error instanceof MomoBillingError) {
     sendError(response, error.status, error.code, error.message)
     return
   }

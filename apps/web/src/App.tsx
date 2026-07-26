@@ -41,6 +41,7 @@ import { useProjects } from "@/hooks/useProjects"
 import { IntakeWizard } from "@/IntakeWizard"
 import { LoginPage } from "@/LoginPage"
 import { apiGet } from "@/lib/api"
+import { useApiObjectUrl } from "@/lib/use-api-object-url"
 import { formatDate, initials, statusClass, statusLabel } from "@/projectFormat"
 import { ProjectsPage } from "@/ProjectsPage"
 import { RecipeLibrary } from "@/RecipeLibrary"
@@ -145,6 +146,7 @@ function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onB
     if (checkout === "success") onReloadUser()
     const url = new URL(window.location.href)
     url.searchParams.delete("checkout")
+    url.searchParams.delete("provider")
     window.history.replaceState({}, "", url)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -210,14 +212,14 @@ function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onB
         </header>
 
         <div className="mx-auto max-w-[1440px] space-y-6 px-6 py-8 md:px-10">
-          {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success"><span>Payment received — your plan will update as soon as Stripe confirms it (usually a few seconds).</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>Dismiss</Button></CardContent></Card>}
+          {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success"><span>Payment submitted — your plan will update as soon as the payment provider confirms it.</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>Dismiss</Button></CardContent></Card>}
           {checkoutBanner === "cancelled" && <Card className="border-amber-300 bg-amber-50"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-amber-900"><span>Checkout was cancelled — no charge was made.</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>Dismiss</Button></CardContent></Card>}
           {error && <Card className="border-destructive/40 bg-destructive/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-destructive"><span>{error}</span><Button variant="outline" size="sm" onClick={reload}>Retry</Button></CardContent></Card>}
           {data && data.issues.length > 0 && <Card className="border-amber-300 bg-amber-50"><CardContent className="p-5 text-sm text-amber-900">{data.issues.length} project folder(s) contain invalid data. Open Projects for details.</CardContent></Card>}
           <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
             {featured ? <Card className="relative min-h-[360px] overflow-hidden border-0 bg-[linear-gradient(135deg,#3a302b_0%,#7b5a42_52%,#c9a878_100%)] text-white shadow-xl">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,.22),transparent_35%),linear-gradient(to_top,rgba(14,12,11,.78),transparent_65%)]" />
-              <div className="absolute right-10 top-12 grid size-36 place-items-center rounded-full border border-white/20 bg-white/10 font-serif text-5xl backdrop-blur-sm">{initials(featured.name)}</div>
+              <ProjectAvatar project={featured} className="absolute right-10 top-12 size-36 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm" textClassName="text-5xl" />
               <div className="relative flex min-h-[360px] flex-col justify-end p-8">
                 <Badge className="mb-4 w-fit border-0 bg-white/15 text-white">{statusLabel[featured.status]}</Badge>
                 <h2 className="font-serif text-4xl font-semibold">{featured.name}</h2><p className="mt-1 text-white/75 capitalize">{featured.tier} · {featured.currentPhase || "Not started"} · Updated {formatDate(featured.updatedAt)}</p>
@@ -236,7 +238,7 @@ function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onB
           {featured && <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Pipeline progress</CardTitle><CardDescription>{featured.name} · <span className="capitalize">{featured.currentPhase || "not started"}</span></CardDescription></div><span className="font-serif text-3xl font-semibold text-primary">{featured.progress}%</span></CardHeader><CardContent><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${featured.progress}%` }} /></div><div className="mt-3 flex justify-between text-xs text-muted-foreground"><span className="flex items-center gap-2"><span className={cn("size-2 rounded-full", featured.status === "failed" || featured.status === "invalid" ? "bg-red-500" : featured.status === "paused" ? "bg-amber-500" : "bg-success")} /> {statusLabel[featured.status]}</span><span>Updated {formatDate(featured.updatedAt)}</span></div>{featured.error && <p className="mt-3 text-xs text-destructive">{featured.error}</p>}</CardContent></Card>}
 
           <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
-            <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Recent projects</CardTitle><CardDescription>{loading ? "Loading project folders…" : "Ordered by latest job update"}</CardDescription></div><Button variant="ghost" size="sm" onClick={onBrowseProjects}>View all <ArrowRight className="size-4" /></Button></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{projects.slice(0, 4).map((project, index) => <button onClick={onBrowseProjects} key={project.id} className="overflow-hidden rounded-lg border bg-background text-left"><div className={cn("grid h-28 place-items-center font-serif text-2xl text-white", ["bg-[#8b7869]", "bg-[#65705f]", "bg-[#9b745d]", "bg-[#687a87]"][index])}>{initials(project.name)}</div><div className="p-3"><p className="text-sm font-medium">{project.name}</p><p className="mt-0.5 text-xs capitalize text-muted-foreground">{project.tier} · {project.currentPhase || "not started"}</p><Badge className={cn("mt-3 border-0", statusClass[project.status])}>{statusLabel[project.status]}</Badge></div></button>)}{!loading && projects.length === 0 && <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No recent projects.</p>}</CardContent></Card>
+            <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Recent projects</CardTitle><CardDescription>{loading ? "Loading project folders…" : "Ordered by latest job update"}</CardDescription></div><Button variant="ghost" size="sm" onClick={onBrowseProjects}>View all <ArrowRight className="size-4" /></Button></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{projects.slice(0, 4).map((project, index) => <button onClick={onBrowseProjects} key={project.id} className="overflow-hidden rounded-lg border bg-background text-left"><ProjectAvatar project={project} className={cn("h-28 w-full", ["bg-[#8b7869]", "bg-[#65705f]", "bg-[#9b745d]", "bg-[#687a87]"][index])} textClassName="text-2xl" /><div className="p-3"><p className="text-sm font-medium">{project.name}</p><p className="mt-0.5 text-xs capitalize text-muted-foreground">{project.tier} · {project.currentPhase || "not started"}</p><Badge className={cn("mt-3 border-0", statusClass[project.status])}>{statusLabel[project.status]}</Badge></div></button>)}{!loading && projects.length === 0 && <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No recent projects.</p>}</CardContent></Card>
             <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Activity className="size-4 text-primary" /> Activity</CardTitle><CardDescription>Latest project updates</CardDescription></CardHeader><CardContent className="space-y-4 text-sm">{projects.slice(0, 4).map((project) => <ActivityRow key={project.id} title={`${project.name}: ${statusLabel[project.status]}`} time={formatDate(project.updatedAt)} />)}{!loading && projects.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No activity yet.</p>}</CardContent></Card>
           </div>
         </div>
@@ -418,6 +420,20 @@ function planIsExhausted(plan: Plan): boolean {
 
 function Summary({ label, value }: { label: string; value: string }) {
   return <div><p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</p><p className="leading-6">{value}</p></div>
+}
+
+// The representative photo for a finished project — same thumbnail.jpg the
+// delivery package already picked (a real hero frame, never a bookend
+// slide). Falls back to the letter-avatar placeholder for a project with no
+// delivery yet (thumbnail 404s as ARTIFACT_NOT_READY, useApiObjectUrl just
+// resolves null), so "not delivered" degrades gracefully instead of erroring.
+function ProjectAvatar({ project, className, textClassName }: { project: ProjectSummary; className?: string; textClassName?: string }) {
+  const thumbnailUrl = useApiObjectUrl(`/projects/${encodeURIComponent(project.id)}/artifacts/thumbnail`)
+  return <div className={cn("overflow-hidden", className)}>
+    {thumbnailUrl
+      ? <img src={thumbnailUrl} alt="" className="h-full w-full object-cover" />
+      : <div className={cn("grid h-full w-full place-items-center font-serif text-white", textClassName)}>{initials(project.name)}</div>}
+  </div>
 }
 
 function Metric({ icon: Icon, value, label, detail }: { icon: typeof Film; value: string; label: string; detail: string }) {

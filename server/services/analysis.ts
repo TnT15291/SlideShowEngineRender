@@ -1,6 +1,6 @@
 import { spawn, type ChildProcessByStdio } from "node:child_process"
-import { createHash, randomUUID } from "node:crypto"
-import { readFile, rename, rm, stat, writeFile } from "node:fs/promises"
+import { createHash } from "node:crypto"
+import { readFile, stat } from "node:fs/promises"
 import path from "node:path"
 import type { Readable } from "node:stream"
 
@@ -8,6 +8,7 @@ import { z } from "zod"
 
 import { listProjectAssets } from "./assets.js"
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
+import { writeJsonAtomic } from "./atomicFile.js"
 
 const projectSchema = z.object({
   id: z.string(), tier: z.enum(["template", "lite", "premium"]), analysisDir: z.string(), inputDir: z.string(),
@@ -65,16 +66,6 @@ const OPENAI_RATES: Record<string, { input: number; output: number }> = {
 
 export class AnalysisRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) { super(message) }
-}
-
-async function writeJsonAtomic(file: string, value: unknown) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-    await rename(temporary, file)
-  } finally {
-    await rm(temporary, { force: true })
-  }
 }
 
 function messageOf(error: unknown) { return error instanceof Error ? error.message : String(error) }

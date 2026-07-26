@@ -1,5 +1,4 @@
-import { randomUUID } from "node:crypto"
-import { readFile, rename, rm, stat, writeFile } from "node:fs/promises"
+import { readFile, stat } from "node:fs/promises"
 import path from "node:path"
 
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020.js"
@@ -7,6 +6,7 @@ import { z } from "zod"
 
 import { listProjectAssets } from "./assets.js"
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
+import { writeJsonAtomic } from "./atomicFile.js"
 
 const projectSchema = z.object({
   id: z.string(), analysisDir: z.string().min(1), timeline: z.string().min(1), output: z.string().min(1),
@@ -52,14 +52,6 @@ const imageMime = new Map([
 function isInside(parent: string, target: string) {
   const relative = path.relative(parent, target)
   return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
-}
-
-async function writeJsonAtomic(file: string, value: unknown) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-    await rename(temporary, file)
-  } finally { await rm(temporary, { force: true }) }
 }
 
 function slotsOf(slide: z.infer<typeof slideSchema>): TimelineImageSlot[] {

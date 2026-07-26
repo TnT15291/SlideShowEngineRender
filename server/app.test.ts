@@ -112,6 +112,44 @@ test("missing or invalid bearer token is rejected on protected routes", async ()
   }, { listRecipes: async () => [] })
 })
 
+test("billing routes select MoMo for one-time checkout and acknowledge its IPN with 204", async () => {
+  const allowedOrigin = [...config.webOrigins][0]
+  let checkoutInput: { userId: string; username: string; redirectUrl: string } | null = null
+  let ipnBody: Buffer | null = null
+  await withServer(async (baseUrl) => {
+    const checkout = await fetch(`${baseUrl}/api/billing/checkout`, {
+      method: "POST",
+      headers: { "content-type": "application/json", Origin: allowedOrigin },
+      body: JSON.stringify({ plan: "per_video", provider: "momo" }),
+    })
+    assert.equal(checkout.status, 200)
+    assert.equal((await checkout.json() as { data: { url: string } }).data.url, "https://momo.test/pay")
+    assert.equal(checkoutInput?.userId, TEST_USER_ID)
+    assert.match(checkoutInput?.redirectUrl || "", /provider=momo/)
+
+    const ipn = await fetch(`${baseUrl}/api/billing/momo/ipn`, {
+      method: "POST",
+      headers: { "content-type": "application/json", Authorization: "" },
+      body: JSON.stringify({ signed: true }),
+    })
+    assert.equal(ipn.status, 204)
+    assert.equal(ipnBody?.toString("utf8"), JSON.stringify({ signed: true }))
+  }, {
+    getUserById: async () => ({
+      id: TEST_USER_ID,
+      username: "test-user",
+      plan: { type: "per_video", creditsRemaining: 0 },
+    }),
+    createMomoCheckout: async (input) => {
+      checkoutInput = input
+      return { url: "https://momo.test/pay" }
+    },
+    handleMomoIpn: async (body) => {
+      ipnBody = body
+    },
+  })
+})
+
 test("technical incidents are restricted to configured administrators", async (context) => {
   const previous = process.env.STOREEL_ADMIN_USERNAMES
   process.env.STOREEL_ADMIN_USERNAMES = "storeel"
@@ -624,17 +662,26 @@ test("sharing a project requires an existing release, and toggles the shared fla
   })
 })
 
-test("the public gallery lists only shared projects and streams shared video without a session", async (context) => {
+test("the public gallery lists only shared projects and streams shared video and thumbnail without a session", async (context) => {
   const root = await mkdtemp(path.join(os.tmpdir(), "storeel-gallery-route-"))
-  const file = path.join(root, "final.mp4")
-  await writeFile(file, Buffer.from("0123456789"))
+  const videoFile = path.join(root, "final.mp4")
+  const thumbnailFile = path.join(root, "thumbnail.jpg")
+  await writeFile(videoFile, Buffer.from("0123456789"))
+  await writeFile(thumbnailFile, Buffer.from("jpegbytes"))
   context.after(() => rm(root, { recursive: true, force: true }))
 
   const sharedProject: ProjectSummary = { ...OWNED_PROJECT, id: "public-linh-nam", shared: true }
-  const artifact = {
-    id: "delivery" as const, label: "Delivery", kind: "video" as const, mimeType: "video/mp4",
-    ready: true, stale: false, size: 10, updatedAt: "2026-07-22T10:00:00.000Z",
-    url: "/projects/public-linh-nam/artifacts/delivery", absolutePath: file, filename: "final.mp4",
+  const artifactsById = {
+    delivery: {
+      id: "delivery" as const, label: "Delivery", kind: "video" as const, mimeType: "video/mp4",
+      ready: true, stale: false, size: 10, updatedAt: "2026-07-22T10:00:00.000Z",
+      url: "/projects/public-linh-nam/artifacts/delivery", absolutePath: videoFile, filename: "final.mp4",
+    },
+    thumbnail: {
+      id: "thumbnail" as const, label: "Thumbnail", kind: "image" as const, mimeType: "image/jpeg",
+      ready: true, stale: false, size: 9, updatedAt: "2026-07-22T10:00:00.000Z",
+      url: "/projects/public-linh-nam/artifacts/thumbnail", absolutePath: thumbnailFile, filename: "thumbnail.jpg",
+    },
   }
 
   await withServer(async (baseUrl) => {
@@ -647,11 +694,20 @@ test("the public gallery lists only shared projects and streams shared video wit
     assert.equal(video.status, 200)
     assert.equal(await video.text(), "0123456789")
 
+    // The representative photo for the gallery card's poster image — same
+    // hero frame deliver.mjs already picked, served publicly like the video.
+    const thumbnail = await fetch(`${baseUrl}/api/gallery/${sharedProject.id}/thumbnail`, { headers: { Authorization: "" } })
+    assert.equal(thumbnail.status, 200)
+    assert.equal(thumbnail.headers.get("content-type"), "image/jpeg")
+    assert.equal(await thumbnail.text(), "jpegbytes")
+
     const notShared = await fetch(`${baseUrl}/api/gallery/linh-nam/video`, { headers: { Authorization: "" } })
     assert.equal(notShared.status, 404)
+    const notSharedThumbnail = await fetch(`${baseUrl}/api/gallery/linh-nam/thumbnail`, { headers: { Authorization: "" } })
+    assert.equal(notSharedThumbnail.status, 404)
   }, {
     listSharedProjects: async () => [sharedProject],
     getProject: async (id) => id === sharedProject.id ? sharedProject : OWNED_PROJECT,
-    getProjectArtifact: async () => artifact,
+    getProjectArtifact: async (_projectId, artifactId) => artifactsById[artifactId as keyof typeof artifactsById],
   })
 })

@@ -4,6 +4,7 @@ import {
   activateSubscription, cancelSubscription, getStripeCustomerId, grantPerVideoCredits,
   linkStripeCustomer, resetSubscriptionPeriod,
 } from "./auth.js"
+import { getMomoCatalog } from "./momoBilling.js"
 
 export class BillingRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) {
@@ -38,6 +39,7 @@ export function getPlanCatalog() {
   return {
     subscription: { name: PLAN_CATALOG.subscription.name, unitAmountCents: PLAN_CATALOG.subscription.unitAmountCents, monthlyRenderQuota: PLAN_CATALOG.subscription.monthlyRenderQuota, currency: currency() },
     per_video: { name: PLAN_CATALOG.per_video.name, unitAmountCents: PLAN_CATALOG.per_video.unitAmountCents, credits: PLAN_CATALOG.per_video.credits, currency: currency() },
+    momo: getMomoCatalog(),
   }
 }
 

@@ -35,6 +35,12 @@
     "origin": "original",
     "notes": "Wedding-day-only template with an antique heirloom mood: deep lacquer, aged gold, formal symmetry and restrained film texture instead of modern white minimalism."
   },
+  "intro": {
+    "summary": "Không khí cổ kính, sơn mài và ánh vàng cổ điển — dành riêng cho ngày lễ cưới truyền thống.",
+    "photos": "Hợp ảnh lễ cưới truyền thống/lễ gia tiên, nghi thức, không gian tiệc cưới trang trọng — không cần ảnh prewedding hay hẹn hò trước đó.",
+    "story": "Phù hợp video chỉ tập trung vào NGÀY LỄ: rước dâu, nghi thức gia tiên, lời thề, lễ cưới, tiệc đãi khách — mang màu sắc truyền thống, trang nghiêm.",
+    "music": "Hợp nhạc mang âm hưởng truyền thống, giao hưởng trang nghiêm, ấm áp, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "ceremony_only",

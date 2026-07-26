@@ -72,7 +72,7 @@ test("job runner reports completed dry runs and missing projects", async (contex
   assert.equal((await runner.get("linh-nam")).progress, 100)
 })
 
-test("job runner cancels a stale running manifest after a server restart", async (context) => {
+test("job runner reports nothing to cancel once a stale running manifest has self-healed to failed", async (context) => {
   const { root } = await workspace()
   const runner = createJobRunner(root)
   context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
@@ -91,7 +91,51 @@ test("job runner cancels a stale running manifest after a server restart", async
     artifacts: {},
   }))
 
-  const cancelled = await runner.cancel("linh-nam")
-  assert.equal(cancelled.status, "paused")
-  assert.equal(cancelled.phases.render, "pending")
+  // cancel() reads the manifest itself before deciding whether there is
+  // anything to cancel — that read now self-heals the orphaned "running"
+  // state to "failed" (healOrphanedRun), so by the time cancel's own check
+  // runs there is genuinely nothing left running to cancel. This supersedes
+  // the old "cancel resolves a stale run to paused" behavior: the run is now
+  // resolved the instant anything reads it, not only when a human clicks
+  // cancel, so cancel correctly reports JOB_NOT_RUNNING instead.
+  await assert.rejects(runner.cancel("linh-nam"), (error: unknown) => error instanceof JobRequestError && error.code === "JOB_NOT_RUNNING")
+  const snapshot = await runner.get("linh-nam")
+  assert.equal(snapshot.status, "failed")
+  assert.equal(snapshot.phases.render, "failed")
+})
+
+test("job runner self-heals a stale running manifest to failed, and a retry is not blocked by it", async (context) => {
+  const { root } = await workspace()
+  const runner = createJobRunner(root)
+  context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
+  const phase = (status: string) => ({ status })
+  const manifestFile = path.join(root, "projects", "linh-nam", "analysis", "job-manifest.json")
+  await writeFile(manifestFile, JSON.stringify({
+    schemaVersion: 1,
+    projectId: "linh-nam",
+    status: "running",
+    startedAt: "2026-07-24T10:00:00.000Z",
+    updatedAt: "2026-07-24T10:01:00.000Z",
+    currentPhase: "render",
+    phases: {
+      validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"),
+      build: phase("completed"), render: phase("running"), qa: phase("pending"), deliver: phase("pending"),
+    },
+    artifacts: {},
+  }))
+
+  // No ActiveJob was ever created for this run in this process — exactly what
+  // a fresh server sees after a crash or a forced kill left the old process's
+  // job with no chance to run shutdown(). A plain read must not keep repeating
+  // "running" forever; it should surface a clear failure instead.
+  const snapshot = await runner.get("linh-nam")
+  assert.equal(snapshot.status, "failed")
+  assert.match(snapshot.error ?? "", /interrupted/i)
+  assert.equal(snapshot.phases.render, "failed")
+  assert.equal(snapshot.progress, 57) // 4 of 7 phases (validate/analyze/plan/build) were genuinely done
+
+  // The self-heal must also unblock start() — the whole point of detecting
+  // this is that a retry should work, not trade one stuck state for another.
+  const restarted = await runner.start("linh-nam", { mode: "render", resume: false })
+  assert.equal(restarted.status, "running")
 })

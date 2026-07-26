@@ -18,22 +18,27 @@
 import fs from "node:fs";
 import path from "node:path";
 import { assignPhotos } from "./lib/photoAssignment.mjs";
-import { applyStoryArc, editorialRole } from "./lib/tier1Editorial.mjs";
-import { retimeSlidesToMusic, MAX_TRANSITION_SEC } from "./lib/musicRetime.mjs";
+import { applyStoryArc } from "./lib/tier1Editorial.mjs";
+import { retimeSlidesToMusic } from "./lib/musicRetime.mjs";
 import { createTransitionGrammar } from "./lib/transitionGrammar.mjs";
 import { buildDiversityReport } from "./lib/diversityPlanner.mjs";
 import { createMotionPlanner } from "./lib/motionPlanner.mjs";
 import { averageAdjustments, buildColorNormalization } from "./lib/colorNormalizer.mjs";
 import { loadLedger, active, applyToStoryboard, applyToTimeline } from "./lib/directives.mjs";
-import { fitScale, describeFit, makeEnergy, MAX_SCENE } from "./lib/pacing.mjs";
-import { solveRecipeShotList } from "./lib/recipeShotList.mjs";
+import { fitScale, describeFit } from "./lib/pacing.mjs";
 import { scenePhotoCount } from "./lib/scenePhotoCount.mjs";
-import { chooseMusicEdit, resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
-import { NATURAL_SEC_PER_PHOTO } from "./lib/fitPlan.mjs";
 import { hashSeed, pickVariant as pickVariantFor } from "./lib/copyVariants.mjs";
+import { createTemplateTheme } from "./lib/templateTheme.mjs";
 import {
-  SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_MAX, EASING_EFFECTS,
+  buildPhotoAssignmentRequests,
+  principalSlotId,
+} from "./lib/templatePhotoRequests.mjs";
+import { createLayerSceneBuilder } from "./lib/layerSceneBuilder.mjs";
+import { planTemplateMusic } from "./lib/templateMusicPlan.mjs";
+import { planTemplateShotList } from "./lib/templateShotList.mjs";
+import {
+  SINGLE_PHOTO_EFFECTS, MONTAGE_MAX, EASING_EFFECTS,
 } from "./lib/engineCapabilities.mjs";
 
 const root = process.cwd();
@@ -199,62 +204,24 @@ if (capacityLimited) {
       `The film ships, but more photos would give it more variety.`
   );
 }
-const requestedMusicMode = orders.find((d) => d.kind === "music_mode" && d.op === "set")?.target
-  || musicModeArg || brief.musicMode || "auto";
-const musicModeOrder = orders.find((d) => d.kind === "music_mode" && d.op === "set");
-if (requestedMusicMode === "full_song" && sourceMusic.duration / photos.length >= 7.2 && !acceptMisfit) {
-  throw new Error(
-    `full-song was requested, but ${photos.length} photos cannot carry the ${sourceMusic.duration}s track naturally. ` +
-    `Add at least ${Math.ceil(sourceMusic.duration / 7.2) - photos.length} photo(s), choose highlight/auto, or pass --accept-misfit.`
-  );
-}
-// playlist/loop EXTEND a track too short for the album — the mirror of highlight, which
-// TRIMS one too long. chooseMusicEdit only knows trim-or-keep (auto/highlight/full_song),
-// so these two are resolved by hand: the target is what the kept photos naturally want
-// (photoCount * NATURAL_SEC_PER_PHOTO), not the source track's own length. The engine needs
-// no new code for this — a single music track shorter than the film already loops via
-// -stream_loop -1 (buildAudioMuxArgs); "loop" mode is simply NOT trimming to the source
-// duration. "playlist" additionally appends a second track, letting acrossfade join them.
-let musicEdit;
-if (requestedMusicMode === "playlist" || requestedMusicMode === "loop") {
-  const sourceDuration = Number(sourceMusic.duration) || 0;
-  const extendedDuration = Math.max(sourceDuration, photos.length * NATURAL_SEC_PER_PHOTO);
-  const usePlaylist = requestedMusicMode === "playlist" && extraMusicPath;
-  if (requestedMusicMode === "playlist" && !extraMusicPath) {
-    console.log(`[applyStoryTemplate] playlist requested but no --extra-music given — looping "${musicPath}" instead.`);
-  }
-  musicEdit = {
-    mode: usePlaylist ? "playlist" : "loop",
-    sourceDuration, start: 0, end: sourceDuration,
-    duration: +extendedDuration.toFixed(3),
-    reason: "photo_budget_extend",
-  };
-  if (musicModeOrder) appliedIds.add(musicModeOrder.id);
-} else {
-  // The same window composeStoryboard solved its shot list against — same function, same
-  // inputs. When these two disagreed, premium built a 219s film for a 93s excerpt.
-  musicEdit = resolveMusicWindow({
-    music: sourceMusic,
-    photoCount: photos.length,
-    orders,
-    brief,
-    musicMode: musicModeArg,
-  });
-  if (musicModeOrder) appliedIds.add(musicModeOrder.id);
-}
-// sliceMusicAnalysis only knows highlight/full_song; loop/playlist keep every phrase/beat
-// the source track has (nothing to trim) but must still carry the EXTENDED duration so
-// downstream pacing solves the shot list against it, not the shorter source length.
-let music = (musicEdit.mode === "playlist" || musicEdit.mode === "loop")
-  ? { ...sourceMusic, duration: musicEdit.duration }
-  : sliceMusicAnalysis(sourceMusic, musicEdit);
-if (musicEdit.mode === "highlight") {
-  console.log(`[applyStoryTemplate] highlight: ${musicEdit.start}s–${musicEdit.end}s (${musicEdit.duration}s) ` +
-    `because ${photos.length} photos cannot carry the ${musicEdit.sourceDuration}s full song naturally`);
-} else if (musicEdit.mode === "loop" || musicEdit.mode === "playlist") {
-  console.log(`[applyStoryTemplate] ${musicEdit.mode}: extending to ${musicEdit.duration}s ` +
-    `(source track is ${musicEdit.sourceDuration}s) so ${photos.length} photos are not rushed`);
-}
+const {
+  requestedMusicMode,
+  musicModeOrderId,
+  musicEdit: initialMusicEdit,
+  music: initialMusic,
+} = planTemplateMusic({
+  orders,
+  musicModeArg,
+  brief,
+  sourceMusic,
+  photoCount: photos.length,
+  acceptMisfit,
+  extraMusicPath,
+  musicPath,
+});
+if (musicModeOrderId) appliedIds.add(musicModeOrderId);
+let musicEdit = initialMusicEdit;
+let music = initialMusic;
 const availableFiles = new Set(photos.map((p) => p.file));
 for (const file of [...(brief.mustUsePhotos || []), brief.openingPhoto, brief.endingPhoto].filter(Boolean)) {
   if (!availableFiles.has(file)) throw new Error(`brief requires unavailable/excluded photo: ${file}`);
@@ -438,203 +405,39 @@ const selectedPacing = direction
   ? pacingOptions.find((v) => v.id === direction.pacing?.variantId) || pacingVariant
   : pacingVariant;
 
-const styleRules = [
-  { match: /editorial|tạp chí|thời trang|fashion/, theme: "editorial_bold" },
-  { match: /hiện đại|modern|minimal|tối giản|teal/, theme: "modern_teal" },
-  { match: /điện ảnh|cinematic|moody|trầm|dark/, theme: "dark_film" },
-  { match: /hoài niệm|vintage|film|ấm|warm|mộc/, theme: "warm_film" },
-];
-const requestedTheme = styleRules.find((r) => r.match.test(customerPrompt))?.theme;
-const themeRef = direction?.style?.themeId || (requestedTheme && library.designTokens?.themes?.[requestedTheme]
-  ? requestedTheme
-  : (template.libraryTheme || "white_weddings"));
-const libTheme = () => (library.designTokens?.themes || {})[themeRef] || {};
-
-function resolveColor(spec) {
-  if (typeof spec !== "string") return "#000000";
-  if (spec.startsWith("theme.")) {
-    const th = libTheme();
-    return th.palette?.[spec.slice(6)] || th.background || "#000000";
-  }
-  return spec;
-}
-
-function resolveFont(role) {
-  const th = libTheme();
-  return th.fonts?.[role]
-    || template.defaults?.fonts?.[role]
-    || template.defaults?.fonts?.body
-    || "fonts/BeVietnamPro-Regular.ttf";
-}
-
-function resolveFrame(name) {
-  if (!name) return undefined;
-  if (typeof name === "object") return name;
-  return template.layoutPresets?.[name] || library.designTokens?.framePreset?.[name] || undefined;
-}
-
-function hexLuma(hex) {
-  const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
-  if (!m) return 255; // named colors: assume light
-  const v = parseInt(m[1], 16);
-  return 0.2126 * ((v >> 16) & 255) + 0.7152 * ((v >> 8) & 255) + 0.0722 * (v & 255);
-}
-
-function themeInk() {
-  const pal = libTheme().palette || {};
-  return pal.text || pal.warm_brown || pal.ink_dark || template.defaults?.palette?.brown || "#2D2D33";
-}
-
-// Over a full-bleed photo, text is white unless a LIGHT panel backs it; over a
-// dark scrim panel it stays white. On solid theme backgrounds use theme ink.
-function defaultTextColor(slot, layout) {
-  if (layout.background?.type !== "photo_full_bleed") return themeInk();
-  const cx = slot.x + slot.width / 2;
-  const cy = slot.y + slot.height / 2;
-  const backing = (layout.panels || []).find(
-    (p) => cx >= p.x && cx <= p.x + p.width && cy >= p.y && cy <= p.y + p.height
-  );
-  if (!backing || hexLuma(resolveColor(backing.color)) < 140) return "#FFFFFF";
-  return themeInk();
-}
-
-const stagger = () => library.designTokens?.motionPresets?.staggerSeconds || {};
-function photoStart(idx) {
-  const s = stagger();
-  return +(((s.photoBase ?? 0.15) + idx * (s.photoStep ?? 0.1))).toFixed(2);
-}
-function textStart(role) {
-  const s = stagger();
-  return ["heading", "eyebrow", "display", "names"].includes(role) ? (s.heading ?? 0.2) : (s.body ?? 0.5);
-}
-
-/** The slot that carries a layer_scene's PRINCIPAL photo.
- *
- * The opening scene's principal photo is the reserved hero, and it is withheld from the
- * general pool so no other scene can take it. That only worked when the opening layout
- * had a full-bleed photo background: with a cream-background layout (which the composer
- * picks freely) the principal photo is an ordinary `hero` slot, so the opening ASKED the
- * pool for a photo while the hero sat reserved and unclaimed — one request more than the
- * pool could serve, and the build died with "could not fill" on an unrelated scene.
- *
- * Naming the principal slot ONCE, and using the same answer where photos are requested
- * and where they are handed out, is what keeps those two from disagreeing. */
-function principalSlotId(layout) {
-  return layout?.background?.type === "photo_full_bleed"
-    ? layout.background.slot
-    : layout?.photoSlots?.[0]?.id ?? null;
-}
-
-function buildLayerSceneFromLayout(scene) {
-  const layout = (library.layouts || []).find((l) => l.id === scene.layout);
-  if (!layout) throw new Error(`Scene ${scene.id}: unknown layout '${scene.layout}' (not in ${libraryPath})`);
-  const canvas = library.meta?.canvas || { width: 1920, height: 1080 };
-  const isClosing = scene.durationRole === "closing";
-  const bg = isClosing ? { type: "photo_full_bleed", slot: "__bookend" } : (layout.background || { type: "cream" });
-  const bgSlotId = bg.type === "photo_full_bleed" ? bg.slot : null;
-  const defOf = (id) => (scene.photoSlots || []).find((s) => s.slot === id) || {};
-  const layers = [];
-
-  // 1) background: full-bleed photo or a solid theme fill.
-  if (bg.type === "photo_full_bleed") {
-    const slot = (layout.photoSlots || []).find((s) => s.id === bgSlotId)
-      || { x: 0, y: 0, width: canvas.width, height: canvas.height };
-    const def = defOf(bgSlotId);
-    const file = isClosing ? endingPhoto.file : (scene === expandedScenes?.[0] ? heroPhoto.file
-      : globalAssignments.get(`${scene.id}:${bgSlotId}`)?.[0] || take({ orient: def.orient }, 1));
-    if (!isClosing && file === heroPhoto.file) { used.add(file); lastPhoto = heroPhoto; }
-    layers.push(pic(file, slot.x, slot.y, slot.width, slot.height, {
-      fit: def.fit || slot.fit || "cover",
-      ...(def.motion ? { motion: def.motion } : {}),
-    }, scene, { isHero: true, isBackground: true }));
-    if (isClosing) layers.push(rect(0, 0, canvas.width, canvas.height, "#000000", 0.42));
-  } else {
-    const bgColor = bg.type === "cream"
-      ? (libTheme().background || "#FBF6ED")
-      : resolveColor(bg.color || "#000000");
-    layers.push(rect(0, 0, canvas.width, canvas.height, bgColor, 1));
-  }
-
-  // 2) panels (scrims / title pills), drawn above the background. Panels with
-  //    z:"over_photos" wait until after the photo layers (e.g. a scrim that
-  //    must darken foreground photos so text stays legible).
-  const allPanels = layout.panels || [];
-  for (const p of allPanels.filter((p) => p.z !== "over_photos")) {
-    layers.push(rect(p.x, p.y, p.width, p.height, resolveColor(p.color), p.opacity ?? 1));
-  }
-
-  // 3) photo slots: the layout drives how many + where; the scene refines
-  //    which photo lands in each (orientation, quality, motion, frame).
-  let pIdx = 0;
-  const isOpening = scene === expandedScenes?.[0];
-  for (const slot of layout.photoSlots || []) {
-    if (slot.id === bgSlotId) continue;
-    const def = defOf(slot.id);
-    // The opening's principal photo is the hero — reserved out of the pool precisely so
-    // it lands here. Claim it, or the reservation strands a photo the pool needs.
-    const file = (isOpening && slot.id === principalSlotId(layout))
-      ? heroPhoto.file
-      : globalAssignments.get(`${scene.id}:${slot.id}`)?.[0] || take({ orient: def.orient }, 1);
-    if (isOpening && file === heroPhoto.file) { used.add(file); lastPhoto = heroPhoto; }
-    const frame = resolveFrame(def.frame || slot.frame);
-    const anim = def.animation || slot.suggestedAnimation;
-    const animated = anim && anim !== "none";
-    layers.push(pic(file, slot.x, slot.y, slot.width, slot.height, {
-      fit: def.fit || slot.fit || "cover",
-      ...(def.motion ? { motion: def.motion } : {}),
-      ...(frame ? { frame } : {}),
-      ...(slot.rotation != null ? { rotation: slot.rotation } : {}),
-      ...(animated ? { animation: anim, start: photoStart(pIdx) } : {}),
-    }, scene, { isHero: slot.id === "hero" || def.quality === "best" }));
-    pIdx++;
-  }
-
-  // 4) panels layered over the photos (text-legibility scrims).
-  for (const p of allPanels.filter((p) => p.z === "over_photos")) {
-    layers.push(rect(p.x, p.y, p.width, p.height, resolveColor(p.color), p.opacity ?? 1));
-  }
-
-  // 5) optional full-frame decor PNG (1920x1080 wedding frame) under the text.
-  if (scene.frameOverlay) {
-    layers.push({
-      type: "image", path: scene.frameOverlay,
-      x: 0, y: 0, width: canvas.width, height: canvas.height,
-      fit: "stretch",
-    });
-  }
-
-  // 6) text slots: only render the ones this scene supplies copy for.
-  for (const slot of layout.textSlots || []) {
-    // An AI-written copy map (node B) may override the recipe's canned line, but
-    // ONLY for a slot the layout already has. Keys it does not have are never
-    // looked up, so an invented scene or slot cannot conjure a text layer.
-    const override = copyMap[scene.id]?.[slot.id];
-    const slotKey = `${scene.id}:${slot.id}`;
-    const raw = typeof override === "string" && override
-      ? override
-      : pickVariant(scene.text ? scene.text[slot.id] : undefined, slotKey);
-    const obj = raw && typeof raw === "object" ? raw : null;
-    const value = fill(obj ? pickVariant(obj.value, `${slotKey}:value`) : raw);
-    if (!value) continue;
-    const role = obj?.fontRole || slot.fontRole || "body";
-    layers.push(txt(
-      value,
-      resolveFont(role),
-      slot.x, slot.y, slot.width, slot.height,
-      obj?.sizePx || slot.sizePx || 40,
-      obj?.color || slot.color || (isClosing ? "#FFFFFF" : defaultTextColor(slot, layout)),
-      slot.align || "left",
-      {
-        ...(slot.lineSpacing ? { lineSpacing: slot.lineSpacing } : {}),
-        animation: "fade",
-        start: textStart(slot.role),
-      }
-    ));
-  }
-
-  return { effect: "layer_scene", captions: [], layers };
-}
-
+const {
+  themeRef,
+  libTheme,
+  resolveColor,
+  resolveFont,
+  resolveFrame,
+  defaultTextColor,
+  photoStart,
+  textStart,
+} = createTemplateTheme({ library, template, customerPrompt, direction });
+const buildLayerSceneFromLayout = createLayerSceneBuilder({
+  library,
+  libraryPath,
+  endingPhoto,
+  heroPhoto,
+  getExpandedScenes: () => expandedScenes,
+  getGlobalAssignments: () => globalAssignments,
+  take,
+  claimPhoto: (file, selected) => { used.add(file); lastPhoto = selected; },
+  pic,
+  rect,
+  libTheme,
+  resolveColor,
+  resolveFrame,
+  photoStart,
+  copyMap,
+  pickVariant,
+  fill,
+  resolveFont,
+  defaultTextColor,
+  textStart,
+  txt,
+});
 // Emit a caption only when the scene actually supplies copy — recipes that want
 // "photos only" montage beats just omit captionPattern.
 const capsFor = (pattern, role = "caption", key = "") => {
@@ -733,140 +536,29 @@ let t = 0;
 // lands on some montage twenty scenes later, nowhere near the bookend that caused it. So
 // the reservation, the requests and the budget are all derived from these same two facts,
 // in one place, instead of three places agreeing by luck.
-const openingSource = template.scenes[0];
-const closingSource = template.scenes.find((s) => s.durationRole === "closing");
-const openingTakesHero = Boolean(openingSource)
-  && openingSource.effect !== "video_background"
-  && !MONTAGE_EFFECTS.has(openingSource.effect);
-const closingTakesEnding = Boolean(closingSource);
-
-const reservedPhotos = new Set([
-  ...(openingTakesHero ? [heroPhoto.file] : []),
-  ...(closingTakesEnding ? [endingPhoto.file] : []),
-]);
-const editorialPhotoCount = new Set(photos.map((photo) =>
-  photo.duplicateGroup ? `group:${photo.duplicateGroup}` : `file:${photo.file}`
-)).size;
-// What the bookends draw FROM THE POOL: their declared slots, minus the one frame each of
-// them takes from the reserved set instead.
-const bookendPoolCost =
-  Math.max(0, (openingSource ? scenePhotoCount(openingSource, { library, direction }) : 0) - (openingTakesHero ? 1 : 0)) +
-  Math.max(0, (closingSource ? scenePhotoCount(closingSource, { library, direction }) : 0) - (closingTakesEnding ? 1 : 0));
-
-// A COMPOSED STORYBOARD IS ALREADY SOLVED. Re-solving it here threw the whole thing away.
-//
-// solveRecipeShotList exists for HAND-WRITTEN recipes, whose authors typed a fixed list of
-// scenes and never knew how long the customer's song would be. A storyboard from
-// composeStoryboard is the opposite: its scene count, its photo counts and its per-scene
-// durations were all solved against this job's photo budget and this job's track. Running
-// the recipe solver over it re-derived every duration from `durationStrategy` — a flat
-// table keyed on `durationRole`, which a composed scene does not carry — so every scene
-// fell back to the same 5.5s base and came out, after scaling, within a tenth of a second
-// of every other scene in the film. The energy-driven pacing the composer had just
-// computed was overwritten before anything could render it.
-const composed = template.source?.origin === "composed";
-const solveShotList = () => solveRecipeShotList({
-  recipe: template,
-  photoCount: editorialPhotoCount,
-  musicDuration: Number(music.duration) || 0,
-  durationOf: (scene, at) => durationFor(scene.durationRole, at),
-  photoDemandOf: (scene) => scenePhotoCount(scene, { library, direction }),
-  bodyPhotoBudget: editorialPhotoCount - reservedPhotos.size - bookendPoolCost,
-  // The same sampler QA measures with — the solver bends body durations toward
-  // the music instead of emitting the role table's uniform lengths.
-  energy: makeEnergy(music),
+const shotListPlan = planTemplateShotList({
+  template,
+  photos,
+  heroPhoto,
+  endingPhoto,
+  library,
+  direction,
+  durationFor,
+  sourceMusic,
+  requestedMusicMode,
+  initialMusic: music,
+  initialMusicEdit: musicEdit,
 });
-let shotList = composed
-  ? { scenes: template.scenes.map((s) => ({ ...s })), fit: template.fit ?? { message: "composed", scale: 1 } }
-  : solveShotList();
-
-// loop/playlist EXTENDS the target past what the source track needed, and a recipe's own
-// scene budget (repeat caps, photo-poor substitution) can fall short of it: the solver
-// clamps each scene to MAX_SCENE internally, so pushing k (scale) far past 1 leaves MANY
-// scenes pinned at the ceiling and the clamped SUM short of the target it was solved
-// against. Weights sized for an unreachable target do not redistribute cleanly — retime's
-// rails found this the hard way (an "earliest > latest" inversion whenever weights were
-// solved against a bigger duration than the one actually handed to it). Re-solving against
-// the true achievable ceiling, BEFORE building slides, keeps the weights self-consistent
-// with the target retime will actually receive.
-if (!composed && (musicEdit.mode === "loop" || musicEdit.mode === "playlist")) {
-  const ceiling = shotList.scenes.length > 0
-    ? (shotList.scenes.length - 1) * (MAX_SCENE - MAX_TRANSITION_SEC) + MAX_SCENE
-    : 0;
-  if (music.duration > ceiling) {
-    console.log(`[applyStoryTemplate] ${musicEdit.mode} target ${music.duration}s exceeds what ${shotList.scenes.length} scenes can ` +
-      `sustain (≤${ceiling.toFixed(2)}s at this recipe's repeat caps) — using ${ceiling.toFixed(2)}s instead. ` +
-      `A richer recipe or a less aggressive cull would use more of the extension.`);
-    music.duration = +ceiling.toFixed(3);
-    musicEdit.duration = +ceiling.toFixed(3);
-    shotList = solveShotList();
-  }
-}
-if (!composed && !["loop", "playlist"].includes(musicEdit.mode)) {
-  const ceiling = shotList.scenes.length > 0
-    ? (shotList.scenes.length - 1) * (MAX_SCENE - MAX_TRANSITION_SEC) + MAX_SCENE
-    : 0;
-  if (music.duration > ceiling) {
-    if (requestedMusicMode === "full_song") {
-      throw new Error(
-        `full-song was requested, but this recipe can sustain at most ${ceiling.toFixed(2)}s ` +
-        `with ${shotList.scenes.length} scenes. Choose highlight/auto or a richer recipe.`
-      );
-    }
-    musicEdit = chooseMusicEdit(sourceMusic, photos.length, {
-      mode: "highlight", targetDuration: ceiling, maxDuration: ceiling,
-    });
-    music = sliceMusicAnalysis(sourceMusic, musicEdit);
-    console.log(`[applyStoryTemplate] recipe capacity trims the music window to ${musicEdit.duration}s ` +
-      `(${shotList.scenes.length} scenes can sustain at most ${ceiling.toFixed(2)}s).`);
-    shotList = solveShotList();
-  }
-}
+const { shotList, reservedPhotos } = shotListPlan;
+music = shotListPlan.music;
+musicEdit = shotListPlan.musicEdit;
 const expandedScenes = applyStoryArc(shotList.scenes, template.storyArc);
 console.log(
   `[applyStoryTemplate] shot list: ${shotList.fit.sceneCount} scenes, ${shotList.fit.photosUsed}/${shotList.fit.photoCount} photos ` +
     `(bound by ${shotList.fit.boundBy}, budget ${shotList.fit.budgetSecondsPerPhoto}s/photo) — ${shotList.fit.message}`
 );
 
-function assignmentRequests(scenes) {
-  const out = [];
-  scenes.forEach((scene, order) => {
-    if (scene.durationRole === "closing") return; // intentional bookend hero reuse
-    if (scene.effect === "video_background") return;
-    if (scene.effect === "layer_scene") {
-      const layout = (library.layouts || []).find((l) => l.id === scene.layout);
-      for (const slot of layout?.photoSlots || []) {
-        const def = (scene.photoSlots || []).find((s) => s.slot === slot.id) || {};
-        // The opening's principal slot is the reserved hero — it is not requested from
-        // the pool, because it has already been taken out of it.
-        if (order === 0 && slot.id === principalSlotId(layout)) continue;
-        out.push({ key: `${scene.id}:${slot.id}`, sceneId: scene.id, order, count: 1, orient: def.orient || "any", role: editorialRole(scene, def),
-          allowSequence: Boolean(scene.allowSequence), cohesionMode: scene.cohesionMode || "auto",
-          hero: def.quality === "best" || Boolean(def.motion) });
-      }
-      return;
-    }
-    const slot = (scene.photoSlots || [])[0];
-    if (!slot) return;
-    const multi = MONTAGE_EFFECTS.has(scene.effect);
-    // A single-image opening shows the reserved hero (see buildScene), so it must not also
-    // ask the pool for a photo — that is one request more than the pool can serve, and the
-    // shortfall surfaces on some unrelated scene much later.
-    if (order === 0 && !multi) return;
-    // A pair-consuming scene (double_exposure, or a gl_transition hybrid — buildScene asks
-    // both for TWO photos) declares count:2. The old code computed `base` correctly and then
-    // threw it away, hardcoding the non-montage request at 1 — so the global plan reserved a
-    // single photo, buildScene asked for two, and the engine rejected the one-asset slide.
-    const paired = scene.effect === "double_exposure" || scene.template === "gl_transition";
-    const base = slot.count || (paired ? 2 : 1);
-    const count = multi ? Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(base * (direction?.pacing?.controls?.montagePhotoMultiplier ?? 1)))) : base;
-    out.push({ key: `${scene.id}:${slot.slot}`, sceneId: scene.id, order, count, orient: slot.orient || "any", role: editorialRole(scene, slot),
-      allowSequence: Boolean(scene.allowSequence), cohesionMode: scene.cohesionMode || "auto",
-      hero: slot.quality === "best" || slot.slot === "hero" });
-  });
-  return out;
-}
-const requests = assignmentRequests(expandedScenes);
+const requests = buildPhotoAssignmentRequests({ scenes: expandedScenes, library, direction });
 const mustUse = [...new Set([...(brief.mustUsePhotos || []), ...momentRequireFiles])].filter((f) => f !== heroPhoto.file && f !== endingPhoto.file);
 const flexibleRequests = requests.filter((r) => !r.hero);
 if (mustUse.length > flexibleRequests.length) throw new Error(`brief has ${mustUse.length} must-use photos but only ${flexibleRequests.length} assignable slots`);

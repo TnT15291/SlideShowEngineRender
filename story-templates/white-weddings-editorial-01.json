@@ -36,6 +36,12 @@
     "origin": "reference_adaptation",
     "notes": "Adapted from the local White Weddings Theme reference deck: warm ivory editorial pages, restrained serif typography, asymmetric photo stories and soft dissolves."
   },
+  "intro": {
+    "summary": "Trang sách cưới ngà ấm phong cách editorial — chữ serif tinh tế, bố cục ảnh bất đối xứng.",
+    "photos": "Hợp ảnh prewedding/save-the-date ngoài trời hoặc vườn, ảnh chi tiết, phong cách tối giản, sang trọng nhẹ nhàng.",
+    "story": "Phù hợp video save-the-date hoặc prewedding kể chuyện ngắn gọn, thanh lịch — giới thiệu cặp đôi và những chi tiết đáng nhớ.",
+    "music": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa."
+  },
   "fit": {
     "bestFor": [
       "pre_wedding",
