@@ -21,6 +21,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { MONTAGE_EFFECTS, SINGLE_PHOTO_EFFECTS } from "../scripts/lib/engineCapabilities.mjs";
+import { resolveTemplate } from "../scripts/lib/lookResolver.mjs";
 
 const DIR = "story-templates";
 const recipes = fs.readdirSync(DIR)
@@ -31,10 +32,13 @@ const library = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
 const layoutIds = new Set((library.layouts || []).map((l) => l.id));
 
 test("every layer_scene names a layout the library actually has", () => {
+  // A scene may name its geometry directly or through one of its recipe's looks, so the
+  // question is what it RESOLVES to -- asking for scene.layout alone would report a
+  // perfectly good look-based scene as having no layout at all.
   const missing = recipes.flatMap(({ file, doc }) =>
-    (doc.scenes || [])
+    resolveTemplate(doc, { library }).scenes
       .filter((s) => s.effect === "layer_scene" && !layoutIds.has(s.layout))
-      .map((s) => `${file} ${s.id}: layout "${s.layout}" is not in layouts/library.json`)
+      .map((s) => `${file} ${s.id}: layout "${s.layout}"${s.look ? ` (via look "${s.look}")` : ""} is not in layouts/library.json`)
   );
 
   // buildLayerSceneFromLayout reads every coordinate from the library, so an unknown layout

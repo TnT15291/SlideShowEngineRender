@@ -27,7 +27,11 @@ const strip = (scene) => {
 };
 
 test("a recipe with no looks resolves to the library layout, unchanged", () => {
-  for (const recipe of recipes) {
+  // Recipes migrate one at a time; the ones that have not are entitled to render exactly
+  // what they rendered before looks existed.
+  const unmigrated = recipes.filter((recipe) => !recipe.looks);
+  assert.ok(unmigrated.length, "no un-migrated recipe left to prove the no-op against");
+  for (const recipe of unmigrated) {
     const report = resolveTemplate(recipe, { library });
     assert.deepEqual(report.errors, [], `${recipe.id} produced resolver errors`);
     report.scenes.forEach((resolved, i) => {
@@ -53,6 +57,42 @@ test("resolving is idempotent", () => {
       assert.deepEqual(twice, once, `${recipe.id}/${scene.id}`);
     }
   }
+});
+
+test("a migrated recipe resolves cleanly and still costs the same photos", () => {
+  for (const recipe of recipes.filter((r) => r.looks)) {
+    const report = resolveTemplate(recipe, { library });
+    assert.deepEqual(report.errors, [], `${recipe.id} produced resolver errors`);
+    for (const scene of report.scenes) {
+      if (scene.effect !== "layer_scene") continue;
+      assert.equal(
+        (scene.resolvedLayout.photoSlots ?? []).length,
+        (layoutById(scene.layout).photoSlots ?? []).length,
+        `${recipe.id}/${scene.id}: a look changed the slot count`,
+      );
+    }
+  }
+});
+
+test("re-resolving under a new look drops the old look's dressing", () => {
+  // The shot-list solver re-resolves a scene when a wordless repeat adopts a different
+  // look. Merging onto the previous resolution left the new composition wearing the old
+  // one's frame and grade -- a matted quiet beat kept the arch frame of the beat it stood
+  // in for, which is the kind of thing nobody sees until it is on screen.
+  const template = {
+    looks: {
+      dressed: { layout: "photo_duo", frame: "arch", photoTreatment: { saturation: 0.8 }, motion: { stagger: 0.3 } },
+      bare: { layout: "photo_duo" },
+    },
+  };
+  const dressed = resolveScene({ id: "s01", effect: "layer_scene", look: "dressed" }, { template, library }).scene;
+  assert.equal(dressed.resolvedFrame, "arch");
+
+  const swapped = resolveScene({ ...dressed, look: "bare" }, { template, library }).scene;
+  assert.equal(swapped.resolvedFrame, undefined, "kept the previous look's frame");
+  assert.equal(swapped.resolvedTreatment, undefined, "kept the previous look's grade");
+  assert.equal(swapped.resolvedMotion, undefined, "kept the previous look's rhythm");
+  assert.equal(swapped.resolvedSignature, "layer:photo_duo");
 });
 
 test("resolving never mutates the shared library", () => {

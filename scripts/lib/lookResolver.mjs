@@ -139,9 +139,15 @@ export function resolveScene(scene, { template, library }) {
     ? `layer:${layoutId}#${hashSeed(geometryOf(resolvedLayout, extras)).toString(16).padStart(8, "0")}`
     : `layer:${layoutId}`;
 
+  // Strip what a PREVIOUS resolution left behind before adding this one's. The solver
+  // hands back a scene that already carries resolved fields and asks for it to be resolved
+  // again under a new look; merging onto the old output would leave the new composition
+  // wearing the old one's frame and grade — which is precisely what a wordless repeat did:
+  // it adopted the matted quiet look and kept the arch frame of the beat it replaced.
+  const { resolvedFrame, resolvedTreatment, resolvedMotion, ...carried } = scene;
   return {
     scene: {
-      ...scene,
+      ...carried,
       layout: layoutId,
       resolvedLayout,
       ...(extras.frame ? { resolvedFrame: extras.frame } : {}),
@@ -275,22 +281,22 @@ export function validateLook(lookId, look, { template, library }) {
       `resolves to ${(resolved.photoSlots || []).length} photo slot(s) but layout ${look.layout} has ${(base.photoSlots || []).length} — the photo budget is sized from the layout`)); // V3
   }
 
+  // V4, photos: bleeding a frame off the edge is a real composition — the library does it
+  // itself, and meta.coordinateNote says negative x/y are deliberate. What is never a
+  // composition is a slot that has mostly left the canvas. So the test is how much of the
+  // frame still lands on screen, not whether it fits inside the margins.
   const bgSlot = resolved.background?.type === "photo_full_bleed" ? resolved.background.slot : null;
   for (const slot of resolved.photoSlots || []) {
-    // A full-bleed background slot is MEANT to cover the canvas, and library layouts
-    // use negative x/y on purpose to bleed a photo off-frame ("coordinateNote").
-    if (slot.id === bgSlot) continue;
-    const overridden = Boolean(overrides.photoSlots?.[slot.id]);
-    if (!overridden) continue;
-    if (slot.x < 0 || slot.y < 0
-      || slot.x + slot.width > canvas.width || slot.y + slot.height > canvas.height) {
+    if (slot.id === bgSlot || !overrides.photoSlots?.[slot.id]) continue;
+    const onScreen = Math.max(0, Math.min(slot.x + slot.width, canvas.width) - Math.max(slot.x, 0))
+      * Math.max(0, Math.min(slot.y + slot.height, canvas.height) - Math.max(slot.y, 0));
+    const visible = onScreen / Math.max(1, slot.width * slot.height);
+    if (visible < 0.5) {
       out.push(finding("look_overrides", lookId,
-        `photo slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height}, off the ${canvas.width}x${canvas.height} canvas`)); // V4
-    } else if (slot.x < safe && slot.x !== 0) {
-      out.push(finding("look_overrides", lookId,
-        `photo slot '${slot.id}' starts at x=${slot.x}, inside the ${safe}px safe margin`)); // V4
+        `photo slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height} — ${(visible * 100).toFixed(0)}% of it is off the ${canvas.width}x${canvas.height} canvas`)); // V4
     }
   }
+  // Text has no such licence: a heading cropped by the frame edge is never intended.
   for (const slot of resolved.textSlots || []) {
     if (!overrides.textSlots?.[slot.id]) continue;
     if (slot.x < safe || slot.y < safe

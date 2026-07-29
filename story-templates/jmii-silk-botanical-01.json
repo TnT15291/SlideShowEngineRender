@@ -1,25 +1,134 @@
 {
   "id": "jmii-silk-botanical-01",
-  "version": 2,
+  "version": 3,
   "name": "Silk Botanical Wedding",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
   "layoutPresets": {
-    "arch": { "radius": 170, "border": 9, "borderColor": "#FFFDFC", "shadow": true }
+    "arch": {
+      "radius": 170,
+      "border": 9,
+      "borderColor": "#FFFDFC",
+      "shadow": true
+    }
+  },
+  "looks": {
+    "bride_arch": {
+      "intent": "the bride, as an arched ivory card on cream — the recipe's signature frame",
+      "layout": "text_left_photo_right",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 1090,
+            "y": 90,
+            "width": 700,
+            "height": 900,
+            "suggestedAnimation": "fade"
+          }
+        }
+      },
+      "frame": "arch"
+    },
+    "groom_arch": {
+      "intent": "the groom, the same card mirrored to the other side of the spread",
+      "layout": "photo_left_text_right",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 130,
+            "y": 90,
+            "width": 700,
+            "height": 900,
+            "suggestedAnimation": "fade"
+          }
+        }
+      },
+      "frame": "arch"
+    },
+    "moment_still": {
+      "intent": "a held beat: a taller portrait, slightly desaturated, entering more slowly",
+      "layout": "text_left_photo_right",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 1020,
+            "y": 60,
+            "width": 820,
+            "height": 960,
+            "suggestedAnimation": "fade"
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.92
+      },
+      "motion": {
+        "stagger": 0.14
+      }
+    },
+    "arch_gallery": {
+      "intent": "three arched portraits in a row",
+      "layout": "arch_trio",
+      "frame": "arch"
+    },
+    "duo_arch": {
+      "intent": "two arched portraits side by side",
+      "layout": "photo_duo",
+      "frame": "arch"
+    },
+    "quiet_quote": {
+      "intent": "wordless recurrence: one photograph full bleed, softened",
+      "layout": "full_bleed_quote",
+      "photoTreatment": {
+        "saturation": 0.88
+      }
+    },
+    "quiet_matte": {
+      "intent": "the other wordless recurrence: one photograph matted on cream",
+      "layout": "gallery_matte_hero",
+      "photoTreatment": {
+        "saturation": 0.92
+      }
+    }
   },
   "storyArc": {
-    "sequence": ["save_the_date", "title", "bride", "groom", "gallery", "meet", "signature", "story", "invitation", "moment", "together", "closing"]
+    "sequence": [
+      "save_the_date",
+      "title",
+      "bride",
+      "groom",
+      "gallery",
+      "meet",
+      "signature",
+      "story",
+      "invitation",
+      "moment",
+      "together",
+      "closing"
+    ]
   },
   "transitionGrammar": {
-    "vocabulary": ["dissolve", "fade_slow", "crossfade", "none"],
-    "specialRoles": ["memory", "peak"],
-    "limits": { "memory": 2, "peak": 1 }
+    "vocabulary": [
+      "dissolve",
+      "fade_slow",
+      "crossfade",
+      "none",
+      "fade_to_white"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 2,
+      "peak": 1
+    }
   },
   "source": {
     "origin": "reference_adaptation",
     "url": "https://www.youtube.com/watch?v=GxXVVbvJ6W8",
     "title": "Video slide ảnh trình chiếu ngày cưới đẹp, sang trọng | Họa tiết lá thanh lịch (Jmii Marketing)",
-    "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once."
+    "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once. v3: bride/groom cards were the only Vietnamese headings in an otherwise EN-heading/VI-body film (fixed to match); their body was name-only (now a short, generic personality line per templateRules' repeat_depth pattern — 2 variants each); s10's body was silently English while its sibling body scenes (s06/s08) were Vietnamese (translated); the s06/s08/s10 repeat rounds all replayed their own base layout back-to-back (same photo-one-side/cream-text-panel frame every recurrence) — now alternate with their mirror layout and one full_bleed_quote photo-only breather per scene, so long songs don't visibly loop the same card."
   },
   "intro": {
     "summary": "Phong cách save-the-date lụa ngà thanh lịch, dành cho bộ ảnh chân dung studio.",
@@ -28,31 +137,78 @@
     "music": "Hợp nhạc lãng mạn, thanh lịch, nhẹ nhàng, giàu cảm xúc, tiết tấu chậm đến vừa."
   },
   "fit": {
-    "bestFor": ["wedding", "save_the_date", "studio", "elegant", "minimal", "white_wedding", "portrait_heavy"],
+    "bestFor": [
+      "wedding",
+      "save_the_date",
+      "studio",
+      "elegant",
+      "minimal",
+      "white_wedding",
+      "portrait_heavy"
+    ],
     "minPhotos": 18,
     "idealPhotos": 40
   },
   "musicProfile": {
-    "moods": ["romantic", "elegant", "gentle", "sentimental"],
+    "moods": [
+      "romantic",
+      "elegant",
+      "gentle",
+      "sentimental"
+    ],
     "energy": "low_to_medium"
   },
   "pacingVariants": [
-    { "id": "vow", "maxEnergy": 0.38, "durationMultiplier": 1.12 },
-    { "id": "editorial", "maxEnergy": 0.68, "durationMultiplier": 1.0 },
-    { "id": "celebration", "maxEnergy": 1.0, "durationMultiplier": 0.9 }
+    {
+      "id": "vow",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "editorial",
+      "maxEnergy": 0.68,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "celebration",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.9
+    }
   ],
   "briefFields": {
-    "required": ["bride", "groom"],
-    "optional": ["date", "location", "thankYouLine"]
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
   },
   "defaults": {
-    "project": { "width": 1920, "height": 1080, "fps": 30, "quality": "share" },
-    "color": { "temperature": 5400, "saturation": 1.03, "contrast": 1.02, "glow": 0.07, "grain": 0 },
-    "audio": { "fade_in": 2.0, "fade_out": 3.5, "crossfade": 0 },
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5400,
+      "saturation": 1.03,
+      "contrast": 1.02,
+      "glow": 0.07,
+      "grain": 0
+    },
+    "audio": {
+      "fade_in": 2,
+      "fade_out": 3.5,
+      "crossfade": 0
+    },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -71,16 +227,49 @@
       "closingSec": 8.4
     },
     "transitionStrategy": {
-      "default": { "type": "dissolve", "duration": 0.85 },
-      "calm": { "type": "fade_slow", "duration": 1.15 },
-      "memory": { "type": "dissolve", "duration": 0.9 },
-      "peak": { "type": "crossfade", "duration": 0.6 },
-      "final": { "type": "none", "duration": 0 }
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.85
+        },
+        {
+          "type": "crossfade",
+          "duration": 0.8
+        },
+        {
+          "type": "fade_to_white",
+          "duration": 0.7
+        }
+      ],
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.15
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.6
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
     },
     "photoSelection": {
       "reusePolicy": "avoid_until_exhausted",
-      "heroPriority": ["qualityNorm", "heroScore", "emotionScore"],
-      "fallbackPriority": ["qualityNorm", "sharpness", "meanLuma"],
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
       "darkPhotoMaxMeanLuma": 78
     }
   },
@@ -92,12 +281,37 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
-        { "slot": "bg", "orient": "any", "quality": "best" },
-        { "slot": "strip_1", "orient": "portrait", "quality": "good", "frame": "arch" },
-        { "slot": "strip_2", "orient": "portrait", "quality": "best", "frame": "arch" },
-        { "slot": "strip_3", "orient": "portrait", "quality": "good", "frame": "arch" }
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "strip_1",
+          "orient": "portrait",
+          "quality": "good",
+          "frame": "arch"
+        },
+        {
+          "slot": "strip_2",
+          "orient": "portrait",
+          "quality": "best",
+          "frame": "arch"
+        },
+        {
+          "slot": "strip_3",
+          "orient": "portrait",
+          "quality": "good",
+          "frame": "arch"
+        }
       ],
-      "text": { "eyebrow": "SAVE THE DATE", "date": { "value": "{{date}}", "sizePx": 108 } }
+      "text": {
+        "eyebrow": "SAVE THE DATE",
+        "date": {
+          "value": "{{date}}",
+          "sizePx": 108
+        }
+      }
     },
     {
       "id": "s02_silk_title",
@@ -115,33 +329,101 @@
     {
       "id": "s03_bride",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
+      "look": "bride_arch",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
-      "text": { "heading": { "value": "CÔ DÂU", "sizePx": 58 }, "body": "{{bride}}" },
-      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] }
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": {
+          "value": [
+            "MEET THE BRIDE",
+            "ABOUT THE BRIDE"
+          ],
+          "sizePx": 58
+        },
+        "body": [
+          "Cô dâu {{bride}} – dịu dàng, tinh tế và luôn mang đến sự ấm áp cho những người xung quanh.",
+          "Cô dâu {{bride}} – nhẹ nhàng, chu đáo và luôn khiến mọi khoảnh khắc trở nên ấm áp hơn."
+        ]
+      },
+      "muteFallback": {
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ],
+        "look": "quiet_quote"
+      }
     },
     {
       "id": "s04_groom",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
+      "look": "groom_arch",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
-      "text": { "heading": { "value": "CHÚ RỂ", "sizePx": 58 }, "body": "{{groom}}" },
-      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] }
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": {
+          "value": [
+            "MEET THE GROOM",
+            "ABOUT THE GROOM"
+          ],
+          "sizePx": 58
+        },
+        "body": [
+          "Chú rể {{groom}} – điềm đạm, chân thành và luôn hết lòng vì người mình yêu thương.",
+          "Chú rể {{groom}} – ít nói nhưng sâu sắc, luôn âm thầm quan tâm bằng những điều nhỏ nhất."
+        ]
+      },
+      "muteFallback": {
+        "photoSlots": [
+          {
+            "slot": "hero",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ],
+        "look": "quiet_matte"
+      }
     },
     {
       "id": "s05_arch_gallery",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_gallery",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "good", "frame": "arch" },
-        { "slot": "centre", "orient": "portrait", "quality": "best", "frame": "arch" },
-        { "slot": "right", "orient": "portrait", "quality": "good", "frame": "arch" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -150,34 +432,83 @@
       "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "memory",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
-        "heading": { "value": ["WE MEET", "OUR PATH"], "sizePx": 76 },
+        "heading": {
+          "value": [
+            "WE MEET",
+            "OUR PATH"
+          ],
+          "sizePx": 76
+        },
         "body": [
           "Tình yêu là sự kết nối giữa hai trái tim, nơi mình cùng viết nên một câu chuyện thật dài.",
           "Tình yêu là nơi hai trái tim gặp nhau, để cùng viết tiếp một câu chuyện dài."
         ]
       },
-      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
+      "muteFallback": {
+        "photoSlots": [
+          {
+            "slot": "hero",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ],
+        "look": "quiet_matte"
+      },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
-          { "text": { "heading": { "value": "OUR DAY", "sizePx": 76 }, "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới." } },
-          { "text": { "heading": { "value": "ALWAYS", "sizePx": 76 }, "body": "Mọi khoảnh khắc bình dị đều hoá thành kỷ niệm đáng nhớ." } },
-          { "text": { "heading": { "value": "FOREVER", "sizePx": 76 }, "body": "Từ hôm nay, và trong mọi ngày sắp tới, mình vẫn luôn bên nhau." } },
-          { "text": { "heading": { "value": "ONE LOVE", "sizePx": 76 }, "body": "Chỉ cần hôm nay ta cùng nắm tay nhau, thế là đủ đầy." } }
+          {
+            "layout": "photo_left_text_right",
+            "text": {
+              "heading": {
+                "value": "OUR DAY",
+                "sizePx": 76
+              },
+              "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
+            }
+          },
+          {
+            "look": "quiet_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "text": {}
+          },
+          {
+            "layout": "photo_left_text_right",
+            "text": {
+              "heading": {
+                "value": "FOREVER",
+                "sizePx": 76
+              },
+              "body": "Từ hôm nay, và trong mọi ngày sắp tới, mình vẫn luôn bên nhau."
+            }
+          },
+          {
+            "text": {
+              "heading": {
+                "value": "ONE LOVE",
+                "sizePx": 76
+              },
+              "body": "Chỉ cần hôm nay ta cùng nắm tay nhau, thế là đủ đầy."
+            }
+          }
         ]
       }
-    },
-    {
-      "id": "s07_signature_frame",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "floating_frame",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }]
     },
     {
       "id": "s08_story",
@@ -185,19 +516,81 @@
       "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
-        "heading": { "value": ["OUR STORY", "OUR JOURNEY"], "sizePx": 68 },
-        "body": ["Bên nhau, mọi điều giản dị đều trở nên đặc biệt.", "Khi có nhau, điều bình dị nhất cũng thành đặc biệt."]
+        "heading": {
+          "value": [
+            "OUR STORY",
+            "OUR JOURNEY"
+          ],
+          "sizePx": 68
+        },
+        "body": [
+          "Bên nhau, mọi điều giản dị đều trở nên đặc biệt.",
+          "Khi có nhau, điều bình dị nhất cũng thành đặc biệt."
+        ]
       },
-      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
+      "muteFallback": {
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ],
+        "look": "quiet_quote"
+      },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
-          { "text": { "heading": { "value": "TOGETHER", "sizePx": 68 }, "body": "Cảm ơn vì đã luôn ở đây, cùng nhau đi hết chặng đường." } },
-          { "text": { "heading": { "value": "THE BIG DAY", "sizePx": 68 }, "body": "Ngày đặc biệt nhất, khi hai đứa về chung một nhà." } },
-          { "text": { "heading": { "value": "SWEET", "sizePx": 68 }, "body": "Những ánh nhìn, những nụ cười — tất cả đều là yêu thương." } },
-          { "text": { "heading": { "value": "US", "sizePx": 68 }, "body": "Một khởi đầu thật đẹp cho câu chuyện của chúng mình." } }
+          {
+            "layout": "text_left_photo_right",
+            "text": {
+              "heading": {
+                "value": "TOGETHER",
+                "sizePx": 68
+              },
+              "body": "Cảm ơn vì đã luôn ở đây, cùng nhau đi hết chặng đường."
+            }
+          },
+          {
+            "look": "quiet_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "text": {}
+          },
+          {
+            "layout": "text_left_photo_right",
+            "text": {
+              "heading": {
+                "value": "SWEET",
+                "sizePx": 68
+              },
+              "body": "Những ánh nhìn, những nụ cười — tất cả đều là yêu thương."
+            }
+          },
+          {
+            "text": {
+              "heading": {
+                "value": "US",
+                "sizePx": 68
+              },
+              "body": "Một khởi đầu thật đẹp cho câu chuyện của chúng mình."
+            }
+          }
         ]
       }
     },
@@ -208,10 +601,30 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "p1", "orient": "portrait", "quality": "good", "frame": "arch" },
-        { "slot": "p2", "orient": "portrait", "quality": "best", "frame": "arch" },
-        { "slot": "p3", "orient": "portrait", "quality": "good", "frame": "arch" },
-        { "slot": "p4", "orient": "portrait", "quality": "good", "frame": "arch" }
+        {
+          "slot": "p1",
+          "orient": "portrait",
+          "quality": "good",
+          "frame": "arch"
+        },
+        {
+          "slot": "p2",
+          "orient": "portrait",
+          "quality": "best",
+          "frame": "arch"
+        },
+        {
+          "slot": "p3",
+          "orient": "portrait",
+          "quality": "good",
+          "frame": "arch"
+        },
+        {
+          "slot": "p4",
+          "orient": "portrait",
+          "quality": "good",
+          "frame": "arch"
+        }
       ],
       "text": {
         "names": "{{bride}} & {{groom}}",
@@ -221,34 +634,104 @@
     {
       "id": "s10_moment",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
+      "look": "moment_still",
       "durationRole": "normal",
       "transitionRole": "default",
-      "photoSlots": [{ "slot": "hero", "orient": "portrait", "quality": "best" }],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
       "text": {
-        "heading": { "value": ["BEAUTIFUL", "TENDER"], "sizePx": 68 },
-        "body": ["Every quiet moment becomes part of our forever.", "Every small moment quietly becomes part of us."]
+        "heading": {
+          "value": [
+            "BEAUTIFUL",
+            "TENDER"
+          ],
+          "sizePx": 68
+        },
+        "body": [
+          "Mỗi khoảnh khắc dịu dàng đều trở thành một phần của mãi mãi.",
+          "Mỗi khoảnh khắc nhỏ bé lặng lẽ trở thành một phần của chúng mình."
+        ]
       },
-      "muteFallback": { "layout": "full_bleed_quote", "photoSlots": [{ "slot": "bg", "orient": "any", "quality": "good", "fit": "cover" }] },
+      "muteFallback": {
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "any",
+            "quality": "good",
+            "fit": "cover"
+          }
+        ],
+        "look": "quiet_quote"
+      },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
-          { "text": { "heading": { "value": "MOMENTS", "sizePx": 68 }, "body": "Side by side, this is where our next chapter begins." } },
-          { "text": { "heading": { "value": "LOVE", "sizePx": 68 }, "body": "A collection of moments we will keep close, always." } },
-          { "text": { "heading": { "value": "YOU & ME", "sizePx": 68 }, "body": "One love, one lifetime, one beautiful beginning." } },
-          { "text": { "heading": { "value": "AFTER THIS DAY", "sizePx": 68 }, "body": "Here is to every day that comes after this one." } }
+          {
+            "layout": "photo_left_text_right",
+            "text": {
+              "heading": {
+                "value": "MOMENTS",
+                "sizePx": 68
+              },
+              "body": "Sánh bước bên nhau, đây là nơi chương mới của chúng mình bắt đầu."
+            }
+          },
+          {
+            "look": "quiet_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "text": {}
+          },
+          {
+            "layout": "photo_left_text_right",
+            "text": {
+              "heading": {
+                "value": "YOU & ME",
+                "sizePx": 68
+              },
+              "body": "Một tình yêu, một đời người, một khởi đầu thật đẹp."
+            }
+          },
+          {
+            "text": {
+              "heading": {
+                "value": "AFTER THIS DAY",
+                "sizePx": 68
+              },
+              "body": "Xin chào mọi ngày sẽ đến, sau ngày hôm nay."
+            }
+          }
         ]
       }
     },
     {
       "id": "s11_side_by_side",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "duo_arch",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "best", "frame": "arch" },
-        { "slot": "right", "orient": "portrait", "quality": "good", "frame": "arch" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
       ]
     },
     {
@@ -259,9 +742,15 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "hero", "orient": "portrait", "quality": "best" }
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
       ],
-      "params": { "background": "#4A4139" }
+      "params": {
+        "background": "#4A4139"
+      }
     },
     {
       "id": "s11c_glow",
@@ -270,7 +759,150 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "hero", "orient": "portrait", "quality": "best" }
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s06b_corner_fly_four",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "ribbon_cascade",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 6,
+          "orient": "portrait",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07_signature_frame",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "floating_frame",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_feature_duo",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_paper_collage",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good"
+        }
       ]
     },
     {
