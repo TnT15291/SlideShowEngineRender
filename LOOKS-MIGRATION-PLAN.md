@@ -11,9 +11,19 @@ Ngày lập: 2026-07-29. Nhánh: `agent/refactor-engine-and-add-momo`.
 | 3 lint trên hình học đã resolve | ✅ xong | `b35f76c` |
 | 4 metric signature/layout/effect | ✅ xong | `803ad96` |
 | 5 treatment + stagger | ✅ xong | `1c32def`, `59073cd` |
-| 6 migrate recipe | 🔶 **3/24** (jmii, white-weddings-full, cinematic-film) | `5b1186b`, `33437f5`, `ca74231` |
+| 6 migrate recipe | ✅ **24/24** — 87 look, 233 khung hình khác nhau | `5b1186b`, `33437f5`, `ca74231`, `91064ae` |
 | 7 premium / scene composed | ⬜ chưa quyết | — |
 | 8 tài liệu | ✅ xong (TEMPLATE-RULES.md) | `5f6248e` |
+
+Lỗi engine tìm được khi render thật và đã sửa (`cf254af`): `faceSafeFraming` đổi
+`cover`→`contain` khi crop sẽ mất >18% khuôn mặt, nhưng `pad ... color=black@0` chạy
+TRƯỚC `format=rgba`, mà `eq`/`colorbalance` không có pixel format rgba nên ffmpeg âm thầm
+chuyển sang yuv và dán phần trong suốt thành đen. Mọi ảnh được face-safe cứu đều lên
+khung với hai dải đen cứng.
+
+⚠️ **`temp/scene-cache/` không invalidate theo code renderer.** `cacheKey()` tính từ step,
+không tính từ bộ filter vẽ ra nó — nên sửa `src/build*Command.ts` xong render lại vẫn ra
+frame cũ. Phải xoá cache mới thấy thay đổi của chính mình.
 
 **Khác với plan gốc, và vì sao:**
 
@@ -28,7 +38,7 @@ Ngày lập: 2026-07-29. Nhánh: `agent/refactor-engine-and-add-momo`.
 - **`layouts/library.json` chưa sửa.** Câu ghi chú "library chỉ giữ primitive" thuộc về
   file đó, nhưng file đang mang ~1000 dòng chưa commit của phiên làm việc song song.
 
-**Còn lại:** 21 recipe chưa migrate, và quyết định Phase 7.
+**Còn lại:** chỉ Phase 7 (premium / scene `origin:"composed"`).
 
 **Đã tìm thấy, chưa sửa (ngoài phạm vi):** layout `three_photo_row` trong library tự nó
 có va chạm — slot ảnh `right` (1262,434 551×551) đè lên 24% text slot `caption`
