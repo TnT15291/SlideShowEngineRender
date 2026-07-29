@@ -35,10 +35,11 @@ import {
   principalSlotId,
 } from "./lib/templatePhotoRequests.mjs";
 import { createLayerSceneBuilder } from "./lib/layerSceneBuilder.mjs";
+import { resolveTemplate, resolveScene } from "./lib/lookResolver.mjs";
 import { planTemplateMusic } from "./lib/templateMusicPlan.mjs";
 import { planTemplateShotList } from "./lib/templateShotList.mjs";
 import {
-  SINGLE_PHOTO_EFFECTS, MONTAGE_MAX, EASING_EFFECTS,
+  SINGLE_PHOTO_EFFECTS, MONTAGE_MAX, EASING_EFFECTS, HYBRID_ASSET_MIN,
 } from "./lib/engineCapabilities.mjs";
 
 const root = process.cwd();
@@ -46,6 +47,8 @@ const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const args = (flag) => process.argv.flatMap((value, index) =>
+  value === flag && process.argv[index + 1] ? [process.argv[index + 1]] : []);
 
 const templatePath = arg("--template", "story-templates/warm-film-01.json");
 const photosPath = arg("--photos", "analysis/photos.json");
@@ -69,7 +72,7 @@ const sequenceMode = arg("--sequence-mode", "editorial");
 // The second track for "playlist" mode (nối sang bài khác). Absent → playlist degrades to
 // loop (the engine's own -stream_loop already repeats a single track to cover any video
 // length; see buildAudioMuxArgs), and we say so rather than fail.
-const extraMusicPath = arg("--extra-music", "");
+const extraMusicPaths = args("--extra-music");
 // How far the finished film may drift from the track before we refuse to write it.
 // 10%: the phrase snap and the closing card own the last few seconds, and nobody hears
 // a 10s difference on a 200s song. A THIRD of the song missing is a different thing.
@@ -81,9 +84,31 @@ const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replac
 
 const template = JSON.parse(fs.readFileSync(path.resolve(root, templatePath), "utf8"));
 const library = JSON.parse(fs.readFileSync(path.resolve(root, libraryPath), "utf8"));
+
+// LOOKS ARE RESOLVED HERE, BEFORE ANYTHING READS A LAYOUT — not before the renderer.
+// Four of the six readers of scene.layout (photoDemand, scenePhotoCount,
+// templatePhotoRequests, recipeShotList) run while the photo budget is being solved,
+// below. Resolving late would mean the budget was solved against one composition and
+// the film rendered from another. See lib/lookResolver.mjs.
+const looks = resolveTemplate(template, { library });
+if (looks.errors.length) {
+  throw new Error(`${template.id}: unusable looks\n  ${looks.errors.map((e) => `${e.check} [${e.id}] ${e.detail}`).join("\n  ")}`);
+}
+for (const warning of looks.warnings) {
+  console.warn(`[applyStoryTemplate] ${warning.check} [${warning.id}] ${warning.detail}`);
+}
+template.scenes = looks.scenes;
+
 const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "utf8"));
 const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
 const sourceMusic = JSON.parse(fs.readFileSync(path.resolve(root, `${analysisDir}/music/${musicName}.json`), "utf8"));
+const extraMusicDurations = extraMusicPaths.map((track) => {
+  const name = path.basename(track).replace(/\.[^.]+$/, "");
+  const analysisPath = path.resolve(root, `${analysisDir}/music/${name}.json`);
+  return fs.existsSync(analysisPath)
+    ? Number(JSON.parse(fs.readFileSync(analysisPath, "utf8")).duration) || 0
+    : 0;
+});
 const musicContract = validateMusicAnalysis(sourceMusic);
 if (!musicContract.ok) {
   throw new Error(`music analysis is stale or incomplete (${musicContract.missing.join(", ")}). ` +
@@ -140,6 +165,16 @@ const tokens = {
 
 function fill(text = "") {
   return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) => tokens[key] || "");
+}
+
+// Some hybrid templates carry COPY in their params — `title` on the Remotion title card,
+// `title`/`subtitle` on kinetic_typography — and copy in a recipe is written as tokens.
+// Resolve strings so those read like every other line in the film; leave every other type
+// (numbers, booleans, arrays, nested config) exactly as authored.
+function fillParams(params = {}) {
+  return Object.fromEntries(
+    Object.entries(params).map(([key, value]) => [key, typeof value === "string" ? fill(value) : value])
+  );
 }
 
 // Two couples buying the same recipe must not receive byte-identical wording.
@@ -216,7 +251,8 @@ const {
   sourceMusic,
   photoCount: photos.length,
   acceptMisfit,
-  extraMusicPath,
+  extraMusicPaths,
+  extraMusicDurations,
   musicPath,
 });
 if (musicModeOrderId) appliedIds.add(musicModeOrderId);
@@ -322,7 +358,9 @@ function photo(slotName, scene, fallback = {}) {
 function photosFor(slotName, scene, defaultCount) {
   const slot = (scene.photoSlots || []).find((s) => s.slot === slotName) || { count: defaultCount };
   const baseCount = slot.count || defaultCount;
-  const count = Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(baseCount * (direction?.pacing?.controls?.montagePhotoMultiplier ?? 1))));
+  const count = slot.fixedCount
+    ? baseCount
+    : Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(baseCount * (direction?.pacing?.controls?.montagePhotoMultiplier ?? 1))));
   return globalAssignments.get(`${scene.id}:${slotName}`) || take(slot, count);
 }
 
@@ -347,7 +385,15 @@ const rect = (x, y, width, height, color, opacity, extra = {}) =>
   ({ type: "rect", x, y, width, height, color, opacity, ...extra });
 const txt = (text, font, x, y, width, height, size, color, align = "center", extra = {}) =>
   ({ type: "text", text, font, x, y, width, height, size, color, align, wrap: true, ...extra });
-const cap = (text, role = "caption") => ({
+// font is always the theme's VN-safe body face: captionPattern text is full
+// Vietnamese prose, never short romanized copy, so a script/display face here
+// would risk missing diacritic glyphs. Without this, captions fell through to
+// compileTimeline's DEFAULT_FONT (plain arial.ttf) since this object never set one.
+// animation mirrors the layer_scene text rule (layerSceneBuilder.mjs textAnimation):
+// peak/montage beats pop in with slide_up, everything else keeps the plain fade a
+// caption over a moving photo effect (memory_wall, mask_reveal, film_roll_up…) reads
+// best with — captions only ever support fade/slide_up/none (CaptionAnimation).
+const cap = (text, role = "caption", scene = {}) => ({
   text,
   role,
   position: "bottom_center",
@@ -355,7 +401,8 @@ const cap = (text, role = "caption") => ({
   duration: 3.8,
   color: "white",
   shadow: true,
-  animation: "fade",
+  animation: scene.transitionRole === "peak" || scene.durationRole === "montage" || scene.arcBeat === "peak" ? "slide_up" : "fade",
+  font: resolveFont("body"),
 });
 
 function energyAt(t) {
@@ -414,7 +461,7 @@ const {
   defaultTextColor,
   photoStart,
   textStart,
-} = createTemplateTheme({ library, template, customerPrompt, direction });
+} = createTemplateTheme({ library, template, direction });
 const buildLayerSceneFromLayout = createLayerSceneBuilder({
   library,
   libraryPath,
@@ -440,9 +487,11 @@ const buildLayerSceneFromLayout = createLayerSceneBuilder({
 });
 // Emit a caption only when the scene actually supplies copy — recipes that want
 // "photos only" montage beats just omit captionPattern.
-const capsFor = (pattern, role = "caption", key = "") => {
-  const t = fill(pickVariant(pattern, key ? `${key}:captionPattern` : ""));
-  return t ? [cap(t, role)] : [];
+const capsFor = (pattern, role = "caption", key = "", scene = {}) => {
+  const override = copyMap[scene.id]?.captionPattern;
+  const raw = typeof override === "string" && override ? override : pattern;
+  const t = fill(pickVariant(raw, key ? `${key}:captionPattern` : ""));
+  return t ? [cap(t, role, scene)] : [];
 };
 
 // Which effect takes one photo, which takes many, how many a montage may hold, and which
@@ -457,36 +506,46 @@ function buildScene(scene) {
   // single-photo scene (photoSlotsFor gave it a "hero" slot, scene.effect is the harmless
   // "still" placeholder the schema still requires) — only the render backend differs.
   if (scene.renderer && scene.template) {
-    const needsPair = scene.template === "gl_transition";
-    const hybridAssets = needsPair
-      ? photosFor("pair", scene, 2)
-      : [scene === expandedScenes?.[0] ? heroPhoto.file : photo("hero", scene)];
-    if (!needsPair && scene === expandedScenes?.[0]) { used.add(hybridAssets[0]); lastPhoto = heroPhoto; }
+    const required = HYBRID_ASSET_MIN[scene.template] ?? 1;
+    const slot = (scene.photoSlots || [])[0] || { slot: required > 1 ? "assets" : "hero", count: required };
+    const isOpening = scene === expandedScenes?.[0];
+    const assigned = globalAssignments.get(`${scene.id}:${slot.slot}`) || [];
+    const hybridAssets = isOpening
+      ? [heroPhoto.file, ...take(slot, Math.max(0, required - 1))]
+      : assigned.length >= required ? assigned.slice(0, required) : take(slot, required);
+    if (isOpening) { used.add(heroPhoto.file); lastPhoto = heroPhoto; }
     return {
       effect: "still",
       renderer: scene.renderer,
       template: scene.template,
       assets: hybridAssets,
-      params: scene.params || {},
-      captions: capsFor(scene.captionPattern, "caption", scene.id),
+      // Hybrid templates used to wear their own hardcoded colours and fonts — a near-black
+      // backdrop and Georgia, whatever film they were dropped into — so a signature scene
+      // announced itself as belonging to a different production than the twenty around it.
+      // Dress them from the SAME theme every other scene is dressed from; a recipe that
+      // states a value on purpose still wins, because scene.params is spread last.
+      params: fillParams({ background: libTheme().background, fontFamily: resolveFont("heading"), ...scene.params }),
+      // And crop like the rest of the engine: around the subject, not the middle.
+      ...focusOf(hybridAssets[0]),
+      captions: capsFor(scene.captionPattern, "caption", scene.id, scene),
     };
   }
   if (scene.effect === "layer_scene") return buildLayerSceneFromLayout(scene);
   if (scene.effect === "memory_wall") {
-    return { effect: "memory_wall", images: photosFor("memories", scene, 5), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
+    return { effect: "memory_wall", images: photosFor("memories", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id, scene) };
   }
   if (scene.effect === "collage_grid") {
-    return { effect: "collage_grid", images: photosFor("grid", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
+    return { effect: "collage_grid", images: photosFor("grid", scene, 6), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id, scene) };
   }
   if (["film_roll_left", "film_roll_up", "film_roll_right", "photo_strip_up", "photo_strip_left", "photo_strip_right"].includes(scene.effect)) {
-    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id) };
+    return { effect: scene.effect, images: photosFor("film_roll", scene, 8), params: scene.params || {}, captions: capsFor(scene.captionPattern, "caption", scene.id, scene) };
   }
   if (scene.effect === "double_exposure") {
-    return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern, "caption", scene.id) };
+    return { effect: "double_exposure", images: photosFor("pair", scene, 2), captions: capsFor(scene.captionPattern, "caption", scene.id, scene) };
   }
   if (scene.effect === "video_background") {
     if (!scene.background) throw new Error(`Scene ${scene.id}: video_background needs a 'background' video path`);
-    return { effect: "video_background", background: scene.background, captions: capsFor(scene.captionPattern, "caption", scene.id) };
+    return { effect: "video_background", background: scene.background, captions: capsFor(scene.captionPattern, "caption", scene.id, scene) };
   }
   if (scene.effect === "mask_reveal") {
     const isOpening = scene === expandedScenes?.[0];
@@ -497,7 +556,7 @@ function buildScene(scene) {
       image: maskImage,
       mask: scene.mask || "assets/masks/particle_gather.mp4",
       params: scene.params || {},
-      captions: capsFor(scene.captionPattern, "caption", scene.id),
+      captions: capsFor(scene.captionPattern, "caption", scene.id, scene),
       ...focusOf(maskImage),
     };
   }
@@ -509,7 +568,7 @@ function buildScene(scene) {
     // and the build died on an unrelated scene. Same bug, second door.
     const image = scene === expandedScenes?.[0] ? heroPhoto.file : photo("hero", scene);
     if (scene === expandedScenes?.[0]) { used.add(image); lastPhoto = heroPhoto; }
-    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role, scene.id), ...focusOf(image) };
+    const slide = { effect: scene.effect, image, captions: capsFor(scene.captionPattern, role, scene.id, scene), ...focusOf(image) };
     if (scene.easing && EASING_EFFECTS.has(scene.effect)) slide.easing = scene.easing;
     return slide;
   }
@@ -664,7 +723,7 @@ const timeline = {
   // needed here. playlist: a second track appended; the engine's playlist path joins them
   // with acrossfade and repeats the WHOLE pair until it covers the video.
   music: musicEdit.mode === "playlist"
-    ? [{ path: musicPath, volume: 0.82 }, { path: extraMusicPath, volume: 0.82 }]
+    ? [musicPath, ...extraMusicPaths].map((track) => ({ path: track, volume: 0.82 }))
     : [{ path: musicPath, volume: 0.82,
         ...(musicEdit.mode === "highlight" ? { start: musicEdit.start, end: musicEdit.end } : {}) }],
   audio: musicEdit.mode === "playlist"

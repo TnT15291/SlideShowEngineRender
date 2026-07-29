@@ -9,6 +9,8 @@ import test from "node:test";
 import {
   resolveScene, resolveTemplate, validateLook, visualSignature,
 } from "../scripts/lib/lookResolver.mjs";
+import { solveRecipeShotList } from "../scripts/lib/recipeShotList.mjs";
+import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
 
 const root = process.cwd();
 const libraryPath = path.join(root, "layouts", "library.json");
@@ -182,6 +184,57 @@ test("a scene naming an unknown look, or a look on a non-layout scene, is an err
   const wrongEffect = resolveScene({ id: "s02", effect: "dark_feather", look: "triptych" },
     { template: { looks: { triptych: { layout: "three_photo_row" } } }, library });
   assert.match(wrongEffect.errors[0].detail, /layer_scene geometry only/);
+});
+
+// -- the solver must carry a look across a swap, not just a layout id -----------------
+
+test("a wordless recurrence adopts its muteFallback's LOOK, not bare library geometry", () => {
+  // A one-photo layout on purpose: the point under test is the composition swap, and a
+  // three-slot beat is simply unaffordable at this budget, so the solver would drop it.
+  const base = layoutById("photo_left_text_right");
+  const recipe = {
+    id: "looks-fixture-01",
+    looks: {
+      tall: {
+        layout: "photo_left_text_right",
+        layoutOverrides: { photoSlots: { [base.photoSlots[0].id]: { width: 860, height: 900 } } },
+      },
+      matted: { layout: "photo_left_text_right", frame: { border: 8, borderColor: "#C5A363" } },
+    },
+    scenes: [
+      { id: "open", effect: "still", photoSlots: [{ slot: "hero" }] },
+      { id: "body", effect: "layer_scene", look: "tall", muteFallback: { look: "matted" }, text: { heading: "x" } },
+      { id: "close", effect: "layer_scene", layout: "closing_names", durationRole: "closing" },
+    ],
+  };
+  const resolved = resolveTemplate(recipe, { library });
+  assert.deepEqual(resolved.errors, []);
+  recipe.scenes = resolved.scenes;
+
+  const { scenes } = solveRecipeShotList({
+    recipe,
+    photoCount: 24,
+    musicDuration: 90,
+    durationOf: () => 5,
+    photoDemandOf: (scene) => scenePhotoCount(scene, { library }),
+    resolveOf: (scene) => resolveScene(scene, { template: recipe, library }).scene,
+    bodyPhotoBudget: 20,
+  });
+
+  const body = scenes.filter((scene) => scene.id.startsWith("body"));
+  assert.ok(body.length >= 2, `expected the body beat to recur, got ${body.length}`);
+  const [first, ...repeats] = body;
+  assert.equal(first.look, "tall");
+  assert.equal(first.resolvedLayout.photoSlots[0].height, 900);
+
+  for (const repeat of repeats) {
+    assert.equal(repeat.look, "matted", `${repeat.id} lost the recipe's look on a wordless repeat`);
+    assert.deepEqual(repeat.resolvedFrame, { border: 8, borderColor: "#C5A363" });
+    assert.notEqual(repeat.resolvedSignature, "layer:photo_left_text_right",
+      `${repeat.id} fell back to bare library geometry`);
+    assert.equal(scenePhotoCount(repeat, { library }), scenePhotoCount(first, { library }),
+      "a look swap must never change what the beat costs");
+  }
 });
 
 test("a scene that sets both a look and a conflicting layout is an error", () => {

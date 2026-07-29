@@ -14,7 +14,11 @@ export function buildPhotoAssignmentRequests({ scenes, library, direction }) {
     if (scene.durationRole === "closing" || scene.effect === "video_background") return;
 
     if (scene.effect === "layer_scene") {
-      const layout = (library.layouts || []).find((candidate) => candidate.id === scene.layout);
+      // A look never changes how many slots there are (lookResolver.mjs, I1), so the
+      // request COUNT is the same either way — but principalSlotId and the per-slot
+      // definitions must read the geometry that will actually be rendered.
+      const layout = scene.resolvedLayout
+        || (library.layouts || []).find((candidate) => candidate.id === scene.layout);
       for (const slot of layout?.photoSlots || []) {
         const definition = (scene.photoSlots || []).find((candidate) => candidate.slot === slot.id) || {};
         if (order === 0 && slot.id === principalSlotId(layout)) continue;
@@ -40,7 +44,7 @@ export function buildPhotoAssignmentRequests({ scenes, library, direction }) {
     const paired = scene.effect === "double_exposure" || scene.template === "gl_transition";
     const base = slot.count || (paired ? 2 : 1);
     const multiplier = direction?.pacing?.controls?.montagePhotoMultiplier ?? 1;
-    const count = multi
+    const count = multi && !slot.fixedCount
       ? Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(base * multiplier)))
       : base;
     requests.push({

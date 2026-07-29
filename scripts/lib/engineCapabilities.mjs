@@ -69,7 +69,7 @@ const SINGLE = {
  *  reads; `max` is the engine's hard clamp. These are the budget's shock absorbers: on a
  *  photo-rich job they soak up the surplus, on a photo-poor one they shrink away. */
 const MONTAGE = {
-  memory_wall: { slot: "memories", min: 3, max: 5, hint: "photos settle onto a wall; warm, collective" },
+  memory_wall: { slot: "memories", min: 3, max: 6, hint: "photos settle onto a wall; warm, collective" },
   collage_grid: { slot: "grid", min: 4, max: 6, hint: "grid of frames; energetic, good for group/party beats" },
   film_roll_up: { slot: "film_roll", min: 4, max: 12, hint: "strip of frames scrolling up; a montage sweep" },
   film_roll_left: { slot: "film_roll", min: 4, max: 12, hint: "strip scrolling left; a montage sweep" },
@@ -110,14 +110,39 @@ const HYBRID = {
   gl_transition: { renderer: "remotion", assets: 2, cost: "fast", hint: "GPU shader wipe between two photos (heart/kaleidoscope/cube/doorway/circleopen/ripple/windowslice/DreamyZoom/FilmBurn/morph via params.name); needs a pair, not a single hero shot" },
   glass_frame: { renderer: "remotion", assets: 1, cost: "fast", hint: "glassmorphism reveal: frosted glass panel over a blurred backdrop, sharp photo inset, one light sweep" },
   confetti_bloom: { renderer: "remotion", assets: 1, cost: "fast", hint: "blush/ivory/gold/sage petals drift in from the edges and settle around the photo while the camera dollies in" },
+  fly_in_duo: { renderer: "remotion", assets: 2, cost: "fast", hint: "two framed photos fly in from opposite sides, hold as a balanced pair, then leave through those sides" },
+  corner_fly_four: { renderer: "remotion", assets: 4, cost: "fast", hint: "four photos enter from four corners, settle into an asymmetric editorial grid, then fly back out" },
+  hero_filmstrip: { renderer: "remotion", assets: 5, cost: "fast", hint: "one large hero photo shares the frame with a vertical moving film strip made from four supporting photos" },
+  depth_parallax_stack: { renderer: "remotion", assets: 4, cost: "fast", hint: "four photographs occupy different depth planes while a virtual camera drifts through the stack" },
+  radial_gallery: { renderer: "remotion", assets: 6, cost: "fast", hint: "six framed photographs orbit a calm centre, then expand outward like a radial gallery" },
+  contact_sheet_zoom: { renderer: "remotion", assets: 9, cost: "fast", hint: "a nine-frame contact sheet assembles, then the camera pushes into one selected memory" },
+  ribbon_cascade: { renderer: "remotion", assets: 6, cost: "fast", hint: "six photographs unfold in a staggered ribbon, with alternating depth and a continuous exit direction" },
+  aperture_reveal: { renderer: "remotion", assets: 2, cost: "fast", hint: "six rotating shutter blades close on one photograph and reopen onto the next" },
+  match_cut_windows: { renderer: "remotion", assets: 3, cost: "fast", hint: "three full-height windows preserve horizontal motion while match-cutting across three photographs" },
+  checker_mosaic: { renderer: "remotion", assets: 2, cost: "fast", hint: "staggered checker tiles replace one photograph with the next, matching classic wedding-template mosaic transitions" },
+  flash_burst: { renderer: "remotion", assets: 2, cost: "fast", hint: "a white radial starburst peaks at the cut and reveals the next photograph" },
+  shared_frame_morph: { renderer: "remotion", assets: 4, cost: "fast", hint: "a 2x2 gallery recedes while one selected thumbnail preserves its identity and morphs into a full-frame hero (params.heroIndex 0..3)" },
+  kinetic_typography: { renderer: "remotion", assets: 1, cost: "fast", hint: "headline characters reveal with staggered rise, rotation and blur-to-sharp motion over one photograph; params.title and params.subtitle provide the copy" },
+  dither_dissolve: { renderer: "remotion", assets: 2, cost: "fast", hint: "GPU ordered (Bayer) dither progressively replaces one photograph with the next through a halftone pattern" },
+  // NOT LISTED: depth_photo_parallax. It displaced a photograph by a grayscale DEPTH MAP,
+  // and nothing in this engine produces one — no analysis node, no model in assets/models.
+  // Every caller that could reach it hands out ordinary photographs, so the second asset's
+  // red channel was being read as depth and the shot warped on the subject's own colours.
+  // Bring it back with a depth node (MiDaS/Depth-Anything through onnxruntime), not before.
+  image_echo_trail: { renderer: "remotion", assets: 1, cost: "fast", hint: "a moving hero photograph leaves a configurable delayed trail of soft image echoes (params.copies 5..14)" },
+  glass_refraction: { renderer: "remotion", assets: 2, cost: "fast", hint: "a procedural glass lens sweeps across the frame, refracting and revealing the next photograph" },
+  audio_reactive: { renderer: "remotion", assets: 1, cost: "fast", hint: "photo scale, light and rings pulse from params.beatFrames or a params.bpm fallback" },
+  particle_dissolve: { renderer: "remotion", assets: 2, cost: "fast", hint: "GPU cell particles scatter the outgoing photograph while revealing the next one" },
   // Blender — a real headless render process per scene. page_flip_3d/camera_gallery_3d use
   // Workbench (fake studio shading, no lighting setup) and are noticeably slower than
   // Remotion but not minutes-slow; ring_spin_reveal/photo_frame_orbit use EEVEE for real
   // lighting/depth-of-field/bokeh and cost minutes per scene, not seconds.
   page_flip_3d: { renderer: "blender", assets: 2, cost: "slow", hint: "a real 3D page bends and turns to reveal the next photo" },
   camera_gallery_3d: { renderer: "blender", assets: 1, cost: "slow", hint: "camera dollies across a row of 3D photo tiles; more assets = a longer row" },
-  ring_spin_reveal: { renderer: "blender", assets: 1, cost: "slow", hint: "3D gold ring with a glass gem spins in the foreground; camera racks focus back to the photo in soft bokeh — a wedding-ring / intro motif" },
+  ring_spin_reveal: { renderer: "blender", assets: 1, cost: "slow", hint: "a gold ring with a faceted stone spins low in the near foreground, opposite the subject, while the camera racks focus back to the full-frame photograph in warm bokeh — a wedding-ring / intro motif" },
   photo_frame_orbit: { renderer: "blender", assets: 1, cost: "slow", hint: "camera orbits a single hanging photo frame with warm bokeh lights defocused behind it — a gallery/hero moment" },
+  photo_carousel_3d: { renderer: "blender", assets: 4, cost: "slow", hint: "four upright photo cards form a shallow 3D carousel while the camera arcs across them" },
+  floating_collage_3d: { renderer: "blender", assets: 4, cost: "slow", hint: "four photo planes fly in from different depths, settle as a layered collage, then separate again" },
 };
 
 // The guarantee. An effect the engine accepts but nobody classified would be invisible to
@@ -170,9 +195,14 @@ export const MOTION_EFFECTS = [...EASING_EFFECTS];
  *  so the shot list, the budget and the assignment cannot disagree about it. */
 export function photoDemand(scene, library) {
   if (!scene?.effect) return 0;
+  if (scene.renderer && scene.template) return HYBRID_ASSET_MIN[scene.template] ?? 1;
   if (scene.effect === "video_background") return 0;
   if (scene.effect === "layer_scene") {
-    const layout = (library?.layouts || []).find((l) => l.id === scene.layout);
+    // A recipe look may dress a layout's slots but never add or remove one
+    // (lib/lookResolver.mjs, invariant I1) — so this count is the same whether it is read
+    // off the resolved geometry or the library's, and the budget need not know about looks.
+    const layout = scene.resolvedLayout
+      || (library?.layouts || []).find((l) => l.id === scene.layout);
     return layout?.photoSlots?.length || 0;
   }
   if (MONTAGE_EFFECTS.has(scene.effect)) {

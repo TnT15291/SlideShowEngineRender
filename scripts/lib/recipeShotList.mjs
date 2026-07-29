@@ -50,6 +50,14 @@ const VARIABLE_SLOT = MONTAGE_SLOT;
 const VARIABLE_MAX = MONTAGE_MAX;
 const isVariable = (scene) => MONTAGE_EFFECTS.has(scene.effect);
 
+/** Everything that decides what a scene LOOKS like, as opposed to what it says or which
+ *  photographs it holds. A composition swap moves all of these together or none of them:
+ *  a half-applied swap is a scene whose geometry and whose frame disagree. */
+const COMPOSITION_KEYS = [
+  "look", "layout", "resolvedLayout", "resolvedFrame",
+  "resolvedTreatment", "resolvedMotion", "resolvedSignature",
+];
+
 /** Strip a scene's authored words. Used when a scene recurs past the variants its author
  *  supplied: a wordless repeat is honest, and the same heading three times is not.
  *
@@ -59,12 +67,20 @@ const isVariable = (scene) => MONTAGE_EFFECTS.has(scene.effect);
  *  keeps its 50% and the text's 50% becomes blank cream. The author names the balanced
  *  stand-in (full_bleed_quote, photo_duo, ...) and the solver applies it here, so the
  *  muted repeat is a different composition rather than a hole. */
-function mute(scene) {
-  const next = { ...scene, ...(scene.muteFallback || {}) };
+function mute(scene, resolveOf = (s) => s) {
+  const fallback = scene.muteFallback || {};
+  const next = { ...scene, ...fallback };
   delete next.muteFallback;
   delete next.captionPattern;
   if (next.text) next.text = Object.fromEntries(Object.keys(next.text).map((k) => [k, ""]));
-  return next;
+  // The stand-in may be a different LOOK, not just a different layout — and a wordless
+  // recurrence is where most of a long film's screen time goes. Re-resolve, or the recipe
+  // quietly reverts to bare library geometry for exactly those beats. Whichever of the two
+  // the fallback names wins outright; carrying the scene's other one forward would leave a
+  // look and a layout that disagree.
+  if (fallback.look) delete next.layout;
+  else if (fallback.layout) delete next.look;
+  return resolveOf(next);
 }
 
 /**
@@ -76,6 +92,10 @@ function mute(scene) {
  * @param {function} photoDemandOf   (scene) => photos consumed. Injected: the caller owns
  *                                   the layout library, which is the only thing that knows
  *                                   what a layer_scene costs.
+ * @param {function} [resolveOf]     (scene) => scene with its look merged onto the library
+ *                                   geometry. Injected for the same reason as photoDemandOf:
+ *                                   this solver owns WHICH scene, never what a scene looks
+ *                                   like. Defaults to identity for callers without looks.
  * @param {object}   [energy]        optional lib/pacing.mjs makeEnergy() sampler — the SAME
  *                                   curve QA measures against. Present, it bends each body
  *                                   scene toward the music it covers (see the durations
@@ -88,6 +108,7 @@ export function solveRecipeShotList({
   musicDuration,
   durationOf,
   photoDemandOf,
+  resolveOf = (scene) => scene,
   maxReuse = DEFAULT_MAX_REUSE,
   bodyPhotoBudget,
   energy,
@@ -206,7 +227,11 @@ export function solveRecipeShotList({
   // least-used alone kept landing on the scene that was just on screen. Preferring a
   // different layout costs nothing when the pool has one, and degrades to the old
   // behaviour when it does not.
-  const layoutOf = (s) => s.layout || s.effect;
+  // Two scenes on ONE layout can now be two different pictures (a recipe look may nudge
+  // the geometry and dress the frame), so the anti-adjacency test asks the resolved
+  // signature first. Un-migrated scenes sign as `layer:<layout>`, which partitions them
+  // exactly as the bare layout id always did.
+  const layoutOf = (s) => s.resolvedSignature || s.layout || s.effect;
   let prevLayout = opening ? layoutOf(opening) : null;
   const preferDifferent = (pool) => {
     const differing = pool.filter((s) => layoutOf(s) !== prevLayout);
@@ -221,7 +246,7 @@ export function solveRecipeShotList({
     const want = wanted[i];
     let paletteSource = source;
 
-    let scene = round === 0 ? { ...source } : variantOf(source, round);
+    let scene = round === 0 ? { ...source } : variantOf(source, round, resolveOf);
     if (round > 0) scene.id = `${source.id}_r${round}`;
 
     // A photoless scene is authored punctuation — a title card, a video interlude. It
@@ -230,7 +255,7 @@ export function solveRecipeShotList({
     if (round > 0 && !isVariable(scene) && photoDemandOf(scene) === 0 && underCap(substitutes).length) {
       const pick = leastUsed(preferDifferent(underCap(substitutes)));
       paletteSource = pick;
-      scene = variantOf(pick, round);
+      scene = variantOf(pick, round, resolveOf);
       scene.id = `${pick.id}_r${round}`;
     }
 
@@ -245,25 +270,33 @@ export function solveRecipeShotList({
       const pick = leastUsed(preferDifferent(affordable));
       paletteSource = pick;
       const seen = timesUsed.get(pick.id) ?? 0;
-      scene = seen === 0 ? { ...pick } : variantOf(pick, seen);
+      scene = seen === 0 ? { ...pick } : variantOf(pick, seen, resolveOf);
       scene.id = round === 0 && seen === 0 ? pick.id : `${pick.id}_r${round}`;
     }
 
     if (isVariable(scene)) {
-      // A montage is sized by the budget: as many photos as this beat can afford, never
-      // the 8 its author happened to type.
-      const count = Math.max(2, Math.min(VARIABLE_MAX[scene.effect], want));
-      scene.photoSlots = [{ slot: VARIABLE_SLOT[scene.effect], count }];
+      // Most montages flex with the beat budget. A fixedCount slot is authored geometry
+      // (for example an eight-frame strip), so shrinking it changes the composition.
+      const authoredSlot = scene.photoSlots?.[0] || {};
+      const fixedCount = Boolean(authoredSlot.fixedCount);
+      const count = fixedCount
+        ? authoredSlot.count
+        : Math.max(2, Math.min(VARIABLE_MAX[scene.effect], want));
+      scene.photoSlots = [{
+        ...authoredSlot,
+        slot: VARIABLE_SLOT[scene.effect],
+        count,
+      }];
       const cost = demandOf(scene);
       // Pacing can make a montage denser. If its minimum shape now costs more than this
       // beat owns, substitute an affordable single-photo scene instead of overdrawing
       // the pool and failing much later during assignment.
-      if (cost > want || spent + cost > storyPhotos) {
+      if ((!fixedCount && cost > want) || spent + cost > storyPhotos) {
         const affordable = underCap(substitutes.filter((s) => demandOf(s) <= Math.min(want, storyPhotos - spent)));
         if (!affordable.length) break;
         const pick = leastUsed(preferDifferent(affordable));
         paletteSource = pick;
-        scene = round === 0 ? { ...pick } : variantOf(pick, round);
+        scene = round === 0 ? { ...pick } : variantOf(pick, round, resolveOf);
         scene.id = round === 0 ? pick.id : `${pick.id}_r${round}`;
         spent += demandOf(scene);
       } else {
@@ -285,7 +318,7 @@ export function solveRecipeShotList({
         if (differing.length || (unaffordable && affordable.length)) {
           const pick = leastUsed(differing.length ? differing : affordable);
           paletteSource = pick;
-          scene = round === 0 ? { ...pick } : variantOf(pick, round);
+          scene = round === 0 ? { ...pick } : variantOf(pick, round, resolveOf);
           scene.id = round === 0 ? pick.id : `${pick.id}_r${round}`;
         }
       }
@@ -297,17 +330,28 @@ export function solveRecipeShotList({
     // cycling. First use gets authored copy, later uses consume variants, then go mute.
     const occurrence = timesUsed.get(paletteSource.id) ?? 0;
     if (occurrence > 0) {
-      const copy = variantOf(paletteSource, occurrence);
+      const copy = variantOf(paletteSource, occurrence, resolveOf);
       delete scene.captionPattern;
       delete scene.text;
       if (copy.captionPattern != null) scene.captionPattern = copy.captionPattern;
       if (copy.text != null) scene.text = copy.text;
-      // A muted recurrence may carry a muteFallback layout swap (see mute()). Adopt it
+      // A muted recurrence may carry a muteFallback composition swap (see mute()). Adopt it
       // only when the stand-in costs the same number of photos: this block runs AFTER
       // the beat's photos were spent, so a cheaper/dearer layout here would desync the
       // budget from the assignment.
-      if (copy.layout && copy.layout !== scene.layout && photoDemandOf(copy) === photoDemandOf(scene)) {
-        scene.layout = copy.layout;
+      //
+      // The swap carries the LOOK across, not just the layout id. Copying the id alone
+      // would strip the recipe's own geometry and frame off every wordless repeat — the
+      // beats that fill most of a long film — and drop them back onto bare library
+      // geometry, silently, with nothing downstream able to tell.
+      const swapped = copy.resolvedSignature
+        ? copy.resolvedSignature !== scene.resolvedSignature
+        : copy.layout && copy.layout !== scene.layout;
+      if (swapped && photoDemandOf(copy) === photoDemandOf(scene)) {
+        for (const key of COMPOSITION_KEYS) {
+          if (copy[key] === undefined) delete scene[key];
+          else scene[key] = copy[key];
+        }
         if (copy.photoSlots) scene.photoSlots = copy.photoSlots;
       }
     }
@@ -323,14 +367,25 @@ export function solveRecipeShotList({
   // least as many photos, keeping the already-closed photo budget intact.
   for (const required of body.filter((scene) => scene.signature)) {
     if (scenes.some((scene) => scene.signature && scene.id.startsWith(required.id))) continue;
-    const need = demandOf(required);
+    // A montage's demand scales with its AUTHORED count (e.g. a 6-photo grid), which is
+    // sized for when the budget can afford it generously — not for a last-resort restore,
+    // where the goal is just to get the beat on screen at all. Costing it at the recipe's
+    // full count made `need` higher than anything ever swapped out for it (this is
+    // exactly how collage_grid could vanish from a whole film: substituted away every
+    // round for being unaffordable, then never restored because restoring it "affordably"
+    // still demanded more photos than the swap could free up). Size it at the same
+    // minimal, two-photo floor the main loop uses when a montage beat is tight on budget.
+    const requiredScene = isVariable(required) && !required.photoSlots?.[0]?.fixedCount
+      ? { ...required, photoSlots: [{ slot: VARIABLE_SLOT[required.effect], count: 2 }] }
+      : required;
+    const need = demandOf(requiredScene);
     let at = -1;
     for (let i = scenes.length - 1; i >= 0; i--) {
       if (!scenes[i].signature && demandOf(scenes[i]) >= need) { at = i; break; }
     }
     if (at < 0) continue;
     const removed = demandOf(scenes[at]);
-    scenes[at] = { ...required, id: uniqueId(required.id) };
+    scenes[at] = { ...requiredScene, id: uniqueId(required.id) };
     spent += need - removed;
   }
 
@@ -343,6 +398,7 @@ export function solveRecipeShotList({
       if (surplus <= 0) break;
       if (!isVariable(scene)) continue;
       const slot = scene.photoSlots[0];
+      if (slot.fixedCount) continue;
       const room = VARIABLE_MAX[scene.effect] - slot.count;
       // photoDemandOf may apply the pacing direction's montage multiplier. Adding one
       // declared photo therefore does not necessarily cost one assigned photo. Grow a
@@ -362,7 +418,11 @@ export function solveRecipeShotList({
   // the whole set once so it lands on the track. Scaling is uniform, so the recipe still
   // decides which beats breathe and which cut — it just no longer decides, alone, how long
   // the film is.
-  const xfade = recipe.timelineRules?.transitionStrategy?.default?.duration ?? 0.8;
+  // "default" may author a few transition variants (array) that the grammar cycles
+  // through per cut — they land within a similar duration band by convention, so the
+  // first one is a fair representative for this budgeting estimate.
+  const defaultTransition = recipe.timelineRules?.transitionStrategy?.default;
+  const xfade = (Array.isArray(defaultTransition) ? defaultTransition[0] : defaultTransition)?.duration ?? 0.8;
   let t = openingDur;
   const bases = scenes.map((s) => {
     const base = Math.max(MIN_SCENE, durationOf(s, t));
@@ -436,10 +496,13 @@ export function solveRecipeShotList({
 /** A recurrence of an authored scene. The author's own `repeatable.variants` come first
  *  — they wrote them precisely so a second pass would not read like the first — and once
  *  those run out the scene recurs WITHOUT its words rather than repeating them. */
-function variantOf(source, round) {
+function variantOf(source, round, resolveOf = (s) => s) {
   const config = typeof source.repeatable === "object" ? source.repeatable : {};
   const variants = config.variants || [];
   const variant = variants[round - 1];
-  if (!variant) return mute({ ...source, repeatable: undefined });
-  return { ...source, ...variant, repeatable: undefined };
+  if (!variant) return mute({ ...source, repeatable: undefined }, resolveOf);
+  const next = { ...source, ...variant, repeatable: undefined };
+  if (variant.look) delete next.layout;
+  else if (variant.layout) delete next.look;
+  return resolveOf(next);
 }

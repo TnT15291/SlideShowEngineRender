@@ -1,6 +1,7 @@
 import { MAX_TRANSITION_SEC } from "./musicRetime.mjs";
 import { chooseMusicEdit, sliceMusicAnalysis } from "./musicHighlight.mjs";
 import { makeEnergy, MAX_SCENE } from "./pacing.mjs";
+import { resolveScene } from "./lookResolver.mjs";
 import { solveRecipeShotList } from "./recipeShotList.mjs";
 import { scenePhotoCount } from "./scenePhotoCount.mjs";
 import { MONTAGE_EFFECTS } from "./engineCapabilities.mjs";
@@ -59,6 +60,10 @@ export function planTemplateShotList({
     musicDuration: Number(music.duration) || 0,
     durationOf: (scene, at) => durationFor(scene.durationRole, at),
     photoDemandOf: (scene) => scenePhotoCount(scene, { library, direction }),
+    // The solver swaps a scene's look mid-solve (a muted recurrence adopting its
+    // muteFallback, a variant carrying its own look). It owns the swap; it must not also
+    // own the merge, so it hands the swapped scene back here to be re-resolved.
+    resolveOf: (scene) => resolveScene(scene, { template, library }).scene,
     bodyPhotoBudget: editorialPhotoCount - reservedPhotos.size - bookendPoolCost,
     energy: makeEnergy(music),
   });

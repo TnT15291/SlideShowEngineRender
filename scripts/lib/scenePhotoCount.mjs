@@ -8,9 +8,16 @@
 export function scenePhotoCount(scene, { library, direction } = {}) {
   if (scene.effect === "video_background") return 0;
   if (scene.effect === "layer_scene") {
-    const layout = (library?.layouts || []).find((l) => l.id === scene.layout);
+    // scene.resolvedLayout and the library layout always agree on slot COUNT — a recipe
+    // look may dress slots but never add or remove one (lib/lookResolver.mjs, invariant
+    // I1, enforced by V2/V3). That is what lets the photo budget ignore looks entirely.
+    const layout = scene.resolvedLayout
+      || (library?.layouts || []).find((l) => l.id === scene.layout);
     return layout?.photoSlots?.length || 0;
   }
   const multiplier = direction?.pacing?.controls?.montagePhotoMultiplier ?? 1;
-  return (scene.photoSlots || []).reduce((sum, slot) => sum + Math.max(1, Math.round((slot.count || 1) * multiplier)), 0);
+  return (scene.photoSlots || []).reduce((sum, slot) => {
+    const count = slot.count || 1;
+    return sum + (slot.fixedCount ? count : Math.max(1, Math.round(count * multiplier)));
+  }, 0);
 }
