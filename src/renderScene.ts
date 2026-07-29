@@ -45,11 +45,21 @@ function cacheKey(step: RenderSlideStep): string {
       catch { return [file, 0, 0]; }
     });
   const data = {
-    cacheVersion: 1,
-    ...(step.renderer === "blender" ? { rendererRevision: 3 } : {}),
+    // Bump when the RENDERER changes in a way a cached clip cannot know about. Everything
+    // else in this key describes the step; nothing in it describes the filter graph that
+    // drew the pixels, so a cached slide happily outlives a fix to how it was drawn.
+    //   2: contain-padding no longer flattens to black bars (buildLayerSceneCommand.ts)
+    cacheVersion: 2,
+    ...(step.renderer === "blender" ? { rendererRevision: 4 } : {}),
     renderer: step.renderer, template: step.rendererTemplate, params: step.rendererParams,
+    // The focal point is an input, not a derivative of the file: re-analysing a photo moves
+    // the crop without touching a byte on disk, and both external renderers now frame from it.
+    focusX: step.focusX, focusY: step.focusY,
     duration: step.duration, width: step.width, height: step.height, fps: step.fps,
     effect: step.effect, color: step.color, captions: step.captions, layers: step.layers, files,
+    ...(["collage_grid", "double_exposure"].includes(step.effect)
+      ? { technicalColor: step.technicalColor }
+      : {}),
   };
   return crypto.createHash("sha256").update(JSON.stringify(data)).digest("hex").slice(0, 24);
 }
