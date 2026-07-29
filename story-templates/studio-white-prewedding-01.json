@@ -4,6 +4,38 @@
   "name": "Studio White Pre-Wedding",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "polaroid_scatter_plate": {
+      "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
+      "layout": "polaroid_scatter",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "title",
@@ -319,14 +351,14 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
-            "slot": "bg",
+            "slot": "hero",
             "orient": "portrait",
             "quality": "good"
           }
-        ]
+        ],
+        "look": "gallery_matte_plate"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -542,12 +574,12 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "bg",
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
@@ -556,7 +588,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -575,7 +607,7 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
+      "look": "polaroid_scatter_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

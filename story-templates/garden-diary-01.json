@@ -4,6 +4,48 @@
   "name": "Garden Diary",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "looks": {
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "magazine_page_turn_plate": {
+      "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
+      "layout": "magazine_page_turn",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "three_photo_row_plate": {
+      "intent": "wordless three photo row beat, wearing this recipe's own frame",
+      "layout": "three_photo_row",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "morning",
@@ -216,7 +258,7 @@
     {
       "id": "s02_portraits",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -501,7 +543,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -515,7 +557,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
+      "look": "magazine_page_turn_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -534,7 +576,7 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
+      "look": "three_photo_row_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

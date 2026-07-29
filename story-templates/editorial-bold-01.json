@@ -4,6 +4,42 @@
   "name": "Editorial Bold",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    },
+    "duo_tinted_spread_plate": {
+      "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+      "layout": "duo_tinted_spread",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    },
+    "polaroid_scatter_plate": {
+      "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
+      "layout": "polaroid_scatter",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    },
+    "breath_quote": {
+      "intent": "the recurring quiet beat, softened away from the opening it shares a page with",
+      "layout": "full_bleed_quote",
+      "photoTreatment": {
+        "saturation": 0.9
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "statement",
@@ -369,7 +405,7 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "breath_quote",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -594,7 +630,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -608,7 +644,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
+      "look": "duo_tinted_spread_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -627,7 +663,7 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
+      "look": "polaroid_scatter_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

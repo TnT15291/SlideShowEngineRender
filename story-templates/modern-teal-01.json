@@ -4,6 +4,42 @@
   "name": "Modern Teal",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "breath_quote": {
+      "intent": "the recurring quiet beat, softened away from the opening it shares a page with",
+      "layout": "full_bleed_quote",
+      "photoTreatment": {
+        "saturation": 0.9
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "space",
@@ -385,7 +421,7 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "breath_quote",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -578,12 +614,12 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "bg",
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
@@ -592,7 +628,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -611,7 +647,7 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

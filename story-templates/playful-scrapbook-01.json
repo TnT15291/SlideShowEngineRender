@@ -4,6 +4,35 @@
   "name": "Playful Scrapbook",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    },
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    },
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#17171B"
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "snapshot",
@@ -635,12 +664,12 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "bg",
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
@@ -649,7 +678,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -668,12 +697,12 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "paper_collage",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "back",
+          "slot": "left",
           "orient": "any",
           "quality": "good"
         },
@@ -683,7 +712,7 @@
           "quality": "best"
         },
         {
-          "slot": "front",
+          "slot": "right",
           "orient": "any",
           "quality": "good"
         }

@@ -4,6 +4,38 @@
   "name": "Letters to Forever",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "magazine_page_turn_plate": {
+      "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
+      "layout": "magazine_page_turn",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "feature_plus_duo_plate": {
+      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "layout": "feature_plus_duo",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "dear_you",
@@ -472,7 +504,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -486,7 +518,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
+      "look": "magazine_page_turn_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -505,7 +537,7 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "feature_plus_duo",
+      "look": "feature_plus_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

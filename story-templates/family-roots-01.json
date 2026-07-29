@@ -4,6 +4,44 @@
   "name": "Roots & Branches",
   "tier": "smart_lite",
   "libraryTheme": "warm_film",
+  "looks": {
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 8,
+        "border": 16,
+        "borderColor": "#F4ECE0"
+      },
+      "photoTreatment": {
+        "saturation": 1.03
+      }
+    },
+    "duo_tinted_spread_plate": {
+      "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+      "layout": "duo_tinted_spread",
+      "frame": {
+        "radius": 8,
+        "border": 16,
+        "borderColor": "#F4ECE0"
+      },
+      "photoTreatment": {
+        "saturation": 1.03
+      }
+    },
+    "feature_plus_duo_plate": {
+      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "layout": "feature_plus_duo",
+      "frame": {
+        "radius": 8,
+        "border": 16,
+        "borderColor": "#F4ECE0"
+      },
+      "photoTreatment": {
+        "saturation": 1.03
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "roots",
@@ -276,15 +314,15 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
-            "slot": "bg",
+            "slot": "hero",
             "orient": "any",
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "gallery_matte_plate"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -565,7 +603,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -579,7 +617,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
+      "look": "duo_tinted_spread_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -598,22 +636,22 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "paper_collage",
+      "look": "feature_plus_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "back",
-          "orient": "any",
-          "quality": "good"
-        },
-        {
-          "slot": "centre",
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "front",
+          "slot": "top",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
           "orient": "any",
           "quality": "good"
         }

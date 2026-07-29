@@ -27,10 +27,20 @@ const strip = (scene) => {
 };
 
 test("a recipe with no looks resolves to the library layout, unchanged", () => {
-  // Recipes migrate one at a time; the ones that have not are entitled to render exactly
-  // what they rendered before looks existed.
-  const unmigrated = recipes.filter((recipe) => !recipe.looks);
-  assert.ok(unmigrated.length, "no un-migrated recipe left to prove the no-op against");
+  // Every shipped recipe now declares looks, so the no-op is proved against synthetic
+  // un-migrated copies of them -- looks stripped, every `look` put back as the `layout` it
+  // resolves to. The guarantee has to outlive the migration: a recipe written tomorrow
+  // without looks, and the AI director's composed storyboards, both take this path.
+  const unmigrated = recipes.map((recipe) => ({
+    ...recipe,
+    looks: undefined,
+    scenes: recipe.scenes.map((scene) => {
+      if (!scene.look) return scene;
+      const { look, ...rest } = scene;
+      return { ...rest, layout: recipe.looks[look].layout };
+    }),
+  }));
+  assert.ok(unmigrated.length, "no recipe left to prove the no-op against");
   for (const recipe of unmigrated) {
     const report = resolveTemplate(recipe, { library });
     assert.deepEqual(report.errors, [], `${recipe.id} produced resolver errors`);

@@ -4,6 +4,44 @@
   "name": "Across the Miles",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "looks": {
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "magazine_page_turn_plate": {
+      "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
+      "layout": "magazine_page_turn",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    },
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 0,
+        "border": 8,
+        "borderColor": "#2E6F6A"
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "two_places",
@@ -181,7 +219,7 @@
     {
       "id": "s01_places",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -496,12 +534,12 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "bg",
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
@@ -510,7 +548,7 @@
     {
       "id": "s84_arch_trio",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
+      "look": "magazine_page_turn_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -529,7 +567,7 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

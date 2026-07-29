@@ -4,6 +4,58 @@
   "name": "Classic Multisong Wedding Album",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "looks": {
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "feature_plus_duo_plate": {
+      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "layout": "feature_plus_duo",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "duo_tinted_spread_plate": {
+      "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+      "layout": "duo_tinted_spread",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    },
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 20,
+        "border": 12,
+        "borderColor": "#FFFDFC",
+        "shadow": true
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "opening",
@@ -227,7 +279,7 @@
     {
       "id": "s04_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -324,22 +376,22 @@
     {
       "id": "s08_paper_collage",
       "effect": "layer_scene",
-      "layout": "paper_collage",
+      "look": "feature_plus_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "back",
+          "slot": "hero",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "top",
           "orient": "portrait",
           "quality": "best"
         },
         {
-          "slot": "front",
+          "slot": "bottom",
           "orient": "any",
           "quality": "good"
         }
@@ -650,7 +702,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -664,7 +716,7 @@
     {
       "id": "s84_arch_trio",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
+      "look": "duo_tinted_spread_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -683,7 +735,7 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

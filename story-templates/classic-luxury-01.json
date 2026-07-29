@@ -4,6 +4,56 @@
   "name": "Classic Luxury",
   "tier": "smart_lite",
   "libraryTheme": "dark_film",
+  "looks": {
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 0,
+        "border": 5,
+        "borderColor": "#C9A86A"
+      },
+      "photoTreatment": {
+        "saturation": 0.92
+      }
+    },
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 5,
+        "borderColor": "#C9A86A"
+      },
+      "photoTreatment": {
+        "saturation": 0.92
+      }
+    },
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 0,
+        "border": 5,
+        "borderColor": "#C9A86A"
+      },
+      "photoTreatment": {
+        "saturation": 0.92
+      }
+    },
+    "feature_plus_duo_plate": {
+      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "layout": "feature_plus_duo",
+      "frame": {
+        "radius": 0,
+        "border": 5,
+        "borderColor": "#C9A86A"
+      },
+      "photoTreatment": {
+        "saturation": 0.92
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "arrival",
@@ -324,7 +374,7 @@
     {
       "id": "s55_gallery_trio",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -485,7 +535,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -499,7 +549,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -518,7 +568,7 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "layout": "feature_plus_duo",
+      "look": "feature_plus_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [

@@ -4,6 +4,44 @@
   "name": "Afterparty Pulse",
   "tier": "smart_lite",
   "libraryTheme": "teal_orange_editorial",
+  "looks": {
+    "feature_plus_duo_plate": {
+      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "layout": "feature_plus_duo",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#C9A86A"
+      }
+    },
+    "gallery_matte_plate": {
+      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+      "layout": "gallery_matte_hero",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#C9A86A"
+      }
+    },
+    "photo_duo_plate": {
+      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "layout": "photo_duo",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#C9A86A"
+      }
+    },
+    "arch_trio_plate": {
+      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "layout": "arch_trio",
+      "frame": {
+        "radius": 0,
+        "border": 6,
+        "borderColor": "#C9A86A"
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "entrance",
@@ -285,7 +323,7 @@
     {
       "id": "s03_dinner",
       "effect": "layer_scene",
-      "layout": "feature_plus_duo",
+      "look": "feature_plus_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -576,7 +614,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
+      "look": "gallery_matte_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -590,7 +628,7 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
+      "look": "photo_duo_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -609,7 +647,7 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "layout": "arch_trio",
+      "look": "arch_trio_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
