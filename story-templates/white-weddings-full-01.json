@@ -4,6 +4,39 @@
   "name": "White Weddings Full Collection",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "looks": {
+    "gallery_matte": {
+      "intent": "one photograph matted on cream — the reference's gallery page",
+      "layout": "gallery_matte_hero"
+    },
+    "quiet_quote": {
+      "intent": "wordless recurrence: full bleed, softened away from the announcement beat",
+      "layout": "full_bleed_quote",
+      "photoTreatment": {
+        "saturation": 0.9
+      }
+    },
+    "row_reprise": {
+      "intent": "the three-photo row levelled instead of staggered, for the late reprise",
+      "layout": "three_photo_row",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": {
+            "y": 220,
+            "height": 640
+          },
+          "centre": {
+            "y": 180,
+            "height": 720
+          },
+          "right": {
+            "y": 220,
+            "height": 640
+          }
+        }
+      }
+    }
+  },
   "storyArc": {
     "sequence": [
       "save_the_date",
@@ -21,7 +54,8 @@
       "dissolve",
       "crossfade",
       "fade_slow",
-      "none"
+      "none",
+      "vert_open"
     ],
     "specialRoles": [
       "memory",
@@ -34,7 +68,7 @@
   },
   "source": {
     "origin": "reference_adaptation",
-    "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement."
+    "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement. Three recipe `looks` depart from a literal page-for-page reading, and each is a move TOWARD the reference's variety rather than away from it: the reference gives every page its own composition, while this adaptation had full_bleed_quote carrying the announcement, a second beat and the wordless fallback of four scenes at once."
   },
   "intro": {
     "summary": "Bộ sưu tập đầy đủ nhất của dòng White Weddings — nhiều 'trang' giai điệu ngà ấm, phù hợp video dài hơi.",
@@ -112,8 +146,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -132,10 +166,20 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.8
+        },
+        {
+          "type": "fade_slow",
+          "duration": 0.85
+        },
+        {
+          "type": "vert_open",
+          "duration": 0.65
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.1
@@ -199,7 +243,10 @@
         }
       ],
       "text": {
-        "heading": ["SAVE the DATE", "WE'RE GETTING MARRIED"],
+        "heading": [
+          "SAVE the DATE",
+          "WE'RE GETTING MARRIED"
+        ],
         "date": "{{date}}"
       }
     },
@@ -222,15 +269,15 @@
         "date": "Date · {{date}}"
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
-            "slot": "bg",
+            "slot": "hero",
             "orient": "any",
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "gallery_matte"
       }
     },
     {
@@ -266,7 +313,10 @@
       ],
       "text": {
         "heading": {
-          "value": ["ABOUT THE\nBRIDE", "MEET THE\nBRIDE"],
+          "value": [
+            "ABOUT THE\nBRIDE",
+            "MEET THE\nBRIDE"
+          ],
           "sizePx": 62
         },
         "body": [
@@ -275,7 +325,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -283,7 +332,8 @@
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "quiet_quote"
       }
     },
     {
@@ -301,7 +351,10 @@
       ],
       "text": {
         "heading": {
-          "value": ["ABOUT THE\nGROOM", "MEET THE\nGROOM"],
+          "value": [
+            "ABOUT THE\nGROOM",
+            "MEET THE\nGROOM"
+          ],
           "sizePx": 62
         },
         "body": [
@@ -310,7 +363,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -318,7 +370,8 @@
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "quiet_quote"
       }
     },
     {
@@ -340,8 +393,14 @@
         }
       ],
       "text": {
-        "heading": ["OUR JOURNEY", "OUR PATH"],
-        "caption": ["From friendship to forever", "From two strangers to forever"]
+        "heading": [
+          "OUR JOURNEY",
+          "OUR PATH"
+        ],
+        "caption": [
+          "From friendship to forever",
+          "From two strangers to forever"
+        ]
       },
       "muteFallback": {
         "layout": "photo_duo",
@@ -427,7 +486,10 @@
         }
       ],
       "text": {
-        "heading": ["LOVE IS IN THE AIR", "LOVE ALL AROUND"]
+        "heading": [
+          "LOVE IS IN THE AIR",
+          "LOVE ALL AROUND"
+        ]
       }
     },
     {
@@ -504,15 +566,15 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
-            "slot": "bg",
+            "slot": "hero",
             "orient": "any",
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "gallery_matte"
       }
     },
     {
@@ -557,8 +619,14 @@
         }
       ],
       "text": {
-        "heading": ["ONE LOVE\nONE LIFETIME", "ONE HEART\nONE JOURNEY"],
-        "body": ["Beautiful moments", "Quiet moments"]
+        "heading": [
+          "ONE LOVE\nONE LIFETIME",
+          "ONE HEART\nONE JOURNEY"
+        ],
+        "body": [
+          "Beautiful moments",
+          "Quiet moments"
+        ]
       },
       "muteFallback": {
         "layout": "paper_collage",
@@ -804,7 +872,10 @@
         }
       ],
       "text": {
-        "heading": ["Written in Time", "A Moment in Time"]
+        "heading": [
+          "Written in Time",
+          "A Moment in Time"
+        ]
       }
     },
     {
@@ -867,11 +938,146 @@
       ]
     },
     {
+      "id": "s70_corner_fly_four",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "contact_sheet_zoom",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 9,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
       "id": "s71_signature",
       "effect": "still",
       "renderer": "blender",
-      "template": "camera_gallery_3d",
+      "template": "floating_collage_3d",
       "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 4,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s19c_photo_network",
+      "effect": "layer_scene",
+      "layout": "photo_network_hero",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top_right",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#F7F4EE"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "look": "gallery_matte",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -879,6 +1085,53 @@
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_title_reprise",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "eyebrow": "{{bride}} & {{groom}}",
+        "date": "{{date}}"
+      }
+    },
+    {
+      "id": "s85_magazine_reprise",
+      "effect": "layer_scene",
+      "look": "row_reprise",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },
