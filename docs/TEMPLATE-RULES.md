@@ -14,6 +14,9 @@ tương ứng một lỗi đã nhìn thấy trên màn hình — không phải l
 | 7 | Thiếu hiệu ứng mới Remotion/Blender | Mỗi template ≥ 1 cảnh signature hybrid (chỉ template `assets=1`, hoặc `gl_transition`; ≤ 1 cảnh Blender vì tốn nhiều phút render) | `signature_hybrid` |
 | 8 | Bài dài → cảnh lặp câm hàng loạt | ≥ 2 cảnh body có `repeatable.variants` ≥ 2 | `repeat_depth` |
 | 9 | Zoom to cắt mất mặt | Không hardcode `motion: zoom_*` trên slot `orient: portrait` — để motionPlanner (biết mặt ở đâu) quyết định | `face_safe_motion` |
+| 10 | Look đè lên hình học không hợp lệ | Override chỉ được sửa slot đã có (không thêm/xoá/đổi tên), ảnh không được lệch khỏi canvas quá nửa, chữ phải nằm trong safe margin, ảnh không được che >20% một text slot; look khai mà không dùng, hoặc hai look ra cùng một khung, là warning | `look_overrides` |
+| 11 | Look trỏ vào hư vô | `scene.look`, `muteFallback.look`, `variant.look` phải trỏ tới look recipe có khai | `look_reachable` |
+| 12 | Stand-in mập mờ | `muteFallback`/variant chỉ được khai `look` HOẶC `layout`, không cả hai | `look_fallback_shape` |
 
 Ngưỡng số nằm ở `scripts/lib/rules/thresholds.mjs` (khối "story-template authoring
 rules"). Logic check ở `scripts/lib/rules/templateRules.mjs`.
@@ -46,6 +49,49 @@ template vi phạm sẽ đỏ CI chứ không đợi tới lúc render cho khác
 - **motionPlanner** không còn coi ảnh chưa phân tích mặt là "ảnh chi tiết" để đẩy zoom
   mạnh nhất — thiếu dữ liệu thì đi motion nhẹ (0.025).
 
+## Recipe looks — thư viện giữ hình học, recipe giữ cá tính
+
+`layouts/library.json` giữ **primitive**: các khung toạ độ luôn hợp lệ trên canvas
+1920×1080. Recipe khai `looks` — mỗi look chọn một primitive rồi khoác lên nó hình học
+được nhích nhẹ, khung viền, sắc độ ảnh, nhịp vào. Cảnh trỏ tới look thay vì layout trần:
+
+```jsonc
+"looks": {
+  "bride_arch": {
+    "intent": "cô dâu, thành một thẻ ảnh bo góc trên nền kem",
+    "layout": "text_left_photo_right",
+    "layoutOverrides": {
+      "photoSlots": { "hero": { "x": 1090, "y": 90, "width": 700, "height": 900 } }
+    },
+    "frame": "arch",                        // tên preset trong layoutPresets, hoặc object
+    "photoTreatment": { "saturation": 0.92 }, // → ImageSceneLayer.grade, KHÔNG phải technicalColor
+    "motion": { "stagger": 0.14 }
+  }
+}
+```
+```jsonc
+{ "id": "s03_bride", "effect": "layer_scene", "look": "bride_arch", "photoSlots": [...] }
+```
+
+Thứ tự merge (`scripts/lib/lookResolver.mjs`, một nơi duy nhất — lint và build dùng chung):
+
+```
+library layout  →  look.layoutOverrides  →  scene.photoSlots/text
+frame: scene slot → look.frame → layout slot → layoutPresets → designTokens.framePreset
+```
+
+Ràng buộc quan trọng nhất: **override chỉ được sửa slot đã tồn tại**. `photoDemand()` tính
+ngân sách ảnh bằng `layout.photoSlots.length`, nên số slot cố định là thứ cho phép cả tầng
+solver không cần biết look tồn tại. Luật `look_overrides` (V2/V3) chặn việc này ở CI.
+
+`scene.layout` vẫn dùng được bình thường và không bị bỏ — recipe chuyển sang look từng cái
+một, và một recipe có thể trộn cả hai. Cảnh nào dùng đúng layout thư viện thì cứ khai
+`layout`; chỉ tạo look khi recipe thực sự có cá tính riêng ở beat đó.
+
+Đo lường: `signatureCount` (số khung hình khác nhau) / `layoutCount` (số primitive) /
+`effectCount`. Không đếm số look — hai look chỉ khác cái viền không phải hai khung hình,
+và luật `look_overrides` sẽ cảnh báo nếu chúng resolve ra cùng một fingerprint.
+
 ## Ghi chú layout library
 
 - `textRequired: true` trong `layouts/library.json` đánh dấu layout mà chữ là một nửa
@@ -57,7 +103,11 @@ template vi phạm sẽ đỏ CI chứ không đợi tới lúc render cho khác
 ## Khi thêm template mới
 
 1. Viết template như cũ (xem `story-templates/warm-film-01.json` làm mẫu đầy đủ:
-   `muteFallback`, `params.background`, cảnh hybrid, variants).
-2. Chạy `node scripts/lintStoryTemplates.mjs --template <file>` tới khi sạch.
+   `muteFallback`, `params.background`, cảnh hybrid, variants). Muốn recipe có nhận diện
+   riêng thì thêm `looks` — `story-templates/jmii-silk-botanical-01.json` là mẫu đã
+   chuyển hoàn chỉnh (7 look, quiet fallback tách đôi).
+2. Chạy `node scripts/lintStoryTemplates.mjs --template <file>` tới khi sạch, rồi
+   `npm run test:unit` — có 2 luật lint **không** kiểm (tổng opacity overlay ≤ 0.3 và
+   `transitionGrammar.limits`), chỉ `test/template-recipes.test.mjs` bắt.
 3. Màu `params.background` gợi ý theo theme: white_weddings `#4A4139`, dark_film
    `#2B2B32`, editorial_bold `#34322E`, warm_film `#3B332B`, modern_teal `#2F3B3A`.
