@@ -35,7 +35,7 @@ import {
   principalSlotId,
 } from "./lib/templatePhotoRequests.mjs";
 import { createLayerSceneBuilder } from "./lib/layerSceneBuilder.mjs";
-import { resolveTemplate, resolveScene } from "./lib/lookResolver.mjs";
+import { resolveTemplate, applyTreatment } from "./lib/lookResolver.mjs";
 import { planTemplateMusic } from "./lib/templateMusicPlan.mjs";
 import { planTemplateShotList } from "./lib/templateShotList.mjs";
 import {
@@ -367,6 +367,7 @@ function photosFor(slotName, scene, defaultCount) {
 function pic(file, x, y, width, height, extra = {}, scene = null, intent = {}) {
   const p = byFile.get(file) || {};
   const plan = scene ? motionPlanner.plan(p, scene, intent) : null;
+  const { treatment, ...rest } = extra;
   return {
     type: "image",
     path: file,
@@ -375,9 +376,9 @@ function pic(file, x, y, width, height, extra = {}, scene = null, intent = {}) {
     focusX: p.focusX ?? 0.5,
     focusY: p.focusY ?? 0.45,
     ...(p.faceBoxEstimate ? { faceBox: clampFaceBox(p.faceBoxEstimate) } : {}),
-    technicalColor: colorByFile.get(file),
+    technicalColor: applyTreatment(colorByFile.get(file), treatment),
     ...(plan?.motion && plan.motion !== "none" ? { motion: plan.motion, motionStrength: plan.strength, easing: plan.easing } : {}),
-    ...extra,
+    ...rest,
   };
 }
 

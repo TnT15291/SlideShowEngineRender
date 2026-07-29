@@ -62,6 +62,7 @@ export function createLayerSceneBuilder({
       layers.push(pic(file, slot.x, slot.y, slot.width, slot.height, {
         fit: def.fit || slot.fit || "cover",
         ...(def.motion ? { motion: def.motion } : {}),
+        ...(scene.resolvedTreatment ? { treatment: scene.resolvedTreatment } : {}),
       }, scene, { isHero: true, isBackground: true }));
       if (isClosing) layers.push(rect(0, 0, canvas.width, canvas.height, "#000000", 0.42));
     } else {
@@ -101,8 +102,9 @@ export function createLayerSceneBuilder({
         fit: def.fit || slot.fit || "cover",
         ...(def.motion ? { motion: def.motion } : {}),
         ...(frame ? { frame } : {}),
+        ...(scene.resolvedTreatment ? { treatment: scene.resolvedTreatment } : {}),
         ...(slot.rotation != null ? { rotation: slot.rotation } : {}),
-        ...(animated ? { animation: anim, start: photoStart(pIdx) } : {}),
+        ...(animated ? { animation: anim, start: photoStart(pIdx, scene) } : {}),
       }, scene, { isHero: slot.id === "hero" || def.quality === "best" }));
       pIdx++;
     }

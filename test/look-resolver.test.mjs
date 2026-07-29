@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import {
-  resolveScene, resolveTemplate, validateLook, visualSignature,
+  applyTreatment, resolveScene, resolveTemplate, validateLook, visualSignature,
 } from "../scripts/lib/lookResolver.mjs";
 import { solveRecipeShotList } from "../scripts/lib/recipeShotList.mjs";
 import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
@@ -199,6 +199,32 @@ test("a scene naming an unknown look, or a look on a non-layout scene, is an err
   const wrongEffect = resolveScene({ id: "s02", effect: "dark_feather", look: "triptych" },
     { template: { looks: { triptych: { layout: "three_photo_row" } } }, library });
   assert.match(wrongEffect.errors[0].detail, /layer_scene geometry only/);
+});
+
+// -- photo treatment ------------------------------------------------------------------
+
+test("a look's treatment rides on top of the album's normalization, never replaces it", () => {
+  const normalized = { brightness: 0.04, saturation: 1.08, redBalance: -0.02, blueBalance: 0.01, confidence: 0.9 };
+  const out = applyTreatment(normalized, { saturation: 0.5 });
+  // eq's saturation is a multiplier, so a mood of 0.5 halves this photo's corrected
+  // saturation rather than throwing the correction away.
+  assert.equal(out.saturation, 0.54);
+  assert.equal(out.brightness, 0.04, "the album's exposure correction was discarded");
+  assert.equal(out.redBalance, -0.02);
+  assert.equal(out.confidence, 0.9, "the decision's provenance was dropped");
+});
+
+test("no treatment leaves the normalization object untouched", () => {
+  const normalized = { brightness: 0.04, saturation: 1.08, redBalance: 0, blueBalance: 0 };
+  assert.equal(applyTreatment(normalized, undefined), normalized);
+  assert.equal(applyTreatment(undefined, undefined), undefined);
+});
+
+test("a treatment on an unanalyzed photo starts from neutral, and stays in range", () => {
+  assert.deepEqual(applyTreatment(undefined, { saturation: 0.88, brightness: 0.02 }),
+    { brightness: 0.02, saturation: 0.88, redBalance: 0, blueBalance: 0 });
+  assert.equal(applyTreatment(undefined, { brightness: 9 }).brightness, 0.3);
+  assert.equal(applyTreatment(undefined, { saturation: -4 }).saturation, 0);
 });
 
 // -- the solver must carry a look across a swap, not just a layout id -----------------

@@ -321,6 +321,30 @@ export function validateLook(lookId, look, { template, library }) {
   return out;
 }
 
+/**
+ * Lay a look's photo treatment ON TOP of this album's per-photo normalization rather than
+ * instead of it. The normalizer's job is to make one couple's photographs agree with each
+ * other; the look's is to give the whole recipe a mood. Replacing the first with the
+ * second hands the mood back a set of mismatched exposures.
+ *
+ * Composed the way the filters themselves compose (src/ffmpegFilterHelpers.ts builds
+ * `eq=brightness=B:saturation=S,colorbalance=rs=R:bs=BL`): eq's saturation is a
+ * multiplier, its brightness an offset, and colorbalance's are offsets.
+ */
+export function applyTreatment(normalization, treatment) {
+  if (!treatment) return normalization;
+  const base = normalization || { brightness: 0, saturation: 1, redBalance: 0, blueBalance: 0 };
+  const round = (n) => Math.round(n * 1000) / 1000;
+  const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+  return {
+    ...base,
+    brightness: round(clamp((base.brightness ?? 0) + (treatment.brightness ?? 0), -0.3, 0.3)),
+    saturation: round(clamp((base.saturation ?? 1) * (treatment.saturation ?? 1), 0, 2)),
+    redBalance: round(clamp((base.redBalance ?? 0) + (treatment.redBalance ?? 0), -0.3, 0.3)),
+    blueBalance: round(clamp((base.blueBalance ?? 0) + (treatment.blueBalance ?? 0), -0.3, 0.3)),
+  };
+}
+
 /** The fingerprint a viewer registers. Resolved scenes carry it; unresolved ones fall
  *  back to the pre-looks definition, so this is a drop-in for templateRules.lookOf(). */
 export function visualSignature(scene) {

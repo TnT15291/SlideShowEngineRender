@@ -1,16 +1,32 @@
-export function createTemplateTheme({ library, template, customerPrompt, direction }) {
-  const styleRules = [
-    { match: /editorial|tạp chí|thời trang|fashion/, theme: "editorial_bold" },
-    { match: /hiện đại|modern|minimal|tối giản|teal/, theme: "modern_teal" },
-    { match: /điện ảnh|cinematic|moody|trầm|dark/, theme: "dark_film" },
-    { match: /hoài niệm|vintage|film|ấm|warm|mộc/, theme: "warm_film" },
-  ];
-  const requestedTheme = styleRules.find((rule) => rule.match.test(customerPrompt))?.theme;
-  const themeRef = direction?.style?.themeId
-    || (requestedTheme && library.designTokens?.themes?.[requestedTheme]
-      ? requestedTheme
-      : (template.libraryTheme || "white_weddings"));
-  const libTheme = () => (library.designTokens?.themes || {})[themeRef] || {};
+export function createTemplateTheme({ library, template, direction }) {
+  // direction.style.themeId (chooseTier1Direction.mjs) already resolves to the
+  // recipe's own libraryTheme — a curated recipe's layouts/panels are built
+  // for that one palette, so this never guesses a different theme from
+  // customerPrompt wording. template.libraryTheme is the fallback for callers
+  // that skip the direction step entirely.
+  const themeRef = direction?.style?.themeId || template.libraryTheme || "white_weddings";
+  const libTheme = () => {
+    const base = (library.designTokens?.themes || {})[themeRef] || {};
+    const palette = template.defaults?.palette || {};
+    const fonts = template.defaults?.fonts || {};
+    return {
+      ...base,
+      ...(palette.cream ? { background: palette.cream } : {}),
+      palette: {
+        ...base.palette,
+        ...(palette.cream ? { cream_bg: palette.cream } : {}),
+        ...(palette.ink ? { ink_dark: palette.ink, text: palette.ink } : {}),
+        ...(palette.brown ? { warm_brown: palette.brown, accent: palette.brown } : {}),
+        ...(palette.white ? { numeral_white: palette.white } : {}),
+      },
+      fonts: {
+        ...base.fonts,
+        ...(fonts.title ? { script_accent: fonts.title } : {}),
+        ...(fonts.heading ? { heading: fonts.heading } : {}),
+        ...(fonts.body ? { body: fonts.body } : {}),
+      },
+    };
+  };
 
   function resolveColor(spec) {
     if (typeof spec !== "string") return "#000000";
@@ -23,8 +39,8 @@ export function createTemplateTheme({ library, template, customerPrompt, directi
 
   function resolveFont(role) {
     const theme = libTheme();
-    return theme.fonts?.[role]
-      || template.defaults?.fonts?.[role]
+    return template.defaults?.fonts?.[role]
+      || theme.fonts?.[role]
       || template.defaults?.fonts?.body
       || "fonts/BeVietnamPro-Regular.ttf";
   }
@@ -51,7 +67,6 @@ export function createTemplateTheme({ library, template, customerPrompt, directi
     return palette.text
       || palette.warm_brown
       || palette.ink_dark
-      || template.defaults?.palette?.brown
       || "#2D2D33";
   }
 
@@ -71,9 +86,13 @@ export function createTemplateTheme({ library, template, customerPrompt, directi
 
   const stagger = () => library.designTokens?.motionPresets?.staggerSeconds || {};
 
-  function photoStart(index) {
+  /** How long after the cut each successive photo enters. A recipe look may set its own
+   *  step — a triptych that snaps in and one that unfolds are different pictures made of
+   *  the same rectangles — falling back to the library's shared rhythm. */
+  function photoStart(index, scene) {
     const values = stagger();
-    return +((values.photoBase ?? 0.15) + index * (values.photoStep ?? 0.1)).toFixed(2);
+    const step = scene?.resolvedMotion?.stagger ?? values.photoStep ?? 0.1;
+    return +((values.photoBase ?? 0.15) + index * step).toFixed(2);
   }
 
   function textStart(role) {
