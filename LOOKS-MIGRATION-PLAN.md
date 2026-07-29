@@ -1,7 +1,40 @@
 # Kế hoạch triển khai: Recipe Looks (hybrid layout/look)
 
-Trạng thái: **chưa bắt đầu** — đây là plan, chưa có dòng code nào được viết.
-Ngày lập: 2026-07-29. Nhánh hiện tại: `agent/refactor-engine-and-add-momo`.
+Ngày lập: 2026-07-29. Nhánh: `agent/refactor-engine-and-add-momo`.
+
+## Trạng thái (cập nhật 2026-07-29)
+
+| Phase | Trạng thái | Commit |
+| --- | --- | --- |
+| 0–1 resolver + V1–V7 | ✅ xong | `1fce756` |
+| 2 nối vào pipeline (byte-identical) | ✅ xong | `0f924a9` |
+| 3 lint trên hình học đã resolve | ✅ xong | `b35f76c` |
+| 4 metric signature/layout/effect | ✅ xong | `803ad96` |
+| 5 treatment + stagger | ✅ xong | `1c32def`, `59073cd` |
+| 6 migrate recipe | 🔶 **3/24** (jmii, white-weddings-full, cinematic-film) | `5b1186b`, `33437f5`, `ca74231` |
+| 7 premium / scene composed | ⬜ chưa quyết | — |
+| 8 tài liệu | ✅ xong (TEMPLATE-RULES.md) | `5f6248e` |
+
+**Khác với plan gốc, và vì sao:**
+
+- **§5.2 đảo ngược.** `photoTreatment` KHÔNG nằm trong `technicalColor`. Render thật cho
+  thấy schema chặn `saturation` ngoài `0.9..1.1` — đúng, vì đó là biên của bộ chuẩn hoá
+  ảnh tự động. Look là chỉ đạo nghệ thuật, nên có field riêng `ImageSceneLayer.grade`
+  (saturation/contrast/brightness). `contrast` vì thế được làm luôn — điều kiện "chỉ làm
+  khi có recipe thật cần" đã thoả.
+- **V4 nới cho ảnh.** Bleed ảnh khỏi mép khung là bố cục thật (library tự làm, ghi trong
+  `meta.coordinateNote`). Rule đổi thành "quá nửa slot ra ngoài canvas mới là lỗi"; chữ
+  vẫn giữ safe margin nghiêm ngặt.
+- **`layouts/library.json` chưa sửa.** Câu ghi chú "library chỉ giữ primitive" thuộc về
+  file đó, nhưng file đang mang ~1000 dòng chưa commit của phiên làm việc song song.
+
+**Còn lại:** 21 recipe chưa migrate, và quyết định Phase 7.
+
+**Đã tìm thấy, chưa sửa (ngoài phạm vi):** layout `three_photo_row` trong library tự nó
+có va chạm — slot ảnh `right` (1262,434 551×551) đè lên 24% text slot `caption`
+(96,880 1728×140). Nhìn thấy trên frame render của `s07_fall_in_love`: dòng caption bị
+ảnh che mất đuôi. Sửa nó đổi hình học cho MỌI recipe dùng layout này, nên cần quyết
+định riêng.
 
 ---
 
