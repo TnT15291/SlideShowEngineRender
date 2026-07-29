@@ -33,8 +33,9 @@ import {
   SCENE_PHOTO_COVERAGE_MIN, SCENE_PHOTO_COVERAGE_MIN_TEXTED, CANVAS_BG_MIN_LUMA,
 } from "./thresholds.mjs";
 import {
-  HYBRID_SIGNATURE_TEMPLATES, HYBRID_RENDERER, MONTAGE_EFFECTS, photoDemand,
+  HYBRID_RENDERER, MONTAGE_EFFECTS, MONTAGE_SLOT, photoDemand,
 } from "../engineCapabilities.mjs";
+import { resolveScene, resolveTemplate, visualSignature } from "../lookResolver.mjs";
 
 /** Effects that paint their own canvas on the engine's black default and therefore
  *  must carry params.background (see canvasBackground() in src/buildFfmpegCommand.ts). */
@@ -42,12 +43,13 @@ export const CANVAS_EFFECTS = new Set(["mask_reveal", "memory_wall"]);
 
 const finding = (check, sceneId, detail) => ({ check, id: sceneId ?? "template", detail });
 
-/** The visual state a viewer registers for a scene — what "repeat" means. */
-export function lookOf(scene) {
-  if (scene.renderer && scene.template) return `${scene.renderer}:${scene.template}`;
-  if (scene.effect === "layer_scene") return `layer:${scene.layout}`;
-  return scene.effect;
-}
+/** The visual state a viewer registers for a scene — what "repeat" means.
+ *
+ *  Delegated to lib/lookResolver.mjs so a recipe cannot score well here by naming two
+ *  looks that render the same picture: the signature is computed from resolved geometry,
+ *  frame and treatment, and an undressed look signs as its bare layout. For a scene with
+ *  no look this is character-for-character what this function always returned. */
+export const lookOf = visualSignature;
 
 const hexLuma = (hex) => {
   const m = /^#?([0-9a-fA-F]{6})$/.exec(String(hex ?? "").trim());
@@ -78,12 +80,47 @@ const isBody = (scene, index, scenes) =>
 export function evaluateStoryTemplate(template, { library }) {
   const errors = [];
   const warnings = [];
-  const scenes = template.scenes ?? [];
   const layouts = new Map((library?.layouts ?? []).map((l) => [l.id, l]));
   const canvas = library?.meta?.canvas ?? { width: 1920, height: 1080 };
   const canvasArea = canvas.width * canvas.height;
+
+  // EVERY GEOMETRY RULE BELOW READS RESOLVED GEOMETRY, through the same resolver the
+  // build uses. Judging the authored layout instead would mean a recipe whose look nudges
+  // a slot gets measured on coordinates nobody renders — the lint would pass a frame it
+  // never looked at. See LOOKS-MIGRATION-PLAN.md §3.
+  const resolution = resolveTemplate(template, { library });
+  errors.push(...resolution.errors.map((f) => finding(f.check, f.id, f.detail)));
+  warnings.push(...resolution.warnings.map((f) => finding(f.check, f.id, f.detail)));
+  const scenes = resolution.scenes;
+
+  const resolveAlternative = (scene, alternative) => {
+    if (!alternative) return null;
+    const merged = { ...scene, ...alternative };
+    if (alternative.look) delete merged.layout;
+    else if (alternative.layout) delete merged.look;
+    return resolveScene(merged, { template, library }).scene;
+  };
   const layoutOfScene = (scene) =>
-    scene.effect === "layer_scene" ? layouts.get(scene.layout) : null;
+    scene.effect === "layer_scene" ? (scene.resolvedLayout ?? layouts.get(scene.layout)) : null;
+
+  // -- look_fallback_shape --------------------------------------------------------
+  // A stand-in that names both is ambiguous, and the two paths pick differently.
+  for (const scene of scenes) {
+    const alternatives = [
+      ["muteFallback", scene.muteFallback],
+      ...(scene.repeatable?.variants ?? []).map((v, i) => [`repeat variant ${i + 1}`, v]),
+    ];
+    for (const [label, alternative] of alternatives) {
+      if (alternative?.look && alternative?.layout) {
+        errors.push(finding("look_fallback_shape", scene.id,
+          `${label} names both look '${alternative.look}' and layout '${alternative.layout}' — name one`));
+      }
+      if (alternative?.look && !template.looks?.[alternative.look]) {
+        errors.push(finding("look_reachable", scene.id,
+          `${label} names unknown look '${alternative.look}'`));
+      }
+    }
+  }
 
   // -- scene_variety ------------------------------------------------------------
   if (scenes.length < TEMPLATE_MIN_SCENES) {
@@ -117,12 +154,17 @@ export function evaluateStoryTemplate(template, { library }) {
     }
   }
 
-  // -- photo_coverage (via the library's geometry, once per layout used) ---------
-  const seenLayouts = new Set();
+  // -- photo_coverage (once per distinct COMPOSITION used) ------------------------
+  //
+  // Memoised on the visual signature, not the layout id. Two looks may sit on one layout
+  // and place their slots differently; keying on the id would measure the first and wave
+  // the second through on numbers it does not use — the exact hole a look could hide in.
+  const seenCompositions = new Set();
   for (const scene of scenes) {
     const layout = layoutOfScene(scene);
-    if (!layout || seenLayouts.has(layout.id)) continue;
-    seenLayouts.add(layout.id);
+    const composition = lookOf(scene);
+    if (!layout || seenCompositions.has(composition)) continue;
+    seenCompositions.add(composition);
     const bgSlot = layout.background?.type === "photo_full_bleed" ? layout.background.slot : null;
     const slots = (layout.photoSlots ?? []).filter((s) => s.id !== bgSlot);
     if (!slots.length) continue;
@@ -157,6 +199,16 @@ export function evaluateStoryTemplate(template, { library }) {
     }
   }
 
+  // -- montage_slot -------------------------------------------------------------
+  for (const scene of scenes.filter((s) => MONTAGE_EFFECTS.has(s.effect))) {
+    const expected = MONTAGE_SLOT[scene.effect];
+    const actual = (scene.photoSlots ?? []).map((slot) => slot.slot);
+    if (!actual.includes(expected)) {
+      errors.push(finding("montage_slot", scene.id,
+        `${scene.effect} reads photo slot ${expected}; recipe supplies ${actual.join(", ") || "none"}`));
+    }
+  }
+
   // -- balanced_text -------------------------------------------------------------
   scenes.forEach((scene, index) => {
     const layout = layoutOfScene(scene);
@@ -168,7 +220,10 @@ export function evaluateStoryTemplate(template, { library }) {
     if (!isBody(scene, index, scenes)) return;
     const demand = photoDemand(scene, library);
     const fallback = scene.muteFallback;
-    const fallbackLayout = fallback?.layout ? layouts.get(fallback.layout) : null;
+    // The stand-in may be named as a look or as a bare layout; both resolve here, so the
+    // rule judges the composition that will actually stand in.
+    const resolvedFallback = resolveAlternative(scene, fallback);
+    const fallbackLayout = resolvedFallback ? layoutOfScene(resolvedFallback) : null;
     if (!fallback || !fallbackLayout) {
       errors.push(finding("balanced_text", scene.id,
         `body scene on textRequired layout ${layout.id} needs a muteFallback layout for wordless recurrences`));
@@ -177,14 +232,14 @@ export function evaluateStoryTemplate(template, { library }) {
         errors.push(finding("balanced_text", scene.id,
           `muteFallback ${fallbackLayout.id} is itself textRequired — a wordless repeat would still be half-empty`));
       }
-      const fallbackDemand = photoDemand({ ...scene, ...fallback }, library);
+      const fallbackDemand = photoDemand(resolvedFallback, library);
       if (fallbackDemand !== demand) {
         errors.push(finding("balanced_text", scene.id,
-          `muteFallback ${fallback.layout} costs ${fallbackDemand} photo(s) but the scene costs ${demand} — the solver only adopts an equal-cost stand-in`));
+          `muteFallback ${fallback.look ?? fallback.layout} costs ${fallbackDemand} photo(s) but the scene costs ${demand} — the solver only adopts an equal-cost stand-in`));
       }
     }
     for (const [i, variant] of (scene.repeatable?.variants ?? []).entries()) {
-      const vLayout = layouts.get(variant.layout ?? scene.layout);
+      const vLayout = layoutOfScene(resolveAlternative(scene, variant) ?? scene);
       const vText = variant.text !== undefined ? variant.text : scene.text;
       if (vLayout?.textRequired && !textOf(vText)) {
         errors.push(finding("balanced_text", scene.id,
@@ -195,9 +250,13 @@ export function evaluateStoryTemplate(template, { library }) {
 
   // -- signature_hybrid ----------------------------------------------------------
   const hybrids = scenes.filter((s) => s.renderer && s.template);
-  if (!hybrids.length) {
+  if (hybrids.length < 2) {
     errors.push(finding("signature_hybrid", null,
-      "no Remotion/Blender signature scene; the recipe never spends the engine's richest effects"));
+      `${hybrids.length} Remotion/Blender signature scene(s); each recipe must carry 2-3`));
+  }
+  if (hybrids.length > 3) {
+    errors.push(finding("signature_hybrid", hybrids[3].id,
+      `${hybrids.length} Remotion/Blender signature scenes; keep at most 3 so signature moments stay special`));
   }
   for (const scene of hybrids) {
     const known = HYBRID_RENDERER[scene.template];
@@ -206,9 +265,6 @@ export function evaluateStoryTemplate(template, { library }) {
     } else if (known !== scene.renderer) {
       errors.push(finding("signature_hybrid", scene.id,
         `template ${scene.template} is rendered by ${known}, not ${scene.renderer}`));
-    } else if (!HYBRID_SIGNATURE_TEMPLATES.has(scene.template) && scene.template !== "gl_transition") {
-      errors.push(finding("signature_hybrid", scene.id,
-        `${scene.template} needs more photos than the recipe path can hand a hybrid scene (only assets=1 templates, or gl_transition's pair, resolve correctly here)`));
     }
   }
   const slow = hybrids.filter((s) => HYBRID_RENDERER[s.template] === "blender");
