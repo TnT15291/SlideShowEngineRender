@@ -1,0 +1,720 @@
+{
+  "id": "classic-multisong-album-01",
+  "version": 1,
+  "name": "Classic Multisong Wedding Album",
+  "tier": "smart_lite",
+  "libraryTheme": "white_weddings",
+  "storyArc": {
+    "sequence": [
+      "opening",
+      "portraits",
+      "together",
+      "memories",
+      "celebration",
+      "forever",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "fade_slow",
+      "dissolve",
+      "crossfade",
+      "slice_left",
+      "circle_open",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 4,
+      "peak": 3
+    }
+  },
+  "source": {
+    "origin": "reference_adaptation",
+    "notes": "Adapted from Tuan Tien Slideshow.mp4: an 18:37 classic wedding slideshow using five romantic/pop songs, portrait cards over blurred backdrops, photo stacks, grids, page turns, white flashes and checker mosaics. Designed for long playlists and roughly 140-220 photographs."
+  },
+  "intro": {
+    "summary": "Album cưới cổ điển dạng phim dài, nối nhiều bài nhạc và thay đổi nhịp theo từng chương.",
+    "photos": "Phù hợp bộ ảnh lớn 140–220 tấm, gồm ảnh chân dung, ngoại cảnh, đời thường, chi tiết và ảnh cưới.",
+    "story": "Mở đầu nhẹ nhàng, đi qua chân dung và kỷ niệm, tăng tốc ở chương vui, rồi kết bằng lời hứa cưới.",
+    "music": "Playlist 4–6 bài, tổng khoảng 14–20 phút; acoustic/ballad ở đầu và cuối, pop vừa hoặc nhanh ở chương celebration."
+  },
+  "fit": {
+    "bestFor": [
+      "wedding",
+      "pre_wedding",
+      "large_album",
+      "multisong",
+      "classic_slideshow"
+    ],
+    "minPhotos": 120,
+    "idealPhotos": 190
+  },
+  "musicProfile": {
+    "moods": [
+      "romantic",
+      "nostalgic",
+      "warm",
+      "celebratory"
+    ],
+    "energy": "low_to_high_to_low"
+  },
+  "pacingVariants": [
+    {
+      "id": "vow",
+      "maxEnergy": 0.36,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "memory",
+      "maxEnergy": 0.66,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "celebration",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.86
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5550,
+      "saturation": 1.03,
+      "contrast": 1.04,
+      "glow": 0.1,
+      "grain": 1
+    },
+    "audio": {
+      "fade_in": 1.5,
+      "fade_out": 4,
+      "crossfade": 2
+    },
+    "overlays": [],
+    "fonts": {
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F7F3EC",
+      "white": "#FFFDFC",
+      "ink": "#262422",
+      "warm": "#B9906A"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.2,
+      "calmSceneSec": 6.8,
+      "buildSceneSec": 4.2,
+      "montageSec": 8.5,
+      "closingSec": 9
+    },
+    "transitionStrategy": {
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.75
+        },
+        {
+          "type": "fade_slow",
+          "duration": 0.9
+        },
+        {
+          "type": "slice_left",
+          "duration": 0.65
+        }
+      ],
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1.05
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.85
+      },
+      "peak": {
+        "type": "crossfade",
+        "duration": 0.5
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 74
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_opening",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best",
+          "fit": "cover",
+          "motion": "zoom_in"
+        }
+      ],
+      "text": {
+        "quote": "{{bride}} & {{groom}} · {{date}}"
+      }
+    },
+    {
+      "id": "s02_portrait_bride",
+      "effect": "portrait_blur_background",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s03_portrait_groom",
+      "effect": "portrait_reflection",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s04_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s05_three_photo_row",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "OUR STORY",
+        "caption": "Every photograph keeps a little piece of forever."
+      },
+      "repeatable": {
+        "maxRepeats": 4,
+        "variants": [
+          {
+            "text": {
+              "heading": "TOGETHER",
+              "caption": "The best memories are the ones we made together."
+            }
+          },
+          {
+            "text": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "s06_page_turn",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "page_flip",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "any",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s07_memory_wall",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#F7F3EC"
+      }
+    },
+    {
+      "id": "s08_paper_collage",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s09_checker_mosaic",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "checker_mosaic",
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "any",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "columns": 8,
+        "rows": 5
+      }
+    },
+    {
+      "id": "s10_photo_grid",
+      "effect": "layer_scene",
+      "layout": "photo_grid_6",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "a",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "b",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "c",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "d",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "e",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "f",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s10_photo_network",
+      "effect": "layer_scene",
+      "layout": "photo_network_hero",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top_right",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s11_film_roll",
+      "effect": "film_roll_left",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s12_collage_grid",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s13_slow_hero",
+      "effect": "slow_zoom_in",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s14_story_pair",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "body": "From the first hello to every tomorrow."
+      },
+      "repeatable": {
+        "maxRepeats": 4,
+        "variants": [
+          {
+            "text": {
+              "body": "A thousand little moments became one beautiful story."
+            }
+          },
+          {
+            "text": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "s15_flash_burst",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "flash_burst",
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "any",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s16_polaroid_memories",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good",
+          "frame": "polaroid"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best",
+          "frame": "polaroid"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good",
+          "frame": "polaroid"
+        }
+      ],
+      "text": {
+        "heading": "MEMORIES"
+      }
+    },
+    {
+      "id": "s17_final_portrait",
+      "effect": "dream_glow",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_arch_trio",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_feature_duo",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s18_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Beautiful in every tomorrow · {{date}}"
+      }
+    }
+  ]
+}

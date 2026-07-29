@@ -21,7 +21,8 @@
       "crossfade",
       "smooth_left",
       "dissolve",
-      "none"
+      "none",
+      "wipe_right"
     ],
     "specialRoles": [
       "memory",
@@ -110,8 +111,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/PlayfairDisplay.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/JosefinSans-Regular.ttf",
+      "heading": "fonts/Montserrat-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -130,10 +131,20 @@
       "closingSec": 8
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.55
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.55
+        },
+        {
+          "type": "smooth_left",
+          "duration": 0.5
+        },
+        {
+          "type": "wipe_right",
+          "duration": 0.5
+        }
+      ],
       "calm": {
         "type": "dissolve",
         "duration": 0.8
@@ -187,6 +198,24 @@
       ]
     },
     {
+      "id": "s01b_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "match_cut_windows",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 3,
+          "orient": "landscape",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
       "id": "s02_signal",
       "effect": "still",
       "renderer": "remotion",
@@ -205,7 +234,10 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["TỪ HAI THÀNH PHỐ · MỘT CUỘC TRÒ CHUYỆN", "HAI NƠI CÁCH XA · MỘT TRÁI TIM CHUNG"]
+      "captionPattern": [
+        "TỪ HAI THÀNH PHỐ · MỘT CUỘC TRÒ CHUYỆN",
+        "HAI NƠI CÁCH XA · MỘT TRÁI TIM CHUNG"
+      ]
     },
     {
       "id": "s03_visits",
@@ -226,7 +258,10 @@
         }
       ],
       "text": {
-        "heading": ["Những chuyến đi", "Những lần bay đến bên nhau"],
+        "heading": [
+          "Những chuyến đi",
+          "Những lần bay đến bên nhau"
+        ],
         "caption": [
           "Mỗi lần gặp là một lần khoảng cách ngắn lại.",
           "Mỗi lần gặp lại, khoảng cách như ngắn thêm một chút."
@@ -289,7 +324,10 @@
         }
       ],
       "text": {
-        "heading": ["Across the Miles", "Closer Than the Distance"]
+        "heading": [
+          "Across the Miles",
+          "Closer Than the Distance"
+        ]
       }
     },
     {
@@ -332,7 +370,10 @@
         }
       ],
       "text": {
-        "heading": ["Hai thành phố · Một trái tim", "Hai nơi xa · Một tình yêu"]
+        "heading": [
+          "Hai thành phố · Một trái tim",
+          "Hai nơi xa · Một tình yêu"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -351,12 +392,13 @@
     {
       "id": "s06_wedding",
       "effect": "collage_grid",
+      "signature": true,
       "durationRole": "montage",
       "transitionRole": "peak",
       "photoSlots": [
         {
           "slot": "grid",
-          "count": 7,
+          "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
@@ -370,7 +412,10 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": ["Khoảng cách nhoè đi, chỉ còn lại hai ta.", "Mọi khoảng cách mờ dần, chỉ còn lại hai ta bên nhau."],
+      "captionPattern": [
+        "Khoảng cách nhoè đi, chỉ còn lại hai ta.",
+        "Mọi khoảng cách mờ dần, chỉ còn lại hai ta bên nhau."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -396,6 +441,111 @@
         {
           "slot": "hero",
           "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#1C2B30"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_arch_trio",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_feature_duo",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
           "quality": "good"
         }
       ]

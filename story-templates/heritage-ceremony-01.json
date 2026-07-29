@@ -20,7 +20,9 @@
       "fade_slow",
       "dissolve",
       "fade_to_black",
-      "none"
+      "none",
+      "fade_grays",
+      "blur"
     ],
     "specialRoles": [
       "memory",
@@ -112,8 +114,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/Italianno-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/AlexBrush-Regular.ttf",
+      "heading": "fonts/YesevaOne-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -132,10 +134,20 @@
       "closingSec": 9
     },
     "transitionStrategy": {
-      "default": {
-        "type": "fade_slow",
-        "duration": 1
-      },
+      "default": [
+        {
+          "type": "fade_slow",
+          "duration": 1
+        },
+        {
+          "type": "fade_grays",
+          "duration": 1
+        },
+        {
+          "type": "blur",
+          "duration": 0.9
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.2
@@ -174,7 +186,10 @@
       "effect": "dark_feather",
       "durationRole": "calm",
       "transitionRole": "calm",
-      "captionPattern": ["HỶ SỰ · {{bride}} & {{groom}}", "LỄ CƯỚI · {{bride}} & {{groom}}"],
+      "captionPattern": [
+        "HỶ SỰ · {{bride}} & {{groom}}",
+        "LỄ CƯỚI · {{bride}} & {{groom}}"
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -207,7 +222,10 @@
         }
       ],
       "text": {
-        "heading": ["Gia lễ · {{date}}", "Ngày trọng đại · {{date}}"]
+        "heading": [
+          "Gia lễ · {{date}}",
+          "Ngày trọng đại · {{date}}"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -226,29 +244,52 @@
       }
     },
     {
+      "id": "s02c_family_portraits",
+      "effect": "layer_scene",
+      "layout": "invitation_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p4",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "invite": [
+          "Trân trọng kính mời đến chung vui.",
+          "Kính mời gia đình, bạn bè đến chung vui."
+        ]
+      }
+    },
+    {
       "id": "s02b_lacquer_heirloom",
       "effect": "video_background",
       "background": "assets/backgrounds/editorial/midnight-lacquer-aged-gold.png",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": ["Nếp nhà trao lại · Duyên lành tiếp nối.", "Gia phong được giữ gìn · Duyên lành được nối dài."],
+      "captionPattern": [
+        "Nếp nhà trao lại · Duyên lành tiếp nối.",
+        "Gia phong được giữ gìn · Duyên lành được nối dài."
+      ],
       "photoSlots": []
-    },
-    {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "blender",
-      "template": "photo_frame_orbit",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
     },
     {
       "id": "s03_family",
@@ -263,7 +304,10 @@
           "quality": "good"
         }
       ],
-      "captionPattern": ["Hai gia đình · Một niềm vui", "Hai họ sum vầy · Một niềm hạnh phúc"],
+      "captionPattern": [
+        "Hai gia đình · Một niềm vui",
+        "Hai họ sum vầy · Một niềm hạnh phúc"
+      ],
       "params": {
         "background": "#2B2B32"
       },
@@ -325,10 +369,38 @@
         }
       ],
       "text": {
-        "heading": ["Nghi lễ", "Nghi thức"],
+        "heading": [
+          "Nghi lễ",
+          "Nghi thức"
+        ],
         "caption": [
           "Trước gia tiên và những người thương yêu nhất.",
           "Trước bàn thờ gia tiên, có đủ những người mình thương yêu."
+        ]
+      }
+    },
+    {
+      "id": "s05b_ceremony_detail",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Từng nghi thức, một lời hẹn ước.",
+          "Từng nghi lễ, một lời nguyện trăm năm."
         ]
       }
     },
@@ -373,6 +445,145 @@
       "photoSlots": [
         {
           "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s70_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "aperture_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "photo_carousel_3d",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 4,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
           "orient": "any",
           "quality": "good"
         }

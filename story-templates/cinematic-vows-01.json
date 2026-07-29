@@ -21,7 +21,8 @@
       "fade_to_black",
       "crossfade",
       "dissolve",
-      "none"
+      "none",
+      "blur"
     ],
     "specialRoles": [
       "memory",
@@ -110,7 +111,7 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/AlexBrush-Regular.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
@@ -130,10 +131,20 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.5
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.5
+        },
+        {
+          "type": "dissolve",
+          "duration": 0.5
+        },
+        {
+          "type": "blur",
+          "duration": 0.45
+        }
+      ],
       "calm": {
         "type": "dissolve",
         "duration": 0.8
@@ -172,7 +183,10 @@
       "effect": "dark_feather",
       "durationRole": "calm",
       "transitionRole": "calm",
-      "captionPattern": ["A FILM ABOUT {{bride}} & {{groom}}", "THE STORY OF {{bride}} & {{groom}}"],
+      "captionPattern": [
+        "A FILM ABOUT {{bride}} & {{groom}}",
+        "THE STORY OF {{bride}} & {{groom}}"
+      ],
       "photoSlots": [
         {
           "slot": "hero",
@@ -206,6 +220,31 @@
       ]
     },
     {
+      "id": "s02b_anticipation_detail",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Hôm nay là ngày của chúng ta.",
+          "Hôm nay, mọi thứ đều dành cho hai ta."
+        ]
+      }
+    },
+    {
       "id": "s03_firstlook",
       "effect": "portrait_reflection",
       "signature": true,
@@ -234,7 +273,10 @@
         }
       ],
       "text": {
-        "quote": ["Hôm nay · và mọi ngày về sau", "Từ hôm nay, mãi mãi có nhau"]
+        "quote": [
+          "Hôm nay · và mọi ngày về sau",
+          "Từ hôm nay, mãi mãi có nhau"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -254,8 +296,8 @@
     },
     {
       "id": "s05_rings",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "effect": "tilt_shift",
+      "signature": true,
       "durationRole": "normal",
       "transitionRole": "peak",
       "captionPattern": [
@@ -268,10 +310,7 @@
           "orient": "landscape",
           "quality": "best"
         }
-      ],
-      "params": {
-        "background": "#303A3C"
-      }
+      ]
     },
     {
       "id": "s06_kiss",
@@ -299,11 +338,27 @@
       ]
     },
     {
+      "id": "s70_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "aperture_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
       "id": "s71_signature",
       "effect": "still",
       "renderer": "blender",
       "template": "ring_spin_reveal",
-      "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -368,6 +423,150 @@
           "slot": "hero",
           "orient": "landscape",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07d_celebration_grid",
+      "effect": "layer_scene",
+      "layout": "quad_grid_caption",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "top1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top2",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Khoảnh khắc hạnh phúc",
+          "Những khoảnh khắc đáng nhớ"
+        ],
+        "caption": [
+          "Mỗi bức ảnh, một mảnh ghép của ngày hôm nay.",
+          "Mỗi khoảnh khắc, một phần của câu chuyện này."
+        ]
+      }
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

@@ -20,7 +20,8 @@
       "fade_slow",
       "dissolve",
       "crossfade",
-      "none"
+      "none",
+      "reveal_left"
     ],
     "specialRoles": [
       "memory",
@@ -109,8 +110,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -129,10 +130,20 @@
       "closingSec": 9
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.85
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.85
+        },
+        {
+          "type": "fade_slow",
+          "duration": 0.9
+        },
+        {
+          "type": "reveal_left",
+          "duration": 0.7
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.15
@@ -209,7 +220,10 @@
         }
       ],
       "text": {
-        "heading": ["Lá thư đầu tiên", "Trang thư mở đầu"]
+        "heading": [
+          "Lá thư đầu tiên",
+          "Trang thư mở đầu"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -240,7 +254,10 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["CHAPTERS OF US", "PAGES OF OUR STORY"],
+      "captionPattern": [
+        "CHAPTERS OF US",
+        "PAGES OF OUR STORY"
+      ],
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
@@ -259,7 +276,10 @@
       "background": "assets/backgrounds/editorial/cotton-rag-botanical-ivory.png",
       "durationRole": "calm",
       "transitionRole": "default",
-      "captionPattern": ["Có những lời không phai theo năm tháng.", "Có những lời hứa, năm tháng không thể xoá nhoà."],
+      "captionPattern": [
+        "Có những lời không phai theo năm tháng.",
+        "Có những lời hứa, năm tháng không thể xoá nhoà."
+      ],
       "photoSlots": []
     },
     {
@@ -289,8 +309,8 @@
     },
     {
       "id": "s05_vows",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "effect": "floating_card_gallery",
+      "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "captionPattern": [
@@ -300,13 +320,10 @@
       "photoSlots": [
         {
           "slot": "hero",
-          "orient": "landscape",
+          "orient": "portrait",
           "quality": "best"
         }
-      ],
-      "params": {
-        "background": "#4A4139"
-      }
+      ]
     },
     {
       "id": "s06_postscript",
@@ -332,24 +349,11 @@
         }
       ],
       "text": {
-        "heading": ["P.S. · Và câu chuyện vẫn tiếp tục", "P.S. · Chuyện của mình chưa bao giờ dừng lại"]
+        "heading": [
+          "P.S. · Và câu chuyện vẫn tiếp tục",
+          "P.S. · Chuyện của mình chưa bao giờ dừng lại"
+        ]
       }
-    },
-    {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "panel_reveal",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
     },
     {
       "id": "s06b_glow",
@@ -378,6 +382,145 @@
       "photoSlots": [
         {
           "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s70_corner_fly_four",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "contact_sheet_zoom",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 9,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "panel_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#34302D"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "bottom",
           "orient": "any",
           "quality": "good"
         }

@@ -1,0 +1,600 @@
+{
+  "id": "luminous-editorial-motion-01",
+  "version": 1,
+  "name": "Luminous Editorial Motion",
+  "tier": "smart_lite",
+  "libraryTheme": "editorial_bold",
+  "storyArc": {
+    "sequence": [
+      "declaration",
+      "encounter",
+      "fragments",
+      "recognition",
+      "intimacy",
+      "journey",
+      "celebration",
+      "promise",
+      "forever"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "crossfade",
+      "fade_slow",
+      "dissolve",
+      "smooth_left",
+      "blur",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 2,
+      "peak": 2
+    }
+  },
+  "source": {
+    "origin": "original",
+    "notes": "Original 2026 editorial-motion recipe. Warm ivory paper, black serif type and restrained champagne light pair with shared-element morph, kinetic typography, refraction and particle transitions."
+  },
+  "intro": {
+    "summary": "Editorial sáng, sang và hiện đại: nền ivory, serif lớn, nhiều khoảng thở, chuyển động GPU dùng như dấu chấm câu.",
+    "photos": "Hợp album prewedding hoặc wedding-day có ảnh sắc nét, ánh sáng sạch, chân dung đẹp và đủ ảnh ngang/dọc. Tốt nhất 45–80 ảnh.",
+    "story": "Kể từ lời tuyên ngôn mở đầu đến những mảnh ký ức, sự gần gũi, ngày hội và lời hứa lâu dài.",
+    "music": "Hợp cinematic pop, modern classical hoặc electronic nhẹ; mở chậm, thân bài có pulse vừa và cao trào sáng."
+  },
+  "fit": {
+    "bestFor": [
+      "prewedding",
+      "editorial",
+      "modern_luxury",
+      "wedding_day"
+    ],
+    "minPhotos": 32,
+    "idealPhotos": 64
+  },
+  "musicProfile": {
+    "moods": [
+      "elegant",
+      "cinematic",
+      "luminous",
+      "modern"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "gallery",
+      "maxEnergy": 0.38,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "editorial",
+      "maxEnergy": 0.7,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "motion",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.88
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "yearsTogether",
+      "thankYouLine"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 5900,
+      "saturation": 0.97,
+      "contrast": 1.06,
+      "brightness": 0.015,
+      "grain": 3,
+      "glow": 0.04,
+      "halation": 0.08
+    },
+    "audio": {
+      "fade_in": 1.8,
+      "fade_out": 3.2,
+      "crossfade": 0
+    },
+    "overlays": [
+      {
+        "path": "overlays/light_sweep.mp4",
+        "position": "fullscreen",
+        "opacity": 0.1,
+        "blend": "screen",
+        "start": 0
+      }
+    ],
+    "fonts": {
+      "title": "fonts/PlayfairDisplay.ttf",
+      "heading": "fonts/PlayfairDisplay.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#F3EFE7",
+      "ink": "#191816",
+      "brown": "#9B8060",
+      "white": "#FFFDF8"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.8,
+      "calmSceneSec": 7.2,
+      "buildSceneSec": 4.8,
+      "montageSec": 11.5,
+      "closingSec": 8.5
+    },
+    "transitionStrategy": {
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.65
+        },
+        {
+          "type": "blur",
+          "duration": 0.7
+        }
+      ],
+      "calm": {
+        "type": "fade_slow",
+        "duration": 1
+      },
+      "memory": {
+        "type": "dissolve",
+        "duration": 0.7
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.45
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "qualityNorm",
+        "heroScore",
+        "emotionScore",
+        "skinFrac"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 70
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_kinetic_declaration",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "kinetic_typography",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best",
+          "preferHeroScore": true
+        }
+      ],
+      "params": {
+        "title": "{{bride}} & {{groom}}",
+        "subtitle": "{{location}} · {{date}}",
+        "color": "#FFFDF8"
+      }
+    },
+    {
+      "id": "s02_encounter",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "repeatable": {
+        "variants": [
+          {
+            "text": {
+              "heading": "Gặp nhau",
+              "body": "Có những cuộc gặp chỉ mất một khoảnh khắc, nhưng thay đổi cả phần đời còn lại."
+            }
+          },
+          {
+            "layout": "photo_left_text_right",
+            "text": {
+              "heading": "Nhận ra nhau",
+              "body": "Giữa rất nhiều người, ánh nhìn ấy vẫn tìm đúng một người."
+            }
+          }
+        ],
+        "maxRepeats": 2
+      },
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Khởi đầu",
+          "Điểm bắt đầu"
+        ],
+        "body": [
+          "Mọi câu chuyện lớn đều bắt đầu từ một điều rất nhỏ.",
+          "Một cuộc gặp nhẹ nhàng, rồi trở thành điều không thể thiếu."
+        ]
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "landscape",
+            "quality": "best",
+            "fit": "cover"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_fragments",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "repeatable": {
+        "variants": [
+          {
+            "text": {
+              "heading": "Những ngày bình thường"
+            }
+          },
+          {
+            "text": {
+              "heading": "Gom từng mảnh nhớ"
+            }
+          },
+          {
+            "text": {}
+          }
+        ],
+        "maxRepeats": 3
+      },
+      "photoSlots": [
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Những mảnh ký ức",
+          "Từng mảnh ghép nhỏ"
+        ]
+      }
+    },
+    {
+      "id": "s04_shared_memory",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "shared_frame_morph",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 4,
+          "orient": "any",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "heroIndex": 2,
+        "background": "#191816"
+      }
+    },
+    {
+      "id": "s05_luminous_portrait",
+      "effect": "dream_glow",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "repeatable": {
+        "variants": [
+          {
+            "captionPattern": "Ánh sáng đẹp nhất là ánh sáng trong mắt người mình thương."
+          },
+          {
+            "captionPattern": "Chỉ cần đứng cạnh nhau, mọi ánh sáng đều trở nên dịu dàng."
+          }
+        ],
+        "maxRepeats": 2
+      },
+      "captionPattern": [
+        "Ánh sáng đẹp nhất là ánh sáng trong mắt người mình thương.",
+        "Chỉ cần đứng cạnh nhau, mọi ánh sáng đều trở nên dịu dàng."
+      ],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best",
+          "preferHeroScore": true
+        }
+      ]
+    },
+    {
+      "id": "s06_intimacy",
+      "effect": "layer_scene",
+      "layout": "two_photo_story",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "repeatable": {
+        "variants": [
+          {
+            "text": {
+              "body": "Hai khung hình, một nhịp bình yên."
+            }
+          },
+          {
+            "text": {}
+          }
+        ],
+        "maxRepeats": 2
+      },
+      "photoSlots": [
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "body": [
+          "Có những điều không cần nói, chỉ cần được ở cạnh nhau.",
+          "Bình yên không phải một nơi, mà là một người."
+        ]
+      }
+    },
+    {
+      "id": "s07_visual_breath",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s08_journey_montage",
+      "effect": "photo_strip_right",
+      "durationRole": "montage",
+      "transitionRole": "peak",
+      "captionPattern": [
+        "Từng chặng đường đi qua, điều đáng nhớ nhất vẫn là có nhau.",
+        "Không quan trọng đã đi bao xa, chỉ cần vẫn đi cùng nhau."
+      ],
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 8,
+          "orient": "any",
+          "quality": "good",
+          "preferEmotion": true
+        }
+      ]
+    },
+    {
+      "id": "s09_glass_chapter",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_refraction",
+      "durationRole": "normal",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s10_fashion_echo",
+      "effect": "moving_background_echo",
+      "durationRole": "build",
+      "transitionRole": "default",
+      "repeatable": {
+        "variants": [
+          {
+            "captionPattern": "Một khoảnh khắc chuyển động, một ký ức ở lại."
+          },
+          {
+            "captionPattern": ""
+          }
+        ],
+        "maxRepeats": 3
+      },
+      "captionPattern": "Mỗi bước đi đều mang theo một phần câu chuyện.",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s11_particle_vow",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best",
+          "preferEmotion": true
+        }
+      ],
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s12_afterglow",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_tinted_duo",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s13_closing",
+      "effect": "layer_scene",
+      "layout": "closing_names",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "{{location}} · {{date}}"
+      }
+    }
+  ]
+}

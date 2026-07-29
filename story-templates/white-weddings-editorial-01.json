@@ -21,7 +21,8 @@
       "dissolve",
       "crossfade",
       "fade_slow",
-      "none"
+      "none",
+      "blur"
     ],
     "specialRoles": [
       "memory",
@@ -112,8 +113,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -132,10 +133,20 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.8
+        },
+        {
+          "type": "crossfade",
+          "duration": 0.75
+        },
+        {
+          "type": "blur",
+          "duration": 0.7
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.1
@@ -240,7 +251,10 @@
       ],
       "text": {
         "heading": {
-          "value": ["The Beginning", "Where It Started"],
+          "value": [
+            "The Beginning",
+            "Where It Started"
+          ],
           "sizePx": 78
         },
         "body": [
@@ -319,7 +333,10 @@
         }
       ],
       "text": {
-        "heading": ["Special Day", "Our Special Day"],
+        "heading": [
+          "Special Day",
+          "Our Special Day"
+        ],
         "caption": [
           "Những khoảnh khắc dịu dàng làm nên ngày đáng nhớ nhất.",
           "Những khoảnh khắc nhẹ nhàng nhất, lại làm nên ngày đáng nhớ nhất."
@@ -393,7 +410,10 @@
         }
       ],
       "text": {
-        "heading": ["Fall in Love", "In Love"],
+        "heading": [
+          "Fall in Love",
+          "In Love"
+        ],
         "body": [
           "Không cần lời hứa trăm năm, chỉ cần hôm nay ta cùng nắm tay nhau.",
           "Chẳng cần lời hứa xa xôi, chỉ cần hôm nay có nhau là đủ."
@@ -495,7 +515,10 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["OUR LOVE STORY", "THE STORY OF US"]
+      "captionPattern": [
+        "OUR LOVE STORY",
+        "THE STORY OF US"
+      ]
     },
     {
       "id": "s08c_background_echo",
@@ -509,7 +532,10 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["TOGETHER · ALWAYS", "SIDE BY SIDE · ALWAYS"]
+      "captionPattern": [
+        "TOGETHER · ALWAYS",
+        "SIDE BY SIDE · ALWAYS"
+      ]
     },
     {
       "id": "s08d_album_panel",
@@ -525,22 +551,6 @@
         }
       ],
       "captionPattern": "THE STORY CONTINUES"
-    },
-    {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "portrait_echo",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
     },
     {
       "id": "s09_memories",
@@ -594,12 +604,154 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": ["EVERY STEP LED HERE.", "EVERY PATH LED US HERE."],
+      "captionPattern": [
+        "EVERY STEP LED HERE.",
+        "EVERY PATH LED US HERE."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "aperture_reveal",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "portrait_echo",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#F7F4EE"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "bottom",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

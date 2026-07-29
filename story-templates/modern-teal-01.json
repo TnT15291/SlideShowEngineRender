@@ -6,14 +6,14 @@
   "libraryTheme": "modern_teal",
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
-      "family",
-      "peak",
-      "breathe",
-      "closing"
+      "space",
+      "presence",
+      "clarity",
+      "motion",
+      "quiet",
+      "geometry",
+      "resonance",
+      "forever"
     ]
   },
   "transitionGrammar": {
@@ -22,7 +22,9 @@
       "smooth_up",
       "dissolve",
       "smooth_left",
-      "none"
+      "none",
+      "horz_open",
+      "squeeze_h"
     ],
     "specialRoles": [
       "memory",
@@ -111,8 +113,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/PlayfairDisplay.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/JosefinSans-Regular.ttf",
+      "heading": "fonts/Montserrat-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -131,10 +133,20 @@
       "closingSec": 7.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.5
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.5
+        },
+        {
+          "type": "horz_open",
+          "duration": 0.45
+        },
+        {
+          "type": "squeeze_h",
+          "duration": 0.45
+        }
+      ],
       "calm": {
         "type": "smooth_up",
         "duration": 0.6
@@ -189,6 +201,43 @@
       }
     },
     {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "match_cut_windows",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 3,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s03_circle",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "params": {
+        "tint": "220,242,238"
+      },
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
       "id": "s02_duo",
       "repeatable": {
         "variants": [
@@ -226,23 +275,29 @@
       }
     },
     {
-      "id": "s03_circle",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "glass_frame",
-      "params": {
-        "tint": "220,242,238"
-      },
-      "signature": true,
+      "id": "s02b_minimal_duo",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
+          "slot": "left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "landscape",
+          "quality": "good"
         }
-      ]
+      ],
+      "text": {
+        "heading": [
+          "Đơn giản, nhưng đủ đầy.",
+          "Ít đi, để đủ đầy hơn."
+        ]
+      }
     },
     {
       "id": "s04_journey",
@@ -286,7 +341,10 @@
       ],
       "text": {
         "heading": {
-          "value": ["Hành trình", "Chặng đường"],
+          "value": [
+            "Hành trình",
+            "Chặng đường"
+          ],
           "color": "#2E6F6A"
         },
         "caption": [
@@ -410,6 +468,165 @@
       "photoSlots": [
         {
           "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07d_minimal_cluster",
+      "effect": "layer_scene",
+      "layout": "collage_cluster_text",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "tl",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bl",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Điều giản dị",
+          "Những điều nhỏ"
+        ],
+        "body": [
+          "Hạnh phúc là những điều nhỏ, cộng lại mỗi ngày.",
+          "Từng điều nhỏ, gộp lại thành một cuộc đời."
+        ]
+      },
+      "muteFallback": {
+        "layout": "paper_collage",
+        "photoSlots": [
+          {
+            "slot": "back",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "centre",
+            "orient": "portrait",
+            "quality": "best"
+          },
+          {
+            "slot": "front",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#1C2B30"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
           "orient": "any",
           "quality": "good"
         }

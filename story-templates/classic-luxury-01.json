@@ -6,14 +6,14 @@
   "libraryTheme": "dark_film",
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
-      "family",
-      "peak",
-      "breathe",
-      "closing"
+      "arrival",
+      "presentation",
+      "lineage",
+      "memory",
+      "celebration",
+      "illumination",
+      "grace",
+      "forever"
     ]
   },
   "transitionGrammar": {
@@ -21,7 +21,9 @@
       "fade_slow",
       "dissolve",
       "fade_to_black",
-      "none"
+      "none",
+      "fade_grays",
+      "distance"
     ],
     "specialRoles": [
       "memory",
@@ -118,8 +120,8 @@
       }
     ],
     "fonts": {
-      "title": "fonts/Italianno-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/AlexBrush-Regular.ttf",
+      "heading": "fonts/YesevaOne-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -138,10 +140,20 @@
       "closingSec": 9
     },
     "transitionStrategy": {
-      "default": {
-        "type": "fade_slow",
-        "duration": 1
-      },
+      "default": [
+        {
+          "type": "fade_slow",
+          "duration": 1
+        },
+        {
+          "type": "fade_grays",
+          "duration": 1
+        },
+        {
+          "type": "distance",
+          "duration": 0.9
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.2
@@ -181,6 +193,39 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "captionPattern": "{{bride}} & {{groom}}",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s03b_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "aperture_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 2,
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s04_hero",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "ring_spin_reveal",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
       "photoSlots": [
         {
           "slot": "hero",
@@ -246,7 +291,10 @@
         }
       ],
       "text": {
-        "heading": ["Ngày trọng đại", "Ngày hai họ nên duyên"],
+        "heading": [
+          "Ngày trọng đại",
+          "Ngày hai họ nên duyên"
+        ],
         "caption": [
           "Khoảnh khắc hai gia đình cùng chứng kiến một lời hẹn ước.",
           "Giây phút thiêng liêng, có đủ hai bên gia đình chứng kiến."
@@ -272,22 +320,6 @@
           }
         ]
       }
-    },
-    {
-      "id": "s04_hero",
-      "effect": "still",
-      "renderer": "blender",
-      "template": "ring_spin_reveal",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "landscape",
-          "quality": "best"
-        }
-      ]
     },
     {
       "id": "s55_gallery_trio",
@@ -321,7 +353,7 @@
       "photoSlots": [
         {
           "slot": "memories",
-          "count": 5,
+          "count": 6,
           "orient": "any",
           "quality": "good"
         }
@@ -399,6 +431,111 @@
           "slot": "hero",
           "orient": "landscape",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_feature_duo",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "bottom",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

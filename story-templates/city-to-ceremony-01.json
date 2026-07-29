@@ -21,7 +21,8 @@
       "crossfade",
       "smooth_left",
       "dissolve",
-      "none"
+      "none",
+      "wipe_left"
     ],
     "specialRoles": [
       "memory",
@@ -118,7 +119,7 @@
       }
     ],
     "fonts": {
-      "title": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/JosefinSans-Regular.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
@@ -138,10 +139,20 @@
       "closingSec": 7.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.45
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.45
+        },
+        {
+          "type": "wipe_left",
+          "duration": 0.4
+        },
+        {
+          "type": "smooth_left",
+          "duration": 0.4
+        }
+      ],
       "calm": {
         "type": "dissolve",
         "duration": 0.7
@@ -188,7 +199,10 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["{{bride}} × {{groom}} · CITY LOVERS", "A CITY LOVE STORY: {{bride}} × {{groom}}"]
+      "captionPattern": [
+        "{{bride}} × {{groom}} · CITY LOVERS",
+        "A CITY LOVE STORY: {{bride}} × {{groom}}"
+      ]
     },
     {
       "id": "s02_street",
@@ -205,7 +219,10 @@
       ],
       "text": {
         "heading": "{{meetingPlace}}",
-        "body": ["Thành phố nơi câu chuyện bắt đầu.", "Nơi những con đường quen thuộc trở thành một phần câu chuyện."]
+        "body": [
+          "Thành phố nơi câu chuyện bắt đầu.",
+          "Nơi những con đường quen thuộc trở thành một phần câu chuyện."
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -274,7 +291,10 @@
         }
       ],
       "text": {
-        "tile_text": ["US / EVERYDAY", "JUST US, EVERY DAY"]
+        "tile_text": [
+          "US / EVERYDAY",
+          "JUST US, EVERY DAY"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -307,7 +327,10 @@
         }
       ],
       "text": {
-        "quote": ["Giữa triệu ánh đèn · mình chọn nhau", "Giữa phố xá đông người · chỉ cần tìm thấy nhau"]
+        "quote": [
+          "Giữa triệu ánh đèn · mình chọn nhau",
+          "Giữa phố xá đông người · chỉ cần tìm thấy nhau"
+        ]
       }
     },
     {
@@ -329,13 +352,16 @@
         }
       ],
       "text": {
-        "heading": ["GETTING READY", "THE FINAL TOUCHES"]
+        "heading": [
+          "GETTING READY",
+          "THE FINAL TOUCHES"
+        ]
       }
     },
     {
       "id": "s06_ceremony",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/particle_gather.mp4",
+      "effect": "double_exposure",
+      "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "captionPattern": [
@@ -344,26 +370,8 @@
       ],
       "photoSlots": [
         {
-          "slot": "hero",
-          "orient": "landscape",
-          "quality": "best"
-        }
-      ],
-      "params": {
-        "background": "#34322E"
-      }
-    },
-    {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "glass_frame",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
+          "slot": "pair",
+          "count": 2,
           "orient": "any",
           "quality": "best"
         }
@@ -377,7 +385,7 @@
       "photoSlots": [
         {
           "slot": "grid",
-          "count": 7,
+          "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
@@ -407,6 +415,145 @@
       "photoSlots": [
         {
           "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "depth_parallax_stack",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 4,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_frame",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#1C2B30"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "paper_collage",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "back",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "front",
           "orient": "any",
           "quality": "good"
         }

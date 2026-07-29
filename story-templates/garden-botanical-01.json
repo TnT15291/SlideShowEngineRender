@@ -6,14 +6,14 @@
   "libraryTheme": "modern_teal",
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
-      "family",
-      "peak",
-      "breathe",
-      "closing"
+      "bloom",
+      "morning",
+      "gathering",
+      "bond",
+      "blossom",
+      "joy",
+      "wonder",
+      "forever"
     ]
   },
   "transitionGrammar": {
@@ -21,7 +21,8 @@
       "crossfade",
       "dissolve",
       "smooth_up",
-      "none"
+      "none",
+      "wipe_up"
     ],
     "specialRoles": [
       "memory",
@@ -116,8 +117,8 @@
       }
     ],
     "fonts": {
-      "title": "fonts/DancingScript.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/JosefinSans-Regular.ttf",
+      "heading": "fonts/Montserrat-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -136,10 +137,20 @@
       "closingSec": 8
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.8
+        },
+        {
+          "type": "dissolve",
+          "duration": 0.9
+        },
+        {
+          "type": "wipe_up",
+          "duration": 0.7
+        }
+      ],
       "calm": {
         "type": "dissolve",
         "duration": 1
@@ -215,7 +226,10 @@
         }
       ],
       "text": {
-        "heading": ["Ngày nở hoa", "Ngày rực nở"],
+        "heading": [
+          "Ngày nở hoa",
+          "Ngày rực nở"
+        ],
         "body": [
           "Giữa thiên nhiên, mình cùng viết nên một ngày thật đẹp.",
           "Giữa cỏ cây và nắng gió, mình có một ngày thật đẹp bên nhau."
@@ -316,7 +330,10 @@
         }
       ],
       "text": {
-        "heading": ["Người thương", "Người thân yêu"],
+        "heading": [
+          "Người thương",
+          "Người thân yêu"
+        ],
         "caption": [
           "Ngày vui trọn vẹn khi có gia đình và bạn bè ở bên.",
           "Niềm vui nhân đôi khi có gia đình, bạn bè cùng chung vui."
@@ -366,22 +383,6 @@
       }
     },
     {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "confetti_bloom",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
       "id": "s06_peak",
       "effect": "collage_grid",
       "durationRole": "montage",
@@ -424,6 +425,145 @@
         {
           "slot": "hero",
           "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "radial_gallery",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "confetti_bloom",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#253B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "bottom",
+          "orient": "any",
           "quality": "good"
         }
       ]

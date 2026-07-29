@@ -20,7 +20,8 @@
       "fade_slow",
       "dissolve",
       "crossfade",
-      "none"
+      "none",
+      "reveal_up"
     ],
     "specialRoles": [
       "memory",
@@ -109,8 +110,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -129,10 +130,20 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.8
+        },
+        {
+          "type": "fade_slow",
+          "duration": 0.85
+        },
+        {
+          "type": "reveal_up",
+          "duration": 0.7
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.1
@@ -195,7 +206,10 @@
         }
       ],
       "text": {
-        "heading": ["GARDEN DIARY", "OUR GARDEN STORY"],
+        "heading": [
+          "GARDEN DIARY",
+          "OUR GARDEN STORY"
+        ],
         "date": "{{date}}"
       }
     },
@@ -224,26 +238,6 @@
       ]
     },
     {
-      "id": "s03_details",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "confetti_bloom",
-      "params": {
-        "background": "#FBF6ED"
-      },
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "portrait",
-          "quality": "best"
-        }
-      ],
-      "captionPattern": ["LITTLE BOTANICAL MOMENTS", "SMALL MOMENTS AMONG THE FLOWERS"]
-    },
-    {
       "id": "s04_walk",
       "effect": "layer_scene",
       "layout": "journey_duo",
@@ -262,7 +256,10 @@
         }
       ],
       "text": {
-        "heading": ["A walk to remember", "A moment to remember"],
+        "heading": [
+          "A walk to remember",
+          "A moment to remember"
+        ],
         "caption": [
           "Trong khu vườn, giữa những người mình thương.",
           "Giữa khu vườn, cùng những người mình yêu thương nhất."
@@ -303,8 +300,8 @@
     },
     {
       "id": "s05_vows",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "effect": "portrait_reflection",
+      "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "captionPattern": [
@@ -314,13 +311,10 @@
       "photoSlots": [
         {
           "slot": "hero",
-          "orient": "landscape",
+          "orient": "portrait",
           "quality": "best"
         }
-      ],
-      "params": {
-        "background": "#4A4139"
-      }
+      ]
     },
     {
       "id": "s55_diary_pages",
@@ -346,7 +340,10 @@
         }
       ],
       "text": {
-        "heading": ["Trang nhật ký của mình", "Nhật ký của hai đứa"]
+        "heading": [
+          "Trang nhật ký của mình",
+          "Nhật ký của hai đứa"
+        ]
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -370,13 +367,16 @@
       "photoSlots": [
         {
           "slot": "memories",
-          "count": 8,
+          "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
       ],
-      "captionPattern": ["GOLDEN HOUR · {{bride}} & {{groom}}", "SUNSET LIGHT · {{bride}} & {{groom}}"],
+      "captionPattern": [
+        "GOLDEN HOUR · {{bride}} & {{groom}}",
+        "SUNSET LIGHT · {{bride}} & {{groom}}"
+      ],
       "params": {
         "background": "#4A4139"
       }
@@ -406,6 +406,152 @@
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s02b_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "ribbon_cascade",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 6,
+          "orient": "portrait",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s03_details",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "confetti_bloom",
+      "params": {
+        "background": "#FBF6ED"
+      },
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ],
+      "captionPattern": [
+        "LITTLE BOTANICAL MOMENTS",
+        "SMALL MOMENTS AMONG THE FLOWERS"
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#253B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "magazine_page_turn",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "page_left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_feature_duo",
+      "effect": "layer_scene",
+      "layout": "three_photo_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

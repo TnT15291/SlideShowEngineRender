@@ -6,14 +6,14 @@
   "libraryTheme": "editorial_bold",
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
-      "family",
-      "peak",
-      "breathe",
-      "closing"
+      "statement",
+      "form",
+      "proximity",
+      "pause",
+      "motion",
+      "unveil",
+      "spectrum",
+      "reflection"
     ]
   },
   "transitionGrammar": {
@@ -22,7 +22,9 @@
       "fade_slow",
       "dissolve",
       "smooth_left",
-      "none"
+      "none",
+      "horz_open",
+      "vert_open"
     ],
     "specialRoles": [
       "memory",
@@ -127,7 +129,7 @@
       }
     ],
     "fonts": {
-      "title": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/JosefinSans-Regular.ttf",
       "heading": "fonts/PlayfairDisplay.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
@@ -147,10 +149,20 @@
       "closingSec": 8
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.6
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.6
+        },
+        {
+          "type": "horz_open",
+          "duration": 0.5
+        },
+        {
+          "type": "vert_open",
+          "duration": 0.5
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 0.9
@@ -259,7 +271,10 @@
         }
       ],
       "text": {
-        "heading": ["Khởi đầu", "Điểm bắt đầu"],
+        "heading": [
+          "Khởi đầu",
+          "Điểm bắt đầu"
+        ],
         "body": [
           "Câu chuyện của mình bắt đầu thật khẽ, rồi lớn dần theo năm tháng.",
           "Bắt đầu từ một điều rất nhỏ, rồi trở thành cả một câu chuyện."
@@ -324,7 +339,10 @@
         }
       ],
       "text": {
-        "heading": ["Chuyện mình", "Câu chuyện của mình"],
+        "heading": [
+          "Chuyện mình",
+          "Câu chuyện của mình"
+        ],
         "caption": [
           "Mỗi khung hình là một chương mình đã cùng nhau viết nên.",
           "Từng khung hình, một trang trong câu chuyện của riêng mình."
@@ -364,7 +382,10 @@
         }
       ],
       "text": {
-        "quote": ["Bình yên là khi có nhau.", "Chỉ cần có nhau, là đủ bình yên."]
+        "quote": [
+          "Bình yên là khi có nhau.",
+          "Chỉ cần có nhau, là đủ bình yên."
+        ]
       }
     },
     {
@@ -402,22 +423,6 @@
       }
     },
     {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "panel_reveal",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
       "id": "s06_grid",
       "effect": "collage_grid",
       "durationRole": "build",
@@ -441,11 +446,15 @@
       "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "peak",
-      "captionPattern": ["Và rồi, ngày trọng đại cũng đến.", "Và rồi, ngày mong đợi cũng đã tới."],
+      "captionPattern": [
+        "Và rồi, ngày trọng đại cũng đến.",
+        "Và rồi, ngày mong đợi cũng đã tới."
+      ],
       "photoSlots": [
         {
           "slot": "film_roll",
           "count": 8,
+          "fixedCount": true,
           "orient": "any",
           "quality": "good",
           "preferEmotion": true
@@ -454,8 +463,7 @@
     },
     {
       "id": "s08_portrait",
-      "effect": "mask_reveal",
-      "mask": "assets/masks/brush_stroke.mp4",
+      "effect": "moving_background_echo",
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
@@ -466,10 +474,7 @@
           "orient": "portrait",
           "quality": "best"
         }
-      ],
-      "params": {
-        "background": "#34322E"
-      }
+      ]
     },
     {
       "id": "s08b_prism",
@@ -501,6 +506,145 @@
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s70_corner_fly_four",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "contact_sheet_zoom",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 9,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "panel_reveal",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#171717"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "gallery_matte_hero",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },

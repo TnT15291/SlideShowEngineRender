@@ -21,7 +21,8 @@
       "fade_slow",
       "dissolve",
       "crossfade",
-      "none"
+      "none",
+      "circle_open"
     ],
     "specialRoles": [
       "memory",
@@ -111,8 +112,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -131,10 +132,20 @@
       "closingSec": 8.5
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.8
+        },
+        {
+          "type": "fade_slow",
+          "duration": 0.85
+        },
+        {
+          "type": "circle_open",
+          "duration": 0.65
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.1
@@ -188,6 +199,40 @@
       }
     },
     {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "contact_sheet_zoom",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 9,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "light_rays",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
       "id": "s02_bride",
       "effect": "layer_scene",
       "layout": "photo_left_text_right",
@@ -201,7 +246,10 @@
         }
       ],
       "text": {
-        "heading": ["Cô dâu · {{bride}}", "Về cô dâu · {{bride}}"],
+        "heading": [
+          "Cô dâu · {{bride}}",
+          "Về cô dâu · {{bride}}"
+        ],
         "body": [
           "Những năm tháng, ước mơ và người thân đã làm nên cô ấy của hôm nay.",
           "Năm tháng, ước mơ và những người thương yêu đã làm nên con người cô ấy hôm nay."
@@ -250,7 +298,10 @@
         }
       ],
       "text": {
-        "heading": ["Chú rể · {{groom}}", "Về chú rể · {{groom}}"],
+        "heading": [
+          "Chú rể · {{groom}}",
+          "Về chú rể · {{groom}}"
+        ],
         "body": [
           "Một hành trình riêng, trước khi tìm thấy người sẽ cùng mình đi tiếp.",
           "Một chặng đường của riêng anh, trước khi tìm được người đi cùng phần đời còn lại."
@@ -286,22 +337,6 @@
       }
     },
     {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "light_rays",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
       "id": "s04_meeting",
       "effect": "double_exposure",
       "signature": true,
@@ -309,12 +344,17 @@
       "transitionRole": "memory",
       "photoSlots": [
         {
-          "slot": "hero",
+          "slot": "pair",
+          "count": 2,
           "orient": "landscape",
-          "quality": "best"
+          "quality": "best",
+          "preferVariety": true
         }
       ],
-      "captionPattern": ["CHƯƠNG II · NGÀY TA GẶP NHAU", "CHƯƠNG II · NƠI HAI CON ĐƯỜNG GIAO NHAU"]
+      "captionPattern": [
+        "CHƯƠNG II · NGÀY TA GẶP NHAU",
+        "CHƯƠNG II · NƠI HAI CON ĐƯỜNG GIAO NHAU"
+      ]
     },
     {
       "id": "s05_journey",
@@ -362,13 +402,16 @@
       "photoSlots": [
         {
           "slot": "memories",
-          "count": 7,
+          "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
       ],
-      "captionPattern": ["OUR STORY", "OUR JOURNEY"],
+      "captionPattern": [
+        "OUR STORY",
+        "OUR JOURNEY"
+      ],
       "params": {
         "background": "#4A4139"
       }
@@ -436,6 +479,165 @@
       "photoSlots": [
         {
           "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s07d_story_network",
+      "effect": "layer_scene",
+      "layout": "photo_network_hero",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top_right",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#4A4139"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "feature_plus_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "bottom",
           "orient": "any",
           "quality": "good"
         }

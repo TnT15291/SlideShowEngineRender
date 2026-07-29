@@ -23,7 +23,8 @@
       "dissolve",
       "fade_to_white",
       "crossfade",
-      "none"
+      "none",
+      "reveal_right"
     ],
     "specialRoles": [
       "memory",
@@ -117,8 +118,8 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/GreatVibes-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -137,10 +138,20 @@
       "closingSec": 8.2
     },
     "transitionStrategy": {
-      "default": {
-        "type": "dissolve",
-        "duration": 0.85
-      },
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.85
+        },
+        {
+          "type": "fade_to_white",
+          "duration": 0.6
+        },
+        {
+          "type": "reveal_right",
+          "duration": 0.6
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.15
@@ -190,7 +201,10 @@
         }
       ],
       "text": {
-        "quote": ["Save the date · {{bride}} & {{groom}}", "We're tying the knot · {{bride}} & {{groom}}"]
+        "quote": [
+          "Save the date · {{bride}} & {{groom}}",
+          "We're tying the knot · {{bride}} & {{groom}}"
+        ]
       }
     },
     {
@@ -220,42 +234,74 @@
           "quality": "best"
         }
       ],
-      "captionPattern": ["Our Love Story", "The Story of Us"]
+      "captionPattern": [
+        "Our Love Story",
+        "The Story of Us"
+      ]
     },
     {
       "id": "s04_studio_triptych",
-      "effect": "moving_background_echo",
+      "effect": "layer_scene",
+      "layout": "polaroid_feature",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "hero",
+          "slot": "feature",
           "orient": "portrait",
           "quality": "best"
         }
       ],
-      "captionPattern": [
-        "Together · every quiet moment becomes part of our forever.",
-        "Together · every small moment quietly becomes part of us."
-      ],
+      "text": {
+        "heading": "Together",
+        "body": [
+          "Every quiet moment becomes part of our forever.",
+          "Every small moment quietly becomes part of us."
+        ]
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      },
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
           {
-            "captionPattern": "You & Me · this is where our next chapter begins."
+            "text": {
+              "heading": "You & Me",
+              "body": "This is where our next chapter begins."
+            }
           },
           {
-            "captionPattern": "Always · a collection of moments we will keep close."
+            "text": {
+              "heading": "Always",
+              "body": "A collection of moments we will keep close."
+            }
           },
           {
-            "captionPattern": ""
+            "layout": "full_bleed_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "portrait",
+                "quality": "good"
+              }
+            ],
+            "text": {}
           }
         ]
       }
     },
     {
       "id": "s05_soft_pair",
-      "effect": "panel_flip",
+      "effect": "layer_scene",
+      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -265,21 +311,48 @@
           "quality": "best"
         }
       ],
-      "captionPattern": [
-        "One love · one lifetime · one beautiful beginning.",
-        "One heart · one journey · one beautiful start."
-      ],
+      "text": {
+        "heading": "One Love",
+        "body": [
+          "One lifetime · one beautiful beginning.",
+          "One heart · one journey · one beautiful start."
+        ]
+      },
+      "muteFallback": {
+        "layout": "full_bleed_quote",
+        "photoSlots": [
+          {
+            "slot": "bg",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      },
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
           {
-            "captionPattern": "The simplest moments are the ones we remember most."
+            "text": {
+              "heading": "One Day",
+              "body": "The simplest moments are the ones we remember most."
+            }
           },
           {
-            "captionPattern": "Here is to every day that comes after this one."
+            "text": {
+              "heading": "Forever",
+              "body": "Here is to every day that comes after this one."
+            }
           },
           {
-            "captionPattern": ""
+            "layout": "full_bleed_quote",
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "portrait",
+                "quality": "good"
+              }
+            ],
+            "text": {}
           }
         ]
       }
@@ -309,22 +382,6 @@
       }
     },
     {
-      "id": "s71_signature",
-      "effect": "still",
-      "renderer": "remotion",
-      "template": "portrait_echo",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
       "id": "s07_floating_gallery",
       "effect": "memory_wall",
       "durationRole": "montage",
@@ -338,7 +395,10 @@
           "preferVariety": true
         }
       ],
-      "captionPattern": ["Beautiful moments · beautiful memories", "Quiet moments · lasting memories"],
+      "captionPattern": [
+        "Beautiful moments · beautiful memories",
+        "Quiet moments · lasting memories"
+      ],
       "params": {
         "background": "#4A4139"
       }
@@ -386,11 +446,152 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": ["Every little detail, remembered forever.", "Every small detail, kept close forever."],
+      "captionPattern": [
+        "Every little detail, remembered forever.",
+        "Every small detail, kept close forever."
+      ],
       "photoSlots": [
         {
           "slot": "hero",
           "orient": "portrait",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s70_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "radial_gallery",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 6,
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s71_signature",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "portrait_echo",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#F7F4EE"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "polaroid_scatter",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "p1",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "p2",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "p3",
+          "orient": "any",
           "quality": "good"
         }
       ]

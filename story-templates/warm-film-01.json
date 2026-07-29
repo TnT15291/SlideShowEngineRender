@@ -6,14 +6,14 @@
   "libraryTheme": "warm_film",
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
+      "sunlight",
+      "memory",
+      "closeness",
       "family",
-      "peak",
-      "breathe",
-      "closing"
+      "grain",
+      "ink",
+      "warmth",
+      "forever"
     ]
   },
   "transitionGrammar": {
@@ -21,7 +21,8 @@
       "crossfade",
       "fade_slow",
       "dissolve",
-      "none"
+      "none",
+      "fade_grays"
     ],
     "specialRoles": [
       "memory",
@@ -130,8 +131,8 @@
       }
     ],
     "fonts": {
-      "title": "fonts/DancingScript.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/Allura-Regular.ttf",
+      "heading": "fonts/Fraunces-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -150,10 +151,20 @@
       "closingSec": 8
     },
     "transitionStrategy": {
-      "default": {
-        "type": "crossfade",
-        "duration": 0.8
-      },
+      "default": [
+        {
+          "type": "crossfade",
+          "duration": 0.8
+        },
+        {
+          "type": "dissolve",
+          "duration": 0.75
+        },
+        {
+          "type": "fade_grays",
+          "duration": 0.8
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1
@@ -336,7 +347,10 @@
         }
       ],
       "text": {
-        "heading": ["Ngày đầu", "Lần đầu gặp gỡ"],
+        "heading": [
+          "Ngày đầu",
+          "Lần đầu gặp gỡ"
+        ],
         "body": [
           "Mình gặp nhau thật tình cờ, rồi thương nhau lúc nào chẳng hay.",
           "Gặp nhau như một sự tình cờ, rồi thương nhau tự lúc nào không hay."
@@ -369,7 +383,10 @@
       "background": "assets/backgrounds/mixkit_wedding_flower_arrangement_calla_lilies_1080.mp4",
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": ["Ngày mình nói lời đồng ý.", "Ngày mình gật đầu, và bắt đầu một hành trình mới."],
+      "captionPattern": [
+        "Ngày mình nói lời đồng ý.",
+        "Ngày mình gật đầu, và bắt đầu một hành trình mới."
+      ],
       "photoSlots": []
     },
     {
@@ -406,7 +423,10 @@
         }
       ],
       "text": {
-        "quote": ["Nắng của mình, là nhau.", "Ánh nắng đẹp nhất, là khi có nhau."]
+        "quote": [
+          "Nắng của mình, là nhau.",
+          "Ánh nắng đẹp nhất, là khi có nhau."
+        ]
       }
     },
     {
@@ -454,7 +474,10 @@
         }
       ],
       "text": {
-        "heading": ["Gia đình", "Người thân"],
+        "heading": [
+          "Gia đình",
+          "Người thân"
+        ],
         "caption": [
           "Tình yêu hôm nay có thêm lời chúc phúc của những người thương.",
           "Tình yêu hôm nay được vun đắp bằng lời chúc phúc của người thân."
@@ -495,22 +518,6 @@
       ]
     },
     {
-      "id": "s08_instant",
-      "effect": "still",
-      "renderer": "blender",
-      "template": "photo_frame_orbit",
-      "signature": true,
-      "durationRole": "normal",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "hero",
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
       "id": "s08b_ink",
       "effect": "mask_reveal",
       "mask": "assets/masks/ink_reveal.mp4",
@@ -544,6 +551,145 @@
           "slot": "hero",
           "orient": "any",
           "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07b_fly_in_duo",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "depth_parallax_stack",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 4,
+          "orient": "portrait",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s08_instant",
+      "effect": "still",
+      "renderer": "blender",
+      "template": "photo_frame_orbit",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#3B332B"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "layout": "full_bleed_quote",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "duo_tinted_spread",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_arch_trio",
+      "effect": "layer_scene",
+      "layout": "arch_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
         }
       ]
     },
