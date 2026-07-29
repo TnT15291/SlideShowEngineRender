@@ -106,8 +106,7 @@ function buildLayerImageFilter(
     layer.fit === "stretch"
       ? `scale=${innerW}:${innerH}`
       : layer.fit === "contain"
-        ? `scale=${innerW}:${innerH}:force_original_aspect_ratio=decrease:force_divisible_by=2,` +
-          `pad=${innerW}:${innerH}:(ow-iw)/2:(oh-ih)/2:color=black@0`
+        ? `scale=${innerW}:${innerH}:force_original_aspect_ratio=decrease:force_divisible_by=2`
         : `scale=${innerW}:${innerH}:force_original_aspect_ratio=increase,` +
           `crop=${innerW}:${innerH}:(iw-ow)*${clamp01(layer.focusX)}:(ih-oh)*${clamp01(layer.focusY)}`;
 
@@ -118,10 +117,22 @@ function buildLayerImageFilter(
   // job (these photographs agreeing with each other) and the mood is applied to the result.
   const grade = buildLayerGradeFilter(layer.grade);
   if (grade) parts.push(grade);
+
+  // ALPHA STARTS HERE, AND THE CONTAIN PADDING WAITS FOR IT.
+  //
+  // `contain` letterboxes with black@0 — transparent, so the page shows through. It used
+  // to be padded up in `base`, before this conversion, and both filters above are `eq` /
+  // `colorbalance`, which have no rgba pixel format: ffmpeg quietly inserted a conversion
+  // to yuv and flattened that transparency onto black. Every photograph the face-safe pass
+  // rescues from an over-tight crop (it swaps cover for contain, see faceSafeFraming.ts)
+  // therefore arrived on the page inside hard black bars.
+  parts.push("format=rgba");
+  if (layer.fit === "contain") {
+    parts.push(`pad=${innerW}:${innerH}:(ow-iw)/2:(oh-ih)/2:color=black@0`);
+  }
   if (border > 0) {
     parts.push(`pad=${w}:${h}:${border}:${border}:color=${cssColor(frame!.borderColor ?? "white")}`);
   }
-  parts.push("format=rgba");
   if (frame?.radius) parts.push(roundedMaskGeq(round(frame.radius)));
   if (layer.rotation && layer.rotation !== 0) {
     const radians = (layer.rotation * Math.PI) / 180;
