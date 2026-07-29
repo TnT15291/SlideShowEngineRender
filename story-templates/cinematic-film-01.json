@@ -4,16 +4,41 @@
   "name": "Cinematic Film",
   "tier": "smart_lite",
   "libraryTheme": "dark_film",
+  "looks": {
+    "title_plate": {
+      "intent": "the title card, drained to near-monochrome so it is not another quote beat",
+      "layout": "full_bleed_quote",
+      "photoTreatment": {
+        "saturation": 0.5
+      }
+    },
+    "film_gallery": {
+      "intent": "the matte gallery page cropped to the theme's own 2.39 frame",
+      "layout": "gallery_matte_hero",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "y": 239,
+            "height": 602
+          }
+        }
+      }
+    },
+    "feature_trio": {
+      "intent": "one hero with two stacked beside it — what this beat's id always claimed",
+      "layout": "feature_plus_duo"
+    }
+  },
   "storyArc": {
     "sequence": [
-      "hook",
-      "establish",
-      "connection",
-      "build",
-      "family",
-      "peak",
-      "breathe",
-      "closing"
+      "silhouette",
+      "recognition",
+      "closeness",
+      "tension",
+      "belonging",
+      "vow",
+      "stillness",
+      "forever"
     ]
   },
   "transitionGrammar": {
@@ -21,7 +46,9 @@
       "fade_slow",
       "dissolve",
       "smooth_left",
-      "none"
+      "none",
+      "blur",
+      "distance"
     ],
     "specialRoles": [
       "memory",
@@ -122,8 +149,8 @@
       }
     ],
     "fonts": {
-      "title": "fonts/Italianno-Regular.ttf",
-      "heading": "fonts/PlayfairDisplay.ttf",
+      "title": "fonts/AlexBrush-Regular.ttf",
+      "heading": "fonts/YesevaOne-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
     "palette": {
@@ -142,10 +169,20 @@
       "closingSec": 9
     },
     "transitionStrategy": {
-      "default": {
-        "type": "fade_slow",
-        "duration": 1
-      },
+      "default": [
+        {
+          "type": "fade_slow",
+          "duration": 1
+        },
+        {
+          "type": "blur",
+          "duration": 0.9
+        },
+        {
+          "type": "distance",
+          "duration": 1
+        }
+      ],
       "calm": {
         "type": "fade_slow",
         "duration": 1.1
@@ -197,7 +234,7 @@
     {
       "id": "s02_title",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "title_plate",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -212,6 +249,24 @@
       "text": {
         "quote": "{{bride}} & {{groom}}"
       }
+    },
+    {
+      "id": "s70_hero_filmstrip",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "match_cut_windows",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 3,
+          "orient": "landscape",
+          "quality": "best",
+          "preferVariety": true
+        }
+      ]
     },
     {
       "id": "s71_signature",
@@ -266,7 +321,7 @@
       "photoSlots": [
         {
           "slot": "memories",
-          "count": 5,
+          "count": 6,
           "orient": "any",
           "quality": "good",
           "allowMixedOrientation": true
@@ -274,6 +329,60 @@
       ],
       "params": {
         "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s04b_cluster",
+      "effect": "layer_scene",
+      "layout": "collage_cluster_text",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "tl",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bl",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Từng mảnh ghép",
+          "Những mảnh ghép nhỏ"
+        ],
+        "body": [
+          "Từng khoảnh khắc nhỏ, gộp lại thành yêu thương.",
+          "Gom từng điều nhỏ bé, thành một tình yêu lớn."
+        ]
+      },
+      "muteFallback": {
+        "layout": "paper_collage",
+        "photoSlots": [
+          {
+            "slot": "back",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "centre",
+            "orient": "portrait",
+            "quality": "best"
+          },
+          {
+            "slot": "front",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
       }
     },
     {
@@ -309,7 +418,10 @@
         }
       ],
       "text": {
-        "quote": ["Yêu là chọn nhau, mỗi ngày.", "Không phải một khoảnh khắc, mà là một lựa chọn mỗi ngày."]
+        "quote": [
+          "Yêu là chọn nhau, mỗi ngày.",
+          "Không phải một khoảnh khắc, mà là một lựa chọn mỗi ngày."
+        ]
       }
     },
     {
@@ -344,6 +456,50 @@
       ],
       "text": {
         "body": "Có những khoảnh khắc chỉ cần nhìn nhau là đủ hiểu."
+      }
+    },
+    {
+      "id": "s06b_journey",
+      "effect": "layer_scene",
+      "layout": "journey_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "accent",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Hành trình này",
+          "Chặng đường này"
+        ],
+        "caption": [
+          "Không phải đích đến, mà là người đi cùng.",
+          "Quan trọng không phải đi đâu, mà là đi cùng ai."
+        ]
+      },
+      "muteFallback": {
+        "layout": "photo_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
       }
     },
     {
@@ -423,9 +579,126 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
-        { "slot": "left", "orient": "portrait", "quality": "good" },
-        { "slot": "centre", "orient": "portrait", "quality": "good" },
-        { "slot": "right", "orient": "portrait", "quality": "good" }
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s80_gallery_six",
+      "effect": "collage_grid",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "grid",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_signature_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_memory_six",
+      "effect": "memory_wall",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "memories",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ],
+      "params": {
+        "background": "#2B2B32"
+      }
+    },
+    {
+      "id": "s83_gallery_matte",
+      "effect": "layer_scene",
+      "look": "film_gallery",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_photo_duo",
+      "effect": "layer_scene",
+      "layout": "photo_duo",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s85_feature_duo",
+      "effect": "layer_scene",
+      "look": "feature_trio",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "top",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "any",
+          "quality": "good"
+        }
       ]
     },
     {
