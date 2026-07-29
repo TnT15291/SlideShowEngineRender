@@ -1,43 +1,53 @@
 // Core domain types for the wedding render engine.
 // Timeline JSON is the "contract"; these types are its canonical, normalized shape.
 
-export type EffectPreset =
-  | "still"
-  | "slow_zoom_in"
-  | "slow_zoom_out"
-  | "pan_left"
-  | "pan_right"
-  | "pan_up"
-  | "pan_down"
-  | "kenburns_tl"
-  | "kenburns_tr"
-  | "kenburns_bl"
-  | "kenburns_br"
-  | "portrait_blur_background"
-  | "portrait_reflection"
-  | "floating_card_gallery"
-  | "moving_background_echo"
-  | "panel_flip"
-  | "polaroid"
-  | "circle_focus"
-  | "memory_wall"
-  | "dark_feather"
-  | "film_roll_up"
-  | "film_roll_left"
-  | "film_roll_right"
-  | "photo_strip_up"
-  | "photo_strip_left"
-  | "photo_strip_right"
-  | "video_background"
-  | "collage_grid"
-  | "double_exposure"
-  | "mask_reveal"
-  | "tilt_shift"
-  | "dream_glow"
-  | "prism_split"
-  | "spotlight_focus"
-  | "mirror_split"
-  | "layer_scene";
+// Single source of truth for the engine's effect vocabulary — validation
+// (validateTimeline.ts) and the command builder's implemented-effect check
+// (buildFfmpegCommand.ts) both derive from this array instead of keeping
+// their own hand-typed copies. schema/timeline.schema.json's $defs.effect
+// enum is a separate, JSON-only artifact for the .mjs pipeline side; it is
+// checked against this array by effectVocabulary.test.ts, not generated
+// from it, since JSON Schema can't be produced from a TS union at build time.
+export const EFFECT_PRESETS = [
+  "still",
+  "slow_zoom_in",
+  "slow_zoom_out",
+  "pan_left",
+  "pan_right",
+  "pan_up",
+  "pan_down",
+  "kenburns_tl",
+  "kenburns_tr",
+  "kenburns_bl",
+  "kenburns_br",
+  "portrait_blur_background",
+  "portrait_reflection",
+  "floating_card_gallery",
+  "moving_background_echo",
+  "panel_flip",
+  "polaroid",
+  "circle_focus",
+  "memory_wall",
+  "dark_feather",
+  "film_roll_up",
+  "film_roll_left",
+  "film_roll_right",
+  "photo_strip_up",
+  "photo_strip_left",
+  "photo_strip_right",
+  "video_background",
+  "collage_grid",
+  "double_exposure",
+  "mask_reveal",
+  "tilt_shift",
+  "dream_glow",
+  "prism_split",
+  "spotlight_focus",
+  "mirror_split",
+  "layer_scene",
+] as const;
+
+export type EffectPreset = (typeof EFFECT_PRESETS)[number];
 
 // Canonical transition names (timeline-facing) -> ffmpeg xfade transition names.
 // One source of truth: validation derives its enum from these keys and the
@@ -164,6 +174,12 @@ export const CURVES_PRESETS = [
 
 export type CurvesPreset = (typeof CURVES_PRESETS)[number];
 
+/** Two flat colors (shadows -> highlights) the image's luma is mapped onto. `#rrggbb` only. */
+export interface DuotoneGrade {
+  shadow: string;
+  highlight: string;
+}
+
 /**
  * Color grade. Set globally on the timeline (`color`) and/or per slide
  * (`slides[].color`); per-slide fields override the global ones.
@@ -180,8 +196,11 @@ export interface ColorGrade {
   blur?: number; // gblur sigma (soft-focus look)
   temperature?: number; // color temperature in Kelvin (6500 = neutral, lower = warmer)
   glow?: number; // 0..1 -> dreamy bloom (blurred screen-blend over itself)
+  halation?: number; // 0..1 -> warm/red bloom around highlights only (film-emulation "halation")
+  duotone?: DuotoneGrade; // gradient-map the image between two flat colors by luma
   grain?: number; // 0..30 -> animated film grain (noise strength)
   flicker?: number; // 0..1 -> analog exposure flicker (Super-8 luma pulse)
+  vhs?: number; // 0..1 -> retro camcorder texture (scanlines, chroma smear, tracking jitter)
   letterbox?: boolean | number; // cinematic bars; true = 2.39:1, number = target aspect
 }
 
@@ -288,6 +307,7 @@ export interface ImageSceneLayer extends BaseSceneLayer {
   motionStrength?: number; // 0.01..0.12 travel/zoom amount
   easing?: MotionEasing;
   technicalColor?: TechnicalColor;
+  grade?: LayerGrade; // authored mood, on top of the technical correction
   frame?: LayerFrame; // rounded/bordered/shadowed card
   focusX?: number; // 0..1 cover-crop focal point (default 0.5 = center)
   focusY?: number; // 0..1
@@ -295,6 +315,18 @@ export interface ImageSceneLayer extends BaseSceneLayer {
 }
 
 export interface TechnicalColor { brightness: number; saturation: number; redBalance: number; blueBalance: number; }
+
+/**
+ * An AUTHORED grade on one image layer — a recipe look's mood, not a correction.
+ *
+ * Deliberately separate from TechnicalColor, which those same eq knobs also drive.
+ * TechnicalColor is produced automatically by the album normalizer and is bounded hard
+ * (saturation 0.9..1.1) so an automatic correction can never do anything dramatic; a
+ * look asking for a near-monochrome title plate is dramatic ON PURPOSE. Keeping them
+ * apart means the narrow bound still means what it says, and the two authorities stay
+ * legible in a finished timeline. Composed after the correction, never instead of it.
+ */
+export interface LayerGrade { saturation?: number; contrast?: number; brightness?: number; }
 
 export interface RectSceneLayer extends BaseSceneLayer {
   type: "rect";
@@ -435,6 +467,7 @@ export interface CompiledImageSceneLayer extends CompiledBaseSceneLayer {
   motionStrength?: number;
   easing?: MotionEasing;
   technicalColor?: TechnicalColor;
+  grade?: LayerGrade;
   frame?: LayerFrame;
   focusX?: number;
   focusY?: number;

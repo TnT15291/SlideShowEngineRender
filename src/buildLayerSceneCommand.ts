@@ -1,6 +1,5 @@
 import { toFfmpegPath } from "./fileUtils";
-import { cssColor, quoteFilterPath } from "./ffmpegFilterUtils";
-import { buildTechnicalColorFilter, clamp01 } from "./ffmpegFilterHelpers";
+import { buildLayerGradeFilter, buildTechnicalColorFilter, clamp01, cssColor, quoteFilterPath } from "./ffmpegFilterHelpers";
 import { videoEncodeArgs } from "./quality";
 import type { RenderSlideStep } from "./types";
 
@@ -115,6 +114,10 @@ function buildLayerImageFilter(
   const parts = [base];
   const technical = buildTechnicalColorFilter(layer.technicalColor);
   if (technical) parts.push(technical);
+  // The look's mood goes on AFTER the album correction, so the correction still does its
+  // job (these photographs agreeing with each other) and the mood is applied to the result.
+  const grade = buildLayerGradeFilter(layer.grade);
+  if (grade) parts.push(grade);
   if (border > 0) {
     parts.push(`pad=${w}:${h}:${border}:${border}:color=${cssColor(frame!.borderColor ?? "white")}`);
   }

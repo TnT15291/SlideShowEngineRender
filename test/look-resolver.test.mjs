@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import {
-  applyTreatment, resolveScene, resolveTemplate, validateLook, visualSignature,
+  gradeOf, resolveScene, resolveTemplate, validateLook, visualSignature,
 } from "../scripts/lib/lookResolver.mjs";
 import { solveRecipeShotList } from "../scripts/lib/recipeShotList.mjs";
 import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
@@ -243,28 +243,26 @@ test("a scene naming an unknown look, or a look on a non-layout scene, is an err
 
 // -- photo treatment ------------------------------------------------------------------
 
-test("a look's treatment rides on top of the album's normalization, never replaces it", () => {
-  const normalized = { brightness: 0.04, saturation: 1.08, redBalance: -0.02, blueBalance: 0.01, confidence: 0.9 };
-  const out = applyTreatment(normalized, { saturation: 0.5 });
-  // eq's saturation is a multiplier, so a mood of 0.5 halves this photo's corrected
-  // saturation rather than throwing the correction away.
-  assert.equal(out.saturation, 0.54);
-  assert.equal(out.brightness, 0.04, "the album's exposure correction was discarded");
-  assert.equal(out.redBalance, -0.02);
-  assert.equal(out.confidence, 0.9, "the decision's provenance was dropped");
+test("a look's treatment becomes a grade, and never touches the technical correction", () => {
+  // The album normalizer's output is bounded hard by the timeline schema (saturation
+  // 0.9..1.1) so an automatic correction can never do anything dramatic. A look asking
+  // for a near-monochrome title plate is dramatic on purpose, so it is a separate field
+  // -- folding it in would have meant either widening that bound or neutering the look.
+  assert.deepEqual(gradeOf({ saturation: 0.5 }), { saturation: 0.5 });
+  assert.deepEqual(gradeOf({ saturation: 0.88, contrast: 1.2, brightness: 0.05 }),
+    { saturation: 0.88, contrast: 1.2, brightness: 0.05 });
 });
 
-test("no treatment leaves the normalization object untouched", () => {
-  const normalized = { brightness: 0.04, saturation: 1.08, redBalance: 0, blueBalance: 0 };
-  assert.equal(applyTreatment(normalized, undefined), normalized);
-  assert.equal(applyTreatment(undefined, undefined), undefined);
+test("no treatment means no grade at all", () => {
+  assert.equal(gradeOf(undefined), undefined);
+  assert.equal(gradeOf({}), undefined);
 });
 
-test("a treatment on an unanalyzed photo starts from neutral, and stays in range", () => {
-  assert.deepEqual(applyTreatment(undefined, { saturation: 0.88, brightness: 0.02 }),
-    { brightness: 0.02, saturation: 0.88, redBalance: 0, blueBalance: 0 });
-  assert.equal(applyTreatment(undefined, { brightness: 9 }).brightness, 0.3);
-  assert.equal(applyTreatment(undefined, { saturation: -4 }).saturation, 0);
+test("a grade stays inside what the timeline schema will accept", () => {
+  assert.equal(gradeOf({ saturation: -4 }).saturation, 0);
+  assert.equal(gradeOf({ saturation: 9 }).saturation, 2);
+  assert.equal(gradeOf({ contrast: 0.1 }).contrast, 0.5);
+  assert.equal(gradeOf({ brightness: 9 }).brightness, 0.3);
 });
 
 // -- the solver must carry a look across a swap, not just a layout id -----------------

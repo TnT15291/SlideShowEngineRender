@@ -324,6 +324,7 @@ function normalizeLayer(l: any): any {
       motionStrength: l?.motionStrength,
       easing: l?.easing,
       technicalColor: l?.technicalColor,
+      grade: l?.grade,
       frame: l?.frame,
       focusX: l?.focusX,
       focusY: l?.focusY,

@@ -142,11 +142,21 @@
       "enum": [
         "title", "filmstrip", "page_flip", "portrait_echo", "triptych",
         "card_gallery", "paper_peel", "panel_reveal", "floating_frame", "light_rays",
-        "gl_transition", "glass_frame", "confetti_bloom"
+        "gl_transition", "glass_frame", "confetti_bloom",
+        "fly_in_duo", "corner_fly_four", "hero_filmstrip",
+        "depth_parallax_stack", "radial_gallery", "contact_sheet_zoom",
+        "ribbon_cascade", "aperture_reveal", "match_cut_windows",
+        "checker_mosaic", "flash_burst", "shared_frame_morph",
+        "kinetic_typography", "dither_dissolve",
+        "image_echo_trail", "glass_refraction", "audio_reactive",
+        "particle_dissolve"
       ]
     },
     "blenderTemplate": {
-      "enum": ["page_flip_3d", "camera_gallery_3d", "ring_spin_reveal", "photo_frame_orbit"]
+      "enum": [
+        "page_flip_3d", "camera_gallery_3d", "ring_spin_reveal", "photo_frame_orbit",
+        "photo_carousel_3d", "floating_collage_3d"
+      ]
     },
     "colorGrade": {
       "type": "object",
@@ -163,8 +173,19 @@
         "blur": { "type": "number", "minimum": 0, "maximum": 50, "description": "Gaussian sigma (soft-focus)." },
         "temperature": { "type": "number", "minimum": 1000, "maximum": 40000, "description": "Kelvin; <6500 warmer." },
         "glow": { "type": "number", "minimum": 0, "maximum": 1, "description": "Dreamy bloom." },
+        "halation": { "type": "number", "minimum": 0, "maximum": 1, "description": "Warm/red bloom around highlights only (film-emulation halation), distinct from glow which blooms every tone." },
+        "duotone": {
+          "type": "object",
+          "description": "Gradient-map the image between two flat colors by luma; a stylized poster-flat look.",
+          "required": ["shadow", "highlight"],
+          "properties": {
+            "shadow": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "description": "Color mapped to dark tones." },
+            "highlight": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "description": "Color mapped to bright tones." }
+          }
+        },
         "grain": { "type": "number", "minimum": 0, "maximum": 30, "description": "Animated film grain." },
         "flicker": { "type": "number", "minimum": 0, "maximum": 1, "description": "Analog exposure flicker (Super-8 luma pulse); subtle even at 1." },
+        "vhs": { "type": "number", "minimum": 0, "maximum": 1, "description": "Retro camcorder texture: scanlines, chroma smear, tracking jitter. Reads convincingly VHS even with grain 0." },
         "letterbox": { "anyOf": [{ "type": "boolean" }, { "type": "number", "minimum": 1, "maximum": 4 }] }
       }
     },
@@ -237,6 +258,7 @@
               }
             },
             "technicalColor": { "type": "object", "required": ["brightness", "saturation", "redBalance", "blueBalance"], "properties": { "file": { "type": "string", "minLength": 1 }, "brightness": { "type": "number", "minimum": -0.12, "maximum": 0.12 }, "saturation": { "type": "number", "minimum": 0.9, "maximum": 1.1 }, "redBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "blueBalance": { "type": "number", "minimum": -0.08, "maximum": 0.08 }, "confidence": { "type": "number", "minimum": 0, "maximum": 1 }, "reason": { "type": "string" } }, "additionalProperties": false },
+            "grade": { "type": "object", "description": "An authored recipe-look grade on this image layer, applied after technicalColor. Artistic range on purpose: technicalColor is the automatic album correction and stays narrow.", "properties": { "saturation": { "type": "number", "minimum": 0, "maximum": 2 }, "contrast": { "type": "number", "minimum": 0.5, "maximum": 2 }, "brightness": { "type": "number", "minimum": -0.3, "maximum": 0.3 } }, "additionalProperties": false },
             "frame": {
               "type": "object",
               "description": "Card treatment: rounded corners, white matte border, soft drop shadow.",
@@ -290,7 +312,7 @@
         "assets": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Ordered media inputs for a Remotion or Blender template." },
         "params": { "type": "object", "additionalProperties": true, "description": "Template-specific renderer parameters." },
         "image": { "type": "string", "minLength": 1, "description": "One photo for single-image effects." },
-        "images": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Multiple photos for film_roll_*/collage_grid/double_exposure (>=2) or memory_wall (1-5)." },
+        "images": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Multiple photos for film_roll_*/collage_grid/double_exposure (>=2) or memory_wall (1-6)." },
         "background": { "type": "string", "minLength": 1, "description": "Looping video file for video_background." },
         "mask": { "type": "string", "minLength": 1, "description": "Grayscale reveal video for mask_reveal (white = photo shows; plays once, last frame holds). Bundled: assets/masks/particle_gather.mp4." },
         "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" }, "description": "Required for layer_scene; drawn back-to-front." },
@@ -350,7 +372,7 @@
         },
         {
           "if": { "properties": { "effect": { "const": "memory_wall" } } },
-          "then": { "required": ["images"], "properties": { "images": { "minItems": 1, "maxItems": 5 } } }
+          "then": { "required": ["images"], "properties": { "images": { "minItems": 1, "maxItems": 6 } } }
         },
         {
           "if": { "properties": { "effect": { "const": "video_background" } } },

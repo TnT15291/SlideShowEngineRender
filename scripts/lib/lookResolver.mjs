@@ -34,10 +34,10 @@ const TEXT_SLOT_OVERRIDABLE = new Set([
   "x", "y", "width", "height", "align", "sizePx", "lineSpacing", "fontRole", "color", "role",
 ]);
 
-/** Photo treatment keys the engine can actually apply today. `saturation` maps onto
- *  ImageSceneLayer.technicalColor (src/types.ts), which is wired end to end. `contrast`
- *  and `vignette` are NOT per-layer capabilities — see LOOKS-MIGRATION-PLAN.md §5.2. */
-const TREATMENT_KEYS = new Set(["saturation", "brightness", "redBalance", "blueBalance"]);
+/** Photo treatment keys the engine can apply per layer, via ImageSceneLayer.grade.
+ *  Vignette is deliberately absent: it only exists as a whole-frame grade, and on a
+ *  520x760 collage tile it reads as a dark ring inside the frame, not as atmosphere. */
+const TREATMENT_KEYS = new Set(["saturation", "contrast", "brightness"]);
 
 const clone = (value) => (value == null ? value : JSON.parse(JSON.stringify(value)));
 
@@ -328,27 +328,24 @@ export function validateLook(lookId, look, { template, library }) {
 }
 
 /**
- * Lay a look's photo treatment ON TOP of this album's per-photo normalization rather than
- * instead of it. The normalizer's job is to make one couple's photographs agree with each
- * other; the look's is to give the whole recipe a mood. Replacing the first with the
- * second hands the mood back a set of mismatched exposures.
+ * Turn a look's photoTreatment into an image layer's `grade` (src/types.ts LayerGrade).
  *
- * Composed the way the filters themselves compose (src/ffmpegFilterHelpers.ts builds
- * `eq=brightness=B:saturation=S,colorbalance=rs=R:bs=BL`): eq's saturation is a
- * multiplier, its brightness an offset, and colorbalance's are offsets.
+ * It is NOT folded into the layer's technicalColor. That field is the album normalizer's
+ * output — the correction that makes one couple's photographs agree with each other — and
+ * the timeline schema bounds it hard (saturation 0.9..1.1) precisely so an automatic
+ * correction can never do anything dramatic. A look asking for a near-monochrome title
+ * plate is dramatic on purpose. Two authorities, two fields; the engine applies the
+ * correction first and the mood on its result.
  */
-export function applyTreatment(normalization, treatment) {
-  if (!treatment) return normalization;
-  const base = normalization || { brightness: 0, saturation: 1, redBalance: 0, blueBalance: 0 };
+export function gradeOf(treatment) {
+  if (!treatment) return undefined;
   const round = (n) => Math.round(n * 1000) / 1000;
   const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
-  return {
-    ...base,
-    brightness: round(clamp((base.brightness ?? 0) + (treatment.brightness ?? 0), -0.3, 0.3)),
-    saturation: round(clamp((base.saturation ?? 1) * (treatment.saturation ?? 1), 0, 2)),
-    redBalance: round(clamp((base.redBalance ?? 0) + (treatment.redBalance ?? 0), -0.3, 0.3)),
-    blueBalance: round(clamp((base.blueBalance ?? 0) + (treatment.blueBalance ?? 0), -0.3, 0.3)),
-  };
+  const grade = {};
+  if (treatment.saturation != null) grade.saturation = round(clamp(treatment.saturation, 0, 2));
+  if (treatment.contrast != null) grade.contrast = round(clamp(treatment.contrast, 0.5, 2));
+  if (treatment.brightness != null) grade.brightness = round(clamp(treatment.brightness, -0.3, 0.3));
+  return Object.keys(grade).length ? grade : undefined;
 }
 
 /** The fingerprint a viewer registers. Resolved scenes carry it; unresolved ones fall

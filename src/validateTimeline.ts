@@ -4,6 +4,7 @@ import { fileExists, ValidationError } from "./fileUtils";
 import {
   CURVES_PRESETS,
   EASED_MOTION_EFFECTS,
+  EFFECT_PRESETS,
   lightLeakAssetPath,
   LIGHT_LEAK_VARIANTS,
   MOTION_EASINGS,
@@ -11,6 +12,13 @@ import {
 } from "./types";
 import type { Timeline } from "./types";
 
+const hexColorSchema = z
+  .string()
+  .regex(/^#[0-9a-fA-F]{6}$/, "must be a #rrggbb hex color");
+const duotoneSchema = z.object({
+  shadow: hexColorSchema,
+  highlight: hexColorSchema,
+});
 const colorGradeSchema = z.object({
   brightness: z.number().min(-1).max(1).optional(),
   contrast: z.number().min(0).max(3).optional(),
@@ -23,11 +31,22 @@ const colorGradeSchema = z.object({
   blur: z.number().min(0).max(50).optional(),
   temperature: z.number().min(1000).max(40000).optional(),
   glow: z.number().min(0).max(1).optional(),
+  halation: z.number().min(0).max(1).optional(),
+  duotone: duotoneSchema.optional(),
   grain: z.number().min(0).max(30).optional(),
   flicker: z.number().min(0).max(1).optional(),
+  vhs: z.number().min(0).max(1).optional(),
   letterbox: z.union([z.boolean(), z.number().min(1).max(4)]).optional(),
 });
 const technicalColorSchema = z.object({ brightness: z.number().min(-0.12).max(0.12), saturation: z.number().min(0.9).max(1.1), redBalance: z.number().min(-0.08).max(0.08), blueBalance: z.number().min(-0.08).max(0.08) });
+// An AUTHORED look grade, so the range is artistic rather than corrective: the narrow
+// bounds on technicalColor above exist to keep the automatic album normalizer subtle, and
+// a recipe asking for a near-monochrome title plate must not have to widen them.
+const layerGradeSchema = z.object({
+  saturation: z.number().min(0).max(2).optional(),
+  contrast: z.number().min(0.5).max(2).optional(),
+  brightness: z.number().min(-0.3).max(0.3).optional(),
+});
 const normalizedBoxSchema = z.object({
   x: z.number().min(0).max(1), y: z.number().min(0).max(1),
   width: z.number().positive().max(1), height: z.number().positive().max(1),
@@ -41,44 +60,7 @@ const tiltShiftSchema = z.object({
 
 // ---- Structural schema (Zod). Runs on the already-normalized timeline. ----
 
-const effectEnum = z.enum([
-  "still",
-  "slow_zoom_in",
-  "slow_zoom_out",
-  "pan_left",
-  "pan_right",
-  "pan_up",
-  "pan_down",
-  "kenburns_tl",
-  "kenburns_tr",
-  "kenburns_bl",
-  "kenburns_br",
-  "portrait_blur_background",
-  "portrait_reflection",
-  "floating_card_gallery",
-  "moving_background_echo",
-  "panel_flip",
-  "polaroid",
-  "circle_focus",
-  "memory_wall",
-  "dark_feather",
-  "film_roll_up",
-  "film_roll_left",
-  "film_roll_right",
-  "photo_strip_up",
-  "photo_strip_left",
-  "photo_strip_right",
-  "video_background",
-  "collage_grid",
-  "double_exposure",
-  "mask_reveal",
-  "tilt_shift",
-  "dream_glow",
-  "prism_split",
-  "spotlight_focus",
-  "mirror_split",
-  "layer_scene",
-]);
+const effectEnum = z.enum(EFFECT_PRESETS);
 
 const transitionTypeEnum = z.enum(TRANSITION_TYPES);
 
@@ -126,6 +108,7 @@ const layerSchema = z.discriminatedUnion("type", [
     motionStrength: z.number().min(0.01).max(0.12).optional(),
     easing: z.enum(MOTION_EASINGS).optional(),
     technicalColor: technicalColorSchema.optional(),
+    grade: layerGradeSchema.optional(),
     frame: z
       .object({
         radius: z.number().min(0).max(400).optional(),
@@ -344,8 +327,8 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
         errors.push(`slide ${slide.id} layer_scene requires layers`);
       }
     } else if (slide.effect === "memory_wall") {
-      if (!slide.images || slide.images.length < 1 || slide.images.length > 5) {
-        errors.push(`slide ${slide.id} memory_wall requires images with 1 to 5 files`);
+      if (!slide.images || slide.images.length < 1 || slide.images.length > 6) {
+        errors.push(`slide ${slide.id} memory_wall requires images with 1 to 6 files`);
       }
     } else if (isMultiImageEffect(slide.effect)) {
       if (!slide.images || slide.images.length < 2) {
