@@ -23,7 +23,14 @@ const recipeSchema = z.object({
     moods: z.array(z.string()).optional(),
     energy: z.string().optional(),
   }).optional(),
-  scenes: z.array(z.object({ layout: z.string().optional() }).passthrough()).optional(),
+  looks: z.record(z.object({ layout: z.string() }).passthrough()).optional(),
+  scenes: z.array(z.object({
+    layout: z.string().optional(),
+    look: z.string().optional(),
+    effect: z.string().optional(),
+    renderer: z.string().optional(),
+    template: z.string().optional(),
+  }).passthrough()).optional(),
   pacingVariants: z.array(z.object({ id: z.string() }).passthrough()).optional(),
   source: z.object({ notes: z.string().optional() }).optional(),
   storyArc: z.object({ sequence: z.array(z.string()).optional() }).optional(),
@@ -64,7 +71,9 @@ export const recipeSummarySchema = z.object({
   palette: z.record(z.string()),
   fonts: z.record(z.string()),
   sceneCount: z.number().int().nonnegative(),
-  lookCount: z.number().int().nonnegative(),
+  signatureCount: z.number().int().nonnegative(),
+  layoutCount: z.number().int().nonnegative(),
+  effectCount: z.number().int().nonnegative(),
   pacingVariants: z.array(z.string()),
   notes: z.string(),
 })
@@ -110,7 +119,24 @@ export async function listRecipes(engineRoot = process.cwd()): Promise<RecipeSum
       palette: recipe.defaults?.palette || {},
       fonts: recipe.defaults?.fonts || {},
       sceneCount: scenes.length,
-      lookCount: new Set(scenes.flatMap((scene) => scene.layout ? [scene.layout] : [])).size,
+      // How many distinct PICTURES the recipe composes, how many library primitives it
+      // spends them on, and how many render behaviours it uses. A recipe that dresses one
+      // layout as three looks scores 3/1, not 1/1 -- and it cannot cheat by declaring
+      // looks that render alike, because scripts/lib/lookResolver.mjs (V7) refuses to lint
+      // a recipe whose two looks resolve to the same picture. On a recipe with no looks
+      // signatureCount is exactly the layout count this used to report.
+      signatureCount: new Set(scenes.flatMap((scene) => {
+        const composition = scene.look ?? scene.layout
+        return composition ? [composition] : []
+      })).size,
+      layoutCount: new Set(scenes.flatMap((scene) => {
+        const layout = scene.layout ?? (scene.look ? recipe.looks?.[scene.look]?.layout : undefined)
+        return layout ? [layout] : []
+      })).size,
+      effectCount: new Set(scenes.flatMap((scene) => {
+        if (scene.renderer && scene.template) return [`${scene.renderer}:${scene.template}`]
+        return scene.effect ? [scene.effect] : []
+      })).size,
       pacingVariants: (recipe.pacingVariants || []).map((variant) => variant.id),
       notes: recipe.source?.notes || "",
     })

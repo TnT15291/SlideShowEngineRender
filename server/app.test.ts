@@ -222,6 +222,22 @@ test("login issues a session, logout revokes it, and /api/auth/me reports the us
   })
 })
 
+test("login and register share one rate limit and reject once it's exhausted", async () => {
+  await withServer(async (baseUrl) => {
+    const login = await fetch(`${baseUrl}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "alice", password: "wrong" }) })
+    assert.equal(login.status, 429)
+    assert.equal((await login.json() as { error: { code: string } }).error.code, "TOO_MANY_ATTEMPTS")
+
+    const register = await fetch(`${baseUrl}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "new-user", password: "correct-secret" }) })
+    assert.equal(register.status, 429)
+    assert.equal((await register.json() as { error: { code: string } }).error.code, "TOO_MANY_ATTEMPTS")
+  }, {
+    checkAuthRateLimit: () => false,
+    verifyLogin: async () => { throw new Error("rate limit should have short-circuited before this ran") },
+    createUser: async () => { throw new Error("rate limit should have short-circuited before this ran") },
+  })
+})
+
 test("registration creates a user and signs the new account in", async () => {
   const user = { id: "22222222-2222-4222-8222-222222222222", username: "new-user" }
   let registered: { username: string; password: string } | null = null
@@ -286,7 +302,8 @@ test("recipe detail and project routes return service data and typed 404s", asyn
   const recipe: RecipeSummary = {
     id: "warm-film-01", name: "Warm Film", libraryTheme: "warm_film", themeBackground: "#fff", themeAccent: "#a65",
     bestFor: ["candid"], minPhotos: 35, idealPhotos: 70, maxPhotos: null, moods: ["warm"], energy: "low_to_medium",
-    storyArc: ["opening", "closing"], palette: { cream: "#fff" }, fonts: {}, sceneCount: 9, lookCount: 8,
+    storyArc: ["opening", "closing"], palette: { cream: "#fff" }, fonts: {},
+    sceneCount: 9, signatureCount: 8, layoutCount: 7, effectCount: 4,
     pacingVariants: ["tender"], notes: "Warm film",
   }
   const project: ProjectSummary = {
@@ -429,17 +446,16 @@ test("project asset content route streams uploaded media for instant preview", a
 test("project job routes validate start, cancel, and open an SSE snapshot stream", async () => {
   const snapshot: JobSnapshot = {
     projectId: "linh-nam", status: "running", currentPhase: "analyze", progress: 14, error: null,
-    startedAt: "2026-07-21T10:00:00.000Z", updatedAt: "2026-07-21T10:01:00.000Z", mode: "dry_run", deliver: false,
+    startedAt: "2026-07-21T10:00:00.000Z", updatedAt: "2026-07-21T10:01:00.000Z", mode: "render", deliver: false,
     phases: { validate: "completed", analyze: "running", plan: "pending", build: "pending", render: "pending", qa: "pending", deliver: "pending" },
   }
   let unsubscribed = false
+  let completedManually = false
   await withServer(async (baseUrl) => {
-    const invalid = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    const invalid = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "dry_run" }) })
     assert.equal(invalid.status, 400)
-    const invalidDelivery = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "dry_run", deliver: true }) })
-    assert.equal(invalidDelivery.status, 400)
 
-    const started = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "dry_run" }) })
+    const started = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
     assert.equal(started.status, 202)
     assert.deepEqual((await started.json() as { data: JobSnapshot }).data, snapshot)
 
@@ -447,6 +463,9 @@ test("project job routes validate start, cancel, and open an SSE snapshot stream
     assert.equal(current.status, 200)
     const cancelled = await fetch(`${baseUrl}/api/projects/linh-nam/job/cancel`, { method: "POST" })
     assert.equal(cancelled.status, 200)
+    const manuallyCompleted = await fetch(`${baseUrl}/api/projects/linh-nam/job/complete-manually`, { method: "POST" })
+    assert.equal(manuallyCompleted.status, 200)
+    assert.equal(completedManually, true)
 
     const controller = new AbortController()
     const events = await fetch(`${baseUrl}/api/projects/linh-nam/job/events`, { signal: controller.signal })
@@ -460,9 +479,11 @@ test("project job routes validate start, cancel, and open an SSE snapshot stream
     assert.equal(unsubscribed, true)
   }, {
     getProject: async () => OWNED_PROJECT,
+    consumeRenderEntitlement: async () => undefined,
     getJob: async () => snapshot,
     startJob: async () => snapshot,
     cancelJob: async () => snapshot,
+    completeJobManually: async () => { completedManually = true; return snapshot },
     subscribeToJob: () => () => { unsubscribed = true },
   })
   await withServer(async (baseUrl) => {
@@ -496,7 +517,7 @@ test("DELETE project cancels a running job before removing its workspace", async
   })
 })
 
-test("render jobs are metered by plan entitlement, dry runs are not", async () => {
+test("every public job is a metered render", async () => {
   const snapshot: JobSnapshot = {
     projectId: "linh-nam", status: "running", currentPhase: "render", progress: 60, error: null,
     startedAt: "2026-07-21T10:00:00.000Z", updatedAt: "2026-07-21T10:01:00.000Z", mode: "render", deliver: false,
@@ -526,13 +547,13 @@ test("render jobs are metered by plan entitlement, dry runs are not", async () =
     startJob: async () => { throw new Error("startJob must not be called once entitlement is exhausted") },
   })
 
-  // dry_run stays free — no entitlement check at all.
+  // Omitting mode still starts the same metered full render.
   await withServer(async (baseUrl) => {
-    const response = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "dry_run" }) })
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
     assert.equal(response.status, 202)
   }, {
     getProject: async () => OWNED_PROJECT,
-    consumeRenderEntitlement: async () => { throw new Error("dry_run must not consume entitlement") },
+    consumeRenderEntitlement: async () => undefined,
     startJob: async () => snapshot,
   })
 })

@@ -66,6 +66,21 @@ test("visualSignature matches the pre-looks definition for unresolved scenes", (
   assert.equal(visualSignature({ effect: "dark_feather" }), "dark_feather");
 });
 
+test("the API's cheap composition count agrees with the resolver's real one", () => {
+  // server/services/recipes.ts cannot import this module (it compiles with rootDir:server),
+  // so it counts distinct `look ?? layout` instead of resolving geometry. That shortcut is
+  // only sound because V7 refuses to lint a recipe whose two looks render alike. Pin the
+  // agreement here, on every shipped recipe, so the two definitions cannot drift apart.
+  for (const recipe of recipes) {
+    const declared = new Set((recipe.scenes ?? [])
+      .flatMap((scene) => (scene.look ?? scene.layout) ? [scene.look ?? scene.layout] : [])).size;
+    const resolved = new Set(resolveTemplate(recipe, { library }).scenes
+      .filter((scene) => scene.effect === "layer_scene")
+      .map(visualSignature)).size;
+    assert.equal(declared, resolved, `${recipe.id}: API would report ${declared} looks, the resolver sees ${resolved}`);
+  }
+});
+
 // -- looks, on fixtures (the real recipes are migrated one at a time, later) ----------
 
 const fixture = (looks, scenes) => ({

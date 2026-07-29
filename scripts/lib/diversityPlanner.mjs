@@ -1,10 +1,15 @@
+import { visualSignature } from "./lookResolver.mjs";
+
 export const bucketPeople = (n) => n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "solo" : n === 2 ? "pair" : "group";
 
 export function sceneState(scene, files, byFile) {
   const photos = files.map((f) => byFile.get(f)).filter(Boolean);
   return {
     id: scene.id,
-    layout: scene.layout || scene.effect,
+    // What the viewer registers, not what the recipe called it: two scenes on one layout
+    // can be two different pictures once a recipe look dresses them, and two different
+    // hybrid templates were both reading as their shared `effect` and comparing equal.
+    layout: visualSignature(scene),
     effect: scene.effect,
     photoCount: files.length,
     orientationPattern: photos.map((p) => p.orient || "unknown").join("+"),

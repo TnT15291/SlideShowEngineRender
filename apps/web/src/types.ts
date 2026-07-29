@@ -6,6 +6,7 @@ export interface StudioUser {
   id: string
   username: string
   plan: Plan
+  isAdmin: boolean
 }
 
 export interface Incident {
@@ -52,7 +53,9 @@ export interface RecipeSummary {
   palette: Record<string, string>
   fonts: Record<string, string>
   sceneCount: number
-  lookCount: number
+  signatureCount: number
+  layoutCount: number
+  effectCount: number
   pacingVariants: string[]
   notes: string
 }
@@ -74,13 +77,14 @@ export interface ProjectSummary {
   createdAt: string | null
   error: string | null
   warnings?: Array<{ code: string; message: string }>
+  manuallyCompleted: boolean
   phases: Record<string, "pending" | "running" | "completed" | "failed" | "skipped">
   shared: boolean
 }
 
 export interface ProjectListResponse {
   projects: ProjectSummary[]
-  issues: Array<{ projectId: string; message: string }>
+  issues: Array<{ projectId: string; message: string; detail: string }>
 }
 
 export interface CreateProjectInput {
@@ -123,10 +127,12 @@ export interface JobSnapshot {
   currentPhase: "validate" | "analyze" | "plan" | "build" | "render" | "qa" | "deliver" | null
   progress: number
   error: string | null
+  pauseReason?: string | null
   warnings?: Array<{ code: string; message: string }>
+  manuallyCompleted: boolean
   startedAt: string | null
   updatedAt: string
-  mode: "dry_run" | "render" | null
+  mode: "render" | null
   deliver: boolean | null
   phases: Record<string, "pending" | "running" | "completed" | "failed" | "skipped">
 }
@@ -255,6 +261,8 @@ export interface QaSnapshot {
   visionReason: string | null
   updatedAt: string | null
   error: string | null
+  canCompleteManually: boolean
+  manualAccepted: boolean
 }
 
 export interface DeliverySummary {
