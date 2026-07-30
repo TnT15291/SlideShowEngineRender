@@ -42,6 +42,72 @@ test("template music planning degrades a playlist without a second track to loop
   }
 });
 
+// THE REGRESSION: a real job (song-nhi on classic-multisong-album-01) uploaded two songs
+// with musicMode "full_song" — the only modes the intake dropdown offers are auto/highlight/
+// full_song, none of which means "playlist" — and shipped with ONE track in the timeline.
+// The mode describes how much of a single song to use; it cannot decide how many songs
+// there are, so extras have to win.
+const quiet = (run) => {
+  const originalLog = console.log;
+  console.log = () => {};
+  try { return run(); } finally { console.log = originalLog; }
+};
+
+for (const mode of ["full_song", "highlight", "loop"]) {
+  test(`template music planning promotes "${mode}" to playlist rather than dropping extra tracks`, () => {
+    const plan = quiet(() => planTemplateMusic({
+      orders: [],
+      musicModeArg: mode,
+      brief: {},
+      // What the caller hands in for a playlist: ONE combined analysis spanning every track.
+      sourceMusic: { duration: 442.72, playlist: { tracks: 2, crossfade: 2 } },
+      photoCount: 104,
+      acceptMisfit: false,
+      extraMusicPaths: ["music/two.mp3"],
+      musicPath: "music/one.mp3",
+    }));
+    assert.equal(plan.requestedMusicMode, "playlist");
+    assert.equal(plan.musicEdit.mode, "playlist");
+    assert.equal(plan.musicEdit.trackCount, 2);
+    assert.equal(plan.musicEdit.promotedFrom, mode, "the overridden mode is on the receipt, not only in a log");
+    // Timed to the combined playlist, not to track 1 and not to a second crossfade-blind sum.
+    assert.equal(plan.musicEdit.duration, 442.72);
+    assert.equal(plan.music.duration, 442.72);
+  });
+}
+
+test("template music planning leaves an explicit playlist and plain auto unpromoted", () => {
+  for (const mode of ["auto", "playlist"]) {
+    const plan = quiet(() => planTemplateMusic({
+      orders: [],
+      musicModeArg: mode,
+      brief: {},
+      sourceMusic: { duration: 300 },
+      photoCount: 60,
+      acceptMisfit: false,
+      extraMusicPaths: ["music/two.mp3"],
+      musicPath: "music/one.mp3",
+    }));
+    assert.equal(plan.musicEdit.mode, "playlist");
+    assert.equal(plan.musicEdit.promotedFrom, undefined, `${mode} already allows a playlist — nothing was overridden`);
+  }
+});
+
+test("template music planning still honours highlight when there is only one track", () => {
+  const plan = quiet(() => planTemplateMusic({
+    orders: [],
+    musicModeArg: "highlight",
+    brief: {},
+    sourceMusic: { duration: 180, phrases: [{ time: 0 }, { time: 60 }], sections: [] },
+    photoCount: 12,
+    acceptMisfit: false,
+    extraMusicPaths: [],
+    musicPath: "music/one.mp3",
+  }));
+  assert.equal(plan.requestedMusicMode, "highlight");
+  assert.equal(plan.musicEdit.mode, "highlight");
+});
+
 test("template shot-list planning preserves an already composed storyboard", () => {
   const scenes = [
     { id: "opening", effect: "still", durationSec: 7, photoSlots: [{ slot: "hero" }] },

@@ -17,21 +17,23 @@ const bucket = (n) => (n == null ? "unknown" : n === 0 ? "detail" : n === 1 ? "s
 
 /** A Lite project on disk: manifest + photos + (optional) story, music, prompt. The
  *  generators never stat the image files, so the photo records are enough — no pixels. */
-function fixture({ photos, story, music, prompt, language }) {
+function fixture({ photos, story, music, extraMusic, prompt, language }) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tmp-lite-tier-"));
   fs.mkdirSync(path.join(dir, "input"));
   fs.mkdirSync(path.join(dir, "music"));
   fs.mkdirSync(path.join(dir, "analysis", "music"), { recursive: true });
   fs.writeFileSync(path.join(dir, "music", "track.mp3"), "fixture");
+  if (extraMusic) fs.writeFileSync(path.join(dir, "music", "track-2.mp3"), "fixture");
   fs.writeFileSync(path.join(dir, "analysis", "photos.json"), JSON.stringify({ photos }));
   if (story) fs.writeFileSync(path.join(dir, "analysis", "story-template.generated.json"), JSON.stringify(story));
   if (music) fs.writeFileSync(path.join(dir, "analysis", "music", "track.json"), JSON.stringify(music));
+  if (extraMusic) fs.writeFileSync(path.join(dir, "analysis", "music", "track-2.json"), JSON.stringify(extraMusic));
   if (prompt != null) fs.writeFileSync(path.join(dir, "prompt.txt"), prompt);
   fs.writeFileSync(path.join(dir, "project.json"), JSON.stringify({
     version: 1, id: "lite-tier-test", name: "Lite tier test",
     ...(language ? { language } : {}),
     ...(prompt != null ? { promptFile: "prompt.txt" } : {}),
-    inputDir: "input", music: ["music/track.mp3"], analysisDir: "analysis",
+    inputDir: "input", music: ["music/track.mp3", ...(extraMusic ? ["music/track-2.mp3"] : [])], analysisDir: "analysis",
     timeline: "timeline/timeline.json", output: "output/final.mp4", quality: "draft", tier: "lite",
   }));
   return { dir, rel: path.relative(root, dir) };
@@ -80,6 +82,22 @@ const musicAware = {
   phrases: [0, 7, 14, 21, 28, 35, 42, 49, 56].map((time, index) => ({ index, time })),
   downbeats: Array.from({ length: 20 }, (_, index) => ({ index, time: index * 3 })),
 };
+
+test("Lite keeps every playlist track and retimes to their combined duration", (t) => {
+  const second = {
+    ...musicAware,
+    duration: 40,
+    sections: [{ kind: "calm", start: 0, end: 40 }],
+    phrases: [0, 8, 16, 24, 32, 40].map((time, index) => ({ index, time })),
+    downbeats: Array.from({ length: 10 }, (_, index) => ({ index, time: index * 4 })),
+  };
+  const f = fixture({ photos: withBookends(clumpedBody()), story: singleBeats(4), music: musicAware, extraMusic: second });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  generate(f.rel);
+  const timeline = readTimeline(f.dir);
+  assert.equal(timeline.music.length, 2);
+  assert.equal(timeline.metadata.targetDuration, 98);
+});
 
 // The same photo shapes, but clumped: five landscape-pairs then five portrait-solos. A
 // naive cursor draws L,L,L,L,L,P,... and neighbours collide; the picker must interleave.

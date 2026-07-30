@@ -4,35 +4,96 @@
   "name": "White Weddings Editorial",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "editorial_card": {
+      "radius": 20,
+      "border": 12,
+      "borderColor": "#FFFDFC",
+      "shadow": true
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "editorial_card"
     },
     "duo_tinted_spread_plate": {
       "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
       "layout": "duo_tinted_spread",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "editorial_card"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "editorial_card"
+    },
+    "hero_title_card_card": {
+      "intent": "the hero title card, wearing the recipe's editorial_card frame",
+      "layout": "hero_title_card",
+      "frame": "editorial_card"
+    },
+    "full_bleed_quote_card": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 56,
+            "y": 806,
+            "height": 198
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.03,
+        "brightness": 0.02
+      }
+    },
+    "text_left_photo_right_card": {
+      "intent": "the text-left spread, wearing the recipe's editorial_card frame",
+      "layout": "text_left_photo_right",
+      "frame": "editorial_card"
+    },
+    "three_photo_row_card": {
+      "intent": "the three-photo row, wearing the recipe's editorial_card frame",
+      "layout": "three_photo_row",
+      "frame": "editorial_card"
+    },
+    "two_photo_story_card": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's editorial_card frame",
+      "layout": "two_photo_story",
+      "frame": "editorial_card"
+    },
+    "collage_cluster_text_card": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's editorial_card frame",
+      "layout": "collage_cluster_text",
+      "frame": "editorial_card"
+    },
+    "paper_collage_card": {
+      "intent": "the layered paper collage, wearing the recipe's editorial_card frame",
+      "layout": "paper_collage",
+      "frame": "editorial_card"
+    },
+    "polaroid_scatter_card": {
+      "intent": "the scattered prints, wearing the recipe's editorial_card frame",
+      "layout": "polaroid_scatter",
+      "frame": "editorial_card"
+    },
+    "closing_names_card": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 126,
+            "y": 400
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 656
+          }
+        }
       }
     }
   },
@@ -215,7 +276,6 @@
     {
       "id": "s01_save_the_date",
       "effect": "layer_scene",
-      "layout": "hero_title_card",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "calm",
@@ -248,12 +308,12 @@
           "value": "{{date}}",
           "sizePx": 110
         }
-      }
+      },
+      "look": "hero_title_card_card"
     },
     {
       "id": "s02_getting_married",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -266,12 +326,12 @@
       ],
       "text": {
         "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED"
-      }
+      },
+      "look": "full_bleed_quote_card"
     },
     {
       "id": "s03_about_us",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -316,7 +376,6 @@
             }
           },
           {
-            "layout": "full_bleed_quote",
             "photoSlots": [
               {
                 "slot": "bg",
@@ -325,12 +384,12 @@
                 "fit": "cover"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "full_bleed_quote_card"
           }
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -338,13 +397,14 @@
             "quality": "good",
             "fit": "cover"
           }
-        ]
-      }
+        ],
+        "look": "full_bleed_quote_card"
+      },
+      "look": "text_left_photo_right_card"
     },
     {
       "id": "s04_special_day",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -393,12 +453,12 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "three_photo_row_card"
     },
     {
       "id": "s05_one_lifetime",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -415,12 +475,12 @@
       ],
       "text": {
         "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."
-      }
+      },
+      "look": "two_photo_story_card"
     },
     {
       "id": "s06_love_in_the_air",
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
@@ -452,7 +512,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -469,13 +528,14 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_card"
+      },
+      "look": "collage_cluster_text_card"
     },
     {
       "id": "s07_editorial_scatter",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -500,7 +560,8 @@
       ],
       "text": {
         "heading": "Love Is in the Air"
-      }
+      },
+      "look": "polaroid_scatter_card"
     },
     {
       "id": "s08_the_moment",
@@ -606,7 +667,6 @@
     {
       "id": "s10_paper_story",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -628,7 +688,8 @@
       ],
       "text": {
         "heading": "Our Journey"
-      }
+      },
+      "look": "paper_collage_card"
     },
     {
       "id": "s10b_glow",
@@ -683,13 +744,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_photo_strip_up",
+      "effect": "photo_strip_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -698,7 +759,7 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
+      "id": "s81_double_exposure",
       "effect": "double_exposure",
       "signature": true,
       "durationRole": "calm",
@@ -713,7 +774,7 @@
       ]
     },
     {
-      "id": "s82_memory_six",
+      "id": "s82_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -790,14 +851,14 @@
     {
       "id": "s11_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Thank you for celebrating with us · {{date}}"
-      }
+      },
+      "look": "closing_names_card"
     }
   ]
 }

@@ -4,41 +4,76 @@
   "name": "Cinematic Vows",
   "tier": "smart_lite",
   "libraryTheme": "teal_orange_editorial",
+  "layoutPresets": {
+    "vow_card": {
+      "radius": 30,
+      "border": 6,
+      "borderColor": "#FBFCFB",
+      "shadow": true
+    }
+  },
   "looks": {
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "vow_card"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "vow_card"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "vow_card"
     },
     "polaroid_scatter_plate": {
       "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
       "layout": "polaroid_scatter",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
+      "frame": "vow_card"
+    },
+    "duo_tinted_spread_vow": {
+      "intent": "the tinted two-photo spread, wearing the recipe's vow_card frame",
+      "layout": "duo_tinted_spread",
+      "frame": "vow_card"
+    },
+    "full_bleed_quote_vow": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 60,
+            "y": 796,
+            "height": 210
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.95,
+        "brightness": 0.02
+      }
+    },
+    "quad_grid_caption_vow": {
+      "intent": "the captioned quad grid, wearing the recipe's vow_card frame",
+      "layout": "quad_grid_caption",
+      "frame": "vow_card"
+    },
+    "closing_names_vow": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 152,
+            "y": 360
+          },
+          "date": {
+            "sizePx": 38,
+            "y": 640
+          }
+        }
       }
     }
   },
@@ -260,7 +295,6 @@
     {
       "id": "s02b_anticipation_detail",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -280,7 +314,8 @@
           "Hôm nay là ngày của chúng ta.",
           "Hôm nay, mọi thứ đều dành cho hai ta."
         ]
-      }
+      },
+      "look": "duo_tinted_spread_vow"
     },
     {
       "id": "s03_firstlook",
@@ -299,7 +334,6 @@
     {
       "id": "s04_vows",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -330,7 +364,8 @@
             }
           }
         ]
-      }
+      },
+      "look": "full_bleed_quote_vow"
     },
     {
       "id": "s05_rings",
@@ -467,7 +502,6 @@
     {
       "id": "s07d_celebration_grid",
       "effect": "layer_scene",
-      "layout": "quad_grid_caption",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -501,40 +535,11 @@
           "Mỗi bức ảnh, một mảnh ghép của ngày hôm nay.",
           "Mỗi khoảnh khắc, một phần của câu chuyện này."
         ]
-      }
+      },
+      "look": "quad_grid_caption_vow"
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
-      "durationRole": "montage",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "grid",
-          "count": 6,
-          "orient": "any",
-          "quality": "good",
-          "preferVariety": true
-        }
-      ]
-    },
-    {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
-      "id": "s82_memory_six",
+      "id": "s80_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -550,6 +555,36 @@
       "params": {
         "background": "#2B2B32"
       }
+    },
+    {
+      "id": "s81_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_photo_strip_up",
+      "effect": "photo_strip_up",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -611,14 +646,14 @@
     {
       "id": "s08_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Thank you for celebrating with us · {{date}}"
-      }
+      },
+      "look": "closing_names_vow"
     }
   ]
 }

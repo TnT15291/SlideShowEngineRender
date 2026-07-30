@@ -39,8 +39,8 @@ function writeFixtureFile(dir, rel) {
   fs.writeFileSync(target, "fixture\n");
 }
 
-function completedFixture() {
-  const f = fixture();
+function completedFixture(overrides = {}) {
+  const f = fixture(overrides);
   const outputs = [
     "analysis/photos.json",
     "analysis/photo_content.json",
@@ -49,6 +49,7 @@ function completedFixture() {
     "analysis/photos.selected.json",
     "analysis/story.json",
     "directives.json",
+    ...(overrides.tier === "template" ? ["analysis/tier1_direction.json"] : []),
     "timeline/timeline.json",
     "output/final.mp4",
     "analysis/qa/timeline.proxy.json",
@@ -197,6 +198,15 @@ test("resume invalidates plan and downstream phases after prompt changes", (t) =
   const state = inspectResume(f.project);
   assert.equal(state.invalidatedAt, "plan");
   assert.deepEqual([...state.reusable], ["analyze"]);
+});
+
+test("resume rebuilds older English template projects that have no rewritten captions", (t) => {
+  const f = completedFixture({ tier: "template", language: "en", recipe: "warm-film-01" });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  const state = inspectResume(f.project);
+  assert.equal(state.invalidatedAt, "plan");
+  assert.deepEqual([...state.reusable], ["analyze"]);
+  assert.match(state.reason, /missing or stale/);
 });
 
 test("resume invalidates stale music analysis instead of silently losing phrase snapping", (t) => {

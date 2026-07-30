@@ -231,7 +231,14 @@ export function solveRecipeShotList({
   // the geometry and dress the frame), so the anti-adjacency test asks the resolved
   // signature first. Un-migrated scenes sign as `layer:<layout>`, which partitions them
   // exactly as the bare layout id always did.
-  const layoutOf = (s) => s.resolvedSignature || s.layout || s.effect;
+  //
+  // `look` sits between the two because a scene that names a look carries no `layout` of
+  // its own — the resolver puts one there. A caller that skips resolveOf (the default
+  // identity) would otherwise fall all the way through to `effect`, which is "layer_scene"
+  // for every composition in the recipe: the anti-adjacency test would then see one single
+  // layout and substitute on every beat. Now that recipes name looks throughout, that
+  // collapse is the difference between a varied film and a solver fighting itself.
+  const layoutOf = (s) => s.resolvedSignature || s.look || s.layout || s.effect;
   let prevLayout = opening ? layoutOf(opening) : null;
   const preferDifferent = (pool) => {
     const differing = pool.filter((s) => layoutOf(s) !== prevLayout);
@@ -344,9 +351,12 @@ export function solveRecipeShotList({
       // would strip the recipe's own geometry and frame off every wordless repeat — the
       // beats that fill most of a long film — and drop them back onto bare library
       // geometry, silently, with nothing downstream able to tell.
+      // Unresolved, a look-named stand-in has no `layout` to compare either — same reason
+      // layoutOf() consults `look` above.
+      const compositionOf = (s) => s.look ?? s.layout;
       const swapped = copy.resolvedSignature
         ? copy.resolvedSignature !== scene.resolvedSignature
-        : copy.layout && copy.layout !== scene.layout;
+        : compositionOf(copy) && compositionOf(copy) !== compositionOf(scene);
       if (swapped && photoDemandOf(copy) === photoDemandOf(scene)) {
         for (const key of COMPOSITION_KEYS) {
           if (copy[key] === undefined) delete scene[key];

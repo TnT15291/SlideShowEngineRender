@@ -53,6 +53,31 @@ test("tiltShift controls are rejected on unrelated effects", () => {
   assert.equal(result.status, 0, result.stderr);
 });
 
+test("tilt_shift keeps the detected face group inside its sharp band", () => {
+  const result = runTs(`
+    import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
+    const step = {
+      type: "render_slide", slideId: "faces-above-centre", renderer: "ffmpeg",
+      rendererAssets: [], rendererParams: {}, input: "unused.jpg", inputs: [],
+      layers: [], output: "unused.mp4", duration: 3, effect: "tilt_shift",
+      requestedEffect: "tilt_shift", autoPortrait: false,
+      transition: { type: "none", duration: 0 }, captions: [],
+      focusX: 0.36, focusY: 0.24,
+      faceBox: { x: 0.18, y: 0.10, width: 0.36, height: 0.28 },
+      tiltShift: { focusY: 0.5, bandHeight: 0.22, blur: 14 },
+      width: 640, height: 360, fps: 30, quality: "draft",
+    };
+    const args = buildSlideArgs(step);
+    console.log(args[args.indexOf("-vf") + 1]);
+  `);
+  assert.equal(result.status, 0, result.stderr);
+  // Face centre is y=.24 => 86px, not the authored/default dead-centre 180px.
+  assert.match(result.stdout, /abs\(Y-86\)/);
+  assert.doesNotMatch(result.stdout, /abs\(Y-180\)/);
+  // The cover crop now uses the same subject-aware path as the other native effects.
+  assert.match(result.stdout, /crop=640:360:.*0\.36.*0\.24/);
+});
+
 test("the native creative effects compile to their intended FFmpeg filters", () => {
   const result = runTs(`
     import { normalizeTimeline } from "./src/normalizeTimeline.ts";
@@ -116,4 +141,25 @@ test("dream_glow/prism_split/spotlight_focus/mirror_split follow a detected face
     assert.notEqual(faceGraph, centerGraph);
     assert.match(faceGraph, /0\.82/);
   }
+});
+
+test("mirror_split does not place its seam through a detected face", () => {
+  const result = runTs(`
+    import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
+    const step = {
+      type: "render_slide", slideId: "face-on-seam", renderer: "ffmpeg",
+      rendererAssets: [], rendererParams: {}, input: "unused.jpg", inputs: [],
+      layers: [], output: "unused.mp4", duration: 3, effect: "mirror_split",
+      requestedEffect: "mirror_split", autoPortrait: false,
+      transition: { type: "none", duration: 0 }, captions: [],
+      focusX: 0.538, focusY: 0.372,
+      faceBox: { x: 0.515, y: 0.318, width: 0.046, height: 0.109 },
+      width: 640, height: 360, fps: 30, quality: "draft",
+    };
+    const args = buildSlideArgs(step);
+    console.log(args[args.indexOf("-vf") + 1]);
+  `);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /vignette=/);
+  assert.doesNotMatch(result.stdout, /hstack=inputs=2/);
 });

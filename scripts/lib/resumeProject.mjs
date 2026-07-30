@@ -39,6 +39,9 @@ export function inspectResume(project) {
 
   const analysis = project.manifest.analysisDir;
   const musicAnalysis = project.manifest.music.map((track) => `${analysis}/music/${path.parse(track).name}.json`);
+  const recipeCopy = project.manifest.tier === "template" && project.manifest.language === "en"
+    ? [`${analysis}/recipe_copy.json`]
+    : [];
   const timelineBase = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
   const rules = {
     analyze: {
@@ -56,11 +59,12 @@ export function inspectResume(project) {
       inputs: ["project.json", ...(project.manifest.promptFile ? [project.manifest.promptFile] : []), `${analysis}/photos.json`, `${analysis}/photo_content.json`, ...musicAnalysis],
       outputs: [project.manifest.selectionPolicy || `${analysis}/selection_policy.json`, project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`,
         "directives.json",
+        ...recipeCopy,
         ...(project.manifest.tier === "template" ? [`${analysis}/tier1_direction.json`] : [])]
     },
     build: {
       inputs: [project.manifest.selectedPhotos || `${analysis}/photos.selected.json`, project.manifest.story || `${analysis}/story-template.generated.json`,
-        "directives.json",
+        "directives.json", ...recipeCopy,
         ...(project.manifest.tier === "template" ? [`${analysis}/tier1_direction.json`] : []), ...musicAnalysis],
       outputs: [project.manifest.timeline]
     },

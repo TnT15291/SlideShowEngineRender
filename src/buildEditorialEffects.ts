@@ -1,6 +1,5 @@
 import { buildColorFilter, buildLetterboxFilter } from "./buildColorFilters";
-import { canvasBackground } from "./ffmpegFilterHelpers";
-import { cssColor, quoteFilterPath } from "./ffmpegFilterUtils";
+import { canvasBackground, cssColor, quoteFilterPath } from "./ffmpegFilterHelpers";
 import { toFfmpegPath } from "./fileUtils";
 import { videoEncodeArgs } from "./quality";
 import type { CompiledCaption, RenderSlideStep } from "./types";
@@ -172,6 +171,14 @@ const WALL_LAYOUTS: Record<number, WallSlot[]> = {
     { cx: 0.76, cy: 0.56, fh: 0.31, deg: 2.2, ar: 0.8, film: false },
     { cx: 0.88, cy: 0.28, fh: 0.28, deg: -3, ar: 0.84, film: true },
   ],
+  6: [
+    { cx: 0.48, cy: 0.27, fh: 0.28, deg: -2.5, ar: 1.4, film: false },
+    { cx: 0.66, cy: 0.24, fh: 0.27, deg: 2.5, ar: 0.82, film: true },
+    { cx: 0.84, cy: 0.28, fh: 0.27, deg: -2, ar: 1.35, film: false },
+    { cx: 0.5, cy: 0.61, fh: 0.28, deg: 2, ar: 0.82, film: true },
+    { cx: 0.69, cy: 0.58, fh: 0.29, deg: -2.2, ar: 1.4, film: false },
+    { cx: 0.87, cy: 0.62, fh: 0.27, deg: 2.5, ar: 0.84, film: true },
+  ],
 };
 
 /** Cover-crop one photo into its slot and frame it as a white print or a
@@ -245,7 +252,7 @@ function sprocketHoles(
 function buildMemoryWallFilter(step: RenderSlideStep): string {
   const { width: w, height: h, fps, duration } = step;
   const mirror = !textOnLeft(step.slideId);
-  const slots = WALL_LAYOUTS[Math.min(step.inputs.length, 5)];
+  const slots = WALL_LAYOUTS[Math.min(step.inputs.length, 6)];
   const filters: string[] = [];
 
   filters.push(
@@ -288,7 +295,7 @@ function buildMemoryWallFilter(step: RenderSlideStep): string {
 }
 
 export function buildMemoryWallArgs(step: RenderSlideStep): string[] {
-  const slots = WALL_LAYOUTS[Math.min(step.inputs.length, 5)];
+  const slots = WALL_LAYOUTS[Math.min(step.inputs.length, 6)];
   const inputs: string[] = [];
   for (const input of step.inputs.slice(0, slots.length)) {
     inputs.push("-loop", "1", "-t", String(step.duration), "-i", input);

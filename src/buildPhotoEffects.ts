@@ -6,6 +6,7 @@ import {
   lockupTextFilters,
 } from "./buildEditorialEffects";
 import { buildTechnicalColorFilter, clamp01 } from "./ffmpegFilterHelpers";
+import { FACE_CROP_MARGIN } from "./imageSize";
 import type { MotionEasing, RenderSlideStep } from "./types";
 
 // --- Motion tuning (see docs/ENGINE-ARCHITECTURE.md) ---
@@ -166,7 +167,6 @@ function buildFramingFilter(step: RenderSlideStep): string {
       return zoompanFilter(w, h, fps, frames, zoomInExpr(frames, step.easing, faceSafeMaxZoom(step)), kenburnsExpr(frames, "iw", 1, step.easing), kenburnsExpr(frames, "ih", 1, step.easing), tail, step.focusX, step.focusY, step.faceBox);
 
     case "still":
-    default:
       // Cover-fill to 16:9, centered (docs: "scale/crop về 16:9"). Portrait
       // images are rerouted to portrait_blur_background upstream, so cropping
       // here only ever trims a centered landscape frame.
@@ -174,21 +174,42 @@ function buildFramingFilter(step: RenderSlideStep): string {
         `scale=${w}:${h}:force_original_aspect_ratio=increase,` +
         `crop=${w}:${h},${tail}`
       );
+
+    default:
+      // Every other EffectPreset (layer_scene, video_background, collage_grid,
+      // double_exposure, mask_reveal, memory_wall, film_roll_*, photo_strip_*)
+      // is routed to its own builder in buildSlideArgs before buildEffectFilter
+      // is ever called, so a real EffectPreset value can never reach here.
+      // Landing here means validation let something non-EffectPreset through —
+      // silently rendering it as "still" would hide exactly that bug.
+      throw new Error(`buildFramingFilter: unhandled effect "${effect}"`);
   }
 }
 
 function tiltShiftFilter(step: RenderSlideStep): string {
-  const { width: w, height: h, fps } = step;
+  const { height: h, fps } = step;
   const config = step.tiltShift ?? { focusY: 0.5, bandHeight: 0.22, blur: 14 };
-  const focusY = Math.round(config.focusY * h);
-  const halfBand = Math.max(1, Math.round((config.bandHeight * h) / 2));
+  // A fixed centre band blurred the eyes whenever the subjects stood above or below
+  // mid-frame. Prefer the detected face-group centre, then the analyzer's focal point;
+  // the authored/default focus remains the fallback for photos with no subject data.
+  const detectedFaceY = step.faceBox
+    ? step.faceBox.y + step.faceBox.height / 2
+    : undefined;
+  const focusRatio = clamp01(detectedFaceY ?? step.focusY ?? config.focusY);
+  // Keep the complete detected face group inside the sharp core. The same margin used
+  // by face-safe cropping absorbs detector jitter and a little hair/chin breathing room.
+  const faceBand = step.faceBox
+    ? Math.min(0.65, step.faceBox.height + FACE_CROP_MARGIN * 2)
+    : 0;
+  const bandHeight = Math.max(config.bandHeight, faceBand);
+  const focusY = Math.round(focusRatio * h);
+  const halfBand = Math.max(1, Math.round((bandHeight * h) / 2));
   const feather = Math.max(12, Math.round(halfBand * 0.65));
   const outer = halfBand + feather;
   const maskExpr = `255*clip((${outer}-abs(Y-${focusY}))/${feather},0,1)`;
 
   return (
-    `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},` +
-    `setsar=1,split=3[ts_sharp][ts_blur_src][ts_mask_src];` +
+    `${coverFilter(step)},split=3[ts_sharp][ts_blur_src][ts_mask_src];` +
     `[ts_blur_src]gblur=sigma=${config.blur.toFixed(2)}[ts_blur];` +
     `[ts_mask_src]format=gray,geq=lum='${maskExpr}'[ts_mask];` +
     `[ts_blur][ts_sharp][ts_mask]maskedmerge,fps=${fps},format=yuv420p`
@@ -235,6 +256,17 @@ function spotlightFocusFilter(step: RenderSlideStep): string {
 
 function mirrorSplitFilter(step: RenderSlideStep): string {
   const { fps } = step;
+  const face = step.faceBox;
+  if (
+    face &&
+    face.x - FACE_CROP_MARGIN <= 0.5 &&
+    face.x + face.width + FACE_CROP_MARGIN >= 0.5
+  ) {
+    // The mirror seam is destructive when it passes through a face: it duplicates
+    // or removes half the subject and makes adjacent background lines jump. Keep the
+    // same editorial contrast treatment, but fall back to the face-safe full frame.
+    return spotlightFocusFilter(step);
+  }
   return (
     `${coverFilter(step)},split=2[ms_left_src][ms_right_src];` +
     `[ms_left_src]crop=w=iw/2:h=ih:x=0:y=0[ms_left];` +
@@ -296,7 +328,7 @@ function faceSafeCropOffset(
 ): string {
   const desired = `(${input}-${output})*${clamp01(focus)}`;
   if (!Number.isFinite(start) || !Number.isFinite(size)) return desired;
-  const margin = 0.04;
+  const margin = FACE_CROP_MARGIN;
   const near = Math.max(0, (start as number) - margin);
   const far = Math.min(1, (start as number) + (size as number) + margin);
   const constrained = `min(max(${desired},${far.toFixed(4)}*${input}-${output}),${near.toFixed(4)}*${input})`;

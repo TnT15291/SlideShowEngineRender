@@ -195,13 +195,57 @@ test("V3: an override can never change how many photos a scene costs", () => {
   assert.equal(scenes[0].resolvedLayout.photoSlots.length, base.photoSlots.length);
 });
 
-test("V4: an override that leaves the canvas is an error", () => {
-  const base = layoutById("three_photo_row");
-  const findings = validateLook("bleed", {
-    layout: "three_photo_row",
-    layoutOverrides: { photoSlots: { [base.photoSlots[2].id]: { x: 1700, width: 600 } } },
-  }, { template: {}, library });
-  assert.equal(findings.some((f) => /off the 1920x1080 canvas/.test(f.detail)), true);
+test("V4: any overridden photo slot outside a canvas edge is an error", () => {
+  const canvas = { width: 100, height: 80 };
+  const slot = { id: "photo", x: 10, y: 10, width: 20, height: 20 };
+  const fixtureLibrary = {
+    meta: { canvas },
+    layouts: [
+      {
+        id: "photo_fixture",
+        kind: "layer_scene",
+        background: { type: "cream" },
+        photoSlots: [slot],
+      },
+      {
+        id: "background_fixture",
+        kind: "layer_scene",
+        background: { type: "photo_full_bleed", slot: "photo" },
+        photoSlots: [{ ...slot, x: 0, y: 0, width: canvas.width, height: canvas.height }],
+      },
+    ],
+  };
+  const validate = (patch, layout = "photo_fixture") => validateLook("edge", {
+    layout,
+    layoutOverrides: { photoSlots: { photo: patch } },
+  }, { template: {}, library: fixtureLibrary });
+  const outsideCanvas = (findings) => findings.some(
+    (finding) => /outside the 100x80 canvas/.test(finding.detail),
+  );
+
+  for (const [edge, patch] of [
+    ["left", { x: -1 }],
+    ["top", { y: -1 }],
+    ["right", { x: canvas.width - slot.width + 1 }],
+    ["bottom", { y: canvas.height - slot.height + 1 }],
+  ]) {
+    assert.equal(outsideCanvas(validate(patch)), true, `${edge} overflow was accepted`);
+  }
+  assert.equal(
+    outsideCanvas(validate({ x: 0, y: 0, width: canvas.width, height: canvas.height })),
+    false,
+    "a slot exactly on the canvas boundary was rejected",
+  );
+  assert.equal(
+    outsideCanvas(validate({ x: -1 }, "background_fixture")),
+    true,
+    "an overridden full-bleed background slot bypassed V4",
+  );
+  assert.equal(
+    outsideCanvas(validate({ x: 80, rotation: -45 })),
+    true,
+    "a rotated resolved slot was checked only by its raw rectangle",
+  );
 });
 
 test("V5: an override that buries a text slot is an error", () => {

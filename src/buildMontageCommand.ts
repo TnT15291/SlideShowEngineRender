@@ -1,7 +1,7 @@
 import { buildCaptionFilter } from "./captionFilter";
 import { buildColorFilter, buildLetterboxFilter } from "./buildColorFilters";
 import { toFfmpegPath } from "./fileUtils";
-import { quoteFilterPath } from "./ffmpegFilterUtils";
+import { buildTechnicalColorFilter, quoteFilterPath } from "./ffmpegFilterHelpers";
 import { videoEncodeArgs } from "./quality";
 import type { EffectPreset, RenderSlideStep } from "./types";
 
@@ -77,9 +77,12 @@ function buildCollageGridFilter(step: RenderSlideStep): string {
 
   let current = "bg";
   for (let i = 0; i < count; i++) {
-    const col = i % cols;
     const row = Math.floor(i / cols);
-    const x = margin + col * (cellW + gap);
+    const rowStart = row * cols;
+    const rowCount = Math.min(cols, count - rowStart);
+    const col = i - rowStart;
+    const rowOffset = Math.floor(((cols - rowCount) * (cellW + gap)) / 2);
+    const x = margin + rowOffset + col * (cellW + gap);
     const y = margin + row * (cellH + gap);
     const prepared = `c${i}`;
     const next = `cg${i}`;
@@ -94,6 +97,7 @@ function buildCollageGridFilter(step: RenderSlideStep): string {
   }
 
   const post = [
+    buildTechnicalColorFilter(step.technicalColor),
     buildColorFilter(step.color),
     buildLetterboxFilter(step.color, w, h),
     ...step.captions.map((c) => buildCaptionFilter(c, h)),
@@ -248,6 +252,11 @@ function buildPhotoStripFilter(step: RenderSlideStep): string {
   const gap = 4;
   const cellW = vertical ? Math.round(w * 0.31) : Math.round(w * 0.32);
   const cellH = vertical ? Math.round(h * 0.42) : Math.round(h * 0.64);
+  const stripColor = "0xf7f2e8";
+  // The outer mat: photos still touch edge-to-edge with just the hairline `gap`
+  // between them (the "clean ribbon" look), but the assembled strip as a whole
+  // now sits inside one visible frame instead of floating borderless.
+  const border = Math.max(10, Math.round(Math.min(cellW, cellH) * 0.03));
   const filters: string[] = [];
 
   filters.push(
@@ -258,18 +267,19 @@ function buildPhotoStripFilter(step: RenderSlideStep): string {
   for (let i = 0; i < step.inputs.length; i++) {
     filters.push(
       `[${i}:v]scale=${cellW}:${cellH}:force_original_aspect_ratio=increase,` +
-        `crop=${cellW}:${cellH},pad=${cellW + (vertical ? 0 : gap)}:${cellH + (vertical ? gap : 0)}:0:0:color=0xf7f2e8,` +
+        `crop=${cellW}:${cellH},pad=${cellW + (vertical ? 0 : gap)}:${cellH + (vertical ? gap : 0)}:0:0:color=${stripColor},` +
         `setsar=1,fps=${fps},format=yuv420p[ps${i}]`
     );
   }
   const stackInputs = step.inputs.map((_, i) => `[ps${i}]`).join("");
   filters.push(`${stackInputs}${vertical ? "vstack" : "hstack"}=inputs=${step.inputs.length}[strip]`);
+  filters.push(`[strip]pad=iw+${border * 2}:ih+${border * 2}:${border}:${border}:color=${stripColor}[stripframed]`);
 
   if (vertical) {
     const position = String(step.rendererParams.position ?? "center");
     const x = position === "left" ? Math.round(w * 0.06) : position === "right" ? `W-w-${Math.round(w * 0.06)}` : `(W-w)/2`;
     filters.push(
-      `[bg][strip]overlay=x=${x}:y='(H-h)/2+(0.5-t/${duration.toFixed(4)})*H*0.58':shortest=1,` +
+      `[bg][stripframed]overlay=x=${x}:y='(H-h)/2+(0.5-t/${duration.toFixed(4)})*H*0.58':shortest=1,` +
         `fps=${fps},format=yuv420p[strip0]`
     );
   } else {
@@ -277,7 +287,7 @@ function buildPhotoStripFilter(step: RenderSlideStep): string {
       ? `(0.5-t/${duration.toFixed(4)})`
       : `(-0.5+t/${duration.toFixed(4)})`;
     filters.push(
-      `[bg][strip]overlay=x='(W-w)/2+${progress}*W*0.62':y=(H-h)/2:shortest=1,` +
+      `[bg][stripframed]overlay=x='(W-w)/2+${progress}*W*0.62':y=(H-h)/2:shortest=1,` +
         `fps=${fps},format=yuv420p[strip0]`
     );
   }

@@ -17,6 +17,8 @@ import {
 } from "./fileUtils";
 import type { RenderPlan } from "./types";
 
+const MAX_XFADE_INPUTS = 16;
+
 /**
  * Combine the rendered slides and (if present) mux in background music,
  * producing the final MP4.
@@ -148,15 +150,71 @@ async function combineSlides(
   dryRun: boolean
 ): Promise<number> {
   if (hasTransitions(plan.steps)) {
+    const batches = chunkXfadeInputs(plan.steps);
+    if (batches.length === 1) {
+      const { args, totalDuration } = buildXfadeArgs(
+        plan.steps,
+        target,
+        plan.quality
+      );
+      const filterScriptPath = path.join(tempDir, "xfade-filter.txt");
+      const spawnArgs = externalizeFilterComplex(args, filterScriptPath);
+      logger.info(
+        `Combining ${plan.steps.length} slides with transitions (xfade)...`
+      );
+      await runFfmpeg(spawnArgs, "xfade", logger, dryRun);
+      return totalDuration;
+    }
+
+    // A single xfade graph keeps one decoder open per input. Hundreds of slides
+    // therefore consume many gigabytes even after the command-line graph itself
+    // is externalized. Render small groups first, then join those groups with
+    // the original transition at every group boundary.
+    logger.info(
+      `Combining ${plan.steps.length} slides in ${batches.length} memory-safe xfade batches...`
+    );
+    const batchSteps = [];
+    for (let index = 0; index < batches.length; index++) {
+      const batch = batches[index];
+      if (batch.length === 1) {
+        batchSteps.push(batch[0]);
+        continue;
+      }
+
+      const batchNumber = String(index + 1).padStart(3, "0");
+      const batchTarget = path.join(tempDir, `_xfade_batch_${batchNumber}.mp4`);
+      const { args, totalDuration } = buildXfadeArgs(
+        batch,
+        batchTarget,
+        plan.quality
+      );
+      const spawnArgs = externalizeFilterComplex(
+        args,
+        path.join(tempDir, `xfade-filter-batch-${batchNumber}.txt`)
+      );
+      logger.info(
+        `Combining xfade batch ${index + 1}/${batches.length} (${batch.length} slides)...`
+      );
+      await runFfmpeg(spawnArgs, `xfade-batch-${batchNumber}`, logger, dryRun);
+      batchSteps.push({
+        ...batch[0],
+        output: batchTarget,
+        duration: totalDuration,
+        transition: batch[batch.length - 1].transition,
+      });
+    }
+
     const { args, totalDuration } = buildXfadeArgs(
-      plan.steps,
+      batchSteps,
       target,
       plan.quality
     );
-    logger.info(
-      `Combining ${plan.steps.length} slides with transitions (xfade)...`
+    const spawnArgs = externalizeFilterComplex(
+      args,
+      path.join(tempDir, "xfade-filter-final.txt")
     );
-    await runFfmpeg(args, "xfade", logger, dryRun);
+    logger.info(`Combining ${batchSteps.length} xfade batches...`);
+    await runFfmpeg(spawnArgs, "xfade-final", logger, dryRun);
     return totalDuration;
   }
 
@@ -172,4 +230,34 @@ async function combineSlides(
   await runFfmpeg(buildConcatArgs(concatListPath, target), "concat", logger, dryRun);
 
   return plan.steps.reduce((sum, s) => sum + s.duration, 0);
+}
+
+export function chunkXfadeInputs<T>(
+  inputs: T[],
+  maxInputs = MAX_XFADE_INPUTS
+): T[][] {
+  if (!Number.isInteger(maxInputs) || maxInputs < 2) {
+    throw new Error("maxInputs must be an integer of at least 2");
+  }
+  const chunks: T[][] = [];
+  for (let index = 0; index < inputs.length; index += maxInputs) {
+    chunks.push(inputs.slice(index, index + maxInputs));
+  }
+  return chunks;
+}
+
+/** Keep large xfade graphs out of the Windows command line. With a few hundred
+ * slides, `-i` arguments plus the inline graph exceed CreateProcess' length limit
+ * before FFmpeg can even start. FFmpeg's script option reads the exact same graph
+ * from disk and leaves the spawned argument list small enough to launch. */
+export function externalizeFilterComplex(args: string[], scriptPath: string): string[] {
+  const index = args.indexOf("-filter_complex");
+  if (index < 0 || !args[index + 1]) return args;
+  fs.writeFileSync(scriptPath, args[index + 1], "utf8");
+  return [
+    ...args.slice(0, index),
+    "-filter_complex_script",
+    scriptPath,
+    ...args.slice(index + 2),
+  ];
 }

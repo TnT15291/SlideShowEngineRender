@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import { str } from "./strUtils.mjs";
 
 const root = process.cwd();
-const str = (value, max = 240) => typeof value === "string" ? value.trim().slice(0, max) : "";
 // ---------------------------------------------------------------------------
 // Ledger I/O
 // ---------------------------------------------------------------------------

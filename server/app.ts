@@ -6,7 +6,7 @@ import { z } from "zod"
 
 import { config } from "./config.js"
 import { HttpError, readJsonBody, readRawBody, sendError, sendJson } from "./http.js"
-import { bearerToken, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
+import { bearerToken, clientIp, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
 import { AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createSession, createUser, deleteSession, getSession, getUserById, loginInputSchema, registerInputSchema, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type LoginInput, type RegisterInput } from "./services/auth.js"
 import { BillingRequestError, createCheckoutSession, getPlanCatalog, handleWebhookEvent, type PlanId } from "./services/billing.js"
 import { createMomoCheckout, handleMomoIpn, MomoBillingError } from "./services/momoBilling.js"
@@ -15,13 +15,14 @@ import { analysisService, AnalysisRequestError, cullInputSchema, startAnalysisIn
 import { directorGenerateSchema, directorMusicChoiceSchema, directorService, directorStoryChoiceSchema, DirectorRequestError, type DirectorGenerateInput, type DirectorMusicChoiceInput, type DirectorState, type DirectorStoryChoiceInput } from "./services/director.js"
 import { deliveryService, DeliveryRequestError, type DeliverySnapshot } from "./services/delivery.js"
 import { artifactService, ArtifactRequestError, type ProjectArtifact, type ProjectArtifactFile } from "./services/artifacts.js"
-import { jobRunner, JobRequestError, startJobInputSchema, type JobEvent, type JobSnapshot, type StartJobInput } from "./services/jobs.js"
+import { jobRunner, JobRequestError, type JobEvent, type JobSnapshot, type StartJobInput } from "./services/jobs.js"
 import { incidentService, IncidentRequestError, updateIncidentSchema, type Incident, type IncidentStatus } from "./services/incidents.js"
 import { createProject, createProjectInputSchema, deleteProject, getProject, listProjects, listSharedProjects, ProjectAlreadyExistsError, setProjectShared, type CreateProjectInput, type ProjectListResult, type ProjectSummary, UnknownRecipeError } from "./services/projects.js"
 import { qaService, QaRequestError, type QaSnapshot } from "./services/qa.js"
 import { getRecipe, listRecipes, type RecipeSummary } from "./services/recipes.js"
 import { revisionInputSchema, revisionService, revisionUndoSchema, RevisionRequestError, type RevisionInput, type RevisionResult, type RevisionSnapshot, type RevisionUndoInput } from "./services/revisions.js"
 import { replaceTimelineImageSchema, timelineService, TimelineRequestError, type ReplaceTimelineImageInput, type TimelineImageFile, type TimelineSnapshot } from "./services/timeline.js"
+import { createRateLimiter } from "./services/rateLimit.js"
 
 type Services = {
   verifyLogin: (input: LoginInput) => Promise<AuthenticatedUser>
@@ -47,6 +48,7 @@ type Services = {
   getJob: (projectId: string) => Promise<JobSnapshot>
   startJob: (projectId: string, input: StartJobInput) => Promise<JobSnapshot>
   cancelJob: (projectId: string) => Promise<JobSnapshot>
+  completeJobManually?: (projectId: string) => Promise<JobSnapshot>
   subscribeToJob: (projectId: string, listener: (event: JobEvent) => void) => () => void
   getAnalysis: (projectId: string) => Promise<AnalysisSnapshot>
   startAnalysis: (projectId: string, input: StartAnalysisInput) => Promise<AnalysisSnapshot>
@@ -77,7 +79,10 @@ type Services = {
   listIncidents: () => { incidents: Incident[]; openCount: number }
   updateIncident: (id: string, status: IncidentStatus) => Incident | null
   retryIncident: (id: string) => Incident
+  checkAuthRateLimit: (ip: string) => boolean
 }
+
+const authRateLimiter = createRateLimiter(10, 5 * 60 * 1000)
 
 const defaultServices: Services = {
   verifyLogin: (input) => verifyLogin(input.username, input.password),
@@ -97,10 +102,16 @@ const defaultServices: Services = {
   listIncidents: () => incidentService.list(),
   updateIncident: (id, status) => incidentService.update(id, status),
   retryIncident: (id) => incidentService.retry(id),
+  checkAuthRateLimit: authRateLimiter,
 }
 const checkoutInputSchema = z.object({
   plan: z.enum(["subscription", "per_video"]),
   provider: z.enum(["stripe", "momo"]).default("stripe"),
+})
+const publicStartJobInputSchema = z.object({
+  mode: z.literal("render").default("render"),
+  resume: z.boolean().default(true),
+  deliver: z.boolean().default(false),
 })
 
 async function requireSession(request: IncomingMessage, services: Services) {
@@ -148,6 +159,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
       sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
       return
     }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many login attempts, try again later")
     const input = await readJsonBody(request, loginInputSchema)
     const user = await services.verifyLogin(input)
     const token = await services.createSession(user.id)
@@ -161,6 +173,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
       sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
       return
     }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many attempts, try again later")
     const input = await readJsonBody(request, registerInputSchema)
     const user = await services.createUser(input)
     const token = await services.createSession(user.id)
@@ -684,6 +697,18 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     return
   }
 
+  const projectJobManualCompleteMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/job\/complete-manually$/)
+  if (projectJobManualCompleteMatch) {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    if (!services.completeJobManually) throw new HttpError(501, "MANUAL_COMPLETION_UNAVAILABLE", "Manual completion is unavailable")
+    sendJson(response, 200, { ok: true, data: await services.completeJobManually(parseResourceId(projectJobManualCompleteMatch[1])) })
+    return
+  }
+
   const projectJobMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/job$/)
   if (projectJobMatch) {
     const projectId = parseResourceId(projectJobMatch[1])
@@ -692,9 +717,8 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
       return
     }
     if (request.method === "POST") {
-      const input = await readJsonBody(request, startJobInputSchema) as StartJobInput
-      // dry_run is the free QA-proxy pass; only a real render consumes billing entitlement.
-      if (input.mode === "render") await services.consumeRenderEntitlement(session!.userId)
+      const input = await readJsonBody(request, publicStartJobInputSchema) as StartJobInput
+      await services.consumeRenderEntitlement(session!.userId)
       sendJson(response, 202, { ok: true, data: await services.startJob(projectId, input) })
       return
     }

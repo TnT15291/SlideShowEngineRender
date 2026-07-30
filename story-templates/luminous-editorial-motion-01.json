@@ -4,50 +4,91 @@
   "name": "Luminous Editorial Motion",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "layoutPresets": {
+    "halo_card": {
+      "radius": 36,
+      "border": 5,
+      "borderColor": "#FFFFFF",
+      "shadow": true
+    }
+  },
   "looks": {
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "halo_card"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "halo_card"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "halo_card"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "halo_card"
     },
     "three_photo_row_plate": {
       "intent": "wordless three photo row beat, wearing this recipe's own frame",
       "layout": "three_photo_row",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
+      "frame": "halo_card"
+    },
+    "text_left_photo_right_halo": {
+      "intent": "the text-left spread, wearing the recipe's halo_card frame",
+      "layout": "text_left_photo_right",
+      "frame": "halo_card"
+    },
+    "full_bleed_quote_halo": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 64,
+            "y": 778,
+            "height": 226
+          }
+        }
+      },
+      "photoTreatment": {
+        "brightness": 0.04,
+        "contrast": 1.05
+      }
+    },
+    "photo_left_text_right_halo": {
+      "intent": "the photo-left spread, wearing the recipe's halo_card frame",
+      "layout": "photo_left_text_right",
+      "frame": "halo_card"
+    },
+    "paper_collage_halo": {
+      "intent": "the layered paper collage, wearing the recipe's halo_card frame",
+      "layout": "paper_collage",
+      "frame": "halo_card"
+    },
+    "two_photo_story_halo": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's halo_card frame",
+      "layout": "two_photo_story",
+      "frame": "halo_card"
+    },
+    "closing_names_halo": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 144,
+            "y": 380
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 645
+          }
+        }
       }
     }
   },
@@ -260,7 +301,6 @@
     {
       "id": "s02_encounter",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "calm",
       "transitionRole": "default",
       "repeatable": {
@@ -272,11 +312,11 @@
             }
           },
           {
-            "layout": "photo_left_text_right",
             "text": {
               "heading": "Nhận ra nhau",
               "body": "Giữa rất nhiều người, ánh nhìn ấy vẫn tìm đúng một người."
-            }
+            },
+            "look": "photo_left_text_right_halo"
           }
         ],
         "maxRepeats": 2
@@ -299,7 +339,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -307,13 +346,14 @@
             "quality": "best",
             "fit": "cover"
           }
-        ]
-      }
+        ],
+        "look": "full_bleed_quote_halo"
+      },
+      "look": "text_left_photo_right_halo"
     },
     {
       "id": "s03_fragments",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "memory",
       "repeatable": {
@@ -356,7 +396,8 @@
           "Những mảnh ký ức",
           "Từng mảnh ghép nhỏ"
         ]
-      }
+      },
+      "look": "paper_collage_halo"
     },
     {
       "id": "s04_shared_memory",
@@ -413,7 +454,6 @@
     {
       "id": "s06_intimacy",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "calm",
       "transitionRole": "default",
       "repeatable": {
@@ -446,7 +486,8 @@
           "Có những điều không cần nói, chỉ cần được ở cạnh nhau.",
           "Bình yên không phải một nơi, mà là một người."
         ]
-      }
+      },
+      "look": "two_photo_story_halo"
     },
     {
       "id": "s07_visual_breath",
@@ -634,14 +675,14 @@
     {
       "id": "s13_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_halo"
     }
   ]
 }

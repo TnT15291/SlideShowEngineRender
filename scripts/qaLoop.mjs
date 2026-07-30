@@ -291,8 +291,16 @@ if (skipRender) {
 
 // RENDER + REVISE
 writeState("render");
-if (skipInitialRender) console.log("  using the render already produced by the render phase.");
-else { render(); console.log("  rendered."); }
+if (skipInitialRender && preflightFixes === 0) {
+  console.log("  using the render already produced by the render phase.");
+} else {
+  render();
+  console.log(
+    skipInitialRender
+      ? `  re-rendered after ${preflightFixes} pre-flight repair(s).`
+      : "  rendered."
+  );
+}
 
 let manualReview = [];
 while (true) {

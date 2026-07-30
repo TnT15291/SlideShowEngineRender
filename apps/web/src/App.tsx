@@ -125,8 +125,8 @@ export function App() {
   if (view === "director") return <DirectorWorkspace onBack={() => navigate("dashboard")} />
   if (view === "intake") return <IntakeWizard onBack={() => navigate("dashboard")} onCreated={(project) => navigate("assets", project)} />
   if (view === "projects") return <ProjectsPage onBack={() => navigate("dashboard")} onOpen={(project) => navigate("assets", project)} />
-  if (view === "assets" && activeProject) return <AssetsPage project={activeProject} onBack={() => navigate("projects")} onRenderStarted={reloadUser} />
-  if (view === "recipes") return <RecipeLibrary onBack={() => navigate("dashboard")} />
+  if (view === "assets" && activeProject) return <AssetsPage project={activeProject} plan={user.plan} onOpenNav={() => navigate("projects")} onUpgrade={() => navigate("billing")} onRenderStarted={reloadUser} />
+  if (view === "recipes") return <RecipeLibrary onOpenNav={() => navigate("dashboard")} />
   if (view === "billing") return <BillingPage onBack={() => navigate("dashboard")} />
   if (view === "admin") return <AdminIncidentsPage onBack={() => navigate("dashboard")} />
   return <Dashboard user={user} onLogout={logout} onCreate={() => navigate("intake")} onDirector={() => navigate("projects")} onBrowseProjects={() => navigate("projects")} onBrowseRecipes={() => navigate("recipes")} onUpgrade={() => navigate("billing")} onAdmin={() => navigate("admin")} onReloadUser={reloadUser} />

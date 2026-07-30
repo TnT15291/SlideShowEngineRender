@@ -82,6 +82,13 @@ for (const scene of recipe.scenes ?? []) {
   for (const [id, value] of Object.entries(scene.text ?? {})) {
     (TOKEN.test(rawValue(value)) ? facts : writable).push(id);
   }
+  // Non-layer effects render their viewer-visible copy from captionPattern
+  // instead of scene.text. It is still a declared string-only slot, so give it
+  // the same rewrite and validation path rather than leaking canned copy in a
+  // different language into an otherwise rewritten film.
+  if (scene.captionPattern != null) {
+    (TOKEN.test(rawValue(scene.captionPattern)) ? facts : writable).push("captionPattern");
+  }
   if (writable.length) slots[scene.id] = writable;
   if (facts.length) factSlots[scene.id] = facts;
 }
@@ -93,11 +100,14 @@ if (!Object.keys(slots).length) die(`recipe ${recipe.id} declares no writable te
 function cannedCopy() {
   const out = {};
   for (const scene of recipe.scenes ?? []) {
-    if (!scene.text) continue;
     out[scene.id] = {};
-    for (const [slotId, raw] of Object.entries(scene.text)) {
+    for (const [slotId, raw] of Object.entries(scene.text ?? {})) {
       out[scene.id][slotId] = rawValue(raw);
     }
+    if (scene.captionPattern != null) {
+      out[scene.id].captionPattern = rawValue(scene.captionPattern);
+    }
+    if (!Object.keys(out[scene.id]).length) delete out[scene.id];
   }
   return out;
 }
@@ -181,8 +191,8 @@ if (hasKey()) {
 
 const totalSlots = Object.values(slots).reduce((n, ids) => n + ids.length, 0);
 const withheld = Object.values(factSlots).reduce((n, ids) => n + ids.length, 0);
-if (language === "en" && rewritten < totalSlots - withheld) {
-  die(`English output requires all writable recipe text slots to be rewritten (${rewritten}/${totalSlots - withheld}); refusing to mix Vietnamese recipe copy into the video`);
+if (language === "en" && rewritten < totalSlots) {
+  die(`English output requires all writable recipe text slots to be rewritten (${rewritten}/${totalSlots}); refusing to mix Vietnamese recipe copy into the video`);
 }
 const doc = {
   version: 1,

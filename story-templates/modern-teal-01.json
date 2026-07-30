@@ -4,39 +4,93 @@
   "name": "Modern Teal",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "layoutPresets": {
+    "edge_soft": {
+      "radius": 16,
+      "border": 0,
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "edge_soft"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "edge_soft"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "edge_soft"
     },
     "breath_quote": {
       "intent": "the recurring quiet beat, softened away from the opening it shares a page with",
       "layout": "full_bleed_quote",
       "photoTreatment": {
-        "saturation": 0.9
+        "saturation": 0.9,
+        "brightness": 0.03
+      }
+    },
+    "full_bleed_quote_edge": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 70,
+            "y": 770,
+            "height": 232
+          }
+        }
+      },
+      "photoTreatment": {
+        "contrast": 1.06,
+        "saturation": 1.04
+      }
+    },
+    "two_photo_story_edge": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's edge_soft frame",
+      "layout": "two_photo_story",
+      "frame": "edge_soft"
+    },
+    "duo_tinted_spread_edge": {
+      "intent": "the tinted two-photo spread, wearing the recipe's edge_soft frame",
+      "layout": "duo_tinted_spread",
+      "frame": "edge_soft"
+    },
+    "three_photo_row_edge": {
+      "intent": "the three-photo row, wearing the recipe's edge_soft frame",
+      "layout": "three_photo_row",
+      "frame": "edge_soft"
+    },
+    "collage_cluster_text_edge": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's edge_soft frame",
+      "layout": "collage_cluster_text",
+      "frame": "edge_soft"
+    },
+    "paper_collage_edge": {
+      "intent": "the layered paper collage, wearing the recipe's edge_soft frame",
+      "layout": "paper_collage",
+      "frame": "edge_soft"
+    },
+    "closing_names_edge": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 116,
+            "y": 412
+          },
+          "date": {
+            "sizePx": 32,
+            "y": 662
+          }
+        }
       }
     }
   },
@@ -220,7 +274,6 @@
     {
       "id": "s01_open",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -234,7 +287,8 @@
       ],
       "text": {
         "quote": "{{bride}} & {{groom}}"
-      }
+      },
+      "look": "full_bleed_quote_edge"
     },
     {
       "id": "s70_hero_filmstrip",
@@ -288,7 +342,6 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -308,12 +361,12 @@
           "Mình bắt đầu từ những điều giản dị nhất.",
           "Không ồn ào, chỉ cần đúng nhịp của nhau."
         ]
-      }
+      },
+      "look": "two_photo_story_edge"
     },
     {
       "id": "s02b_minimal_duo",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -333,7 +386,8 @@
           "Đơn giản, nhưng đủ đầy.",
           "Ít đi, để đủ đầy hơn."
         ]
-      }
+      },
+      "look": "duo_tinted_spread_edge"
     },
     {
       "id": "s04_journey",
@@ -354,7 +408,6 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "build",
       "transitionRole": "peak",
       "photoSlots": [
@@ -387,7 +440,8 @@
           "Từng bước, từng nơi, đều có nhau bên cạnh.",
           "Mỗi chặng đường đều có nhau đồng hành."
         ]
-      }
+      },
+      "look": "three_photo_row_edge"
     },
     {
       "id": "s04b_teal_glass",
@@ -512,7 +566,6 @@
     {
       "id": "s07d_minimal_cluster",
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -543,7 +596,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -560,17 +612,19 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_edge"
+      },
+      "look": "collage_cluster_text_edge"
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_photo_strip_right",
+      "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -579,37 +633,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_prism_split",
+      "effect": "prism_split",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_up",
+      "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#1C2B30"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -671,14 +721,14 @@
     {
       "id": "s08_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_edge"
     }
   ]
 }

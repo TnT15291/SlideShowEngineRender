@@ -250,15 +250,20 @@ export function createJobRunner(engineRoot = process.cwd()) {
 
   async function terminate(child: ChildProcessByStdio<null, Readable, Readable>) {
     if (!child.pid) return
+    const exited = new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, 5000)
+      child.once("close", () => { clearTimeout(timer); resolve() })
+    })
     if (process.platform === "win32") {
       await new Promise<void>((resolve) => {
         const killer = spawn("taskkill", ["/pid", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" })
         killer.once("close", () => resolve())
         killer.once("error", () => { child.kill("SIGTERM"); resolve() })
       })
-      return
+    } else {
+      try { process.kill(-child.pid, "SIGTERM") } catch { child.kill("SIGTERM") }
     }
-    try { process.kill(-child.pid, "SIGTERM") } catch { child.kill("SIGTERM") }
+    await exited
   }
 
   async function start(projectId: string, rawInput: StartJobInput) {
@@ -337,7 +342,10 @@ export function createJobRunner(engineRoot = process.cwd()) {
       job.log.end(`[runner] process exited with code ${code ?? 1}\n`)
       active.delete(projectId)
       job.releaseOperation()
-      await publishSnapshot(projectId)
+      // cancel()/shutdown() publish only after their paused manifest is on disk.
+      // Publishing here would see a now-orphaned "running" manifest and heal it
+      // to failed while cancellation is still writing the intended paused state.
+      if (!job.cancelRequested) await publishSnapshot(projectId)
     })
 
     await publishSnapshot(projectId)

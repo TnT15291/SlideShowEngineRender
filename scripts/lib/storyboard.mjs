@@ -398,8 +398,15 @@ export function composeStoryboard({
  * duration, transitions) still sees an ordinary single-photo scene. `easing` is dropped: it
  * was computed for the effect this scene is no longer rendered with, and the hybrid
  * templates have no use for it.
+ *
+ * `params` is how the substituted template is CONFIGURED, and leaving it off was not a
+ * neutral default: a hybrid that reads params falls back to whatever its component
+ * hardcoded, which meant kinetic_typography put the English words "Our Story" over the
+ * peak beat of a Vietnamese wedding and audio_reactive pulsed on an invented 120 BPM grid
+ * instead of the track this film is cut to. Text belongs here as recipe TOKENS
+ * ({{bride}}) — applyStoryTemplate resolves them like any other line of copy.
  */
-export function applySignatureHybridScene(scenes, { template, renderer } = {}) {
+export function applySignatureHybridScene(scenes, { template, renderer, params } = {}) {
   if (!template || !renderer) return scenes;
   const candidates = scenes
     .map((s, i) => ({ s, i }))
@@ -409,7 +416,8 @@ export function applySignatureHybridScene(scenes, { template, renderer } = {}) {
   return scenes.map((s, i) => {
     if (i !== peak) return s;
     const { easing, ...rest } = s;
-    return { ...rest, effect: "still", renderer, template };
+    const configured = params && Object.keys(params).length ? { params } : {};
+    return { ...rest, effect: "still", renderer, template, ...configured };
   });
 }
 

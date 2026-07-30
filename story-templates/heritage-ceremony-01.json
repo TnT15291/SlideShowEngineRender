@@ -4,41 +4,76 @@
   "name": "Heritage Ceremony",
   "tier": "smart_lite",
   "libraryTheme": "dark_film",
+  "layoutPresets": {
+    "lacquer_frame": {
+      "radius": 0,
+      "border": 9,
+      "borderColor": "#8C3A2E",
+      "shadow": true
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "lacquer_frame",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 1.06,
+        "contrast": 1.05
       }
     },
     "magazine_page_turn_plate": {
       "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
       "layout": "magazine_page_turn",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "lacquer_frame",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 1.06,
+        "contrast": 1.05
       }
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "lacquer_frame",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 1.06,
+        "contrast": 1.05
+      }
+    },
+    "paper_collage_lacquer": {
+      "intent": "the layered paper collage, wearing the recipe's lacquer_frame frame",
+      "layout": "paper_collage",
+      "frame": "lacquer_frame"
+    },
+    "invitation_row_lacquer": {
+      "intent": "the invitation row, wearing the recipe's lacquer_frame frame",
+      "layout": "invitation_row",
+      "frame": "lacquer_frame"
+    },
+    "three_photo_row_lacquer": {
+      "intent": "the three-photo row, wearing the recipe's lacquer_frame frame",
+      "layout": "three_photo_row",
+      "frame": "lacquer_frame"
+    },
+    "duo_tinted_spread_lacquer": {
+      "intent": "the tinted two-photo spread, wearing the recipe's lacquer_frame frame",
+      "layout": "duo_tinted_spread",
+      "frame": "lacquer_frame"
+    },
+    "closing_names_lacquer": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 134,
+            "y": 395
+          },
+          "date": {
+            "sizePx": 38,
+            "y": 655
+          }
+        }
       }
     }
   },
@@ -239,7 +274,6 @@
     {
       "id": "s02_details",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -279,12 +313,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "paper_collage_lacquer"
     },
     {
       "id": "s02c_family_portraits",
       "effect": "layer_scene",
-      "layout": "invitation_row",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -315,13 +349,14 @@
           "Trân trọng kính mời đến chung vui.",
           "Kính mời gia đình, bạn bè đến chung vui."
         ]
-      }
+      },
+      "look": "invitation_row_lacquer"
     },
     {
       "id": "s02b_lacquer_heirloom",
       "effect": "video_background",
       "background": "assets/backgrounds/editorial/midnight-lacquer-aged-gold.png",
-      "durationRole": "calm",
+      "durationRole": "build",
       "transitionRole": "default",
       "captionPattern": [
         "Nếp nhà trao lại · Duyên lành tiếp nối.",
@@ -386,7 +421,6 @@
     {
       "id": "s05_ritual",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -415,12 +449,12 @@
           "Trước gia tiên và những người thương yêu nhất.",
           "Trước bàn thờ gia tiên, có đủ những người mình thương yêu."
         ]
-      }
+      },
+      "look": "three_photo_row_lacquer"
     },
     {
       "id": "s05b_ceremony_detail",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -440,7 +474,8 @@
           "Từng nghi thức, một lời hẹn ước.",
           "Từng nghi lễ, một lời nguyện trăm năm."
         ]
-      }
+      },
+      "look": "duo_tinted_spread_lacquer"
     },
     {
       "id": "s06_banquet",
@@ -523,37 +558,7 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
-      "durationRole": "montage",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "grid",
-          "count": 6,
-          "orient": "any",
-          "quality": "good",
-          "preferVariety": true
-        }
-      ]
-    },
-    {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
-      "id": "s82_memory_six",
+      "id": "s80_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -569,6 +574,36 @@
       "params": {
         "background": "#2B2B32"
       }
+    },
+    {
+      "id": "s81_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_photo_strip_left",
+      "effect": "photo_strip_left",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -630,14 +665,14 @@
     {
       "id": "s07_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_lacquer"
     }
   ]
 }

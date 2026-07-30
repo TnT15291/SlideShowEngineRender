@@ -146,3 +146,88 @@ export function coverCropLoss(
   const frameAspect = frameWidth / frameHeight;
   return 1 - Math.min(imageAspect, frameAspect) / Math.max(imageAspect, frameAspect);
 }
+
+export interface NormalizedBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+// Margin (normalized source-image units) padded around a detected face before
+// testing whether it fits inside a cover-crop window. Kept in sync with
+// buildPhotoEffects.ts's faceSafeCropOffset, which pads the same margin when
+// it computes the actual crop offset for zoompan/pan/kenburns at render time.
+export const FACE_CROP_MARGIN = 0.04;
+
+// A cover-crop only ever trims ONE axis (scale is set by whichever dimension
+// has less slack), so the surviving window spans the full 0..1 on the other
+// axis. Returns the surviving window's size as a fraction of the source
+// image, in each axis, in the SAME normalized space faceBox is expressed in.
+function coverCropWindowFraction(
+  size: ImageSize | undefined,
+  frameWidth: number,
+  frameHeight: number
+): { widthFrac: number; heightFrac: number } {
+  if (!size || size.width <= 0 || size.height <= 0 || frameWidth <= 0 || frameHeight <= 0) {
+    return { widthFrac: 1, heightFrac: 1 };
+  }
+  const scale = Math.max(frameWidth / size.width, frameHeight / size.height);
+  return {
+    widthFrac: Math.min(1, frameWidth / (size.width * scale)),
+    heightFrac: Math.min(1, frameHeight / (size.height * scale)),
+  };
+}
+
+/**
+ * Fraction of a detected face's area a cover-crop centered on (focusX,focusY)
+ * would trim away — 0 = the whole face survives, 1 = none of it does. Unlike
+ * coverCropLoss (generic image-area loss, blind to where the face actually
+ * sits), this intersects the real surviving crop window with faceBox, so a
+ * centered face and an edge-of-frame face are told apart correctly.
+ */
+export function faceCropLoss(
+  faceBox: NormalizedBox,
+  size: ImageSize | undefined,
+  frameWidth: number,
+  frameHeight: number,
+  focusX = 0.5,
+  focusY = 0.5
+): number {
+  const faceArea = faceBox.width * faceBox.height;
+  if (faceArea <= 0) return 0;
+  const { widthFrac, heightFrac } = coverCropWindowFraction(size, frameWidth, frameHeight);
+  const fx = Math.min(1, Math.max(0, focusX));
+  const fy = Math.min(1, Math.max(0, focusY));
+  const windowX0 = fx * (1 - widthFrac);
+  const windowY0 = fy * (1 - heightFrac);
+  const overlapWidth = Math.max(0, Math.min(faceBox.x + faceBox.width, windowX0 + widthFrac) - Math.max(faceBox.x, windowX0));
+  const overlapHeight = Math.max(0, Math.min(faceBox.y + faceBox.height, windowY0 + heightFrac) - Math.max(faceBox.y, windowY0));
+  return 1 - (overlapWidth * overlapHeight) / faceArea;
+}
+
+/**
+ * Whether a detected face (padded by `margin`) can be kept FULLY inside a
+ * cover-crop for some choice of offset — i.e. whether an offset exists that
+ * avoids cutting the face at all. Mirrors the fit test embedded in
+ * buildPhotoEffects.ts's faceSafeCropOffset, the ffmpeg expression that
+ * actually performs this best-effort centering at render time for
+ * zoompan-based effects (slow_zoom/pan/kenburns/tilt_shift/...): when this
+ * returns true, that expression is guaranteed to protect the face fully;
+ * when false, no offset could, and the caller should reroute instead.
+ */
+export function faceFitsCoverCrop(
+  faceBox: NormalizedBox,
+  size: ImageSize | undefined,
+  frameWidth: number,
+  frameHeight: number,
+  margin: number = FACE_CROP_MARGIN
+): boolean {
+  const { widthFrac, heightFrac } = coverCropWindowFraction(size, frameWidth, frameHeight);
+  const fitsAxis = (start: number, extent: number, windowFrac: number) => {
+    const near = Math.max(0, start - margin);
+    const far = Math.min(1, start + extent + margin);
+    return far - near <= windowFrac;
+  };
+  return fitsAxis(faceBox.x, faceBox.width, widthFrac) && fitsAxis(faceBox.y, faceBox.height, heightFrac);
+}

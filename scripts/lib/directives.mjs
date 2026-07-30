@@ -37,6 +37,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { TAG_VOCAB } from "./vocab.mjs";
 import { UNSYNTHESISABLE } from "./directiveApplication.mjs";
+import { str } from "./strUtils.mjs";
 
 const root = process.cwd();
 
@@ -80,8 +81,6 @@ export const KINDS = new Set([
 
 const OPS = new Set(["set", "forbid", "require"]);
 const STRENGTHS = new Set(["must", "prefer"]);
-
-const str = (v, max = 240) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 /** Clamp a raw (model-authored or hand-written) directive onto the engine's real
  *  vocabulary. Returns {ok:true, directive} or {ok:false, reason} — and a rejection

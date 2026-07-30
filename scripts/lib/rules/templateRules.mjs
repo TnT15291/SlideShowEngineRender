@@ -27,6 +27,11 @@
 //                        long — authors owe the repeats at least two variants
 //   face_safe_motion     a hardcoded zoom on a portrait slot overrides the subject-
 //                        aware planner, and a zoomed portrait crop starts at the head
+//   copy_language        recipes are authored in Vietnamese and an English film is made
+//                        by REWRITING them (lib/recipeCopyPolicy.mjs runs writeRecipeCopy
+//                        only for language "en"), so English-authored copy has no rewrite
+//                        step on the default vi path — it just ships in the wrong language
+import { inspectCaptionLanguage } from "../captionLanguage.mjs";
 import {
   TEMPLATE_MIN_SCENES, TEMPLATE_MIN_DISTINCT_LOOKS, TEMPLATE_MIN_REPEATABLE_SCENES,
   TEMPLATE_MAX_PHOTOLESS_SCENES, SLOT_AREA_FLOOR, SLOT_AREA_FLOOR_GRID,
@@ -289,6 +294,37 @@ export function evaluateStoryTemplate(template, { library }) {
           `slot ${slot.slot} hardcodes ${slot.motion} on a portrait — leave motion to the subject-aware planner`));
       }
     }
+  }
+
+  // -- copy_language -------------------------------------------------------------
+  //
+  // Judged with the SAME detector QA runs on the finished film
+  // (lib/captionLanguage.mjs), so a recipe that passes here cannot raise
+  // wrong_caption_language on the default vi path — the two cannot drift apart.
+  //
+  // Two recipes shipped authored entirely in English while their own intro prose was
+  // Vietnamese: classic-multisong-album-01 and studio-white-prewedding-01. Every
+  // Vietnamese job on them rendered English cards and QA flagged the film, once per job,
+  // for a defect that lives in the recipe.
+  const copy = [];
+  const collectCopy = (value) => {
+    if (typeof value === "string") copy.push(value);
+    else if (Array.isArray(value)) value.forEach(collectCopy);
+    // A slot may be authored as { value, ... } — see textOf above.
+    else if (value && typeof value === "object") collectCopy(value.value);
+  };
+  for (const scene of scenes) {
+    for (const source of [scene, scene.muteFallback, ...(scene.repeatable?.variants ?? [])]) {
+      if (!source) continue;
+      Object.values(source.text ?? {}).forEach(collectCopy);
+      collectCopy(source.captionPattern);
+    }
+  }
+  const copyLanguage = inspectCaptionLanguage(copy, "vi");
+  if (copyLanguage.flags?.includes("wrong_caption_language")) {
+    errors.push(finding("copy_language", null,
+      `${copy.length} authored copy string(s) carry no Vietnamese at all (${copyLanguage.signals.enWords} English words). `
+      + `Recipes are authored in Vietnamese; an English film comes from writeRecipeCopy.mjs rewriting them`));
   }
 
   return {

@@ -1,5 +1,5 @@
 import path from "node:path";
-import { coverCropLoss, readImageSize } from "./imageSize";
+import { coverCropLoss, faceFitsCoverCrop, readImageSize } from "./imageSize";
 import { resolveQualityProfile } from "./quality";
 import type {
   CompiledCaption,
@@ -103,10 +103,21 @@ export function compileTimeline(
     const size = input ? readImageSize(input) : undefined;
 
     const requestedEffect = slide.effect;
+    // Two different signals, both fed through the same reroute: a generic
+    // aspect-mismatch threshold that applies whether or not a face was ever
+    // detected, and — when one WAS — whether faceSafeCropOffset (the ffmpeg
+    // expression that actually picks the crop offset for these effects,
+    // buildPhotoEffects.ts) can find any offset that keeps the whole face in
+    // frame. A photo can pass the generic threshold and still lose a face
+    // that sits close to the trimmed edge, which the aspect-only check has
+    // no way to see.
+    const faceAtRisk = slide.faceBox
+      ? !faceFitsCoverCrop(slide.faceBox, size, timeline.project.width, timeline.project.height)
+      : false;
     const autoPortrait =
       CROPPING_EFFECTS.has(requestedEffect) &&
-      coverCropLoss(size, timeline.project.width, timeline.project.height) >
-        MAX_COVER_CROP_LOSS;
+      (coverCropLoss(size, timeline.project.width, timeline.project.height) > MAX_COVER_CROP_LOSS ||
+        faceAtRisk);
     const effect: EffectPreset = autoPortrait
       ? "portrait_blur_background"
       : requestedEffect;

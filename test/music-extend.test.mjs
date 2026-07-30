@@ -75,6 +75,23 @@ test("playlist mode appends the second track and sets a crossfade", () => {
   assert.ok(out.audio.crossfade > 0, "a playlist needs a crossfade to join its tracks");
 });
 
+test("auto mode keeps every uploaded playlist track", () => {
+  const { status, out, stderr } = build(
+    "story-templates/warm-film-01.json", 81,
+    "music/River Flows In You.mp3", [
+      "--extra-music", "music/Perfect.mp3",
+      "--extra-music", "music/a thousand years.mp3",
+    ],
+  );
+  assert.equal(status, 0, stderr);
+  assert.deepEqual(out.music.map((track) => track.path), [
+    "music/River Flows In You.mp3",
+    "music/Perfect.mp3",
+    "music/a thousand years.mp3",
+  ]);
+  assert.equal(out.recipeDecisions.musicEdit.mode, "playlist");
+});
+
 test("playlist without a second track degrades to loop instead of failing", () => {
   const { status, out, stderr } = build(
     "story-templates/warm-film-01.json", 81,

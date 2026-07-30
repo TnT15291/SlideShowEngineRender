@@ -30,6 +30,7 @@ import { spawnSync } from "node:child_process";
 import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pacing.mjs";
 import { createTextMeasurer } from "./lib/textMeasure.mjs";
 import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
+import { readPlaylistAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusic.mjs";
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
 import { inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
 import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
@@ -68,18 +69,34 @@ const outPath = arg("--out", `${analysisDir}/qa/${base}.proxy.json`);
 // report, since hero and bookend are still perfectly measurable (a musicless
 // timeline is a normal thing: smoke tests, silent cuts).
 const musicTrack = tl.music?.[0]?.path;
-const musicJson = arg(
-  "--music",
-  musicTrack ? `${analysisDir}/music/${path.basename(musicTrack).replace(/\.[^.]+$/, "")}.json` : ""
-);
+const analysisFor = (track) => `${analysisDir}/music/${path.basename(track).replace(/\.[^.]+$/, "")}.json`;
+const musicJson = arg("--music", musicTrack ? analysisFor(musicTrack) : "");
 const musicAbs = musicJson ? path.resolve(root, musicJson) : null;
 const musicMissing = !musicAbs || !fs.existsSync(musicAbs)
   ? musicTrack
     ? `music analysis not found: ${musicJson} — run: node scripts/analyzeMusic.mjs "${musicTrack}"`
     : "timeline has no music track"
   : null;
-const sourceMusic = musicMissing ? null : JSON.parse(fs.readFileSync(musicAbs, "utf8"));
-const music = sourceMusic ? sliceMusicAnalysis(sourceMusic, tl.recipeDecisions?.musicEdit || { mode: "full_song" }) : null;
+// A playlist is measured against the WHOLE playlist. Reading track 1 alone and then
+// trusting musicEdit.duration told pacing the film was 442s long while handing it 190s of
+// energy envelope: the step silently became 1.17s instead of 0.5s and every calm/build
+// verdict was sampled from the wrong second. An explicit --music overrides (a caller
+// naming one analysis means that one).
+const playlistTracks = arg("--music", "") || (tl.music?.length ?? 0) < 2
+  ? []
+  : tl.music.map((track) => track.path);
+const missingPlaylistAnalysis = playlistTracks
+  .filter((track) => !fs.existsSync(path.resolve(root, analysisFor(track))));
+const sourceMusic = musicMissing
+  ? null
+  : playlistTracks.length && !missingPlaylistAnalysis.length
+    ? readPlaylistAnalyses({ root, analysisDir, musicPaths: playlistTracks,
+        crossfade: Number(tl.audio?.crossfade) || PLAYLIST_CROSSFADE_SEC })
+    : JSON.parse(fs.readFileSync(musicAbs, "utf8"));
+// The playlist analysis already spans the film, so there is no window left to slice.
+const music = !sourceMusic ? null
+  : sourceMusic.playlist ? sourceMusic
+    : sliceMusicAnalysis(sourceMusic, tl.recipeDecisions?.musicEdit || { mode: "full_song" });
 
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const contentAbs = path.resolve(root, contentPath);
@@ -92,6 +109,10 @@ const technicalByFile = new Map((technicalPhotos?.photos || []).map((p) => [p.fi
 const scenes = sceneTimes(tl.slides);
 const problems = [];
 const advisories = [];
+if (missingPlaylistAnalysis.length) {
+  advisories.push(`pacing measured against track 1 only: no analysis for ` +
+    `${missingPlaylistAnalysis.map((track) => path.basename(track)).join(", ")}`);
+}
 
 const visibleText = tl.slides.flatMap((slide) => [
   ...(slide.captions || []).map((caption) => caption.text),
@@ -153,9 +174,18 @@ for (const [slideIndex, slide] of tl.slides.entries()) {
     // a cinematic recipe cold-opens on a text-less photo and puts the names on the NEXT
     // slide, so the opening bookend spans the leading cards, not just index 0.
     const isClosing = slideIndex === tl.slides.length - 1;
-    const intentionalBookendEcho = isClosing && firstSeen != null && firstSeen.slideIndex <= OPENING_BOOKEND_MAX;
+    const intentionalBookendEcho = isClosing && firstSeen != null && (
+      firstSeen.slideIndex <= OPENING_BOOKEND_MAX
+      || firstSeen.editorialBeat === "invitation"
+      || /(?:^|_)invitation(?:_|$)/i.test(firstSeen.slideId)
+    );
     if (normalized && firstSeen && !intentionalBookendEcho) flags.push("duplicate_caption");
-    else if (normalized) seenCopy.set(normalized, { slideIndex, location: `${slide.id}:${item.where}` });
+    else if (normalized) seenCopy.set(normalized, {
+      slideIndex,
+      slideId: slide.id,
+      editorialBeat: slide.editorialBeat,
+      location: `${slide.id}:${item.where}`,
+    });
     const row = { id: slide.id, where: item.where, flags };
     captionIntegrity.items.push(row);
     if (flags.length) {

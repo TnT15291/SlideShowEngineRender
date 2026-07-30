@@ -20,7 +20,14 @@ const phaseLabels: Record<(typeof phaseNames)[number], string> = {
   deliver: "Preparing delivery",
 }
 
-export function JobRunnerPanel({ project, onJobChanged, onRenderStarted }: { project: ProjectSummary; onJobChanged?: (job: JobSnapshot) => void; onRenderStarted?: () => void }) {
+export function JobRunnerPanel({ project, renderBlocked = false, blockedReason, onUpgrade, onJobChanged, onRenderStarted }: {
+  project: ProjectSummary
+  renderBlocked?: boolean
+  blockedReason?: string
+  onUpgrade?: () => void
+  onJobChanged?: (job: JobSnapshot) => void
+  onRenderStarted?: () => void
+}) {
   const [job, setJob] = useState<JobSnapshot | null>(null)
   const [mode, setMode] = useState<"dry_run" | "render" | "deliver">("dry_run")
   const [resume, setResume] = useState(false)
@@ -112,7 +119,8 @@ export function JobRunnerPanel({ project, onJobChanged, onRenderStarted }: { pro
     <CardHeader className="border-b bg-card-soft"><div className="flex flex-wrap items-start justify-between gap-4"><div><CardTitle className="flex items-center gap-2 text-base"><Terminal className="size-4 text-primary" /> Job Runner</CardTitle><CardDescription className="mt-1">Run the project pipeline and follow its live state.</CardDescription></div><div className="flex items-center gap-2"><span className={cn("size-2 rounded-full", connected ? "bg-success" : "bg-muted-foreground")} /><span className="text-xs text-muted-foreground">{connected ? "Live" : "Reconnecting"}</span>{job && <Badge variant="outline" className="capitalize">{job.status.replace("_", " ")}</Badge>}</div></div></CardHeader>
     <CardContent className="p-0"><div className="grid lg:grid-cols-[.85fr_1.15fr]">
       <section className="border-b p-6 lg:border-b-0 lg:border-r"><div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-medium">Run mode<select className="field" value={mode} onChange={(event) => setMode(event.target.value as typeof mode)} disabled={running}><option value="dry_run">Dry run — no video render</option><option value="render">Render — full pipeline</option><option value="deliver">Render, QA & delivery</option></select></label><label className="flex items-center gap-3 self-end rounded-lg border bg-background px-3 py-2.5 text-sm"><input type="checkbox" checked={resume} onChange={(event) => setResume(event.target.checked)} disabled={running} className="size-4 accent-primary" /><span><span className="block font-medium">Resume</span><span className="text-xs text-muted-foreground">Reuse fresh phases</span></span></label></div>
-        <div className="mt-6 flex gap-3">{running ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? "Stopping…" : "Cancel job"}</Button> : <Button onClick={start} disabled={submitting}><Play className="size-4" /> {submitting ? "Starting…" : job?.status === "paused" || job?.status === "failed" ? "Run again" : "Start pipeline"}</Button>}{!running && job && job.status !== "not_started" && <Button variant="ghost" onClick={() => setResume(true)}><RotateCcw className="size-4" /> Resume mode</Button>}</div>
+        <div className="mt-6 flex gap-3">{running ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? "Stopping…" : "Cancel job"}</Button> : <Button onClick={start} disabled={submitting || renderBlocked} title={renderBlocked ? blockedReason : undefined}><Play className="size-4" /> {submitting ? "Starting…" : job?.status === "paused" || job?.status === "failed" ? "Run again" : "Start pipeline"}</Button>}{!running && job && job.status !== "not_started" && <Button variant="ghost" onClick={() => setResume(true)}><RotateCcw className="size-4" /> Resume mode</Button>}</div>
+        {renderBlocked && <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950"><p>{blockedReason}</p>{onUpgrade && <Button className="mt-3" size="sm" variant="outline" onClick={onUpgrade}>View plans</Button>}</div>}
         {error && <p className="mt-4 flex gap-2 text-sm text-destructive"><AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}</p>}
         {job?.warnings?.map((warning) => <div key={warning.code} className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950"><p className="font-medium">Video đã hoàn thành với một cảnh báo.</p><p className="mt-1 text-xs">{warning.message}</p></div>)}
         <div className="mt-7 rounded-xl border bg-card-soft p-5" aria-live="polite">

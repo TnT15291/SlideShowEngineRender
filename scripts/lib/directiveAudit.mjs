@@ -3,8 +3,7 @@ import {
   ROLE_TO_NOTE,
   UNSYNTHESISABLE,
 } from "./directiveApplication.mjs";
-
-const str = (value, max = 240) => typeof value === "string" ? value.trim().slice(0, max) : "";
+import { str } from "./strUtils.mjs";
 // ---------------------------------------------------------------------------
 // Audit — the timeline is the evidence. This is what makes it a director and not
 // a suggestion box: we do not ask whether we TRIED to obey, we check the artifact.

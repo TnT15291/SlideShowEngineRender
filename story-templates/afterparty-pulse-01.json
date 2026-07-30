@@ -4,41 +4,81 @@
   "name": "Afterparty Pulse",
   "tier": "smart_lite",
   "libraryTheme": "teal_orange_editorial",
+  "layoutPresets": {
+    "pulse_edge": {
+      "radius": 0,
+      "border": 10,
+      "borderColor": "#D96F32",
+      "shadow": true
+    }
+  },
   "looks": {
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "pulse_edge"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "pulse_edge"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
-      }
+      "frame": "pulse_edge"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#C9A86A"
+      "frame": "pulse_edge"
+    },
+    "three_photo_row_pulse": {
+      "intent": "the three-photo row, wearing the recipe's pulse_edge frame",
+      "layout": "three_photo_row",
+      "frame": "pulse_edge"
+    },
+    "duo_tinted_spread_pulse": {
+      "intent": "the tinted two-photo spread, wearing the recipe's pulse_edge frame",
+      "layout": "duo_tinted_spread",
+      "frame": "pulse_edge"
+    },
+    "masonry_grid_wall_pulse": {
+      "intent": "the masonry wall, wearing the recipe's pulse_edge frame",
+      "layout": "masonry_grid_wall",
+      "frame": "pulse_edge"
+    },
+    "full_bleed_quote_pulse": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 66,
+            "y": 786,
+            "height": 220
+          }
+        }
+      },
+      "photoTreatment": {
+        "contrast": 1.08,
+        "saturation": 1.06
+      }
+    },
+    "closing_names_pulse": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 120,
+            "y": 400
+          },
+          "date": {
+            "sizePx": 44,
+            "y": 660
+          }
+        }
       }
     }
   },
@@ -247,7 +287,6 @@
     {
       "id": "s02_toasts",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -293,12 +332,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "three_photo_row_pulse"
     },
     {
       "id": "s02c_cheers_duo",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -318,7 +357,8 @@
           "TO LOVE & LAUGHTER",
           "HERE'S TO US"
         ]
-      }
+      },
+      "look": "duo_tinted_spread_pulse"
     },
     {
       "id": "s03_dinner",
@@ -456,7 +496,6 @@
     {
       "id": "s06d_wall",
       "effect": "layer_scene",
-      "layout": "masonry_grid_wall",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -506,12 +545,12 @@
           "DANCEFLOOR MEMORIES",
           "THE NIGHT IN PICTURES"
         ]
-      }
+      },
+      "look": "masonry_grid_wall_pulse"
     },
     {
       "id": "s07_last",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -527,7 +566,8 @@
           "One last song · One endless story",
           "The music fades, the story doesn't"
         ]
-      }
+      },
+      "look": "full_bleed_quote_pulse"
     },
     {
       "id": "s70_corner_fly_four",
@@ -564,13 +604,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_right",
+      "effect": "film_roll_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -579,37 +619,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_spotlight_focus",
+      "effect": "spotlight_focus",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_photo_strip_up",
+      "effect": "photo_strip_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#1C2B30"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -671,14 +707,14 @@
     {
       "id": "s08_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Best night ever · {{date}}"
-      }
+      },
+      "look": "closing_names_pulse"
     }
   ]
 }

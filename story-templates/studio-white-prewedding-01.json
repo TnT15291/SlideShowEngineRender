@@ -4,35 +4,76 @@
   "name": "Studio White Pre-Wedding",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "studio_hairline": {
+      "radius": 0,
+      "border": 2,
+      "borderColor": "#DAD3C9",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "studio_hairline"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "studio_hairline"
     },
     "polaroid_scatter_plate": {
       "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
       "layout": "polaroid_scatter",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "studio_hairline"
+    },
+    "full_bleed_quote_studio": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 48,
+            "y": 822,
+            "height": 180
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.92,
+        "brightness": 0.03
+      }
+    },
+    "polaroid_feature_studio": {
+      "intent": "the single featured print, wearing the recipe's studio_hairline frame",
+      "layout": "polaroid_feature",
+      "frame": "studio_hairline"
+    },
+    "text_left_photo_right_studio": {
+      "intent": "the text-left spread, wearing the recipe's studio_hairline frame",
+      "layout": "text_left_photo_right",
+      "frame": "studio_hairline"
+    },
+    "magazine_page_turn_studio": {
+      "intent": "the magazine page turn, wearing the recipe's studio_hairline frame",
+      "layout": "magazine_page_turn",
+      "frame": "studio_hairline"
+    },
+    "closing_names_studio": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 112,
+            "y": 415
+          },
+          "date": {
+            "sizePx": 30,
+            "y": 665
+          }
+        }
       }
     }
   },
@@ -220,7 +261,6 @@
     {
       "id": "s01_title_detail",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "calm",
@@ -234,10 +274,11 @@
       ],
       "text": {
         "quote": [
-          "Save the date · {{bride}} & {{groom}}",
-          "We're tying the knot · {{bride}} & {{groom}}"
+          "Hẹn ngày chung đôi · {{bride}} & {{groom}}",
+          "Mình sắp về chung một nhà · {{bride}} & {{groom}}"
         ]
-      }
+      },
+      "look": "full_bleed_quote_studio"
     },
     {
       "id": "s02_centered_portrait",
@@ -267,14 +308,13 @@
         }
       ],
       "captionPattern": [
-        "Our Love Story",
-        "The Story of Us"
+        "Chuyện tình của mình",
+        "Chuyện của hai chúng mình"
       ]
     },
     {
       "id": "s04_studio_triptych",
       "effect": "layer_scene",
-      "layout": "polaroid_feature",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -285,39 +325,38 @@
         }
       ],
       "text": {
-        "heading": "Together",
+        "heading": "Bên nhau",
         "body": [
-          "Every quiet moment becomes part of our forever.",
-          "Every small moment quietly becomes part of us."
+          "Mỗi khoảnh khắc bình yên đều thành một phần của mãi mãi.",
+          "Từng khoảnh khắc nhỏ, lặng lẽ thành một phần của mình."
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
             "orient": "portrait",
             "quality": "good"
           }
-        ]
+        ],
+        "look": "full_bleed_quote_studio"
       },
       "repeatable": {
         "maxRepeats": 3,
         "variants": [
           {
             "text": {
-              "heading": "You & Me",
-              "body": "This is where our next chapter begins."
+              "heading": "Anh & Em",
+              "body": "Đây là nơi chương tiếp theo của mình bắt đầu."
             }
           },
           {
             "text": {
-              "heading": "Always",
-              "body": "A collection of moments we will keep close."
+              "heading": "Mãi mãi",
+              "body": "Một bộ sưu tập những khoảnh khắc mình muốn giữ thật gần."
             }
           },
           {
-            "layout": "full_bleed_quote",
             "photoSlots": [
               {
                 "slot": "bg",
@@ -325,15 +364,16 @@
                 "quality": "good"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "full_bleed_quote_studio"
           }
         ]
-      }
+      },
+      "look": "polaroid_feature_studio"
     },
     {
       "id": "s05_soft_pair",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -344,10 +384,10 @@
         }
       ],
       "text": {
-        "heading": "One Love",
+        "heading": "Một tình yêu",
         "body": [
-          "One lifetime · one beautiful beginning.",
-          "One heart · one journey · one beautiful start."
+          "Một đời người · một khởi đầu thật đẹp.",
+          "Một trái tim · một hành trình · một khởi đầu đẹp."
         ]
       },
       "muteFallback": {
@@ -365,18 +405,17 @@
         "variants": [
           {
             "text": {
-              "heading": "One Day",
-              "body": "The simplest moments are the ones we remember most."
+              "heading": "Một ngày",
+              "body": "Những điều giản dị nhất lại là điều mình nhớ lâu nhất."
             }
           },
           {
             "text": {
-              "heading": "Forever",
-              "body": "Here is to every day that comes after this one."
+              "heading": "Trọn đời",
+              "body": "Cho tất cả những ngày sau ngày hôm nay."
             }
           },
           {
-            "layout": "full_bleed_quote",
             "photoSlots": [
               {
                 "slot": "bg",
@@ -384,15 +423,16 @@
                 "quality": "good"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "full_bleed_quote_studio"
           }
         ]
-      }
+      },
+      "look": "text_left_photo_right_studio"
     },
     {
       "id": "s06_page_turn",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "memory",
@@ -409,9 +449,10 @@
         }
       ],
       "text": {
-        "heading": "The Story Continues",
+        "heading": "Chuyện mình còn dài",
         "caption": "{{date}}"
-      }
+      },
+      "look": "magazine_page_turn_studio"
     },
     {
       "id": "s07_floating_gallery",
@@ -428,8 +469,8 @@
         }
       ],
       "captionPattern": [
-        "Beautiful moments · beautiful memories",
-        "Quiet moments · lasting memories"
+        "Khoảnh khắc đẹp · kỷ niệm đẹp",
+        "Khoảnh khắc bình yên · kỷ niệm ở lại"
       ],
       "params": {
         "background": "#4A4139"
@@ -460,7 +501,7 @@
       "signature": true,
       "durationRole": "normal",
       "transitionRole": "default",
-      "captionPattern": "Soft edges, softer hearts.",
+      "captionPattern": "Đường nét dịu dàng, trái tim càng dịu dàng hơn.",
       "photoSlots": [
         {
           "slot": "hero",
@@ -479,8 +520,8 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "captionPattern": [
-        "Every little detail, remembered forever.",
-        "Every small detail, kept close forever."
+        "Từng chi tiết nhỏ, được nhớ mãi.",
+        "Từng chi tiết nhỏ, giữ thật gần mãi mãi."
       ],
       "photoSlots": [
         {
@@ -524,7 +565,36 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
+      "id": "s80_film_roll_right",
+      "effect": "film_roll_right",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_spotlight_focus",
+      "effect": "spotlight_focus",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_collage_grid",
       "effect": "collage_grid",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -537,39 +607,6 @@
           "preferVariety": true
         }
       ]
-    },
-    {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
-      "durationRole": "montage",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "memories",
-          "count": 6,
-          "orient": "any",
-          "quality": "good",
-          "preferVariety": true
-        }
-      ],
-      "params": {
-        "background": "#F7F4EE"
-      }
     },
     {
       "id": "s83_gallery_matte",
@@ -631,14 +668,14 @@
     {
       "id": "s09_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_studio"
     }
   ]
 }

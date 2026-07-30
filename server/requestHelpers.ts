@@ -36,6 +36,10 @@ export function bearerToken(request: IncomingMessage): string | null {
   return match ? match[1].trim() : null
 }
 
+export function clientIp(request: IncomingMessage): string {
+  return request.socket.remoteAddress || "unknown"
+}
+
 export function methodNotAllowed(response: ServerResponse) {
   response.setHeader("Allow", "GET, OPTIONS")
   sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports GET")

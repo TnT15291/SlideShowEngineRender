@@ -109,3 +109,72 @@ test("slide focus survives normalize, validation, and compilation", () => {
   assert.deepEqual(result.compiled, [0.73, 0.21]);
   assert.deepEqual(result.faceBox, { x: 0.61, y: 0.04, width: 0.24, height: 0.31 });
 });
+
+test("a face too tall to fit any cover-crop offset reroutes even under the generic aspect threshold", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "face-safe-fit-"));
+  fs.writeFileSync(path.join(dir, "wide-group.jpg"), minimalJpeg(1600, 1067));
+
+  const script = `
+    import { normalizeTimeline } from "./src/normalizeTimeline.ts";
+    import { validateTimeline } from "./src/validateTimeline.ts";
+    import { compileTimeline } from "./src/compileTimeline.ts";
+    // 1600x1067 into 1920x1080 loses only ~15.7% (compileTimeline's generic
+    // MAX_COVER_CROP_LOSS is 0.3), so the old aspect-only check never rerouted
+    // this. But the crop only survives ~84% of the image height, and this
+    // face spans 0.02..0.88 vertically — no offset keeps all of it in frame.
+    const raw = {
+      project: { name: "test", width: 1920, height: 1080, fps: 30, quality: "draft" },
+      music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],
+      slides: [{ id: "s1", image: "wide-group.jpg", duration: 4, effect: "slow_zoom_in",
+        faceBox: { x: 0.3, y: 0.02, width: 0.3, height: 0.86 },
+        transition: { type: "none", duration: 0 }, captions: [] }]
+    };
+    const timeline = validateTimeline(normalizeTimeline(raw), process.argv[1]);
+    const step = compileTimeline(timeline, process.argv[1], process.argv[2]).steps[0];
+    console.log("RESULT=" + JSON.stringify({ effect: step.effect, requestedEffect: step.requestedEffect, autoPortrait: step.autoPortrait }));
+  `;
+  const run = spawnSync(process.execPath, ["--import", "tsx", "-e", script, dir, path.join(dir, "temp")], {
+    cwd: root,
+    encoding: "utf8",
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  const result = JSON.parse(run.stdout.match(/^RESULT=(.*)$/m)?.[1] ?? "null");
+  assert.equal(result.requestedEffect, "slow_zoom_in");
+  assert.equal(result.effect, "portrait_blur_background");
+  assert.equal(result.autoPortrait, true);
+});
+
+test("a face that fits inside the cover-crop window is left on its cropping effect", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "face-safe-fits-"));
+  fs.writeFileSync(path.join(dir, "portrait-ish.jpg"), minimalJpeg(1600, 1067));
+
+  const script = `
+    import { normalizeTimeline } from "./src/normalizeTimeline.ts";
+    import { validateTimeline } from "./src/validateTimeline.ts";
+    import { compileTimeline } from "./src/compileTimeline.ts";
+    // Same source/frame as the test above (generic loss ~15.7%, under the 0.3
+    // threshold either way), but this face is small and centered, so the
+    // ~84%-of-height crop window comfortably contains it.
+    const raw = {
+      project: { name: "test", width: 1920, height: 1080, fps: 30, quality: "draft" },
+      music: [], audio: {}, output: { path: "output/test.mp4" }, overlays: [],
+      slides: [{ id: "s1", image: "portrait-ish.jpg", duration: 4, effect: "slow_zoom_in",
+        focusX: 0.5, focusY: 0.4,
+        faceBox: { x: 0.4, y: 0.3, width: 0.2, height: 0.2 },
+        transition: { type: "none", duration: 0 }, captions: [] }]
+    };
+    const timeline = validateTimeline(normalizeTimeline(raw), process.argv[1]);
+    const step = compileTimeline(timeline, process.argv[1], process.argv[2]).steps[0];
+    console.log("RESULT=" + JSON.stringify({ effect: step.effect, autoPortrait: step.autoPortrait }));
+  `;
+  const run = spawnSync(process.execPath, ["--import", "tsx", "-e", script, dir, path.join(dir, "temp")], {
+    cwd: root,
+    encoding: "utf8",
+  });
+
+  assert.equal(run.status, 0, run.stderr);
+  const result = JSON.parse(run.stdout.match(/^RESULT=(.*)$/m)?.[1] ?? "null");
+  assert.equal(result.effect, "slow_zoom_in");
+  assert.equal(result.autoPortrait, false);
+});

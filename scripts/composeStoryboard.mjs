@@ -35,6 +35,7 @@ import path from "node:path";
 import { makeEnergy } from "./lib/pacing.mjs";
 import { composeStoryboard, DEFAULT_GRAMMAR, applySignatureHybridScene } from "./lib/storyboard.mjs";
 import { resolveMusicWindow, sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
+import { readPlaylistAnalyses } from "./lib/playlistMusic.mjs";
 import { loadLedger, active } from "./lib/directives.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_SLOT, MOTION_EFFECTS, ALL_TRANSITIONS,
@@ -46,6 +47,8 @@ const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const args = (flag) => process.argv.flatMap((value, index) =>
+  value === flag && process.argv[index + 1] ? [process.argv[index + 1]] : []);
 const die = (msg) => {
   console.error(`[composeStoryboard] FAILED: ${msg}`);
   process.exit(1);
@@ -53,6 +56,7 @@ const die = (msg) => {
 
 const photosPath = arg("--photos", "analysis/photos.json");
 const musicPath = arg("--music", "");
+const extraMusicPaths = args("--extra-music");
 const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 const libraryPath = arg("--library", "layouts/library.json");
 const planPath = arg("--plan", `${analysisDir}/story_plan.json`);
@@ -84,7 +88,9 @@ if (!photos.length) die(`${photosPath} has no photos`);
 const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
 const musicJson = `${analysisDir}/music/${musicName}.json`;
 if (!exists(musicJson)) die(`music analysis not found: ${musicJson} — run analyzeMusic first`);
-const sourceMusic = readJson(musicJson);
+const sourceMusic = extraMusicPaths.length
+  ? readPlaylistAnalyses({ root, analysisDir, musicPaths: [musicPath, ...extraMusicPaths] })
+  : readJson(musicJson);
 
 // WHICH SONG ARE WE MAKING? The two halves of premium used to answer differently. This
 // file solved the shot list against the FULL track; applyStoryTemplate, reading the same
@@ -94,14 +100,16 @@ const sourceMusic = readJson(musicJson);
 // inputs, one answer.
 const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
 const orders = active(ledger);
-const musicEdit = resolveMusicWindow({
-  music: sourceMusic,
-  photoCount: photos.length,
-  orders,
-  brief,
-  musicMode: musicModeArg,
-});
-const music = sliceMusicAnalysis(sourceMusic, musicEdit);
+const musicEdit = extraMusicPaths.length
+  ? { mode: "playlist", sourceDuration: sourceMusic.duration, start: 0, end: sourceMusic.duration, duration: sourceMusic.duration }
+  : resolveMusicWindow({
+      music: sourceMusic,
+      photoCount: photos.length,
+      orders,
+      brief,
+      musicMode: musicModeArg,
+    });
+const music = extraMusicPaths.length ? sourceMusic : sliceMusicAnalysis(sourceMusic, musicEdit);
 if (musicEdit.mode === "highlight") {
   console.log(
     `[composeStoryboard] highlight: ${musicEdit.start}s–${musicEdit.end}s (${musicEdit.duration}s of ` +
@@ -171,6 +179,27 @@ const { scenes: composedScenes, fit } = composeStoryboard({
   montageEffect: notes.montageEffect,
 });
 
+/**
+ * What the signature template needs to know about THIS job. The director names a template
+ * and nothing else, so anything the template reads out of `params` has to be supplied here
+ * or it silently renders its component's hardcoded default — which is how the peak beat of
+ * a Vietnamese wedding ended up captioned "Our Story" in English, and how an effect called
+ * audio_reactive ended up reacting to an invented 120 BPM instead of the analysed track.
+ *
+ * Copy is emitted as recipe TOKENS, not resolved text: this file writes a recipe, and the
+ * brief that fills it in is read by applyStoryTemplate (see its `fill`). A template that
+ * needs nothing returns nothing, and the component's defaults stand.
+ */
+function signatureHybridParams(template, music) {
+  if (template === "kinetic_typography") return { title: "{{bride}} & {{groom}}", subtitle: "{{date}}" };
+  if (template === "audio_reactive") {
+    // analyzeMusic already estimated the tempo of the exact window this film is cut to.
+    const bpm = Number(music?.bpmEstimate);
+    return Number.isFinite(bpm) && bpm > 0 ? { bpm } : {};
+  }
+  return {};
+}
+
 // Clamped again here, same reason as the palettes above: this file has to be safe to run
 // against a hand-edited director_notes.json, not just one generateDirectorNotes wrote.
 const hybridTemplate = notes.signatureHybridScene && HYBRID_SIGNATURE_TEMPLATES.has(notes.signatureHybridScene)
@@ -181,7 +210,13 @@ if (notes.signatureHybridScene && !hybridTemplate) {
 }
 const scenes = applySignatureHybridScene(
   composedScenes,
-  hybridTemplate ? { template: hybridTemplate, renderer: HYBRID_RENDERER[hybridTemplate] } : {}
+  hybridTemplate
+    ? {
+        template: hybridTemplate,
+        renderer: HYBRID_RENDERER[hybridTemplate],
+        params: signatureHybridParams(hybridTemplate, music),
+      }
+    : {}
 );
 if (hybridTemplate) {
   const swapped = scenes.find((s) => s.template === hybridTemplate);
