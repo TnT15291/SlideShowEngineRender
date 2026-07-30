@@ -173,6 +173,9 @@ export function meaningfullyDiffers(resolvedScene, baseLayout, template, library
   const baseSlots = baseLayout.photoSlots || [];
   if (resolvedSlots.length !== baseSlots.length) return true;
 
+  // Slots pair by index, not by id. mergeSlots() rebuilds the array from the base layout in
+  // order and V3 rejects any look that changes the slot count, so index i is the same slot on
+  // both sides. A future primitive that reorders slots would make this compare the wrong pair.
   for (let index = 0; index < resolvedSlots.length; index++) {
     const resolved = resolvedSlots[index];
     const base = baseSlots[index];
@@ -263,40 +266,46 @@ export function geometryStats(recipes, library) {
     const reachableForRecipe = [];
     const meaningfulScenes = [];
 
-    const occurrenceOf = (scene, source, variantIndex) => {
+    const resolveOrThrow = (scene) => {
       const resolved = resolveScene(scene, { template, library });
       if (resolved.errors.length) {
         throw new Error(`${recipeId}/${scene.id}: ${resolved.errors.map((item) => item.detail).join("; ")}`);
       }
-      if (resolved.scene?.effect !== "layer_scene" || !resolved.scene.resolvedLayout) return null;
+      return resolved.scene;
+    };
+
+    // Takes the already-resolved scene rather than resolving again: the meaningful-geometry
+    // gate below needs the same object, and resolveScene() is the expensive call here.
+    const occurrenceOf = (scene, resolved, source, variantIndex) => {
+      if (resolved?.effect !== "layer_scene" || !resolved.resolvedLayout) return null;
       const suffix = source === "main"
         ? ""
         : source === "muteFallback"
           ? ".muteFallback"
           : `.repeatable.variants[${variantIndex}]`;
       return {
-        key: geometryKey(resolved.scene.resolvedLayout, canvas),
+        key: geometryKey(resolved.resolvedLayout, canvas),
         recipeId,
         sceneId: scene.id,
         source,
         ...(variantIndex == null ? {} : { variantIndex }),
         location: `${recipeId}/${scene.id}${suffix}`,
-        look: resolved.scene.look ?? null,
-        layout: resolved.scene.layout ?? null,
+        look: resolved.look ?? null,
+        layout: resolved.layout ?? null,
       };
     };
 
     for (const scene of template.scenes || []) {
-      const main = occurrenceOf(scene, "main");
+      const resolvedMain = resolveOrThrow(scene);
+      const main = occurrenceOf(scene, resolvedMain, "main");
       if (main) {
         authoredOccurrences.push(main);
         reachableOccurrences.push(main);
         authoredForRecipe.push(main);
         reachableForRecipe.push(main);
 
-        const resolved = resolveScene(scene, { template, library }).scene;
-        const baseLayout = (library.layouts || []).find((layout) => layout.id === resolved.layout);
-        if (baseLayout && meaningfullyDiffers(resolved, baseLayout, template, library, canvas)) {
+        const baseLayout = (library.layouts || []).find((layout) => layout.id === resolvedMain.layout);
+        if (baseLayout && meaningfullyDiffers(resolvedMain, baseLayout, template, library, canvas)) {
           meaningfulScenes.push(scene.id);
         }
       }
@@ -306,7 +315,7 @@ export function geometryStats(recipes, library) {
         delete fallback.muteFallback;
         if (scene.muteFallback.look) delete fallback.layout;
         else if (scene.muteFallback.layout) delete fallback.look;
-        const occurrence = occurrenceOf(fallback, "muteFallback");
+        const occurrence = occurrenceOf(fallback, resolveOrThrow(fallback), "muteFallback");
         if (occurrence) {
           reachableOccurrences.push(occurrence);
           reachableForRecipe.push(occurrence);
@@ -317,7 +326,7 @@ export function geometryStats(recipes, library) {
         const repeated = { ...scene, ...variant, repeatable: undefined };
         if (variant.look) delete repeated.layout;
         else if (variant.layout) delete repeated.look;
-        const occurrence = occurrenceOf(repeated, "repeatableVariant", index);
+        const occurrence = occurrenceOf(repeated, resolveOrThrow(repeated), "repeatableVariant", index);
         if (occurrence) {
           reachableOccurrences.push(occurrence);
           reachableForRecipe.push(occurrence);
