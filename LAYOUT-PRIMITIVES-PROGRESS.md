@@ -11,14 +11,15 @@
 | Trường | Giá trị |
 |---|---|
 | Trạng thái tổng | `IN_PROGRESS` |
-| Pha hiện tại | `PRE-0 — chốt baseline metric V2` |
+| Pha hiện tại | `Pha 1 — thêm 7 primitive active` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P0C.6` — toàn bộ gate Pha 0 đã xanh |
-| Bước tiếp theo | `PRE-0.6` — chốt baseline metric V2 trong tracker |
+| Bước hoàn thành gần nhất | `PRE-0.6` — baseline metric V2 đã chốt; **Pha 0 đóng hoàn toàn và đã commit** |
+| Bước tiếp theo | `P1.1` — thêm frame preset `circleMedallion` |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
-| Cập nhật lần cuối | `2026-07-30 19:29 +07:00 — P0C.6 DONE` |
+| Commit Pha 0 | `d5e8d0f` baseline snapshot → `b83d601` Pha 0 → `e43dad3` refactor |
+| Cập nhật lần cuối | `2026-07-30 19:40 +07:00 — PRE-0.6 DONE, Pha 0 đã commit` |
 
 ### Quy ước trạng thái
 
@@ -87,7 +88,7 @@
 | PRE-0.3 | DONE | Chạy `npm run check` trên baseline sạch | `CHECK_EXIT=0`; API 74/74, unit 340/340, integration 1/1, audit 0 vulnerability |
 | PRE-0.4 | DONE | Chọn một Premium job cố định | `projects/layout-primitives-premium-baseline`; config và fingerprint ghi bên dưới |
 | PRE-0.5 | DONE | Chạy Premium dry-run trước khi sửa library | `temp/premium-before.txt`; exit 0; SHA-256 `3549F96C...DBD883` |
-| PRE-0.6 | TODO | Ghi lại baseline metric V2 sau khi metric Pha 0 chạy được | Điền bảng ở mục 3 |
+| PRE-0.6 | DONE | Ghi lại baseline metric V2 sau khi metric Pha 0 chạy được | Bảng mục 3 đã điền đủ 8 dòng; đo lại độc lập 2026-07-30 19:34 trả về đúng 49/48/30/23/7 và meaningful 1/3/1 |
 
 #### Premium job cố định cho phép so sánh trước/sau
 
@@ -145,7 +146,7 @@
 |---|---|---|---|
 | P1.1 | TODO | Thêm frame preset `circleMedallion` | Radius 260 cho slot 520x520 |
 | P1.2 | TODO | Append 7 primitive vào cuối mảng `layouts` | Tổng 32 layout; không xáo thứ tự cũ |
-| P1.3 | TODO | Validate library bằng G1–G8 | G1–G4, G6–G8 sạch; G5 chỉ warning |
+| P1.3 | TODO | Validate library bằng G1–G8 | 0 error; G1–G3 và G6–G8 sạch; **không có offender G4 mới** (3 G4 cũ được grandfather, xem ghi chú dưới); G5 chỉ warning |
 | P1.4 | TODO | Chạy targeted tests | Tất cả xanh |
 | P1.5 | TODO | Nâng ratchet `catalog.distinct` | `>=56`; authored vẫn `>=48` |
 | P1.6 | TODO | Dựng timeline probe 7 scene | Mỗi primitive xuất hiện đúng một lần |
@@ -167,6 +168,26 @@ Không thuộc Pha 1:
 
 - `offset_quad_pinwheel`
 - `filmstrip_band`
+
+#### Ghi chú G4 grandfather cho `P1.3`
+
+Gate `P1.3` ban đầu ghi "G1–G4 sạch". Số đo thực trên library 25 layout cho thấy gate đó
+**không thể xanh như đã phát biểu**: validator đã chạy và báo 0 error nhưng có 20 warning,
+trong đó **3 warning là G4** trên layout có sẵn từ trước Pha 0:
+
+- `[caption] lies outside the 70px text safe margin` — 1 slot.
+- `[body] lies outside the 70px text safe margin` — 2 slot.
+
+Ba slot này không do Pha 0 tạo ra và việc dịch chúng vào lề sẽ đổi geometry, tức đụng ratchet
+`authored.distinct >= 48`. `P0C.5` đã chọn cho G4 severity `warning` thay vì `error`, nên hiện
+không có gì chặn chúng.
+
+Quyết định: grandfather đúng 3 offender này và siết `P1.3` thành "không có offender G4 **mới**".
+Bảy primitive Pha 1 phải sạch G4 tuyệt đối. Nếu số G4 vượt 3, gate `P1.3` fail.
+
+Không hạ G4 xuống warning vĩnh viễn và không sửa 3 slot cũ trong Pha 1: sửa lề an toàn của
+layout cũ là một thay đổi geometry riêng, phải đi kèm việc nâng lại ratchet, nên thuộc Pha 2
+hoặc một pha dọn dẹp riêng.
 
 ### Pha 2A — Adoption planner
 
@@ -284,8 +305,8 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 
 | Mốc | Commit | Test / metric | Artefact | Trạng thái |
 |---|---|---|---|---|
-| Baseline sạch | `82d59a5` + snapshot source/fixture tối thiểu chưa commit | `npm run check`: exit 0; API 74/74; unit 340/340; integration 1/1; audit 0 vulnerability | Worktree `D:\Claude\Projects\SlideshowRenderEngine-layout-primitives` | DONE |
-| Pha 0 metric/validator | — | P0A–P0C hoàn tất; validator 25/25, lint 24/24, gate test 26/26, full typecheck xanh | `scripts/lib/geometrySignature.mjs`; `scripts/lib/lookResolver.mjs`; `scripts/validateLayoutPrimitive.mjs`; targeted tests | DONE |
+| Baseline sạch | `d5e8d0f` (snapshot đã commit; parent `82d59a5`) | `npm run check`: exit 0; API 74/74; unit 340/340; integration 1/1; audit 0 vulnerability | Worktree `D:\Claude\Projects\SlideshowRenderEngine-layout-primitives` | DONE |
+| Pha 0 metric/validator | `b83d601`, refactor `e43dad3` | P0A–P0C hoàn tất; validator 25/25 (0 error, 20 warning), lint 24/24, targeted 53/53, `test:unit` 352/352, full typecheck xanh | `scripts/lib/geometrySignature.mjs`; `scripts/lib/lookResolver.mjs`; `scripts/validateLayoutPrimitive.mjs`; targeted tests | DONE |
 | Pha 1 primitives | — | — | — | TODO |
 | Pha 1 visual probe | — | — | `temp/probe-primitives.json` | TODO |
 | Pha 1 Premium comparison | — | Before: 38 scene, 82/82 ảnh, 188.83s, không card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; after chưa có | IN_PROGRESS |
@@ -300,6 +321,59 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-30 19:40 — PRE-0.6 và đóng Pha 0 vào Git
+
+- Session: Claude Code (session thứ hai, chạy song song với session Codex).
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Đánh giá độc lập `P0C.6` bằng cách tự chạy lại toàn bộ gate mục 5.
+  - Nhận `PRE-0.6` sau khi xác nhận session Codex đã dừng.
+  - Commit toàn bộ Pha 0; trước bước này repo có 119 file dirty và **không một commit nào**.
+  - Sửa hai điểm code đã nêu trong đánh giá.
+  - Siết lại gate `P1.3` theo số G4 đo được.
+- File đã thay đổi:
+  - `scripts/lib/geometrySignature.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`.
+  - `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=30000 test/layout-geometry.test.mjs test/library.test.mjs
+    test/template-recipes.test.mjs test/layout-primitive-validator.test.mjs test/look-resolver.test.mjs`.
+  - `npm run typecheck` và `npm run typecheck:scripts`.
+  - `npm run test:unit` (hai lần: trước và sau refactor).
+  - Harness in trực tiếp `geometryStats()` để đối chiếu số đo trước/sau refactor.
+  - `git add`/`git reset`/`git commit` cho ba commit.
+- Kết quả:
+  - `P0C.6` xác minh độc lập: validator 25/25 với 0 error, lint 24/24, targeted 53/53,
+    `npm run typecheck` exit 0, `test:unit` 352/352.
+  - `PRE-0.6`: bảng mục 3 đã đủ 8 dòng; đo lại độc lập trả về đúng `catalog` 49/30/23 trên 258
+    occurrence, `authored` 48/30/23 trên 233, `reachable` 49/30/23 với `over12Count` 7 trên 396,
+    meaningful `cinematic-film-01:1`, `jmii-silk-botanical-01:3`, `white-weddings-full-01:1`.
+  - Ba commit trên `agent/layout-primitives`:
+    - `d5e8d0f` — snapshot source/fixture mà `PRE-0.3` đã import, tách riêng để ratchet có nguồn
+      tái lập được. 110 file. `layouts/library.json` nằm ở commit này vì 24 recipe cần 25 layout
+      của nó mới resolve được; chỉ dòng `meta.coordinateNote` thuộc `P0C.3`.
+    - `b83d601` — toàn bộ Pha 0. 9 file.
+    - `e43dad3` — refactor `geometryStats()`, bảo toàn hành vi.
+  - Refactor: `geometryStats()` từng resolve mỗi main scene hai lần; nay truyền scene đã resolve
+    vào `occurrenceOf()`, bỏ 233 trong 629 lời gọi `resolveScene()` mỗi lần chạy (37%).
+  - Ghi rõ invariant ghép slot theo index trong `meaningfullyDiffers()`.
+  - Gate `P1.3` siết lại: library hiện có **3 warning G4** trên layout cũ, nên "G1–G4 sạch" không
+    thể xanh. Đã grandfather đúng 3 offender đó và đổi gate thành "không có offender G4 mới".
+- Metric trước/sau: Không đổi. Toàn bộ số đo V2 giống hệt trước và sau refactor.
+- Commit: `d5e8d0f`, `b83d601`, `e43dad3`.
+- Quyết định hoặc sai lệch so với plan:
+  - Tách commit baseline snapshot khỏi commit Pha 0 để phần Pha 0 review/cherry-pick được độc lập
+    và để ratchet có nguồn tái lập trong lịch sử Git.
+  - `d5e8d0f` **chưa được verify khi đứng một mình**: checkout một cây trung gian sẽ clobber
+    session Codex đang giữ worktree này. Chỉ cây hợp nhất được verify (352/352).
+  - Không sửa 3 slot G4 cũ trong Pha 1; đó là thay đổi geometry riêng, phải kèm nâng ratchet.
+  - Không memoize `createTemplateTheme()` trong `slotShapeKey()`: `geometryStats()` chạy 21ms cho
+    233 scene, chưa có vấn đề thực để tối ưu.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có. Pha 0 đóng.
+- Bước tiếp theo: `P1.1` — thêm frame preset `circleMedallion`.
 
 ### 2026-07-30 19:29 — P0C.6
 
