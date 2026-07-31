@@ -13,8 +13,8 @@
 | Trạng thái tổng | `MERGED_VERIFIED` |
 | Pha hiện tại | `Xong Pha 0–2D; đã merge và kiểm chứng cây hợp nhất` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | Merge `294fcda` + gate sau merge: `npm run check` exit 0 |
-| Bước tiếp theo | Không còn bước bắt buộc trong Pha 0–2D; có thể dọn worktree `SlideshowRenderEngine-layout-primitives` sau khi chốt các thay đổi bàn giao chưa commit |
+| Bước hoàn thành gần nhất | Dọn worktree phụ sau merge; chỉ còn worktree chính tại `c899f66` |
+| Bước tiếp theo | Không còn bước bắt buộc trong kế hoạch Pha 0–2D |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,7 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — merged tại 294fcda; gate sau merge xanh` |
+| Cập nhật lần cuối | `2026-07-31 — merge, gate và dọn worktree phụ hoàn tất` |
 
 ### Quy ước trạng thái
 
@@ -429,6 +429,21 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 20:49 — Dọn worktree phụ
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi: Gỡ worktree `D:\Claude\Projects\SlideshowRenderEngine-layout-primitives`; không xóa branch.
+- Kết quả:
+  - Tại thời điểm kiểm tra, đường dẫn và đăng ký worktree phụ đã được một phiên khác gỡ xong.
+  - `git worktree prune --dry-run --verbose` không tìm thấy metadata rác.
+  - `git worktree list` chỉ còn worktree chính tại `c899f66`.
+  - Branch `agent/layout-primitives` vẫn tồn tại tại `fd8e4cb` và là ancestor của `HEAD`.
+- File đã thay đổi: `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: Không còn bước bắt buộc trong kế hoạch Pha 0–2D.
 
 ### 2026-07-31 20:40 — Merge và gate sau merge
 
