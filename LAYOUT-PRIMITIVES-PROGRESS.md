@@ -19,6 +19,8 @@
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
 | Commit Pha 0 | `d5e8d0f` baseline snapshot → `b83d601` Pha 0 → `e43dad3` refactor |
+| Commit Pha 1 | `5871122` |
+| Commit Pha 2A | `4ac137c` |
 | Cập nhật lần cuối | `2026-07-31 — P2A.R2 DONE` |
 
 ### Quy ước trạng thái
@@ -368,10 +370,10 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 |---|---|---|---|---|
 | Baseline sạch | `d5e8d0f` (snapshot đã commit; parent `82d59a5`) | `npm run check`: exit 0; API 74/74; unit 340/340; integration 1/1; audit 0 vulnerability | Worktree `D:\Claude\Projects\SlideshowRenderEngine-layout-primitives` | DONE |
 | Pha 0 metric/validator | `b83d601`, refactor `e43dad3` | P0A–P0C hoàn tất; validator 25/25 (0 error, 20 warning), lint 24/24, targeted 53/53, `test:unit` 352/352, full typecheck xanh | `scripts/lib/geometrySignature.mjs`; `scripts/lib/lookResolver.mjs`; `scripts/validateLayoutPrimitive.mjs`; targeted tests | DONE |
-| Pha 1 primitives | — | P1.1–P1.9 hoàn tất: library 32 layout, catalog V2 56, targeted 28/28, probe render/review và Premium comparison đều đạt | `layouts/library.json`; targeted tests; probe/Premium artefact | DONE |
-| Pha 1 visual probe | — | Render mới 7/7 scene; H.264 1920x1080, 30 fps, 36,466667 giây; review đủ 7 layout và 28 frame mở đầu/ổn định/xfade đạt | `temp/probe-primitives.json` SHA-256 `90D07EE0...F8DA2E8`; `temp/probe-primitives.mp4` SHA-256 `44D7325E...1721ED9` | DONE |
-| Pha 1 Premium comparison | — | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
-| Pha 2 adoption planner | — | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
+| Pha 1 primitives | `5871122` | P1.1–P1.9 hoàn tất: library 32 layout, catalog V2 56, targeted 28/28, probe render/review và Premium comparison đều đạt | `layouts/library.json`; targeted tests; probe/Premium artefact | DONE |
+| Pha 1 visual probe | `5871122` | Render mới 7/7 scene; H.264 1920x1080, 30 fps, 36,466667 giây; review đủ 7 layout và 28 frame mở đầu/ổn định/xfade đạt | `temp/probe-primitives.json` SHA-256 `90D07EE0...F8DA2E8`; `temp/probe-primitives.mp4` SHA-256 `44D7325E...1721ED9` | DONE |
+| Pha 1 Premium comparison | `5871122` | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
+| Pha 2 adoption planner | `4ac137c` | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
 | Pha 2 pilot | — | — | — | TODO |
 | Pha 2 batch B1 | — | — | — | TODO |
 | Pha 2 batch B2 | — | — | — | TODO |
@@ -436,7 +438,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
   - Mô phỏng toàn map: `maxShare=12`, `over12=0`, 253 composition / 0 dùng chung, meaningful ≥3
     (ww-full=1). Host: circle `11`, overlap `8`, portrait `22`, golden `8`, diagonal `11`, inset `7`,
     horizon `2` — diagonal giảm 12→11 vì `four-seasons/s03` chuyển sang circle.
-- Commit: xem mục 6.
+- Commit: `5871122` (sửa lề Pha 1) và `4ac137c` (planner + map + test + docs).
 - Quyết định hoặc sai lệch so với plan:
   - Không khai `accepts` cho 26 lần bỏ `frame` trên primitive sở hữu frame: đó là chính sách P1.7R
     đặt tên trong code, không phải ngoại lệ từng dòng.
