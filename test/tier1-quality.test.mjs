@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { textSafeInsets } from "../scripts/lib/rules/thresholds.mjs";
 import { assignPhotos } from "../scripts/lib/photoAssignment.mjs";
 import { applyStoryArc, deriveRoleScores, snapScenesToPhrases } from "../scripts/lib/tier1Editorial.mjs";
 import { createTransitionGrammar } from "../scripts/lib/transitionGrammar.mjs";
@@ -249,6 +250,44 @@ test("feedback ranking rewards approval and penalizes revisions without exposing
   assert.equal(ranking[0].recipeId, "warm"); assert.ok(ranking[0].adjustedScore > 0); assert.ok(ranking.at(-1).adjustedScore < 0);
 });
 
+// analyzePhotos substitutes the bounding box of every skin-coloured pixel when the detector
+// finds no face ("skin_estimate_fallback", confidence 0.35). On a warm wide shot that box spans
+// the frame, and containment against it is unsatisfiable: any cover crop "cuts" it. Enforcing
+// it flipped four recipes to failing on real wedding photos purely on which photo the solver
+// seated in a cover slot. The axis that carries no position is skipped; a real box is not.
+test("a face box spanning an axis constrains only the axis that still locates something", (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-degenerate-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const run = (faces, label) => {
+    const timeline = path.join(dir, `${label}.json`);
+    const out = path.join(dir, `${label}.qa.json`);
+    const photos = path.join(dir, `${label}.photos.json`);
+    fs.writeFileSync(photos, JSON.stringify({ photos: [{ file: "p.jpg", w: 5760, h: 3840, faces }] }));
+    fs.writeFileSync(timeline, JSON.stringify({
+      project: { width: 1920, height: 1080, fps: 30, quality: "draft" },
+      output: { path: path.join(dir, "missing.mp4") },
+      slides: [{ id: "a", duration: 5, effect: "layer_scene", transition: { type: "none", duration: 0 },
+        captions: [], layers: [{ type: "image", path: "p.jpg", x: 0, y: 0, width: 620, height: 500,
+          fit: "cover", focusX: 0.5, focusY: 0.5 }] }],
+    }));
+    const result = spawnSync(process.execPath,
+      ["scripts/qaProxy.mjs", timeline, "--photos", photos, "--out", out], { cwd: root, encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    return JSON.parse(fs.readFileSync(out, "utf8")).checks.crop.layers[0].flags;
+  };
+
+  // Full-width skin blob, the real shape of the six that broke: horizontal crop cannot contain
+  // it, but the box says nothing about where across the frame anyone stands.
+  assert.equal(run([{ box: { x: 0, y: 0.5, width: 1, height: 0.375 }, confidence: 0.35 }], "wide")
+    .includes("face_cropped"), false);
+  // The whole frame — no axis locates anything.
+  assert.equal(run([{ box: { x: 0, y: 0, width: 1, height: 1 }, confidence: 0.35 }], "everything")
+    .includes("face_cropped"), false);
+  // A real detection near the edge still fails: this is the safety the check exists for.
+  assert.equal(run([{ box: { x: 0.86, y: 0.4, width: 0.12, height: 0.2 }, confidence: 0.91 }], "real")
+    .includes("face_cropped"), true);
+});
+
 test("deterministic QA reports overflow, adjacent reuse and unsafe crop", (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tier1-qa-"));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -454,7 +493,9 @@ test("story arc is explicit and scene boundaries snap to phrases", () => {
 // the slots were pulled in). This locks the geometry the frame-hash regression suite cannot see.
 test("every library text slot sits inside the 5% title-safe margin", () => {
   const lib = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
-  const W = 1920, H = 1080, mx = W * 0.05, my = H * 0.05;
+  const W = 1920, H = 1080;
+  // Same source as the runtime gate, the validator and the look resolver: one rule, not four.
+  const { x: mx, y: my } = textSafeInsets({ width: W, height: H }, lib.meta?.textSafeMargin);
   const offenders = [];
   for (const layout of lib.layouts) for (const t of layout.textSlots || []) {
     if (t.x < mx || t.y < my || t.x + t.width > W - mx || t.y + t.height > H - my) offenders.push(`${layout.id}.${t.id}`);

@@ -34,7 +34,7 @@ import { readPlaylistAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusi
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
 import { inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
 import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
-  HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC } from "./lib/rules/thresholds.mjs";
+  HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC, DEGENERATE_FACE_AXIS } from "./lib/rules/thresholds.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -239,10 +239,27 @@ for (const slide of tl.slides) {
       const face = faces[0];
       if (faces.length) {
         const margin = FACE_CONTAIN_MARGIN;
-        const contained = faces.every((box) => box.x >= visible.x - margin && box.y >= visible.y - margin &&
-          box.x + box.width <= visible.x + visible.width + margin &&
-          box.y + box.height <= visible.y + visible.height + margin);
+        // A box that spans an entire axis says nothing about where to crop along it, so it
+        // cannot be a containment constraint there. These come from analyzePhotos' skin
+        // fallback: when the detector finds no face it substitutes the bounding box of every
+        // skin-coloured pixel, which on a warm-lit wide shot is the whole frame. Enforcing it
+        // failed every cover crop on such a photo no matter what the layout did — 4 recipes
+        // flipped to failing purely on which photo the solver happened to seat there. Real
+        // detections (confidence 0.8-0.9 here) are unaffected; only the axis that carries no
+        // position is skipped.
+        const informative = (start, size) => size < DEGENERATE_FACE_AXIS
+          && start >= 0 && start + size <= 1;
+        const contained = faces.every((box) => (
+          (!informative(box.x, box.width)
+            || (box.x >= visible.x - margin
+              && box.x + box.width <= visible.x + visible.width + margin))
+          && (!informative(box.y, box.height)
+            || (box.y >= visible.y - margin
+              && box.y + box.height <= visible.y + visible.height + margin))));
         if (!contained) flags.push("face_cropped");
+        if (!faces.some((box) => informative(box.x, box.width) || informative(box.y, box.height))) {
+          crop.unscored++;
+        }
       } else crop.unscored++;
     } else crop.unscored++;
     const row = { id: slide.id, layer: index, path: layer.path, visible, faceBoxEstimate: photo?.faceBoxEstimate || null, flags };
