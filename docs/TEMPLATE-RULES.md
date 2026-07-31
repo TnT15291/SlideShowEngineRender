@@ -100,6 +100,35 @@ và luật `look_overrides` sẽ cảnh báo nếu chúng resolve ra cùng một
   `journey_duo.accent` 380×520, `polaroid_feature.feature` 900×870,
   `quad_grid_caption.wide` 520×330, `duo_tinted_spread` 2×800×520.
 
+### Bảy primitive lệch lưới (2026-07-31)
+
+Thư viện có thêm bảy layout cố ý phá lưới: `overlap_stack_duo`, `inset_card_hero`,
+`circle_trio_stagger`, `diagonal_staircase_trio`, `golden_column_pair`,
+`stacked_horizon_trio`, `offset_portrait_hero`. Mô tả từng cái ở
+[docs/generation-guide.md](generation-guide.md) §5. Ba luật khi dùng chúng:
+
+- **Không đặt `frame` toàn cục lên look mặc primitive tự sở hữu frame.**
+  `circle_trio_stagger`, `overlap_stack_duo`, `inset_card_hero` gắn frame ngay trên photo
+  slot. Precedence `def.frame → resolvedFrame → slot.frame` khiến frame ở cấp look **xoá
+  im lặng** medallion tròn hoặc mép card — không lỗi, không cảnh báo, chỉ mất hình.
+- **Resize slot tròn thì phải override luôn `frame`** với radius bằng nửa cạnh mới. Slot
+  600px đeo `circleMedallion` (radius 260) ra hình bo góc chứ không phải hình tròn. Cách
+  sạch: khai preset tròn riêng trong `layoutPresets` của recipe.
+- **`stacked_horizon_trio` chỉ dùng khi mọi request là `orient: "landscape"`.** Ba dải
+  ngang cắt xuyên mặt nếu nhận ảnh dọc. Giữ aspect từng dải ≤4:1 và coverage ≥50%.
+
+Hai primitive `offset_quad_pinwheel` và `filmstrip_band` có trong thư viện nhưng **chưa
+được dùng**: chúng đưa photo demand lên 4 và 5, tức đổi ngân sách của solver.
+
+### Trùng hình học không hiện ra ở `visualSignature`
+
+`compositionUniquenessAudit` (trong `scripts/adoptNewPrimitives.mjs`) tính cả `frame` và
+`photoTreatment`, nên **hai recipe vẽ đúng cùng một bộ khung hình vẫn qua được nó** miễn là
+khác lớp áo. Thước đo hình học thuần là `authored.shared` trong
+`scripts/lib/geometrySignature.mjs`, và `test/layout-geometry.test.mjs` khoá nó ở `<=30`.
+Khi cho hai recipe cùng dùng một layout, hãy cho mỗi recipe một `layoutOverrides` **riêng** —
+override giống hệt nhau nghĩa là cùng một hình.
+
 ## Khi thêm template mới
 
 1. Viết template như cũ (xem `story-templates/warm-film-01.json` làm mẫu đầy đủ:

@@ -13,8 +13,8 @@
 | Trạng thái tổng | `IN_PROGRESS` |
 | Pha hiện tại | `Pha 2D — nghiệm thu và tài liệu` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2C batch B5` — **rollout hoàn tất**: 70/70 adoption đã ghi, 0 group nào còn trên trần 12 |
-| Bước tiếp theo | `P2D` — nghiệm thu cuối: P2D.4 `preview:tier1` trên 2 job thật, P2D.5/6 cập nhật docs, P2D.7 `docs:check`, P2D.8 `npm run check` |
+| Bước hoàn thành gần nhất | `P2D` — nghiệm thu cuối: 8/8 bước xanh; `npm run check` exit 0 |
+| Bước tiếp theo | Merge `agent/layout-primitives` về nhánh đích. **Chưa làm được ngay**: cây chính có 179 file chưa commit của phiên song song — xem nhật ký P2D |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,7 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — P2C B5 DONE, rollout hoàn tất` |
+| Cập nhật lần cuối | `2026-07-31 — P2D DONE, chờ merge` |
 
 ### Quy ước trạng thái
 
@@ -355,14 +355,14 @@ Ngoại lệ:
 
 | ID | Trạng thái | Công việc | Gate / bằng chứng |
 |---|---|---|---|
-| P2D.1 | TODO | Chạy nghiệm thu metric cuối | `maxShare <=12`, `over12Count=0` |
-| P2D.2 | TODO | Chạy lint toàn bộ recipe | 24/24 clean |
-| P2D.3 | TODO | Chạy targeted geometry/layout/template tests | Tất cả xanh |
-| P2D.4 | TODO | Chạy `npm run preview:tier1` trên ít nhất 2 job thật | Không tụt về Lite |
-| P2D.5 | TODO | Cập nhật `docs/generation-guide.md` | Mô tả 7 primitive active |
-| P2D.6 | TODO | Cập nhật `docs/TEMPLATE-RULES.md` nếu có luật mới | Docs phản ánh validator mới |
-| P2D.7 | TODO | Chạy `npm run docs:check` | Xanh |
-| P2D.8 | TODO | Chạy `npm run check` trên worktree sạch | Gate merge cuối phải xanh |
+| P2D.1 | DONE | Chạy nghiệm thu metric cuối | `maxShare=12`, `over12Count=0`; catalog `125`, authored `117`, shared `30` |
+| P2D.2 | DONE | Chạy lint toàn bộ recipe | `24/24` clean, 0 failing |
+| P2D.3 | DONE | Chạy targeted geometry/layout/template tests | `50/50` pass; validator `32/32` |
+| P2D.4 | DONE | Chạy `npm run preview:tier1` trên ít nhất 2 job thật | 2 job; job A `20/24` recipe pass, 4 fail **giống hệt trước migration**; shot list giải được, không tụt Lite. Chi tiết + 2 phát hiện phụ ở nhật ký |
+| P2D.5 | DONE | Cập nhật `docs/generation-guide.md` | Thêm §5 bảng 7 primitive + luật frame nội tại + tiền đề landscape của horizon |
+| P2D.6 | DONE | Cập nhật `docs/TEMPLATE-RULES.md` nếu có luật mới | Thêm 3 luật dùng primitive + ghi chú `authored.shared` là thước đo hình học thuần |
+| P2D.7 | DONE | Chạy `npm run docs:check` | Passed, 13 file Markdown |
+| P2D.8 | DONE | Chạy `npm run check` trên worktree sạch | **exit 0**: typecheck, build, docs:check, test:api, `test:unit 376/376`, `test:integration 1/1`, audit 0 vulnerability |
 
 ### Pha 3 — Radius bốn góc và arch thật, tuỳ chọn
 
@@ -425,10 +425,66 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 batch B3 | `0b42562` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 89 -> 101`, `authored 81 -> 93`, `shared 30 -> 30`, `maxShare 15 -> 13`, `over12 2 -> 1`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `24 pending, 46 already applied`; content contract `24 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{garden-diary-01,heritage-ceremony-01,korean-soft-01,letters-to-forever-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B4 | `2294cac` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B5 | `9d64e17` | 12 adoption / 4 recipe; **rollout hoàn tất**. Đo thật sau ghi: `catalog 113 -> 125`, `authored 105 -> 117`, `shared 30 -> 30`, `maxShare 12`, `over12 0`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `0 pending, 70 already applied` và `Widespread reachable geometry: 0 group(s)`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{studio-white-prewedding-01,three-chapters-biography-01,warm-film-01,white-weddings-editorial-01}.json`; `test/layout-geometry.test.mjs` | DONE |
-| Nghiệm thu cuối | — | — | — | TODO |
+| Nghiệm thu cuối | `P2D_SHA` | P2D.1–P2D.8 xanh. `npm run check` exit 0. `preview:tier1` 2 job; job A `20/24` pass và 4 fail pre-existing (`duplicate_caption` trên repeat variant), xác nhận bằng cách chạy lại đúng 4 recipe đó ở bản pre-rollout — fail y hệt | `docs/generation-guide.md`; `docs/TEMPLATE-RULES.md`; `temp/p2d/` | DONE |
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2D nghiệm thu cuối
+
+- Session: Claude, theo yêu cầu "làm B5 + 2D sau đó merge".
+- Trạng thái nhận việc: `IN_PROGRESS`; cây sạch tại `da3d957`.
+- Kết quả 8 bước: tất cả `DONE`. `npm run check` **exit 0** (typecheck, build, docs:check,
+  test:api, `test:unit 376/376`, `test:integration 1/1`, audit 0 vulnerability).
+
+#### P2D.4 — chạy thật, và ba điều nó lộ ra
+
+Chạy `preview:tier1 --dry-run` (giữ nguyên chooseTier1Direction → applyStoryTemplate →
+pre-flight QA strict, chỉ bỏ encode) trên **hai job**:
+
+- **Job A** — `projects/layout-primitives-premium-baseline`, 82 ảnh, 55 landscape / 27 portrait.
+- **Job B** — `projects/p2d-job-b`, 45 ảnh (30 landscape / 15 portrait), ngân sách hẹp hơn hẳn,
+  dựng bằng cách lấy tập con của job A rồi chạy lại `analyzeProject`.
+
+Kết quả job A, chạy từng recipe một: **20/24 pass, 4 fail**
+(`family-roots-01`, `heritage-ceremony-01`, `luminous-editorial-motion-01`,
+`three-chapters-biography-01`). Chạy lại đúng bốn recipe đó ở **bản pre-rollout** (trích từ
+`6538338`): **fail y hệt**. Nguyên nhân là `caption_integrity: duplicate_caption` trên repeat
+variant — lỗi copy có sẵn, không dính hình học. Shot list giải được ở mọi ca; không ca nào tụt Lite.
+
+Job B: recipe nào cần hơn 44 ảnh thì báo `over-drawn by 1` — ngân sách 45 ảnh đơn giản là hẹp.
+Bản pre-rollout fail cùng scene, chỉ khác tên slot (`s84_photo_duo:left` so với `:back`).
+
+**Phát hiện 1 — repo thiếu 6 file font, không nằm trong commit nào.** `layouts/library.json`
+(đã commit) tham chiếu **18** font nhưng git chỉ track **12**. Sáu file
+(`YesevaOne`, `AlexBrush`, `CormorantGaramond`, `JosefinSans`, `Merienda`, `Montserrat`) chỉ tồn
+tại dưới dạng **untracked** trong cây chính, do đợt font-trends 2026-07-26 tải về mà không commit.
+Hệ quả: ai clone repo cũng sẽ thấy **22/24 recipe fail** pre-flight QA với
+`font not found`. Đây là lỗi có sẵn, không do Pha 2 — đo được vì bản pre-rollout fail y hệt
+(`2 pass / 22 fail`, đúng cùng danh sách). Đã copy 6 file vào worktree để chạy được gate; **không
+commit** vì chúng thuộc phần việc chưa commit của phiên song song. **Cần quyết định riêng: commit 6
+file font này, nếu không repo vẫn hỏng với người clone mới.**
+
+**Phát hiện 2 — số liệu sweep chạy song song không tin được.** Lần quét đầu chạy hai sweep
+chồng lên cùng một thư mục job (`analysis/qa/`, `timeline/previews/`, `output/previews/`) vì một
+sweep foreground bị timeout nhưng tiến trình con vẫn sống. Nó cho `14 pass / 10 fail`, tức "Pha 2
+làm hỏng 6 recipe". Chạy lại **từng recipe một khi máy rảnh**: cả 6 đều **PASS**. Bài học cho
+phiên sau: `preview:tier1` ghi vào thư mục job dùng chung, nên **không chạy hai lượt song song
+trên cùng một job**, và đừng tin số của một sweep có tranh chấp.
+
+- File đã thay đổi: `docs/generation-guide.md`, `docs/TEMPLATE-RULES.md`,
+  `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy: `npm run preview:tier1` (2 job × nhiều recipe, cả bản hiện tại lẫn pre-rollout),
+  `npm run docs:check`, `npm run check`, `node scripts/lintStoryTemplates.mjs`,
+  `node scripts/validateLayoutPrimitive.mjs`, targeted tests.
+- Commit: `P2D_SHA`.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại cho bước merge: cây chính (`agent/refactor-engine-and-add-momo`) đang có **179
+  file chưa commit** của phiên song song, trong đó có `layouts/library.json`, `scripts/` và
+  `docs/` — đúng những file nhánh này sửa. `git merge` sẽ bị git từ chối để khỏi đè mất phần việc
+  đó. Merge phải do người quyết định: commit/stash phần việc kia trước, hoặc merge vào một nhánh
+  khác. **Không tự merge đè.**
+- Bước tiếp theo: Merge `agent/layout-primitives` (`P2D_SHA`) về nhánh đích sau khi cây chính sạch.
 
 ### 2026-07-31 — P2C batch B5 (rollout hoàn tất)
 
