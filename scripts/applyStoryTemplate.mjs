@@ -37,6 +37,7 @@ import {
 import { createLayerSceneBuilder } from "./lib/layerSceneBuilder.mjs";
 import { resolveTemplate, gradeOf } from "./lib/lookResolver.mjs";
 import { planTemplateMusic } from "./lib/templateMusicPlan.mjs";
+import { combineMusicAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusic.mjs";
 import { planTemplateShotList } from "./lib/templateShotList.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_MAX, EASING_EFFECTS, HYBRID_ASSET_MIN,
@@ -100,20 +101,39 @@ for (const warning of looks.warnings) {
 template.scenes = looks.scenes;
 
 const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "utf8"));
-const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
-const sourceMusic = JSON.parse(fs.readFileSync(path.resolve(root, `${analysisDir}/music/${musicName}.json`), "utf8"));
-const extraMusicDurations = extraMusicPaths.map((track) => {
+// EVERY track the customer chose is read, not just the first. A playlist must be timed
+// to the COMBINED analysis rather than to track 1 with a bigger duration number:
+// retimeSlidesToMusic snaps scene boundaries to music.phrases/downbeats/sections
+// (lib/musicRetime.mjs) and track 1's phrases stop at its own end, so on a two-song film
+// every boundary past the first song had nothing to snap to. combineMusicAnalyses shifts
+// those rows onto the playlist clock and subtracts the acrossfade the engine puts between
+// tracks — the same arithmetic assessFit.mjs and runProject's playlist gate already use,
+// so the build now agrees with the plan phase about how long the music is.
+const musicTracks = [musicPath, ...extraMusicPaths];
+const trackAnalyses = musicTracks.map((track) => {
   const name = path.basename(track).replace(/\.[^.]+$/, "");
-  const analysisPath = path.resolve(root, `${analysisDir}/music/${name}.json`);
-  return fs.existsSync(analysisPath)
-    ? Number(JSON.parse(fs.readFileSync(analysisPath, "utf8")).duration) || 0
-    : 0;
+  const analysisRel = `${analysisDir}/music/${name}.json`;
+  const analysisAbs = path.resolve(root, analysisRel);
+  // A missing analysis used to count as 0 seconds of music: the extra track vanished
+  // from the film's length silently. It is an unanalyzed input, so say so.
+  if (!fs.existsSync(analysisAbs)) {
+    throw new Error(`music analysis not found: ${analysisRel}. ` +
+      `Run: node scripts/analyzeMusic.mjs "${track}" --out "${analysisRel}"`);
+  }
+  const analysis = JSON.parse(fs.readFileSync(analysisAbs, "utf8"));
+  const contract = validateMusicAnalysis(analysis);
+  if (!contract.ok) {
+    throw new Error(`music analysis is stale or incomplete for "${track}" (${contract.missing.join(", ")}). ` +
+      `Re-run: node scripts/analyzeMusic.mjs "${track}" --out "${analysisRel}"`);
+  }
+  return analysis;
 });
-const musicContract = validateMusicAnalysis(sourceMusic);
-if (!musicContract.ok) {
-  throw new Error(`music analysis is stale or incomplete (${musicContract.missing.join(", ")}). ` +
-    `Re-run: node scripts/analyzeMusic.mjs "${musicPath}" --out "${analysisDir}/music/${musicName}.json"`);
-}
+// One number for both the scene timing above and the timeline's audio.crossfade below —
+// they described the same joint and were free to disagree.
+const playlistCrossfade = Math.max(PLAYLIST_CROSSFADE_SEC, template.defaults.audio?.crossfade || 0);
+const sourceMusic = trackAnalyses.length > 1
+  ? combineMusicAnalyses(trackAnalyses, playlistCrossfade)
+  : trackAnalyses[0];
 const videoOut = arg("--output", `output/${template.id}.mp4`);
 const projectName = arg("--name", template.id);
 const qualityOverride = arg("--quality", "");
@@ -144,23 +164,55 @@ if (orders.length) {
     photoDemand: (scene) => scenePhotoCount(scene, { library, direction }),
   })) appliedIds.add(id);
 }
-// Optional AI-written copy (scripts/writeRecipeCopy.mjs). Absent → the recipe's
-// own words, byte for byte, so the template tier stays a zero-AI tier.
+// Optional AI-written copy (scripts/writeRecipeCopy.mjs). Vietnamese projects may
+// use the recipe's own words byte for byte; English projects require rewritten copy.
 const copyPath = arg("--copy", "");
-const copyMap = copyPath && fs.existsSync(path.resolve(root, copyPath))
-  ? JSON.parse(fs.readFileSync(path.resolve(root, copyPath), "utf8")).scenes ?? {}
-  : {};
+const copyDoc = copyPath && fs.existsSync(path.resolve(root, copyPath))
+  ? JSON.parse(fs.readFileSync(path.resolve(root, copyPath), "utf8"))
+  : null;
+if (language === "en" && !copyDoc) {
+  throw new Error("English template captions require --copy output from scripts/writeRecipeCopy.mjs");
+}
+if (copyDoc?.language && copyDoc.language !== language) {
+  throw new Error(`Caption copy language "${copyDoc.language}" does not match timeline language "${language}"`);
+}
+const copyMap = copyDoc?.scenes ?? {};
 
 const outPath = arg("--out", `timeline/${template.id}.json`);
 
+// TOKEN FALLBACKS ARE COPY, so they follow --language like every other word on screen.
+// They were all English on a pipeline that defaults to vi and only rewrites copy for "en"
+// (lib/recipeCopyPolicy.mjs), so a brief with no date put "Our Wedding Day" on the opening
+// AND closing card of an otherwise Vietnamese film — the two frames a customer looks at
+// hardest — and QA's caption_language check flagged the film for it.
+const TOKEN_FALLBACKS = {
+  vi: {
+    bride: "Cô dâu",
+    groom: "Chú rể",
+    date: "Ngày cưới của chúng mình",
+    location: "Bên nhau",
+    thankYouLine: "Cảm ơn vì đã là một phần trong câu chuyện của chúng mình",
+  },
+  en: {
+    bride: "Bride",
+    groom: "Groom",
+    date: "Our Wedding Day",
+    location: "Together",
+    thankYouLine: "Thank you for being part of our story",
+  },
+};
+// An unrecognised language gets English rather than Vietnamese: it is the neutral default
+// the recipes' own metadata is written against, not a third wrong language.
+const tokenFallback = TOKEN_FALLBACKS[language] ?? TOKEN_FALLBACKS.en;
+
 const tokens = {
-  bride: brief.bride || "Bride",
-  groom: brief.groom || "Groom",
-  date: brief.date || "Our Wedding Day",
-  location: brief.location || "Together",
+  bride: brief.bride || tokenFallback.bride,
+  groom: brief.groom || tokenFallback.groom,
+  date: brief.date || tokenFallback.date,
+  location: brief.location || tokenFallback.location,
   meetingPlace: brief.meetingPlace || "",
   yearsTogether: brief.yearsTogether || "",
-  thankYouLine: brief.thankYouLine || "Thank you for being part of our story",
+  thankYouLine: brief.thankYouLine || tokenFallback.thankYouLine,
 };
 
 function fill(text = "") {
@@ -252,7 +304,6 @@ const {
   photoCount: photos.length,
   acceptMisfit,
   extraMusicPaths,
-  extraMusicDurations,
   musicPath,
 });
 if (musicModeOrderId) appliedIds.add(musicModeOrderId);
@@ -388,10 +439,34 @@ const rect = (x, y, width, height, color, opacity, extra = {}) =>
   ({ type: "rect", x, y, width, height, color, opacity, ...extra });
 const txt = (text, font, x, y, width, height, size, color, align = "center", extra = {}) =>
   ({ type: "text", text, font, x, y, width, height, size, color, align, wrap: true, ...extra });
-// font is always the theme's VN-safe body face: captionPattern text is full
-// Vietnamese prose, never short romanized copy, so a script/display face here
-// would risk missing diacritic glyphs. Without this, captions fell through to
-// compileTimeline's DEFAULT_FONT (plain arial.ttf) since this object never set one.
+// Captions used to be pinned to the theme's `body` face on the theory that only
+// BeVietnamPro and PlayfairDisplay carry Vietnamese marks. A cmap scan of every
+// file in fonts/ says otherwise: all 18 cover the full precomposed VN set, and
+// the recipes are NFC, so nothing here was ever at risk of tofu. The cost of that
+// wrong premise was the whole product — a caption is display copy ("LỄ CƯỚI ·
+// Nhiên & Hoàng"), and every recipe was setting it in a UI sans that reads as
+// plain Arial next to the layer_scene headings beside it. Captions now take the
+// theme's `heading` face, which is what a recipe already chose as its voice.
+//
+// Size has to be solved rather than left to the role divisor, because captions
+// never wrap and never shrink (src/captionFilter.ts centres on x=(w-text_w)/2, so
+// an overlong line bleeds off BOTH edges). At the role's natural 49px the longest
+// authored captions already ran ~1740px wide inside a 1680px safe area — a
+// latent overflow that a wider display face would only have made worse.
+const CAPTION_SIDE_MARGIN = 120;   // px of breathing room kept at each frame edge
+const CAPTION_MIN_SIZE = 34;       // below this a caption stops reading as a caption
+const DISPLAY_ADVANCE = 0.55;      // mean glyph advance (em fraction) of the display faces
+
+function captionSize(text, role) {
+  const canvas = template.defaults?.project || {};
+  const height = canvas.height || 1080;
+  const width = canvas.width || 1920;
+  const natural = Math.round(height / (role === "title" ? 13 : role === "subtitle" ? 26 : 22));
+  const safeWidth = width - CAPTION_SIDE_MARGIN * 2;
+  const fitted = Math.floor(safeWidth / Math.max(1, text.length * DISPLAY_ADVANCE));
+  return Math.max(CAPTION_MIN_SIZE, Math.min(natural, fitted));
+}
+
 // animation mirrors the layer_scene text rule (layerSceneBuilder.mjs textAnimation):
 // peak/montage beats pop in with slide_up, everything else keeps the plain fade a
 // caption over a moving photo effect (memory_wall, mask_reveal, film_roll_up…) reads
@@ -405,7 +480,8 @@ const cap = (text, role = "caption", scene = {}) => ({
   color: "white",
   shadow: true,
   animation: scene.transitionRole === "peak" || scene.durationRole === "montage" || scene.arcBeat === "peak" ? "slide_up" : "fade",
-  font: resolveFont("body"),
+  font: resolveFont(scene.captionFontRole || "heading"),
+  size: captionSize(text, role),
 });
 
 function energyAt(t) {
@@ -726,11 +802,11 @@ const timeline = {
   // needed here. playlist: a second track appended; the engine's playlist path joins them
   // with acrossfade and repeats the WHOLE pair until it covers the video.
   music: musicEdit.mode === "playlist"
-    ? [musicPath, ...extraMusicPaths].map((track) => ({ path: track, volume: 0.82 }))
+    ? musicTracks.map((track) => ({ path: track, volume: 0.82 }))
     : [{ path: musicPath, volume: 0.82,
         ...(musicEdit.mode === "highlight" ? { start: musicEdit.start, end: musicEdit.end } : {}) }],
   audio: musicEdit.mode === "playlist"
-    ? { ...template.defaults.audio, crossfade: Math.max(2, template.defaults.audio?.crossfade || 0) }
+    ? { ...template.defaults.audio, crossfade: playlistCrossfade }
     : template.defaults.audio,
   color: timelineColor,
   overlays: selectedOverlays,

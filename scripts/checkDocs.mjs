@@ -29,7 +29,7 @@ for (const file of docs) {
     if (!npmScripts.has(match[1])) errors.push(`${rel}: unknown npm script "${match[1]}"`);
   }
 
-  for (const match of text.matchAll(/(?:scripts\/)?([a-zA-Z0-9][a-zA-Z0-9_.-]*\.(?:mjs|cjs|ts|tsx))/g)) {
+  for (const match of text.matchAll(/(?:scripts\/)?([a-zA-Z0-9][a-zA-Z0-9_.-]*\.(?:mjs|cjs|tsx|ts))/g)) {
     const name = match[1];
     if (text.slice(Math.max(0, match.index - 2), match.index) === "*.") continue;
     if (!sourceBasenames.has(name) && !historicalScripts.has(name)) {

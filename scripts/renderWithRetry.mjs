@@ -36,6 +36,8 @@ const arg = (flag, def) => {
 };
 // No default track — see applyStoryTemplate.
 const music = arg("--music", "");
+const extraMusic = process.argv.flatMap((value, index) =>
+  value === "--extra-music" && process.argv[index + 1] ? [process.argv[index + 1]] : []);
 if (!music) {
   console.error(`[renderWithRetry] FAILED: --music is required.`);
   process.exit(1);
@@ -111,6 +113,7 @@ function generate(mode, photosFile) {
       "scripts/composeStoryboard.mjs",
       "--photos", photosFile,
       "--music", music,
+      ...extraMusic.flatMap((track) => ["--extra-music", track]),
       "--analysis-dir", analysisDir,
       "--plan", plan,
       "--director", director,
@@ -149,6 +152,7 @@ function generate(mode, photosFile) {
       "--template", storyboardPath,
       "--photos", photosFile,
       "--music", music,
+      ...extraMusic.flatMap((track) => ["--extra-music", track]),
       "--analysis-dir", analysisDir,
       "--out", TL,
       "--output", videoOut,

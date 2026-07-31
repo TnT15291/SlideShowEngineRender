@@ -10,7 +10,7 @@ const MONTAGE_SLOT = {
 };
 const MONTAGE_COUNT = {
   film_roll_up: 8, film_roll_left: 8, film_roll_right: 8,
-  memory_wall: 5, collage_grid: 6, double_exposure: 2,
+  memory_wall: 6, collage_grid: 6, double_exposure: 2,
 };
 export const isMontage = (effect) => effect in MONTAGE_SLOT;
 export const UNSYNTHESISABLE = new Set(["layer_scene", "video_background"]);
@@ -175,11 +175,17 @@ export function applyToStoryboard(doc, directives, { availablePhotos = Infinity,
     if (d.kind !== "transition" || d.op !== "set") continue;
     const rules = doc.timelineRules || (doc.timelineRules = {});
     const ts = rules.transitionStrategy || (rules.transitionStrategy = {});
+    // "default"/"final" may currently be a cycled array (a few {type,duration}
+    // variants) rather than one object — a customer asking for ONE transition
+    // everywhere overrides that cycling, so this always collapses to a single entry,
+    // keeping only the existing duration (from the first variant if it was an array).
     if (d.scope.global) {
-      ts.default = { ...(ts.default || { duration: 0.8 }), type: d.target };
+      const prevDuration = (Array.isArray(ts.default) ? ts.default[0] : ts.default)?.duration ?? 0.8;
+      ts.default = { duration: prevDuration, type: d.target };
       applied.push(d.id);
     } else if (d.scope.act === "ending") {
-      ts.final = { ...(ts.final || { duration: 1.2 }), type: d.target };
+      const prevDuration = (Array.isArray(ts.final) ? ts.final[0] : ts.final)?.duration ?? 1.2;
+      ts.final = { duration: prevDuration, type: d.target };
       applied.push(d.id);
     }
   }

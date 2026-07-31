@@ -15,12 +15,15 @@ import path from "node:path";
 import { assessFit } from "./lib/fitPlan.mjs";
 import { validate } from "./lib/checkSchema.mjs";
 import { loadLedger, active } from "./lib/directives.mjs";
+import { combineMusicAnalyses } from "./lib/playlistMusic.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
   const i = process.argv.indexOf(flag);
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
 };
+const args = (flag) => process.argv.flatMap((value, index) =>
+  value === flag && process.argv[index + 1] ? [process.argv[index + 1]] : []);
 const die = (msg) => { console.error(`[assessFit] FAILED: ${msg}`); process.exit(1); };
 const readJson = (p) => JSON.parse(fs.readFileSync(path.resolve(root, p), "utf8"));
 const exists = (p) => p && fs.existsSync(path.resolve(root, p));
@@ -29,14 +32,17 @@ const musicJsonPath = arg("--music-analysis", "");
 const photosPath = arg("--photos", "analysis/photos.json");
 const briefPath = arg("--brief", "");
 const directivesPath = arg("--directives", "");
-const extraTracks = Number(arg("--extra-tracks", "0")) || 0;
+const extraMusicJsonPaths = args("--extra-music-analysis");
+const extraTracks = extraMusicJsonPaths.length || Number(arg("--extra-tracks", "0")) || 0;
 const outPath = arg("--out", "analysis/fit_plan.json");
 
 if (!musicJsonPath) die("--music-analysis is required (analysis/music/<track>.json)");
 if (!exists(musicJsonPath)) die(`music analysis not found: ${musicJsonPath} — run analyzeMusic first`);
 if (!exists(photosPath)) die(`photos not found: ${photosPath}`);
 
-const music = readJson(musicJsonPath);
+const music = extraMusicJsonPaths.length
+  ? combineMusicAnalyses([readJson(musicJsonPath), ...extraMusicJsonPaths.map(readJson)])
+  : readJson(musicJsonPath);
 const brief = exists(briefPath) ? readJson(briefPath) : {};
 const orders = exists(directivesPath) ? active(loadLedger(path.resolve(root, directivesPath))) : [];
 const excluded = new Set(brief.excludePhotos || []);

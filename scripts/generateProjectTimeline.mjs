@@ -5,6 +5,7 @@ import { loadLedger, active, applyToTimeline } from "./lib/directives.mjs";
 import { retimeSlidesToMusic } from "./lib/musicRetime.mjs";
 import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
 import { bucketPeople } from "./lib/diversityPlanner.mjs";
+import { readPlaylistAnalyses } from "./lib/playlistMusic.mjs";
 
 const project = loadProject(arg("--project"));
 const read = (p) => JSON.parse(fs.readFileSync(project.abs(p), "utf8"));
@@ -14,12 +15,14 @@ const story = read(project.manifest.story || "analysis/story-template.generated.
 const photos = [...photosDoc.photos];
 if (!photos.length) throw new Error("Project has no analyzed photos");
 
-const musicRel = (project.manifest.music || [])[0];
+const musicRels = project.manifest.music || [];
+const musicRel = musicRels[0];
 let music = null;
-if (musicRel) {
-  const p = `${project.manifest.analysisDir}/music/${path.parse(musicRel).name}.json`;
-  if (fs.existsSync(project.abs(p))) music = read(p);
-}
+if (musicRel) music = readPlaylistAnalyses({
+  root: process.cwd(),
+  analysisDir: project.rel(project.manifest.analysisDir),
+  musicPaths: musicRels.map((track) => project.rel(track)),
+});
 
 const transitions = ["crossfade", "dissolve", "smooth_left", "smooth_right"];
 const singleEffects = ["slow_zoom_in", "kenburns_tl", "slow_zoom_out", "kenburns_br", "pan_left", "pan_right"];
@@ -149,7 +152,7 @@ if (music && validateMusicAnalysis(music).ok) {
 
 const timeline = {
   project: { name: project.manifest.id, width: 1920, height: 1080, fps: 30, quality: project.manifest.quality || "share" },
-  music: musicRel ? [{ path: project.rel(musicRel), volume: 0.85 }] : [],
+  music: musicRels.map((track) => ({ path: project.rel(track), volume: 0.85 })),
   audio: { fade_in: 2, fade_out: 3, crossfade: 2 },
   output: { path: project.rel(project.manifest.output) },
   color: { temperature: 5700, saturation: 1.04, contrast: 1.02, glow: 0.1 },

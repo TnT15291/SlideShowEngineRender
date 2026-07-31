@@ -3,10 +3,10 @@
 // which nodes build the story and the timeline.
 //
 //   template — an art-directed recipe from story-templates/, rendered with the full
-//              engine (layer_scene, LUTs, masks, frames). ZERO AI calls: the copy is
-//              in the recipe and slots are matched on orientation/sharpness, so the
-//              vision node is skipped. This is the cheap tier, and the cheapest tier
-//              must not quietly run the one node whose cost scales with photo count.
+//              engine (layer_scene, LUTs, masks, frames). Vietnamese projects use the
+//              recipe copy with zero AI calls; English projects rewrite that copy so
+//              the selected language is honored. Photo slots still use deterministic
+//              orientation/sharpness matching, so the vision node is skipped.
 //   lite     — rule-based timeline (zoom/pan/kenburns), AI writes the words.
 //   premium  — the AI-director chain: story options (3) -> customer choice (4) ->
 //              director notes (5+6) -> story plan (7) -> generate/validate/fallback
@@ -26,6 +26,8 @@ import { createJobTracker } from "./lib/jobManifest.mjs";
 import { arg, loadProject, root } from "./lib/project.mjs";
 import { inspectResume } from "./lib/resumeProject.mjs";
 import { recordIncident } from "./lib/incidents.mjs";
+import { playlistFit, readPlaylistAnalyses } from "./lib/playlistMusic.mjs";
+import { shouldWriteRecipeCopy } from "./lib/recipeCopyPolicy.mjs";
 
 const projectArg = arg("--project");
 const project = loadProject(projectArg);
@@ -35,6 +37,7 @@ const skipQa = process.argv.includes("--skip-qa");
 const deliver = process.argv.includes("--deliver");
 const resume = process.argv.includes("--resume");
 const acceptBriefGaps = process.argv.includes("--accept-brief-gaps");
+const acceptMusicMismatch = process.argv.includes("--accept-music-mismatch");
 const maxRetries = arg("--max-retries", "2");
 const maxRevisions = arg("--max-revisions", "2");
 const choice = (arg("--choice", "auto") || "auto").toUpperCase();
@@ -44,6 +47,7 @@ const musicChoice = (arg("--music-choice", "auto") || "auto").toLowerCase();
 const node = process.execPath;
 
 const tier = (arg("--tier") || project.manifest.tier || "lite").toLowerCase();
+const language = project.manifest.language || "vi";
 if (!["template", "lite", "premium"].includes(tier)) throw new Error(`--tier must be template|lite|premium, got "${tier}"`);
 if (!["A", "B", "C", "D", "AUTO"].includes(choice)) throw new Error(`--choice must be A|B|C|D|auto, got "${choice}"`);
 if (!["highlight", "full", "full_song", "auto"].includes(musicChoice)) {
@@ -52,12 +56,15 @@ if (!["highlight", "full", "full_song", "auto"].includes(musicChoice)) {
 if (musicChoice !== "auto" && tier !== "premium") throw new Error("--music-choice applies to --tier premium (the other tiers keep the automatic rule)");
 if (dryRun && deliver) throw new Error("--deliver cannot be used with --dry-run");
 
-// Two opt-in AI nodes for the recipe path. Off by default, so `--tier template`
-// stays a zero-AI tier. Together they are what the middle tier will be once
-// recipes stretch to the music: the same art-directed engine output as the cheap
-// tier, but with the recipe CHOSEN for this couple and the words WRITTEN for them.
+// Recipe selection stays opt-in. Copy is also opt-in for Vietnamese projects,
+// but English must rewrite the recipe's canned Vietnamese text: the selected
+// video language is a contract, not a hint.
 const autoRecipe = process.argv.includes("--auto-recipe"); // node A: pickRecipe
-const aiCopy = process.argv.includes("--ai-copy");         // node B: writeRecipeCopy
+const aiCopy = shouldWriteRecipeCopy({
+  tier,
+  language,
+  requested: process.argv.includes("--ai-copy"),
+});                                                        // node B: writeRecipeCopy
 if ((autoRecipe || aiCopy) && tier !== "template") {
   throw new Error(`--auto-recipe/--ai-copy apply to --tier template (got "${tier}")`);
 }
@@ -90,12 +97,12 @@ const recipeCopy = `${analysisDir}/recipe_copy.json`;
 const fitPlan = `${analysisDir}/fit_plan.json`;
 const fitDecision = `${analysisDir}/fit_decision.json`;
 const cullSuggestion = `${analysisDir}/cull_suggestion.json`;
+const playlistConfirmation = `${analysisDir}/playlist_fit_confirmation.json`;
 const suppliedDirection = arg("--direction", "");
 if (suppliedDirection && tier !== "template") throw new Error("--direction applies only to --tier template");
 if (suppliedDirection && !fs.existsSync(path.resolve(root, suppliedDirection))) throw new Error(`direction not found: ${suppliedDirection}`);
 const tier1Direction = suppliedDirection || `${analysisDir}/tier1_direction.json`;
 const contentSample = `${analysisDir}/photo_content.sample.json`;
-const language = project.manifest.language || "vi";
 const sequenceMode = project.manifest.sequenceMode || "editorial";
 
 // Every text node this run spawns memoises its answers HERE, in this job's own analysis
@@ -118,6 +125,8 @@ const base = path.basename(project.manifest.timeline, path.extname(project.manif
 const contactWarning = `${qaDir}/${base}.contact.warning.json`;
 const music = project.manifest.music[0];
 const musicPath = music ? project.rel(music) : "";
+const extraMusicPaths = project.manifest.music.slice(1).map((track) => project.rel(track));
+const extraMusicAnalyses = project.manifest.music.slice(1).map((track) => `${analysisDir}/music/${path.parse(track).name}.json`);
 const musicAnalysis = music ? `${analysisDir}/music/${path.parse(music).name}.json` : "";
 // template and premium pace every scene to the track, so a project with no music
 // is not a silent-video project — it is a misconfigured one. Say so here, rather
@@ -241,6 +250,7 @@ function assessFitAndDecide() {
   run([
     "scripts/assessFit.mjs",
     "--music-analysis", musicAnalysis,
+    ...extraMusicAnalyses.flatMap((track) => ["--extra-music-analysis", track]),
     "--photos", photoPool(),
     ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
     "--directives", directives,
@@ -264,6 +274,34 @@ function assessFitAndDecide() {
   }
 }
 
+function confirmPlaylistFit() {
+  if (!extraMusicPaths.length) return;
+  const rawPhotos = JSON.parse(fs.readFileSync(path.resolve(root, photoPool()), "utf8"));
+  const photoCount = (Array.isArray(rawPhotos) ? rawPhotos : rawPhotos.photos || []).length;
+  const playlist = readPlaylistAnalyses({ root, analysisDir, musicPaths: [musicPath, ...extraMusicPaths] });
+  const fit = playlistFit({ duration: playlist.duration, photoCount });
+  const document = {
+    version: 1,
+    status: fit.mismatch ? (acceptMusicMismatch ? "accepted" : "required") : "balanced",
+    trackCount: 1 + extraMusicPaths.length,
+    photoCount,
+    musicDuration: playlist.duration,
+    secondsPerPhoto: fit.secondsPerPhoto,
+    recommendedPhotos: fit.recommendedPhotos,
+    mismatch: fit.mismatch,
+    updatedAt: new Date().toISOString(),
+  };
+  fs.writeFileSync(path.resolve(root, playlistConfirmation), JSON.stringify(document, null, 2) + "\n");
+  if (!fit.mismatch || acceptMusicMismatch) return;
+  tracker.pause("plan", `PLAYLIST_FIT_CONFIRMATION_REQUIRED:${fit.mismatch}:${photoCount}:${playlist.duration}:${fit.secondsPerPhoto}`);
+  console.log(
+    `\n[runProject] PAUSED — playlist ${Math.round(playlist.duration)}s / ${photoCount} photos ` +
+    `(${fit.secondsPerPhoto}s/photo) needs customer confirmation.\n` +
+    `  Re-run with --accept-music-mismatch to continue unchanged.`
+  );
+  process.exit(3);
+}
+
 /** Gate 4b's decision, read back at build time (the gate ran in the plan phase, and
  *  --resume can skip that phase entirely). Absent file = no gate ran (an old project,
  *  or another tier): "auto" — the tier-1 rule — which is also what the gate's own
@@ -284,6 +322,7 @@ function premiumBuild() {
   const args = [
     "scripts/renderWithRetry.mjs",
     "--music", musicPath,
+    ...extraMusicPaths.flatMap((track) => ["--extra-music", track]),
     "--director", director,
     "--plan", plan,
     "--out", timeline,
@@ -303,8 +342,10 @@ function premiumBuild() {
   // choice IS the human-in-writing the misfit gate's --accept-misfit escape exists
   // for, so the flag travels with the decision instead of someone editing a command.
   const md = musicDecision();
-  if (md?.mode && md.mode !== "auto") args.push("--music-mode", md.mode);
-  if (md?.mode === "full_song" && (md.source === "user" || md.source === "ledger" || md.source === "brief")) {
+  if (extraMusicPaths.length) args.push("--music-mode", "playlist");
+  else if (md?.mode && md.mode !== "auto") args.push("--music-mode", md.mode);
+  if (acceptMusicMismatch) args.push("--accept-misfit");
+  if (!extraMusicPaths.length && md?.mode === "full_song" && (md.source === "user" || md.source === "ledger" || md.source === "brief")) {
     args.push("--accept-misfit");
   }
   run(args, "nodes 8+9: generate + validate/fallback");
@@ -360,6 +401,7 @@ try {
 
       run(["scripts/generateSelectionPolicy.mjs", "--project", projectArg], "selection policy");
       run(["scripts/selectProjectPhotos.mjs", "--project", projectArg], "photo selection");
+      confirmPlaylistFit();
       assessFitAndDecide();
 
       if (tier === "template") {
@@ -405,7 +447,8 @@ try {
       } else {
         // Gate 4b FIRST — before a single AI call is spent. If the job is going to
         // pause on the customer anyway, it should pause having cost nothing.
-        selectMusicWindow();
+        if (extraMusicPaths.length) console.log("[runProject] node 4b: playlist fit is handled by the shared confirmation gate");
+        else selectMusicWindow();
         // The ledger rides every premium node. It used to ride none of them: node 3
         // has accepted a brief since the day it was written and the orchestrator never
         // handed it one, so every premium film was pitched, directed and planned by a
@@ -459,6 +502,7 @@ try {
           "--template", recipe,
           "--photos", photoPool(),
           "--music", musicPath,
+          ...extraMusicPaths.flatMap((track) => ["--extra-music", track]),
           "--analysis-dir", analysisDir,
           "--out", timeline,
           "--output", videoOut,
@@ -470,6 +514,7 @@ try {
           "--language", language,
           "--sequence-mode", sequenceMode,
           ...(project.manifest.musicMode ? ["--music-mode", project.manifest.musicMode] : []),
+          ...(acceptMusicMismatch ? ["--accept-misfit"] : []),
           ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
           ...(aiCopy ? ["--copy", recipeCopy] : []),
         ], `recipe: ${path.basename(recipe)}`);

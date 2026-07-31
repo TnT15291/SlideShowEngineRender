@@ -206,3 +206,29 @@ test("signature hybrid scene is a no-op without a template, and skips gracefully
   const result = applySignatureHybridScene(noSingles, { template: "confetti_bloom", renderer: "remotion" });
   assert.deepEqual(result, noSingles, "with no single-photo scene to carry it, the shot list is returned unchanged");
 });
+
+test("a signature hybrid carries its params, so the template is not left on its own defaults", () => {
+  const sb = composeStoryboard({ photoCount: 40, musicDuration: 180, energy: track(180), library });
+
+  // The substitution used to pass template+renderer and nothing else, which is not a
+  // neutral omission: kinetic_typography reads params.title, so the peak beat of a
+  // Vietnamese wedding rendered the component's hardcoded English "Our Story". Copy travels
+  // as recipe TOKENS — applyStoryTemplate resolves {{bride}} against the brief.
+  const params = { title: "{{bride}} & {{groom}}", subtitle: "{{date}}" };
+  const scenes = applySignatureHybridScene(sb.scenes, {
+    template: "kinetic_typography",
+    renderer: "remotion",
+    params,
+  });
+  const swapped = scenes.filter((s) => s.renderer);
+  assert.equal(swapped.length, 1);
+  assert.deepEqual(swapped[0].params, params, "the template's configuration must reach the recipe");
+
+  // A template that needs nothing must not gain an empty params key it never had.
+  const bare = applySignatureHybridScene(sb.scenes, {
+    template: "confetti_bloom",
+    renderer: "remotion",
+    params: {},
+  });
+  assert.ok(!("params" in bare.filter((s) => s.renderer)[0]));
+});

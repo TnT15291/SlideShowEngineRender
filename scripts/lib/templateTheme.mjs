@@ -70,18 +70,43 @@ export function createTemplateTheme({ library, template, direction }) {
       || "#2D2D33";
   }
 
-  function defaultTextColor(slot, layout) {
-    if (layout.background?.type !== "photo_full_bleed") return themeInk();
+  const LIGHT_BACKDROP = 140;  // luma above this reads as a light surface
+  const MIN_SEPARATION = 60;   // luma gap below which text washes into its backdrop
+
+  /** The theme ink is the intended colour — keep it wherever it actually separates
+   *  from what sits behind it, and fall back to plain black/white where it does not. */
+  function contrastingInk(backdrop) {
+    const ink = themeInk();
+    const bg = hexLuma(backdrop);
+    if (Math.abs(hexLuma(ink) - bg) >= MIN_SEPARATION) return ink;
+    return bg >= LIGHT_BACKDROP ? "#1C1712" : "#FFFFFF";
+  }
+
+  function panelBehind(slot, layout) {
     const centerX = slot.x + slot.width / 2;
     const centerY = slot.y + slot.height / 2;
-    const backing = (layout.panels || []).find(
+    return (layout.panels || []).find(
       (panel) => centerX >= panel.x
         && centerX <= panel.x + panel.width
         && centerY >= panel.y
         && centerY <= panel.y + panel.height
     );
-    if (!backing || hexLuma(resolveColor(backing.color)) < 140) return "#FFFFFF";
-    return themeInk();
+  }
+
+  function defaultTextColor(slot, layout) {
+    // The panel test used to run only for photo_full_bleed layouts, so a solid-fill
+    // layout handed back themeInk() no matter what was drawn on top of the fill. A
+    // theme's ink is picked to sit on ITS OWN background: heritage-ceremony's pale
+    // gold is chosen against near-black lacquer, and paper_collage then draws a
+    // #FFF9E9 paper note under the heading — gold on cream, all but invisible. What
+    // backs the text decides its colour, whatever is behind that.
+    const onPhoto = layout.background?.type === "photo_full_bleed";
+    const backing = panelBehind(slot, layout);
+    if (!backing) return onPhoto ? "#FFFFFF" : themeInk();
+    const backdrop = resolveColor(backing.color);
+    // A dark scrim over an unknown photo stays plain white, as it always has.
+    if (onPhoto && hexLuma(backdrop) < LIGHT_BACKDROP) return "#FFFFFF";
+    return contrastingInk(backdrop);
   }
 
   const stagger = () => library.designTokens?.motionPresets?.staggerSeconds || {};

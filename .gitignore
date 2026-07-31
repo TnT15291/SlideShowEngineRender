@@ -69,6 +69,10 @@ analysis/*
 # Remotion copies customer media here while rendering hybrid scenes.
 public/hybrid-scenes/
 
+# ...and the engine's own fonts, so staticFile() can reach them. A published copy of
+# fonts/, not a source: see publishFonts() in src/renderRemotionScene.ts.
+public/fonts/
+
 # The vision node's answers, keyed by image content + model + prompt + vocabulary.
 # Derived, and it holds one customer's photo judgements — it is not source. Deleting
 # it is safe and costs one re-analysis; committing it would ship a customer's data.
@@ -89,3 +93,7 @@ analysis/photo_content.sample.json
 analysis/story_choice_window.json
 analysis/choice_outbox.txt
 analysis/choice_inbox.txt
+
+# Rendered films and sample outputs — artefacts, not source (2.2 GB and 7 MB).
+video tests/
+samples/

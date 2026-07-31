@@ -39,6 +39,21 @@ test("transition grammar caps special transitions and stays in vocabulary", () =
   assert.ok(grammar.decisions.every((d) => grammar.vocabulary.includes(d.type)));
 });
 
+test("a role authored as an array of variants cycles instead of repeating one cut forever", () => {
+  const grammar = createTransitionGrammar(
+    { default: [{ type: "crossfade" }, { type: "dissolve" }, { type: "wipe_left" }], final: { type: "none" } },
+    { vocabulary: ["crossfade", "dissolve", "wipe_left", "none"] }
+  );
+  const seen = Array.from({ length: 5 }, () => grammar.select("default", false).type);
+  assert.deepEqual(seen, ["crossfade", "dissolve", "wipe_left", "crossfade", "dissolve"]);
+});
+
+test("a single-object role still behaves exactly as before the array support was added", () => {
+  const grammar = createTransitionGrammar({ default: { type: "crossfade", duration: 0.7 } }, { vocabulary: ["crossfade"] });
+  assert.deepEqual(grammar.select("default", false), { type: "crossfade", duration: 0.7 });
+  assert.deepEqual(grammar.select("default", false), { type: "crossfade", duration: 0.7 });
+});
+
 test("diversity evaluates scenes, not matching portraits inside one triptych", () => {
   const photos = [1, 2, 3].map((n) => ({ file: `${n}.jpg`, orient: "portrait", subjectCount: 1 }));
   const assignments = new Map([["triptych:p", photos.map((p) => p.file)]]);
@@ -512,6 +527,10 @@ test("caption integrity treats a title-to-closing name echo as an intentional bo
   assert.ok(!echo.problems.some((p) => p.check === "caption_integrity"), "opening title echoed on the closing card must not be a duplicate");
   const midFilm = runProxy([textSlide("cold_open", null), textSlide("title", "An & Binh"), textSlide("body", "An & Binh"), textSlide("closing", "The End")]);
   assert.ok(midFilm.problems.some((p) => p.check === "caption_integrity" && p.flags.includes("duplicate_caption")), "a genuine mid-film repeat must still flag");
+  const invitation = textSlide("invitation", "An & Binh");
+  invitation.editorialBeat = "invitation";
+  const invitationEcho = runProxy([textSlide("cold_open", null), textSlide("body", "A quiet start"), invitation, textSlide("closing", "An & Binh")]);
+  assert.ok(!invitationEcho.problems.some((p) => p.check === "caption_integrity"), "names echoed from an invitation card to the closing card must not be a duplicate");
 });
 
 // --strict is a gate in EVERY mode. qaLoop's --skip-render path used to exit 0 unconditionally,

@@ -1,6 +1,8 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-24**
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-28**
+> (khảo sát trend 2026 tiếp tục — 3 field color grade mới: `halation`/`duotone`/`vhs`, xem
+> [SLIDESHOW_RESEARCH.md](SLIDESHOW_RESEARCH.md) research pass cùng ngày).
 > (`runProject.mjs` là orchestrator duy nhất cho cả ba tier; Premium có hai cổng quyết định
 > của khách: hướng câu chuyện và cách dùng bài nhạc).
 >
@@ -13,6 +15,21 @@
 > Thanh toán Stripe đã **wired** (checkout + webhook) nhưng **chưa live** (cần key thật).
 > MoMo AIO v2 đã wired cho gói **trả theo video** (`captureWallet` + IPN HMAC/idempotency);
 > subscription vẫn dùng Stripe vì MoMo recurring cần onboarding tokenization riêng.
+>
+> **2026-07-26**: commit `1e77ab8` tách hai file lõi mà tài liệu này trích dẫn số dòng nhiều chỗ —
+> `applyStoryTemplate.mjs` (466 dòng) → `templateMusicPlan.mjs`/`templatePhotoRequests.mjs`/
+> `templateShotList.mjs`/`templateTheme.mjs`/`layerSceneBuilder.mjs`; `directives.mjs` (659 dòng) →
+> `directiveApplication.mjs`/`directiveAudit.mjs`/`directiveLedger.mjs` (giữ `directives.mjs` làm
+> barrel `export *`, gọi từ ngoài không đổi). Anchor dòng cũ trỏ vào `directives.mjs` ở §2b bên dưới
+> đã được vá theo file mới; các tham chiếu dòng khác trong tài liệu (nếu còn) có thể lệch — đối
+> chiếu code trước khi tin số dòng. Cùng session: sửa race condition thật ở
+> [`server/services/analysis.ts:222-229`](../server/services/analysis.ts#L222-L229) (lock nhả ra
+> **sau** khi status đã hiển thị "completed", 2 test `test:api` từng đỏ vì đúng khe hở này), gom
+> 4 bản ghi-file-tạm-rồi-rename tự chế (`director.ts`/`delivery.ts`/`revisions.ts`/`projects.ts`) về
+> `atomicFile.ts` chung (thiếu retry Windows trước đó), thêm rate-limit cho `/api/auth/login|register`
+> (`server/services/rateLimit.ts`), và xoá mockup `DirectorWorkspace` chết trong `apps/web/src/App.tsx`
+> (~250 dòng không route/reference nào tới — tính năng AI Director thật nằm trong workspace
+> `AssetsPage`/`focus:"director"`, không phải component này).
 
 Bảng này theo dõi khoảng cách giữa **thiết kế** ([PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md))
 và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài liệu pipeline đó.
@@ -27,7 +44,7 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 
 | Tầng | Trạng thái | Ghi chú |
 |---|---|---|
-| **Render engine** | ✅ Core ổn định | **29 effect** (gồm 5 effect native nâng cao mới), 56 transition, color grade (+`flicker`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Các hạng mục production/QA còn lại được ghi riêng bên dưới. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
+| **Render engine** | ✅ Core ổn định | 36 effect FFmpeg, 59 transition gồm `none`, 32 template Remotion/GPU, 6 template Blender/3D, color grade (+`flicker`/`halation`/`duotone`/`vhs`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
 | **Project isolation** | ✅ Xong + có test | Mỗi video sống trong `projects/<id>/` (ảnh/nhạc/analysis/timeline/logs/output riêng). `analysis/job-manifest.json` ghi phase state; `--resume` chỉ tái dùng phase còn tươi. Xem [PROJECTS.md](PROJECTS.md) |
 | **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier template\|lite\|premium`. Ba tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
 | **Tier template (Rẻ)** | ✅ Recipe-driven, 22 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. 2026-07-24: cả 22 recipe được nâng cấp thêm cảnh + hiệu ứng hiện đại trước đó chưa dùng (`tilt_shift`/`dream_glow`/`prism_split`/`spotlight_focus`/`mirror_split`, 6 mask reveal petal/ink/watercolor/torn_paper/stained_glass/geometric_teal_wipe, overlay film_burn/vintage_projector/light_sweep/floral_frame, LUT `moody_earth_01`) — lint 22/22 sạch, test 262/262 xanh |
@@ -161,8 +178,19 @@ một timeline duration đồng đều vượt qua **0/51 cảnh** bị flag. N�
 
 **Engine (nền tảng, đã verify bằng render thật):**
 - Pipeline validate → normalize → face-safe → preflight → image-cache → compile → render → QA.
-- 23 effect ảnh, 56 transition, caption tiếng Việt, color grading đầy đủ, audio graph
+- 36 effect FFmpeg, 59 transition gồm `none`, 32 template Remotion/GPU và
+  6 template Blender/3D; caption tiếng Việt, color grading đầy đủ, audio graph
   (playlist/crossfade/automation/voiceover ducking), 4 quality preset.
+
+**Bổ sung phiên 2026-07-28 — modern motion suite:**
+- ✅ `shared_frame_morph`, `kinetic_typography`, `dither_dissolve`,
+  `image_echo_trail`, `glass_refraction`, `audio_reactive`,
+  `particle_dissolve`.
+- ❌ `depth_photo_parallax` đã gỡ (2026-07-28): nó cần grayscale depth map mà
+  không node nào trong pipeline sinh ra, nên mọi caller đều đưa cho nó ảnh cưới
+  thật và kênh R của ảnh thứ hai bị đọc nhầm thành depth. Đưa lại khi có depth node.
+- ✅ Tất cả đã vào schema, asset validation, capability registry, hybrid routing,
+  tài liệu và test contract; đã render sample H.264 960×540 @ 30fps.
 
 **Bổ sung phiên 2026-07-08:**
 - ✅ `light_leak_overlay` — 3 asset procedural (`warm`/`soft`/`sunset`) qua
@@ -302,8 +330,9 @@ chỉ-trỏ thì **chưa làm**.
 - ✅ **`scripts/lib/revisionDiff.mjs` + `reviseProject --preview` — hậu quả, trước khi khách chốt.**
   `reviseProject` vốn in ra directive đã compile — nhìn *như* preview nhưng chỉ là **nhắc lại yêu
   cầu**, không phải **hậu quả**. Hậu quả thì tàn khốc và hoàn toàn im lặng: retarget một cảnh sẽ
-  `delete layout` + `delete text` ([directives.mjs:353](../scripts/lib/directives.mjs#L353)), và
-  montage **nuốt cảnh kề bằng `splice`** ([:394](../scripts/lib/directives.mjs#L394)). Đo trên recipe
+  `delete layout` + `delete text` ([directiveApplication.mjs:129-130](../scripts/lib/directiveApplication.mjs#L129-L130),
+  sau khi `directives.mjs` được tách nhỏ 2026-07-26), và montage **nuốt cảnh kề bằng `splice`**
+  ([:169](../scripts/lib/directiveApplication.mjs#L169)). Đo trên recipe
   thật: một câu *"Dùng hiệu ứng lật trang phim cho cả phim"* → s03 mất layout + mất chữ "CÔ DÂU",
   s04/s05 **biến mất** kèm cả câu "Tình yêu là sự kết nối giữa hai trái tim…". `--preview` áp lên
   **bản sao**, diff, **trích nguyên văn chữ sẽ mất** (đếm "3 cảnh đổi" là thống kê; lời đề tặng mới
@@ -740,6 +769,30 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
   finalizer kiểu murmur3; test khoá đúng cặp seed đã gây trùng. Đã rollout cả 22 recipe (không chỉ
   proof-of-concept modern-teal-01), mỗi recipe viết theo đúng giọng riêng. Verify: lint 22/22,
   test:unit 268/268, quét cả 22 recipe qua `applyStoryTemplate` + engine dry-run thật — sạch hết.
+
+## 4c. Backlog UI/UX web (mở sau đợt rà soát 2026-07-28)
+
+Đợt rà soát giao diện `apps/web` ngày 2026-07-28 đã đóng toàn bộ P0/P1 và phần lớn P2. Những
+mục dưới đây **chưa làm vì cần bạn quyết định**, không phải vì khó — mỗi mục ghi rõ vướng ở đâu.
+
+- ⬜ **Consent của bước vision analysis không hợp lệ khi chưa có ước tính.**
+  `AnalysisPanel.tsx` hiện checkbox *"I reviewed this estimate and approve sending N photo
+  previews to api.openai.com"* trong khi ô **Est. USD hiển thị `—`** (`vision.estimatedUsd` là
+  `null` cho tới khi chạy technical analysis xong). Khách không thể "review" một con số không
+  tồn tại, nên chữ ký đồng ý đó không có giá trị — đây là vấn đề **consent cho một hành động
+  tốn tiền và gửi ảnh ra bên thứ ba**, không phải lỗi hiển thị.
+  Cần chốt trước khi sửa: (a) chặn hẳn checkbox + nút khi chưa có ước tính, hay (b) hiện một
+  khoảng giá trần tính từ `photoCount × đơn giá` rồi mới cho tick? (a) an toàn hơn nhưng buộc
+  chạy technical analysis trước; (b) mượt hơn nhưng phải cam kết một con số trần.
+- ⬜ **i18n cho UI.** Nội dung recipe là tiếng Việt, `language` mặc định `vi`, có tích hợp MoMo —
+  nhưng toàn bộ chrome là tiếng Anh. Đây là một hạng mục kiến trúc (mọi chuỗi trong ~15 file +
+  chọn thư viện + chốt nguồn dịch), không phải polish. Cần quyết: VN-only hay song ngữ?
+- ⬜ **Nhãn "Bride"/"Groom" cứng và bắt buộc** ở intake. Đổi sang trung tính (vd "Partner 1/2")
+  là quyết định về định vị sản phẩm, không phải kỹ thuật — engine/recipe copy đang dùng
+  `bride`/`groom` ở nhiều chỗ nên đổi sẽ lan xuống `copyVariants`/`writeRecipeCopy`.
+- ⬜ **Mô hình giá theo tier.** Ba tier hiện tiêu **cùng 1 render credit** dù Premium tốn nhiều
+  compute hơn hẳn. Đã bỏ dòng lặp "1 render credit" khỏi 3 card so sánh và nêu một lần bên dưới,
+  nhưng bản thân việc Premium có nên đắt hơn không là quyết định kinh doanh.
 
 ## 4b. Lộ trình hiệu ứng (nguồn: `Downloads/hieu-ung-slideshow-cuoi.md`)
 

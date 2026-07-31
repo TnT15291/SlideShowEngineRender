@@ -42,7 +42,7 @@
     "audit:prod": "npm audit --omit=dev",
     "docs:check": "node scripts/checkDocs.mjs",
     "test:unit": "node --test --test-timeout=30000 test/*.test.mjs",
-    "test:api": "node --import tsx --test apps/web/src/lib/sse.test.ts server/app.test.ts server/services/analysis.test.ts server/services/artifacts.test.ts server/services/assets.test.ts server/services/auth.test.ts server/services/billing.test.ts server/services/momoBilling.test.ts server/services/delivery.test.ts server/services/director.test.ts server/services/incidents.test.ts server/services/jobs.test.ts server/services/projects.test.ts server/services/qa.test.ts server/services/recipes.test.ts server/services/revisions.test.ts server/services/timeline.test.ts",
+    "test:api": "node --import tsx --test apps/web/src/lib/sse.test.ts apps/web/src/lib/i18n.test.ts src/effectVocabulary.test.ts src/imageSize.test.ts src/renderFinal.test.ts src/buildColorFilters.test.ts server/app.test.ts server/services/analysis.test.ts server/services/artifacts.test.ts server/services/assets.test.ts server/services/auth.test.ts server/services/billing.test.ts server/services/momoBilling.test.ts server/services/delivery.test.ts server/services/director.test.ts server/services/incidents.test.ts server/services/jobs.test.ts server/services/projects.test.ts server/services/qa.test.ts server/services/rateLimit.test.ts server/services/recipes.test.ts server/services/revisions.test.ts server/services/timeline.test.ts",
     "test:integration": "node --test --test-concurrency=1 --test-timeout=180000 test/integration/*.test.mjs",
     "test:regression": "node --test --test-concurrency=1 --test-timeout=2400000 test/regression/*.test.mjs",
     "test:release": "node --test --test-concurrency=1 --test-timeout=180000 test/release/render-smoke.test.mjs",
@@ -80,6 +80,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@remotion/bundler": "^4.0.489",
+    "@remotion/renderer": "^4.0.489",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.9.0",
     "@types/react": "^19.2.17",

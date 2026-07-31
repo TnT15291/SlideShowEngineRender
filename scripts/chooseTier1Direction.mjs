@@ -15,17 +15,16 @@ const music = read(arg("--music"));
 const outPath = arg("--out", "analysis/tier1_direction.json");
 const pacingOverride = arg("--pacing", "").toLowerCase();
 
-const styleRules = [
-  { match: /super\s?8|8mm|home.?movie|phim cũ/, theme: "super8_nostalgia", reason: "prompt requests an 8mm/home-movie treatment" },
-  { match: /editorial|tạp chí|thời trang|fashion/, theme: "editorial_bold", reason: "prompt requests editorial/fashion styling" },
-  { match: /hiện đại|modern|minimal|tối giản|teal/, theme: "modern_teal", reason: "prompt requests modern/minimal styling" },
-  { match: /điện ảnh|cinematic|moody|trầm|dark/, theme: "dark_film", reason: "prompt requests cinematic/moody styling" },
-  { match: /hoài niệm|vintage|film|ấm|warm|mộc/, theme: "warm_film", reason: "prompt requests warm/nostalgic styling" },
-];
-const rule = styleRules.find((r) => r.match.test(prompt));
-const requestedTheme = rule?.theme;
-const themeId = requestedTheme && library.designTokens?.themes?.[requestedTheme]
-  ? requestedTheme : recipe.libraryTheme;
+// A recipe's libraryTheme is an authored choice — its layouts' panel geometry
+// and photo coverage are built assuming that specific palette (e.g. a scrim
+// opacity tuned for a light background). Guessing a different theme from
+// mood words in the customer's prompt ("ấm áp", "hiện đại", "cinematic" are
+// all common, incidental wedding-brief vocabulary) used to override it on a
+// large fraction of real briefs, silently swapping in a mismatched palette
+// (most visibly dark_film's near-black background showing through every
+// layout that doesn't go full-bleed). Template-tier recipes are a curated,
+// tested visual package — the recipe's own theme always wins.
+const themeId = recipe.libraryTheme;
 const theme = library.designTokens.themes[themeId];
 if (!theme) throw new Error(`Tier-1 direction: unknown theme ${themeId}`);
 
@@ -83,7 +82,7 @@ const doc = {
   version: 1, generatedBy: pacingOverride ? "preview_override" : "rules", generatedAt: new Date().toISOString(), recipeId: recipe.id,
   style: {
     themeId, paletteId: themeId, fontPairId: `${path.basename(theme.fonts.heading, path.extname(theme.fonts.heading))}+${path.basename(theme.fonts.body, path.extname(theme.fonts.body))}`,
-    fonts: theme.fonts, overlayId, overlays, reason: rule?.reason || `recipe default theme ${themeId}`,
+    fonts: theme.fonts, overlayId, overlays, reason: `recipe theme ${themeId}`,
   },
   pacing: {
     variantId: pacing.id, class: paceClass, score: +paceScore.toFixed(3), controls,

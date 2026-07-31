@@ -40,6 +40,9 @@ export function textOf(scene) {
 
 const byId = (scenes) => new Map((scenes || []).map((s) => [s.id, s]));
 const strategy = (doc) => doc?.timelineRules?.transitionStrategy || {};
+// A role may author one {type,duration} or a cycled array of a few — the ledger only
+// needs a representative type to say whether the role's flavor changed at all.
+const strategyType = (entry) => (Array.isArray(entry) ? entry[0]?.type : entry?.type) ?? null;
 
 /** Diff two storyboards into things a customer would recognise. */
 export function diffStoryboard(before, after) {
@@ -72,7 +75,7 @@ export function diffStoryboard(before, after) {
   const sb = strategy(after);
   const transition = {};
   for (const key of ["default", "final"]) {
-    if (sa[key]?.type !== sb[key]?.type) transition[key] = { from: sa[key]?.type ?? null, to: sb[key]?.type ?? null };
+    if (strategyType(sa[key]) !== strategyType(sb[key])) transition[key] = { from: strategyType(sa[key]), to: strategyType(sb[key]) };
   }
 
   return {

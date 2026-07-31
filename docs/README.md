@@ -1,5 +1,7 @@
 # Tài liệu — Wedding Render Engine
 
+- [UI/UX assessment and remediation plan](UI-UX-ASSESSMENT.md)
+
 Dự án AI Wedding Slideshow gồm 2 tầng:
 
 1. **Render engine local** (Node/TypeScript + FFmpeg) — **đã hoàn thiện tính năng**:
@@ -7,9 +9,10 @@ Dự án AI Wedding Slideshow gồm 2 tầng:
 2. **Pipeline sản xuất 3 tier** phía trên engine — Template (recipe, 0 AI), Lite (rule-based)
    và Premium (AI đạo diễn, có cổng khách chọn story + cách dùng bài nhạc).
 
-## Trạng thái (2026-07-13)
+## Trạng thái (2026-07-28)
 
-- **Engine**: 29 effect ảnh, 56 transition, caption tiếng Việt, color grading đầy đủ,
+- **Engine**: 36 effect FFmpeg, 59 transition (gồm `none`), 32 template
+  Remotion/GPU, 6 template Blender/3D, caption tiếng Việt, color grading đầy đủ,
   overlay (kèm 3 light-leak đóng gói sẵn), audio graph (playlist/automation/ducking),
   easing chuyển động (`gentle`/`snap`/`bounce`), validate → preflight → face-safe →
   image-cache → render → QA.

@@ -5,6 +5,8 @@
 // revisionDiff.mjs (a preview, which does not — a preview cannot know which
 // direction a rebuild will pick, so it calls this without one and gets the
 // multiplier's neutral default instead of a guess; see revisionDiff.mjs).
+import { MONTAGE_EFFECTS, MONTAGE_MAX } from "./engineCapabilities.mjs";
+
 export function scenePhotoCount(scene, { library, direction } = {}) {
   if (scene.effect === "video_background") return 0;
   if (scene.effect === "layer_scene") {
@@ -18,6 +20,9 @@ export function scenePhotoCount(scene, { library, direction } = {}) {
   const multiplier = direction?.pacing?.controls?.montagePhotoMultiplier ?? 1;
   return (scene.photoSlots || []).reduce((sum, slot) => {
     const count = slot.count || 1;
-    return sum + (slot.fixedCount ? count : Math.max(1, Math.round(count * multiplier)));
+    const demand = MONTAGE_EFFECTS.has(scene.effect) && !slot.fixedCount
+      ? Math.min(MONTAGE_MAX[scene.effect] ?? Infinity, Math.max(1, Math.round(count * multiplier)))
+      : count;
+    return sum + demand;
   }, 0);
 }
