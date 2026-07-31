@@ -363,7 +363,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
       job.log.end(`[runner] process exited with code ${code ?? 1}\n`)
       active.delete(projectId)
       job.releaseOperation()
-      await publishSnapshot(projectId)
+      if (!job.cancelRequested) await publishSnapshot(projectId)
     })
 
     await publishSnapshot(projectId)

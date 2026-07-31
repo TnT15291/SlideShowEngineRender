@@ -10,11 +10,11 @@
 
 | Trường | Giá trị |
 |---|---|
-| Trạng thái tổng | `READY_TO_MERGE` |
-| Pha hiện tại | `Xong Pha 0–2D; chờ merge` |
+| Trạng thái tổng | `MERGED_VERIFIED` |
+| Pha hiện tại | `Xong Pha 0–2D; đã merge và kiểm chứng cây hợp nhất` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2D` — nghiệm thu cuối: 8/8 bước xanh; `npm run check` exit 0 |
-| Bước tiếp theo | **Chỉ còn một lệnh**: khi cây chính sạch, `git merge agent/layout-primitives` (fast-forward, 21+2 commit). Đang chờ phiên song song commit 179 file của họ — xem nhật ký Merge |
+| Bước hoàn thành gần nhất | Merge `294fcda` + gate sau merge: `npm run check` exit 0 |
+| Bước tiếp theo | Không còn bước bắt buộc trong Pha 0–2D; có thể dọn worktree `SlideshowRenderEngine-layout-primitives` sau khi chốt các thay đổi bàn giao chưa commit |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,7 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — P2D DONE + fonts committed; chờ cây chính sạch để merge` |
+| Cập nhật lần cuối | `2026-07-31 — merged tại 294fcda; gate sau merge xanh` |
 
 ### Quy ước trạng thái
 
@@ -429,6 +429,45 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 20:40 — Merge và gate sau merge
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Thực hiện bước merge còn lại theo tracker và kiểm chứng cây hợp nhất.
+  - Không thay đổi geometry, primitive, adoption map hoặc story-template.
+- Kết quả merge:
+  - Khi session kiểm tra, phiên song song đã merge xong tại `294fcda` với hai parent `b16a60a`
+    và `fd8e4cb`; `agent/layout-primitives` là ancestor của `HEAD` và worktree sạch.
+  - Dự kiến fast-forward trong bản ghi trước đã lỗi thời: nhánh chính có thêm commit nên merge thực
+    tế là 3-way và đã hoà 38 file. Chi tiết quyết định hoà nằm trong message của commit `294fcda`.
+- File đã thay đổi trong session này:
+  - `server/services/jobs.ts` — khi cancellation đã được yêu cầu, callback `close` không publish
+    snapshot trung gian từ manifest còn `running`; `cancel()` tiếp tục sở hữu việc ghi/publish
+    trạng thái cuối `paused`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md` — cập nhật trạng thái merge và bằng chứng gate.
+- Lệnh đã chạy:
+  - Kiểm tra `git status`, parent merge, lịch sử first-parent và quan hệ ancestor.
+  - `npm run check` hai lần trước bản sửa; cả hai dừng ở cùng một race trong
+    `server/services/jobs.test.ts` với `failed !== paused`.
+  - Test job runner riêng 5 lần: 5/5 xanh trước bản sửa nhưng không tái tạo được mức tải của suite.
+  - Sau bản sửa: test job runner riêng 5/5 xanh; `npm run test:api` 116/116 xanh.
+  - `npm run check` cuối chạy nền để không bị timeout công cụ: exit 0.
+- Kết quả gate cuối:
+  - Typecheck, build và docs check xanh.
+  - API 116/116; unit 377/377; integration 1/1; production audit 0 vulnerability.
+- Metric trước/sau: Không đổi metric geometry; merge giữ kết quả P2D
+  `catalog.distinct=125`, `reachable.maxShare=12`, `reachable.over12Count=0`.
+- Commit: Merge `294fcda`; bản sửa race một dòng và cập nhật tracker nằm trong commit chứa bản ghi này.
+- Quyết định hoặc sai lệch so với plan:
+  - Không rerun mù để lấy gate xanh sau khi lỗi xuất hiện hai lần dưới full suite; sửa đúng race
+    cancellation mà gate sau merge làm lộ ra.
+  - Không refactor job runner hoặc mở rộng thay đổi ngoài một điều kiện bảo vệ.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: Không còn bước bắt buộc trong Pha 0–2D; có thể commit hai file bàn giao rồi dọn
+  worktree layout-primitives nếu không còn session nào dùng.
 
 ### 2026-07-31 — Merge: đã sẵn sàng, đang bị chặn bởi cây chính
 
