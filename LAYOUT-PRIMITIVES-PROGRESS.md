@@ -425,7 +425,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 batch B3 | `0b42562` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 89 -> 101`, `authored 81 -> 93`, `shared 30 -> 30`, `maxShare 15 -> 13`, `over12 2 -> 1`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `24 pending, 46 already applied`; content contract `24 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{garden-diary-01,heritage-ceremony-01,korean-soft-01,letters-to-forever-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B4 | `2294cac` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B5 | `9d64e17` | 12 adoption / 4 recipe; **rollout hoàn tất**. Đo thật sau ghi: `catalog 113 -> 125`, `authored 105 -> 117`, `shared 30 -> 30`, `maxShare 12`, `over12 0`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `0 pending, 70 already applied` và `Widespread reachable geometry: 0 group(s)`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{studio-white-prewedding-01,three-chapters-biography-01,warm-film-01,white-weddings-editorial-01}.json`; `test/layout-geometry.test.mjs` | DONE |
-| Nghiệm thu cuối | `P2D_SHA` | P2D.1–P2D.8 xanh. `npm run check` exit 0. `preview:tier1` 2 job; job A `20/24` pass và 4 fail pre-existing (`duplicate_caption` trên repeat variant), xác nhận bằng cách chạy lại đúng 4 recipe đó ở bản pre-rollout — fail y hệt | `docs/generation-guide.md`; `docs/TEMPLATE-RULES.md`; `temp/p2d/` | DONE |
+| Nghiệm thu cuối | `2bec2d3` | P2D.1–P2D.8 xanh. `npm run check` exit 0. `preview:tier1` 2 job; job A `20/24` pass và 4 fail pre-existing (`duplicate_caption` trên repeat variant), xác nhận bằng cách chạy lại đúng 4 recipe đó ở bản pre-rollout — fail y hệt | `docs/generation-guide.md`; `docs/TEMPLATE-RULES.md`; `temp/p2d/` | DONE |
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
@@ -477,14 +477,14 @@ trên cùng một job**, và đừng tin số của một sweep có tranh chấp
 - Lệnh đã chạy: `npm run preview:tier1` (2 job × nhiều recipe, cả bản hiện tại lẫn pre-rollout),
   `npm run docs:check`, `npm run check`, `node scripts/lintStoryTemplates.mjs`,
   `node scripts/validateLayoutPrimitive.mjs`, targeted tests.
-- Commit: `P2D_SHA`.
+- Commit: `2bec2d3`.
 - Trạng thái kết thúc: `DONE`.
 - Blocker còn lại cho bước merge: cây chính (`agent/refactor-engine-and-add-momo`) đang có **179
   file chưa commit** của phiên song song, trong đó có `layouts/library.json`, `scripts/` và
   `docs/` — đúng những file nhánh này sửa. `git merge` sẽ bị git từ chối để khỏi đè mất phần việc
   đó. Merge phải do người quyết định: commit/stash phần việc kia trước, hoặc merge vào một nhánh
   khác. **Không tự merge đè.**
-- Bước tiếp theo: Merge `agent/layout-primitives` (`P2D_SHA`) về nhánh đích sau khi cây chính sạch.
+- Bước tiếp theo: Merge `agent/layout-primitives` (`2bec2d3`) về nhánh đích sau khi cây chính sạch.
 
 ### 2026-07-31 — P2C batch B5 (rollout hoàn tất)
 
