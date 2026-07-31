@@ -13,8 +13,8 @@
 | Trạng thái tổng | `MERGED_VERIFIED` |
 | Pha hiện tại | `Xong Pha 0–2D; đã merge và kiểm chứng cây hợp nhất` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | Dọn worktree phụ sau merge; chỉ còn worktree chính tại `c899f66` |
-| Bước tiếp theo | Không còn bước bắt buộc trong kế hoạch Pha 0–2D |
+| Bước hoàn thành gần nhất | `P2D.4` đóng lại bằng 85 ảnh cưới thật: 19/24 cả hai phía, **0 recipe đổi trạng thái** |
+| Bước tiếp theo | Không còn bước bắt buộc trong Pha 0–2D. Nợ mở: `duplicate_caption` trên repeat variant (5 recipe, có sẵn, không dính hình học) |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,7 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — merge, gate và dọn worktree phụ hoàn tất` |
+| Cập nhật lần cuối | `2026-07-31 — P2D.4 nghiệm thu lại trên ảnh thật; hợp nhất luật lề an toàn và sửa hộp mặt giả` |
 
 ### Quy ước trạng thái
 
@@ -358,7 +358,7 @@ Ngoại lệ:
 | P2D.1 | DONE | Chạy nghiệm thu metric cuối | `maxShare=12`, `over12Count=0`; catalog `125`, authored `117`, shared `30` |
 | P2D.2 | DONE | Chạy lint toàn bộ recipe | `24/24` clean, 0 failing |
 | P2D.3 | DONE | Chạy targeted geometry/layout/template tests | `50/50` pass; validator `32/32` |
-| P2D.4 | DONE | Chạy `npm run preview:tier1` trên ít nhất 2 job thật | 2 job; job A `20/24` recipe pass, 4 fail **giống hệt trước migration**; shot list giải được, không tụt Lite. Chi tiết + 2 phát hiện phụ ở nhật ký |
+| P2D.4 | DONE | Chạy `npm run preview:tier1` trên ít nhất 2 job thật | **Đóng lại 2026-07-31 bằng 85 ảnh cưới THẬT** (`input/Pictures/Tuân Tiên/Bride & Groom`, 55 dọc / 30 ngang, 0 nhóm trùng, cả 85 có mặt người): trước migration `19/24` pass, sau migration `19/24` pass, **0 recipe đổi trạng thái**. 5 ca fail giống hệt hai phía, đều là `duplicate_caption` có sẵn. Bản đóng trước đó dùng 2 job ảnh **tổng hợp** — xem đính chính ở nhật ký |
 | P2D.5 | DONE | Cập nhật `docs/generation-guide.md` | Thêm §5 bảng 7 primitive + luật frame nội tại + tiền đề landscape của horizon |
 | P2D.6 | DONE | Cập nhật `docs/TEMPLATE-RULES.md` nếu có luật mới | Thêm 3 luật dùng primitive + ghi chú `authored.shared` là thước đo hình học thuần |
 | P2D.7 | DONE | Chạy `npm run docs:check` | Passed, 13 file Markdown |
@@ -429,6 +429,63 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2D.4 đóng lại bằng ảnh thật, và hai luật bị hợp nhất
+
+- Session: Claude, sau khi người dùng chỉ ra kho ảnh cưới thật trong `input/Pictures/`.
+- Lý do mở lại: bản đóng P2D.4 trước dùng hai job **ảnh tổng hợp**. Ảnh tổng hợp không có mặt
+  người nên gate `crop` face-safe không bao giờ nổ — đúng thứ gate này sinh ra để bắt.
+
+**Dữ liệu dùng lần này.** `projects/p2d-tuan-tien`, 85 ảnh thật từ
+`input/Pictures/Tuân Tiên/Bride & Groom`: 55 dọc / 30 ngang, **0** nhóm trùng lặp, cả 85 có mặt
+người (76 nhận diện thật confidence `0.81–0.92`). Job đối chứng `projects/p2d-ctl` là bản sao
+cùng bộ ảnh, chạy 24 recipe **trước** migration trích từ `b16a60a`.
+
+**Kết quả cuối.** Trước migration `19/24` pass; sau migration `19/24` pass; **0 recipe đổi trạng
+thái**. 5 ca fail giống hệt hai phía (`family-roots-01`, `luminous-editorial-motion-01`,
+`three-chapters-biography-01`, `white-weddings-editorial-01`, `white-weddings-full-01`), tất cả là
+`caption_integrity: duplicate_caption` trên repeat variant — lỗi copy có sẵn, không dính hình học.
+Kết luận: **migration không gây hồi quy trên ảnh cưới thật.**
+
+**Cảnh báo phương pháp — hai lần đo đầu của tôi đều sai.**
+
+1. Lần 1 kết luận "5 recipe hồi quy". Sai: nhiều tiến trình `preview:tier1` cùng ghi vào một thư
+   mục job (`analysis/qa/`, `timeline/previews/`), giẫm lên file trung gian của nhau.
+   `cinematic-film-01` FAIL trong sweep nhưng PASS 4/4 khi chạy lẻ.
+2. Lần 2 (job tách riêng, tuần tự) ra "4 hồi quy" và **tái lặp 2/2**. Lần này số đúng nhưng
+   nguyên nhân không phải hình học — xem dưới.
+
+Ai đo lại phải: một job riêng cho mỗi phía, chạy tuần tự, và **xoá `analysis/qa/` + `previews/`
+giữa từng recipe** (`qaLoop` để lại `*.loop-state.json` dùng chung theo pacing, không theo recipe).
+
+**Gốc của 4 ca "hồi quy": hộp mặt giả, không phải toạ độ slot.** Khi máy dò không thấy mặt,
+`analyzePhotos` lấy hộp bao mọi điểm màu da làm mặt với `confidence 0.35`
+(`faceDetection: "skin_estimate_fallback"`). Trên ảnh chụp rộng ánh sáng ấm, hộp đó trùm nguyên
+khung — 6/85 tấm bị vậy, `3M4A0700` có hộp đúng `{0,0,1,1}`. `qaProxy` ép containment với nó, mà
+điều đó **bất khả thi theo định nghĩa**: hộp trùm một trục thì không lọt vào bất kỳ crop nào trên
+trục ấy. Nên mọi slot `fit: cover` hẹp hơn ảnh nguồn đều fail, bất kể layout làm gì. 4 recipe đỏ
+chỉ vì solver tình cờ xếp một trong 6 tấm ấy vào slot cover; đổi bộ ảnh là 4 recipe khác đỏ.
+
+Đã sửa ở `f568f72`: containment kiểm **theo từng trục**, bỏ qua trục mà hộp trùm `>=90%`
+(`DEGENERATE_FACE_AXIS`). Không đụng `FACE_CONTAIN_MARGIN` hay focus bounds; 76 tấm có mặt thật
+vẫn bị kiểm đủ. Test mới khoá **cả hai chiều**: hộp trùm trục không nổ, hộp thật sát mép vẫn nổ.
+
+**Hợp nhất luật lề an toàn** (`41bf4d8`, việc riêng, phát hiện khi rà cùng phiên). Có **ba** nơi
+định nghĩa lề title-safe: `tier1QualityGate` dùng 5% mỗi cạnh, còn G4 của validator và V4 của
+lookResolver dùng 70px phẳng, cộng thêm một bản chép cứng `0.05` trong test. Trên 1920×1080, 70px
+phẳng **lỏng hơn 26px theo chiều ngang** (khe hở đã để lọt lỗi 6px của Pha 1) và **chặt hơn 16px
+theo chiều dọc** — chính chỗ chặt thừa này đẻ ra 3 cảnh báo "grandfather" mà tracker từng ghi là
+nợ vĩnh viễn; đo theo luật thật thì chúng là **báo động giả** và đã biến mất.
+`textSafeInsets()` trong `thresholds.mjs` là định nghĩa duy nhất từ nay.
+
+- Lệnh đã chạy: `preview:tier1 --dry-run` × 24 recipe × 2 phía (state xoá giữa mỗi lần);
+  `npm run test:unit` **378/378**; validator `32/32` (0 error, **17** warning, trước là 20);
+  lint `24/24`; `typecheck:scripts` exit 0.
+- Commit: `41bf4d8` (lề an toàn), `f568f72` (hộp mặt).
+- Khoản nợ lộ ra, chưa làm: `duplicate_caption` trên repeat variant làm đỏ 5 recipe ở **cả hai
+  phía**. Đây là lỗi khách hàng thấy được nếu job rơi vào nhánh variant đó, và nó độc lập hoàn
+  toàn với Pha 0–2D.
+- Trạng thái kết thúc: `DONE`.
 
 ### 2026-07-31 20:49 — Dọn worktree phụ
 
@@ -516,6 +573,14 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 - Trạng thái nhận việc: `IN_PROGRESS`; cây sạch tại `da3d957`.
 - Kết quả 8 bước: tất cả `DONE`. `npm run check` **exit 0** (typecheck, build, docs:check,
   test:api, `test:unit 376/376`, `test:integration 1/1`, audit 0 vulnerability).
+
+#### P2D.4 — đính chính: lần đóng đầu tiên dùng ảnh tổng hợp
+
+> **Bản ghi bên dưới đã lỗi thời ở phần kết luận.** Hai "job thật" mà nó dùng —
+> `layout-primitives-premium-baseline` (82 ảnh) và `p2d-job-b` (45 ảnh, tập con của job A) —
+> đều là **ảnh tổng hợp**, không có mặt người. Gate `crop` face-safe vì thế không bao giờ nổ,
+> nên con số `20/24` không mô tả hành vi trên ảnh cưới thật. Kết quả đúng nằm ở mục
+> "P2D.4 đóng lại bằng ảnh thật" trong nhật ký ngày 2026-07-31.
 
 #### P2D.4 — chạy thật, và ba điều nó lộ ra
 
