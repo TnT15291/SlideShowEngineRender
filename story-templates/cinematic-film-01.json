@@ -20,22 +20,6 @@
         "saturation": 0.5
       }
     },
-    "film_gallery": {
-      "intent": "a portrait-safe photograph on a luminous warm matte, cropped to the theme's own 2.39 frame",
-      "layout": "gallery_matte_hero",
-      "layoutOverrides": {
-        "background": {
-          "type": "tint",
-          "color": "#D8CFC0"
-        },
-        "photoSlots": {
-          "hero": {
-            "y": 239,
-            "height": 602
-          }
-        }
-      }
-    },
     "feature_trio": {
       "intent": "one hero with two stacked beside it — what this beat's id always claimed",
       "layout": "feature_plus_duo",
@@ -85,11 +69,6 @@
       "layout": "photo_duo",
       "frame": "reel_hairline"
     },
-    "arch_trio_reel": {
-      "intent": "the arched triptych, wearing the recipe's reel_hairline frame",
-      "layout": "arch_trio",
-      "frame": "reel_hairline"
-    },
     "closing_names_reel": {
       "intent": "the closing card, set in this recipe's own type scale",
       "layout": "closing_names",
@@ -102,6 +81,48 @@
           "date": {
             "sizePx": 32,
             "y": 660
+          }
+        }
+      }
+    },
+    "p2_circle_trio": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s08c_breather.",
+      "layout": "circle_trio_stagger",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p2": {
+            "y": 250
+          }
+        }
+      }
+    },
+    "p2_overlap_duo": {
+      "intent": "Phase 2 adoption of overlap_stack_duo for s84_photo_duo.",
+      "layout": "overlap_stack_duo",
+      "layoutOverrides": {
+        "photoSlots": {
+          "front": {
+            "x": 840,
+            "y": 410,
+            "rotation": -4
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "layoutOverrides": {
+        "background": {
+          "type": "tint",
+          "color": "#D8CFC0"
+        },
+        "photoSlots": {
+          "hero": {
+            "x": 100,
+            "y": 60,
+            "width": 1240,
+            "height": 900
           }
         }
       }
@@ -657,22 +678,22 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "p1",
           "orient": "portrait",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "portrait",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "p3",
           "orient": "portrait",
           "quality": "good"
         }
       ],
-      "look": "arch_trio_reel"
+      "look": "p2_circle_trio"
     },
     {
       "id": "s80_photo_strip_left",
@@ -721,7 +742,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "film_gallery",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -739,17 +760,17 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "back",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "front",
           "orient": "any",
           "quality": "best"
         }
       ],
-      "look": "photo_duo_reel"
+      "look": "p2_overlap_duo"
     },
     {
       "id": "s85_feature_duo",

@@ -13,15 +13,16 @@
 | Trạng thái tổng | `IN_PROGRESS` |
 | Pha hiện tại | `Pha 2B — pilot ba recipe` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2A.R2` — nghiệm thu lại Pha 2A: 4 lỗi chặn rollout đã sửa, gate chạy được trên cây nửa migrate |
-| Bước tiếp theo | `P2B pilot` — áp batch `pilot` (`--write --batch pilot`), rồi chạy `--check-plan` + targeted tests và nâng ratchet đúng ba recipe |
+| Bước hoàn thành gần nhất | `P2B pilot` — 3 recipe đã migrate; bộ test planner được làm rollout-independent và nghiệm thu ở cả 7 giai đoạn |
+| Bước tiếp theo | `P2C batch B1` — `--write --batch B1` cho `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01`, rồi chạy đủ 7 gate của Pha 2C và siết ratchet tới số đo mới |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
 | Commit Pha 0 | `d5e8d0f` baseline snapshot → `b83d601` Pha 0 → `e43dad3` refactor |
 | Commit Pha 1 | `5871122` |
 | Commit Pha 2A | `4ac137c` |
-| Cập nhật lần cuối | `2026-07-31 — P2A.R2 DONE` |
+| Commit Pha 2B pilot | `PILOT_SHA` |
+| Cập nhật lần cuối | `2026-07-31 — P2B pilot DONE` |
 
 ### Quy ước trạng thái
 
@@ -57,11 +58,11 @@
 
 | Metric V2 | Baseline trong plan | Đã xác nhận khi triển khai |
 |---|---:|---|
-| `catalog.distinct` | 49 | Có — P0A.5: 49 |
-| `authored.distinct` | 48 | Có — P0A.5: 48 |
-| `authored.shared` | 30 | Có — P0A.5: 30 |
-| `reachable.maxShare` | 23 | Có — P0A.5: 23 |
-| `reachable.over12Count` | 7 | Có — P0A.5: 7 |
+| `catalog.distinct` | 49 | Có — P0A.5: 49; Pha 1: 56; sau pilot: 64 |
+| `authored.distinct` | 48 | Có — P0A.5: 48; sau pilot: 56 |
+| `authored.shared` | 30 | Có — P0A.5: 30; sau pilot: 30 |
+| `reachable.maxShare` | 23 | Có — P0A.5: 23; sau pilot: 22 |
+| `reachable.over12Count` | 7 | Có — P0A.5: 7; sau pilot: 6 |
 | Scene meaningful | 5 scene / 3 recipe | Có — P0A.4/P0A.5: 5 / 3 |
 | `closing_names` distinct | 11 | Có — P0A.2: 11 |
 | `closing_names` max group | 9 | Có — P0A.2: 9 |
@@ -267,18 +268,57 @@ text key" là đúng nhưng chỉ chạm một scene, nên nó không chứng mi
 
 ### Pha 2B — Pilot ba recipe
 
-| Recipe | Trạng thái | Yêu cầu |
-|---|---|---|
-| `cinematic-film-01` | TODO | 3 scene meaningful; gồm `offset_portrait_hero` |
-| `jmii-silk-botanical-01` | TODO | 3 scene meaningful; frame tròn đúng radius nếu resize |
-| `editorial-bold-01` | TODO | 3 scene meaningful; không dùng `s03_chapter` sai text contract |
+| Recipe | Trạng thái | Yêu cầu | Kết quả đo |
+|---|---|---|---|
+| `cinematic-film-01` | DONE | 3 scene meaningful; gồm `offset_portrait_hero` | meaningful `1 -> 3`; `s83_gallery_matte` → `offset_portrait_hero`, giữ nền `#D8CFC0` |
+| `jmii-silk-botanical-01` | DONE | 3 scene meaningful; frame tròn đúng radius nếu resize | meaningful `3 -> 6`; không resize slot tròn nên `circleMedallion` r=260 vẫn đúng nửa cạnh 520 |
+| `editorial-bold-01` | DONE | 3 scene meaningful; không dùng `s03_chapter` sai text contract | meaningful `0 -> 3`; map không có adoption nào ở `s03_chapter` |
 
 Sau pilot:
 
-- Chạy lại `--check-plan` trên toàn bộ adoption map.
-- Nâng ratchet đúng ba recipe đã migrate.
-- Chỉ hạ `maxShare/over12Count` tới số đo thực tế.
-- Commit pilot độc lập.
+- Chạy lại `--check-plan` trên toàn bộ adoption map — `61 pending, 9 already applied`.
+- Nâng ratchet đúng ba recipe đã migrate — `3 / 6 / 3`, `white-weddings-full-01` giữ `1`.
+- Chỉ hạ `maxShare/over12Count` tới số đo thực tế — `23 -> 22` và `7 -> 6`, không phải mục tiêu `12/0`.
+- Commit pilot độc lập — `PILOT_SHA`.
+
+#### Bộ test planner phải sống được qua cả sáu batch
+
+`P2A.R2` đã sửa `--check-plan` cho cây nửa migrate, nhưng bằng chứng của nó chỉ chạy
+`test/template-recipes.test.mjs` sau khi ghi thử pilot. Ghi pilot thật làm đỏ **11/21** test trong
+`test/adopt-new-primitives.test.mjs`, và `test:unit` glob `test/*.test.mjs` nên `npm run check` đỏ
+theo. Hai nhóm nguyên nhân, đều là "đo trên cây chưa migrate":
+
+1. **Kỳ vọng chốt cứng trạng thái nguồn**: `72 execution path`, `70 pending, 0 already applied`,
+   share `[23,15,15,14,14,13,13]`, `adoptionStatus(...) === "pending"`, và một assert "input recipe
+   was mutated" so với `["left","right"]` — tức so với chính hình dạng mà pilot vừa đổi. Đã sửa
+   bằng cách suy kỳ vọng từ `adoptionStatus()` trên cây hiện tại thay vì chốt số.
+2. **Fixture sửa plan rồi áp lên recipe thật**: khi recipe đã ghi, plan bị sửa không còn khớp file,
+   nên `verifyAppliedAdoption()` throw trước và audit cần kiểm không bao giờ chạy. Đã sửa bằng
+   `test/fixtures/pre-adoption-recipes.json` — bản đóng băng của 6 recipe tại commit `6538338`
+   (trước batch đầu tiên), luôn ở trạng thái `pending`. Một test giữ cho bản đóng băng khỏi mục:
+   mọi adoption của map phải `pending` với nó và `source.layout` phải khớp.
+
+Quét thêm ba lỗi **chưa nổ ở pilot nhưng sẽ nổ ở batch sau**, đã sửa cùng lúc:
+
+- fixture `undeclared` dùng `modern-teal-01` → sẽ đỏ ở `B4`;
+- fixture `collided` dùng `classic-multisong-album-01` → sẽ đỏ ở `B2`;
+- assert "cây nguồn là thứ gate phải từ chối" → sẽ đỏ ngay khi `B5` xong, vì lúc đó cây nguồn
+  **chính là** cây đích. Thay bằng một cây có đúng một recipe bị bỏ lại ở hình học pre-adoption.
+
+Ngoài ra `Orientation contract` và report `Widespread reachable geometry` đều rỗng dần theo rollout
+(`declaredDriftCount` chỉ đếm adoption `pending`; report chỉ in group `share > 12`), nên hai test đó
+chuyển sang khoá thứ bất biến: map ký nhận đúng `7` adoption bẻ hướng ảnh, sáu recipe đóng băng khai
+`3` shape change, và formatter được kiểm bằng stats fixture tự dựng.
+
+Nghiệm thu: chạy `test/adopt-new-primitives.test.mjs` ở **cả bảy giai đoạn** rollout
+(pristine → pilot → B1 → B2 → B3 → B4 → B5) — `22/22` pass ở mọi giai đoạn.
+
+**Việc còn nợ, không chặn rollout.** Writer sinh `intent` máy móc cho look mới
+(`"Phase 2 adoption of <primitive> for <sceneId>."`). Nó là tài liệu cho người đọc recipe, không
+ảnh hưởng hình học và không đụng `compositionUniquenessAudit` (vẫn 0 cặp dùng chung), nhưng hai
+recipe cùng adopt một primitive ở cùng scene id sẽ có `intent` giống hệt nhau. Nếu muốn giữ giọng
+tự viết của recipe thì thêm `intent` cho từng adoption trong map — 70 dòng, nên làm thành một bước
+riêng chứ không nhét vào một batch.
 
 ### Pha 2C — Rollout theo batch
 
@@ -374,7 +414,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 1 visual probe | `5871122` | Render mới 7/7 scene; H.264 1920x1080, 30 fps, 36,466667 giây; review đủ 7 layout và 28 frame mở đầu/ổn định/xfade đạt | `temp/probe-primitives.json` SHA-256 `90D07EE0...F8DA2E8`; `temp/probe-primitives.mp4` SHA-256 `44D7325E...1721ED9` | DONE |
 | Pha 1 Premium comparison | `5871122` | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
 | Pha 2 adoption planner | `4ac137c` | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
-| Pha 2 pilot | — | — | — | TODO |
+| Pha 2 pilot | `PILOT_SHA` | 9 adoption / 3 recipe. Đo thật sau ghi: `catalog 56 -> 64`, `authored 48 -> 56`, `maxShare 23 -> 22`, `over12 7 -> 6`, meaningful `cinematic 1 -> 3`, `editorial 0 -> 3`, `jmii 3 -> 6`, `ww-full` giữ `1`. `--check-plan` `61 pending, 9 already applied`; validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `npm run test:unit` `376/376`. Bộ adoption test chạy `22/22` ở cả 7 giai đoạn rollout | `story-templates/{cinematic-film-01,editorial-bold-01,jmii-silk-botanical-01}.json`; `test/fixtures/pre-adoption-recipes.json`; `test/adopt-new-primitives.test.mjs`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B1 | — | — | — | TODO |
 | Pha 2 batch B2 | — | — | — | TODO |
 | Pha 2 batch B3 | — | — | — | TODO |
@@ -384,6 +424,59 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2B pilot
+
+- Session: Claude, theo yêu cầu "làm bước tiếp theo".
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Ghi batch `pilot`, chạy lại đủ gate, siết ratchet tới số đo thực tế, commit độc lập.
+  - Không đụng `layouts/library.json`, không đụng recipe ngoài ba recipe pilot.
+- File đã thay đổi:
+  - `story-templates/cinematic-film-01.json`, `editorial-bold-01.json`,
+    `jmii-silk-botanical-01.json` — do `--write --batch pilot` ghi.
+  - `test/fixtures/pre-adoption-recipes.json` — mới.
+  - `test/adopt-new-primitives.test.mjs`, `test/layout-geometry.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - 9 adoption trên 3 recipe; diff `156 insertions / 78 deletions`, không phải rewrite cả file.
+  - Ratchet geometry siết tới số **đo được**: `catalog >= 64`, `authored >= 56`, `maxShare <= 22`,
+    `over12Count <= 6`; meaningful `cinematic-film-01 = 3`, `editorial-bold-01 = 3`,
+    `jmii-silk-botanical-01 = 6`, `white-weddings-full-01` giữ `1`.
+  - Bộ test planner chuyển từ "chốt trạng thái nguồn" sang "suy từ `adoptionStatus()`", cộng một
+    bản đóng băng pre-adoption cho các fixture cần source `pending`. Chi tiết ở §Pha 2B.
+- Lệnh đã chạy:
+  - `node scripts/adoptNewPrimitives.mjs --check-plan` (trước và sau khi ghi).
+  - `node scripts/adoptNewPrimitives.mjs --write --batch pilot`.
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`; `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=60000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `npm run typecheck:scripts`; `npm run test:unit`.
+  - Quét 7 giai đoạn: ghi lần lượt `pilot`→`B5` rồi chạy adoption test ở từng bước,
+    sau đó `git checkout -- story-templates` và ghi lại đúng `pilot`.
+- Kết quả:
+  - `--check-plan` trước ghi `70 pending, 0 already applied`; sau ghi `61 pending, 9 already applied`.
+  - Validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`;
+    `typecheck:scripts` exit 0; `npm run test:unit` **376/376** (375 trước, +1 test đóng băng).
+  - Adoption test `22/22` ở **cả bảy** giai đoạn rollout.
+  - Ba yêu cầu riêng của pilot đều đạt: cinematic có `offset_portrait_hero` và giữ nền `#D8CFC0`;
+    jmii không resize slot tròn nên `circleMedallion` r=260 vẫn đúng nửa cạnh 520; editorial không
+    có adoption nào ở `s03_chapter`.
+- Metric trước/sau: `catalog 56 -> 64`, `authored 48 -> 56`, `authored.shared 30 -> 30`,
+  `maxShare 23 -> 22`, `over12 7 -> 6`.
+- Commit: `PILOT_SHA`.
+- Quyết định hoặc sai lệch so với plan:
+  - Siết `jmii-silk-botanical-01` lên `6` chứ không phải `3`: quy ước §2.8 nói chỉ siết tới số đã
+    đo, và `6` là số đo thật.
+  - Sửa bộ test planner nằm ngoài mô tả gốc của P2B nhưng bắt buộc: gate số 6 của Pha 2C đòi
+    targeted tests xanh, `test:unit` glob cả file này, và 3 trong 14 lỗi chỉ nổ ở `B2`/`B4`/`B5` —
+    để lại thì mỗi batch sau đều dừng ở cùng chỗ.
+  - Không chạy so sánh Premium trước/sau: đó là gate của Pha 1 trên một library không đổi; Pha 2 cố
+    ý đổi recipe nên output Premium thay đổi là đúng thiết kế.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2C batch B1` — `--write --batch B1`, rồi đủ 7 gate của Pha 2C và siết ratchet
+  tới số đo mới. Lưu ý: `B2` là batch đầu tiên chạm `classic-multisong-album-01`, recipe có trong
+  bản đóng băng pre-adoption — nếu sửa map cho recipe đó thì phải kiểm lại fixture còn `pending`.
 
 ### 2026-07-31 — P2A.R2 (nghiệm thu lại Pha 2A)
 

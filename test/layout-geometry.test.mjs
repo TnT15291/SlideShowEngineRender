@@ -17,9 +17,12 @@ const recipes = fs.readdirSync(path.join(root, "story-templates"))
   .map((file) => JSON.parse(fs.readFileSync(path.join(root, "story-templates", file), "utf8")));
 const stats = geometryStats(recipes, library);
 
+// Ratcheted to what the tree actually measures, never to a target. The three recipes in the
+// Phase 2B pilot are locked at the count they reached; the rest tighten batch by batch.
 const meaningfulBaseline = {
-  "cinematic-film-01": 1,
-  "jmii-silk-botanical-01": 3,
+  "cinematic-film-01": 3,
+  "editorial-bold-01": 3,
+  "jmii-silk-botanical-01": 6,
   "white-weddings-full-01": 1,
 };
 
@@ -41,11 +44,11 @@ test("meaningful custom geometry does not regress per recipe", () => {
 });
 
 test("catalog, authored, and reachable geometry ratchets do not regress", () => {
-  assert.ok(stats.catalog.distinct >= 56, `catalog distinct fell to ${stats.catalog.distinct}`);
-  assert.ok(stats.authored.distinct >= 48, `authored distinct fell to ${stats.authored.distinct}`);
-  assert.ok(stats.reachable.maxShare <= 23, `reachable maxShare rose to ${stats.reachable.maxShare}`);
+  assert.ok(stats.catalog.distinct >= 64, `catalog distinct fell to ${stats.catalog.distinct}`);
+  assert.ok(stats.authored.distinct >= 56, `authored distinct fell to ${stats.authored.distinct}`);
+  assert.ok(stats.reachable.maxShare <= 22, `reachable maxShare rose to ${stats.reachable.maxShare}`);
   assert.ok(
-    stats.reachable.over12Count <= 7,
+    stats.reachable.over12Count <= 6,
     `reachable over12Count rose to ${stats.reachable.over12Count}`,
   );
 });
