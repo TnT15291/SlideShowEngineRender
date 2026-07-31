@@ -25,7 +25,7 @@
 | Commit Pha 2C B1 | `161b281` |
 | Commit Pha 2C B2 | `4cf6f25` |
 | Commit Pha 2C B3 | `0b42562` |
-| Commit Pha 2C B4 | `B4_SHA` |
+| Commit Pha 2C B4 | `2294cac` |
 | Cập nhật lần cuối | `2026-07-31 — P2C B4 DONE` |
 
 ### Quy ước trạng thái
@@ -331,7 +331,7 @@ riêng chứ không nhét vào một batch.
 | B1 | `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01` | DONE | `161b281` |
 | B2 | `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01` | DONE | `4cf6f25` |
 | B3 | `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`, `letters-to-forever-01` | DONE | `0b42562` |
-| B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | DONE | `B4_SHA` |
+| B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | DONE | `2294cac` |
 | B5 | `studio-white-prewedding-01`, `three-chapters-biography-01`, `warm-film-01`, `white-weddings-editorial-01` | TODO | — |
 
 Gate bắt buộc sau mỗi batch:
@@ -422,7 +422,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 batch B1 | `161b281` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 64 -> 76`, `authored 56 -> 68`, `shared 30 -> 30`, `maxShare 22 -> 18`, `over12 6 -> 4`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `49 pending, 21 already applied`; content contract `51 path / 1 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{afterparty-pulse-01,cinematic-vows-01,city-to-ceremony-01,classic-luxury-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B2 | `4cf6f25` | 13 adoption / 4 recipe. Đo thật sau ghi: `catalog 76 -> 89`, `authored 68 -> 81`, `shared 30 -> 30`, `maxShare 18 -> 15`, `over12 4 -> 2`; meaningful `3/3/4/3`. `--check-plan` `36 pending, 34 already applied`; content contract `36 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{classic-multisong-album-01,family-roots-01,four-seasons-love-01,garden-botanical-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B3 | `0b42562` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 89 -> 101`, `authored 81 -> 93`, `shared 30 -> 30`, `maxShare 15 -> 13`, `over12 2 -> 1`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `24 pending, 46 already applied`; content contract `24 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{garden-diary-01,heritage-ceremony-01,korean-soft-01,letters-to-forever-01}.json`; `test/layout-geometry.test.mjs` | DONE |
-| Pha 2 batch B4 | `B4_SHA` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
+| Pha 2 batch B4 | `2294cac` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B5 | — | — | — | TODO |
 | Nghiệm thu cuối | — | — | — | TODO |
 | Pha 3 tuỳ chọn | — | — | — | TODO |
@@ -486,10 +486,10 @@ không trùng.** Nó tính cả dressing; muốn kiểm hình học thuần thì
      `over12Count === 0` (đổi từ `<=` sang `===` vì đã chạm đáy), `shared <= 30`.
   6. Validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0;
      `npm run test:unit` `376/376`.
-  7. Commit `B4_SHA`.
+  7. Commit `2294cac`.
 - Metric trước/sau: `catalog 101 -> 113`, `authored 93 -> 105`, `authored.shared 30 -> 30`,
   `maxShare 13 -> 12`, `over12 1 -> 0`.
-- Commit: `B4_SHA`.
+- Commit: `2294cac`.
 - Quyết định hoặc sai lệch so với plan:
   - Sửa map nằm ngoài mô tả gốc của một batch. Lý do: lỗi do chính batch này tạo ra, là metric duy
     nhất đi sai hướng, và để lại thì Pha 2D sẽ nghiệm thu trên một catalogue có hai recipe vẽ trùng.
