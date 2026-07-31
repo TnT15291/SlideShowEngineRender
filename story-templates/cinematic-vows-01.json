@@ -13,21 +13,6 @@
     }
   },
   "looks": {
-    "feature_plus_duo_plate": {
-      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
-      "layout": "feature_plus_duo",
-      "frame": "vow_card"
-    },
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "vow_card"
-    },
-    "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
-      "layout": "photo_duo",
-      "frame": "vow_card"
-    },
     "polaroid_scatter_plate": {
       "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
       "layout": "polaroid_scatter",
@@ -72,6 +57,50 @@
           "date": {
             "sizePx": 38,
             "y": 640
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 190,
+            "y": 60,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_golden_pair": {
+      "intent": "Phase 2 adoption of golden_column_pair for s84_photo_duo.",
+      "layout": "golden_column_pair",
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "major": {
+            "x": 90,
+            "width": 1080
+          },
+          "minor": {
+            "x": 1230,
+            "y": 240
+          }
+        }
+      }
+    },
+    "p2_stacked_horizon": {
+      "intent": "Phase 2 adoption of stacked_horizon_trio for s02_anticipation.",
+      "layout": "stacked_horizon_trio",
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "band1": {
+            "x": 160
           }
         }
       }
@@ -271,22 +300,22 @@
     {
       "id": "s02_anticipation",
       "effect": "layer_scene",
-      "look": "feature_plus_duo_plate",
+      "look": "p2_stacked_horizon",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "hero",
+          "slot": "band1",
           "orient": "landscape",
           "quality": "best"
         },
         {
-          "slot": "top",
+          "slot": "band2",
           "orient": "landscape",
           "quality": "good"
         },
         {
-          "slot": "bottom",
+          "slot": "band3",
           "orient": "landscape",
           "quality": "good"
         }
@@ -589,7 +618,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -603,17 +632,17 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "look": "photo_duo_plate",
+      "look": "p2_golden_pair",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "major",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "minor",
           "orient": "any",
           "quality": "best"
         }
