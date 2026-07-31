@@ -2,9 +2,12 @@ import { useState } from "react"
 import { Eye, EyeOff, KeyRound, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { ApiError, apiPost } from "@/lib/api"
+import { apiPost } from "@/lib/api"
+import { apiMessage } from "@/lib/apiMessage"
+import { useI18n } from "@/lib/i18n"
 
 export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n()
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -17,7 +20,7 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
     event.preventDefault()
     setError(null)
     if (newPassword !== confirmPassword) {
-      setError("New passwords do not match")
+      setError(t("password.mismatch"))
       return
     }
     setSubmitting(true)
@@ -28,7 +31,7 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
       setNewPassword("")
       setConfirmPassword("")
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Unable to change password")
+      setError(apiMessage(reason, t, "password.failed"))
     } finally {
       setSubmitting(false)
     }
@@ -57,7 +60,7 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             className="absolute bottom-0 right-0 top-2 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
-            aria-label={shown ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+            aria-label={t(shown ? "password.hide" : "password.show", { field: label.toLowerCase() })}
             onClick={() => setVisible((state) => ({ ...state, [name]: !shown }))}
           >
             {shown ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -72,27 +75,27 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
       <div className="w-full max-w-md rounded-xl border bg-background p-6 text-foreground shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="change-password-title" className="flex items-center gap-2 font-serif text-xl font-semibold"><KeyRound className="size-5 text-primary" /> Change password</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Enter your current password before choosing a new one.</p>
+            <h2 id="change-password-title" className="flex items-center gap-2 font-serif text-xl font-semibold"><KeyRound className="size-5 text-primary" /> {t("password.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("password.intro")}</p>
           </div>
-          <button type="button" className="grid size-8 shrink-0 place-items-center rounded-md hover:bg-muted" aria-label="Close" onClick={onClose}><X className="size-4" /></button>
+          <button type="button" className="grid size-8 shrink-0 place-items-center rounded-md hover:bg-muted" aria-label={t("common.close")} onClick={onClose}><X className="size-4" /></button>
         </div>
 
         {success ? (
           <div className="mt-6">
-            <p className="rounded-lg bg-success/10 px-4 py-3 text-sm text-success">Password changed successfully.</p>
-            <Button className="mt-4 w-full" onClick={onClose}>Done</Button>
+            <p className="rounded-lg bg-success/10 px-4 py-3 text-sm text-success">{t("password.success")}</p>
+            <Button className="mt-4 w-full" onClick={onClose}>{t("common.done")}</Button>
           </div>
         ) : (
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            {passwordField("Current password", currentPassword, setCurrentPassword, "current", "current-password")}
-            {passwordField("New password", newPassword, setNewPassword, "next", "new-password")}
-            {passwordField("Confirm new password", confirmPassword, setConfirmPassword, "confirm", "new-password")}
+            {passwordField(t("password.current"), currentPassword, setCurrentPassword, "current", "current-password")}
+            {passwordField(t("password.new"), newPassword, setNewPassword, "next", "new-password")}
+            {passwordField(t("password.confirm"), confirmPassword, setConfirmPassword, "confirm", "new-password")}
             {error && <p className="text-sm text-destructive">{error}</p>}
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>{t("common.cancel")}</Button>
               <Button type="submit" disabled={submitting || !currentPassword || newPassword.length < 8 || !confirmPassword}>
-                {submitting ? "Changing password…" : "Change password"}
+                {submitting ? t("password.changing") : t("password.title")}
               </Button>
             </div>
           </form>

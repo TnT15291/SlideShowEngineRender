@@ -1,9 +1,11 @@
 import { useState } from "react"
-import { Clapperboard, Eye, EyeOff, LogIn, UserPlus } from "lucide-react"
+import { ArrowRight, Clapperboard, Eye, EyeOff, Film, LogIn, UserPlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ApiError } from "@/lib/api"
+import { LanguageToggle } from "@/components/LanguageToggle"
+import { apiMessage } from "@/lib/apiMessage"
+import { useI18n } from "@/lib/i18n"
 
 type LoginPageProps = {
   onLogin: (username: string, password: string) => Promise<void>
@@ -12,6 +14,7 @@ type LoginPageProps = {
 }
 
 export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPageProps) {
+  const { t } = useI18n()
   const [mode, setMode] = useState<"login" | "register">("login")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -25,7 +28,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
     event.preventDefault()
     setError(null)
     if (mode === "register" && password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(t("login.passwordsDoNotMatch"))
       return
     }
     setSubmitting(true)
@@ -33,7 +36,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
       if (mode === "login") await onLogin(username, password)
       else await onRegister(username.trim(), password)
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : mode === "login" ? "Unable to sign in" : "Unable to create account")
+      setError(apiMessage(reason, t, mode === "login" ? "login.unableToSignIn" : "login.unableToRegister"))
     } finally {
       setSubmitting(false)
     }
@@ -49,32 +52,39 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
 
   const registering = mode === "register"
   return (
-    <main className="grid min-h-screen place-items-center bg-sidebar px-4 text-sidebar-foreground">
-      <Card className="w-full max-w-sm border-white/10 bg-background text-foreground shadow-2xl">
-        <CardHeader className="items-center text-center">
-          <div className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+    <main className="login-canvas grid min-h-screen place-items-center bg-sidebar px-4 py-10 text-sidebar-foreground">
+      <Card className="relative w-full max-w-md overflow-hidden border-white/10 bg-background text-foreground shadow-2xl shadow-black/30">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+        {/* Sign-in is the first screen a customer sees and sits outside the app
+            shell, so the language switch has to live here too — otherwise the
+            only way to reach it would be behind the login itself. */}
+        <div className="absolute right-4 top-4 z-10"><LanguageToggle /></div>
+        <CardHeader className="items-center px-6 pb-7 pt-8 text-center sm:px-9">
+          <div className="grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
             <Clapperboard className="size-6" />
           </div>
-          <CardTitle className="mt-3 font-serif text-2xl">StoReel</CardTitle>
-          <CardDescription>{registering ? "Create your StoReel account." : "Sign in to your account."}</CardDescription>
+          <CardTitle className="mt-4 font-serif text-3xl">StoReel</CardTitle>
+          <CardDescription className="max-w-xs leading-6">
+            {registering ? t("login.registerIntro") : t("login.welcome")}
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-7 sm:px-9 sm:pb-9">
           <form className="space-y-4" onSubmit={handleSubmit}>
             <label className="block space-y-1.5 text-sm font-medium">
-              Username
+              {t("login.username")}
               <input
                 autoFocus
                 autoComplete="username"
                 className="field w-full"
                 minLength={registering ? 3 : undefined}
                 pattern={registering ? "[a-z0-9]+(?:-[a-z0-9]+)*" : undefined}
-                title={registering ? "Use lowercase letters, numbers, or hyphens" : undefined}
+                title={registering ? t("login.usernameHint") : undefined}
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
               />
             </label>
             <label className="block space-y-1.5 text-sm font-medium">
-              Password
+              {t("login.password")}
               <span className="relative block">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -87,7 +97,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
                 <button
                   type="button"
                   className="absolute bottom-0 right-0 top-2 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                   aria-pressed={showPassword}
                   onClick={() => setShowPassword((visible) => !visible)}
                 >
@@ -96,7 +106,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
               </span>
             </label>
             {registering && <label className="block space-y-1.5 text-sm font-medium">
-              Confirm password
+              {t("login.confirmPassword")}
               <span className="relative block">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -109,7 +119,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
                 <button
                   type="button"
                   className="absolute bottom-0 right-0 top-2 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
-                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  aria-label={showConfirmPassword ? t("login.hideConfirmPassword") : t("login.showConfirmPassword")}
                   aria-pressed={showConfirmPassword}
                   onClick={() => setShowConfirmPassword((visible) => !visible)}
                 >
@@ -118,15 +128,30 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
               </span>
             </label>}
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" size="lg" className="w-full" disabled={submitting || !username.trim() || !password || (registering && !confirmPassword)}>
+            <Button type="submit" size="lg" className="w-full shadow-sm" disabled={submitting || !username.trim() || !password || (registering && !confirmPassword)}>
               {registering ? <UserPlus className="size-4" /> : <LogIn className="size-4" />}
-              {submitting ? registering ? "Creating account…" : "Signing in…" : registering ? "Create account" : "Sign in"}
+              {submitting
+                ? registering ? t("login.creatingAccount") : t("login.signingIn")
+                : registering ? t("login.createAccount") : t("login.signIn")}
             </Button>
-            <Button type="button" variant="ghost" className="w-full" disabled={submitting} onClick={toggleMode}>
-              {registering ? "Already have an account? Sign in" : "Need an account? Create one"}
+            <Button type="button" variant="outline" className="w-full" disabled={submitting} onClick={toggleMode}>
+              {registering ? t("login.toSignIn") : t("login.toRegister")}
             </Button>
-            <button type="button" onClick={onBrowseGallery} className="w-full text-center text-xs text-muted-foreground underline underline-offset-2">
-              Browse shared films — no account needed
+            <div className="flex items-center gap-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="h-px flex-1 bg-border" />
+              {t("login.or")}
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <button
+              type="button"
+              onClick={onBrowseGallery}
+              className="group flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span className="flex items-center gap-2.5">
+                <Film className="size-4 text-primary" />
+                {t("login.browseGallery")}
+              </span>
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>
         </CardContent>

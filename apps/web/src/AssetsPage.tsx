@@ -8,6 +8,9 @@ import { LazyApiImage } from "@/components/LazyApiImage"
 import { RecipeSwatch } from "@/components/RecipeSwatch"
 import { humanizeTag, photoRange } from "@/recipeFormat"
 import { apiDelete, apiGet, apiUpload } from "@/lib/api"
+import { apiMessage } from "@/lib/apiMessage"
+import { useI18n, type Translate } from "@/lib/i18n"
+import type { StringKey } from "@/lib/strings"
 import { JobRunnerPanel } from "@/JobRunnerPanel"
 import { AnalysisPanel } from "@/AnalysisPanel"
 import { TimelineViewer } from "@/TimelineViewer"
@@ -16,6 +19,7 @@ import { AdvancedQaPanel } from "@/AdvancedQaPanel"
 import { DeliveryPanel } from "@/DeliveryPanel"
 import { cn } from "@/lib/utils"
 import { planExhaustedReason, planIsExhausted } from "@/planFormat"
+import { languageLabelKey, qualityLabelKey, sequenceLabelKey, tierLabelKey } from "@/projectFormat"
 import type { AssetKind, JobSnapshot, Plan, ProjectAsset, ProjectAssets, ProjectStatus, ProjectSummary, RecipeSummary } from "@/types"
 
 type UploadStatus = "queued" | "uploading" | "error"
@@ -28,15 +32,15 @@ export type WorkspaceFocus = "all" | "director" | "timeline"
 // is how step 4 ended up called "Render & Review", "Render and review" and
 // "Create & Review" on the same screen.
 const workflow = [
-  { id: "setup", label: "Setup", heading: "Project setup", icon: Clapperboard },
-  { id: "media", label: "Media", heading: "Add photos and music", icon: Image },
-  { id: "direct", label: "Direct & Edit", heading: "Direct and edit", icon: Sparkles },
-  { id: "review", label: "Create & Review", heading: "Create and review", icon: Film },
-  { id: "deliver", label: "Deliver", heading: "Approve and deliver", icon: PackageCheck },
-] as const
+  { id: "setup", label: "workspace.step.setup", heading: "workspace.heading.setup", icon: Clapperboard },
+  { id: "media", label: "workspace.step.media", heading: "workspace.heading.media", icon: Image },
+  { id: "direct", label: "workspace.step.direct", heading: "workspace.heading.direct", icon: Sparkles },
+  { id: "review", label: "workspace.step.review", heading: "workspace.heading.review", icon: Film },
+  { id: "deliver", label: "workspace.step.deliver", heading: "workspace.heading.deliver", icon: PackageCheck },
+] as const satisfies ReadonlyArray<{ id: WorkspaceStep; label: StringKey; heading: StringKey; icon: typeof Image }>
 
 function stepIndex(step: WorkspaceStep) { return workflow.findIndex((item) => item.id === step) }
-function stepLabel(step: WorkspaceStep) { return workflow[stepIndex(step)].label }
+function stepLabel(step: WorkspaceStep, t: Translate) { return t(workflow[stepIndex(step)].label) }
 
 function initialWorkspaceStep(fallback: WorkspaceStep): WorkspaceStep {
   const value = new URLSearchParams(window.location.search).get("step")
@@ -49,6 +53,7 @@ const accepted = {
 } as const
 
 export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarted, initialStep = "setup", focus = "all" }: { project: ProjectSummary; plan: Plan; onOpenNav: () => void; onUpgrade: () => void; onRenderStarted?: () => void; initialStep?: WorkspaceStep; focus?: WorkspaceFocus }) {
+  const { t } = useI18n()
   const [step, setStep] = useState<WorkspaceStep>(() => initialWorkspaceStep(initialStep))
   const [currentProject, setCurrentProject] = useState(project)
   const [assets, setAssets] = useState<ProjectAssets | null>(null)
@@ -67,7 +72,8 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
     Promise.all([
       apiGet<ProjectAssets>(`/projects/${project.id}/assets`),
       apiGet<ProjectSummary>(`/projects/${project.id}`),
-    ]).then(([nextAssets, nextProject]) => { setAssets(nextAssets); setCurrentProject(nextProject) }).catch((reason: unknown) => setError(messageOf(reason))).finally(() => setLoading(false))
+    ]).then(([nextAssets, nextProject]) => { setAssets(nextAssets); setCurrentProject(nextProject) }).catch((reason: unknown) => setError(apiMessage(reason, t))).finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id])
 
   useEffect(reload, [reload])
@@ -101,7 +107,11 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
     const maxBytes = kind === "photo" ? assets?.limits.photoMaxBytes : assets?.limits.musicMaxBytes
     const additions = files.map((file): UploadItem => {
       const typeAllowed = accepted[kind].mime.has(file.type as never)
-      const validationError = !typeAllowed ? `Unsupported ${kind} file type` : maxBytes && file.size > maxBytes ? `File exceeds ${formatBytes(maxBytes)}` : file.size === 0 ? "File is empty" : null
+      const validationError = !typeAllowed
+        ? t(kind === "photo" ? "media.unsupportedPhoto" : "media.unsupportedMusic")
+        : maxBytes && file.size > maxBytes ? t("media.tooLarge", { limit: formatBytes(maxBytes) })
+        : file.size === 0 ? t("media.empty")
+        : null
       return { id: crypto.randomUUID(), file, kind, uploadIndex: nextIndex++, status: validationError ? "error" : "queued", progress: 0, error: validationError }
     })
     setQueue((current) => [...current, ...additions])
@@ -121,7 +131,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       } : current)
       setQueue((current) => current.filter((queued) => queued.id !== item.id))
     } catch (reason) {
-      setQueue((current) => current.map((queued) => queued.id === item.id ? { ...queued, status: "error", error: messageOf(reason) } : queued))
+      setQueue((current) => current.map((queued) => queued.id === item.id ? { ...queued, status: "error", error: apiMessage(reason, t) } : queued))
     }
   }
 
@@ -137,7 +147,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
     try {
       setAssets(await apiDelete<ProjectAssets>(`/projects/${project.id}/assets/${asset.id}`))
     } catch (reason) {
-      setError(messageOf(reason))
+      setError(apiMessage(reason, t))
     } finally {
       setDeleting((current) => { const next = new Set(current); next.delete(asset.id); return next })
     }
@@ -170,11 +180,11 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
   }
 
   return <>
-    <header className="sticky top-0 z-20 flex h-20 items-center gap-3 border-b bg-background/95 px-3 backdrop-blur sm:gap-4 sm:px-4 md:px-10"><button aria-label="Open navigation" onClick={onOpenNav} className="grid size-11 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-4" /></button><div className="min-w-0"><p className="hidden text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground sm:block">Project workspace</p><h1 className="truncate font-serif text-base font-semibold sm:text-xl">{currentProject.name}</h1></div><Badge variant="secondary" className="hidden border-0 capitalize sm:inline-flex">{currentProject.tier}</Badge><Button variant="outline" size="sm" className="ml-auto shrink-0" onClick={reload} disabled={loading}><RefreshCw className={cn("size-4", loading && "animate-spin")} /> <span className="hidden sm:inline">Refresh</span></Button></header>
+    <header className="sticky top-0 z-20 flex h-20 items-center gap-3 border-b bg-background/95 px-3 backdrop-blur sm:gap-4 sm:px-4 md:px-10"><button aria-label={t("common.openNavigation")} onClick={onOpenNav} className="grid size-11 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-4" /></button><div className="min-w-0"><p className="hidden text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground sm:block">{t("workspace.eyebrow")}</p><h1 className="truncate font-serif text-base font-semibold sm:text-xl">{currentProject.name}</h1></div><Badge variant="secondary" className="hidden border-0 sm:inline-flex">{t(tierLabelKey[currentProject.tier] ?? "tier.template")}</Badge><Button variant="outline" size="sm" className="ml-auto shrink-0" onClick={reload} disabled={loading}><RefreshCw className={cn("size-4", loading && "animate-spin")} /> <span className="hidden sm:inline">{t("common.refresh")}</span></Button></header>
 
     {/* Sticky under the header: the Media step is thousands of pixels tall, and
         a workflow nav you have to scroll back to the top to reach is not one. */}
-    <div className="sticky top-20 z-10 border-b bg-card-soft/95 backdrop-blur"><p className="px-4 pt-2 text-xs text-muted-foreground sm:hidden">Step {stepIndex(step) + 1} of {workflow.length} · Swipe to see all steps →</p><nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-3 md:px-10" aria-label="Film workflow">{workflow.map(({ id, label, icon: Icon }, index) => <button key={id} ref={id === step ? activeStepButton : undefined} onClick={() => goToStep(id)} aria-current={step === id ? "step" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-colors", step === id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground")}><span className={cn("grid size-5 place-items-center rounded-full", step === id ? "bg-white/15" : completed[id] ? "bg-success/15 text-success" : "bg-muted")}>{completed[id] ? <Check className="size-3" /> : <Icon className="size-3" />}</span><span>{index + 1}. {label}</span></button>)}</nav></div>
+    <div className="sticky top-20 z-10 border-b bg-card-soft/95 backdrop-blur"><p className="px-4 pt-2 text-xs text-muted-foreground sm:hidden">{t("workspace.swipeHint", { current: stepIndex(step) + 1, total: workflow.length })}</p><nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-3 md:px-10" aria-label={t("workspace.workflowNav")}>{workflow.map(({ id, label, icon: Icon }, index) => <button key={id} ref={id === step ? activeStepButton : undefined} onClick={() => goToStep(id)} aria-current={step === id ? "step" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-colors", step === id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground")}><span className={cn("grid size-5 place-items-center rounded-full", step === id ? "bg-white/15" : completed[id] ? "bg-success/15 text-success" : "bg-muted")}>{completed[id] ? <Check className="size-3" /> : <Icon className="size-3" />}</span><span>{index + 1}. {t(label)}</span></button>)}</nav></div>
 
     <div className="mx-auto max-w-6xl px-6 py-9 md:px-10">
       {error && <Card className="mb-6 border-destructive/40 bg-destructive/5"><CardContent className="flex gap-2 p-4 text-sm text-destructive"><AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}</CardContent></Card>}
@@ -182,39 +192,42 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       {/* Surfaced from step 1 onward, not just at the Create step: uploading a
           hundred photos only to be stopped by a 402 at the very end is the
           failure this replaces. */}
-      {renderBlocked && <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-start gap-2"><CreditCard className="mt-0.5 size-4 shrink-0" /><span><span className="font-medium">You can build this film, but not create the video yet.</span><span className="mt-0.5 block text-xs">{planExhaustedReason(plan)}</span></span></span><Button variant="outline" size="sm" onClick={onUpgrade}>View plans <ArrowRight className="size-4" /></Button></CardContent></Card>}
+      {renderBlocked && <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-start gap-2"><CreditCard className="mt-0.5 size-4 shrink-0" /><span><span className="font-medium">{t("workspace.renderBlocked")}</span><span className="mt-0.5 block text-xs">{planExhaustedReason(plan, t)}</span></span></span><Button variant="outline" size="sm" onClick={onUpgrade}>{t("workspace.viewPlans")} <ArrowRight className="size-4" /></Button></CardContent></Card>}
 
       {loading && !assets && <WorkspaceSkeleton />}
       {assets && <>
-      {step === "setup" && <WorkspaceSection step="setup" description="Review the creative contract before adding media.">
-        <Card><CardContent className="grid gap-5 p-6 sm:grid-cols-2 lg:grid-cols-3"><ProjectFact label="Project" value={currentProject.name} /><ProjectFact label="Tier" value={currentProject.tier} /><ProjectFact label="Style" value={recipeName || (currentProject.recipe ? "Loading…" : "AI Director")} /><ProjectFact label="Language" value={currentProject.language === "vi" ? "Vietnamese" : currentProject.language === "en" ? "English" : "Not set"} /><ProjectFact label="Photo order" value={currentProject.sequenceMode || "Not set"} /><ProjectFact label="Output quality" value={currentProject.quality} /></CardContent></Card>
-        <NextAction title="Setup is ready" detail="Add the source photos and soundtrack for this film." next="media" onClick={() => goToStep("media")} />
+      {step === "setup" && <WorkspaceSection step="setup" description={t("setup.description")}>
+        <Card><CardContent className="grid gap-5 p-6 sm:grid-cols-2 lg:grid-cols-3"><ProjectFact label={t("setup.fact.project")} value={currentProject.name} /><ProjectFact label={t("setup.fact.tier")} value={t(tierLabelKey[currentProject.tier] ?? "tier.template")} /><ProjectFact label={t("setup.fact.style")} value={recipeName || (currentProject.recipe ? t("common.loading") : t("setup.aiDirector"))} /><ProjectFact label={t("setup.fact.language")} value={currentProject.language ? t(languageLabelKey[currentProject.language] ?? "lang.vi") : t("common.notSet")} /><ProjectFact label={t("setup.fact.photoOrder")} value={currentProject.sequenceMode ? t(sequenceLabelKey[currentProject.sequenceMode] ?? "sequence.editorial") : t("common.notSet")} /><ProjectFact label={t("setup.fact.quality")} value={t(qualityLabelKey[currentProject.quality] ?? "quality.share")} /></CardContent></Card>
+        <NextAction title={t("setup.ready")} detail={t("setup.readyDetail")} next="media" onClick={() => goToStep("media")} />
       </WorkspaceSection>}
 
-      {step === "media" && <WorkspaceSection step="media" description="Files upload automatically after selection. Upload order is preserved for chronological edits." action={uploading ? <Badge variant="secondary" className="border-0"><RefreshCw className="mr-1 size-3 animate-spin" /> Uploading…</Badge> : undefined}>
-        <Card className="mb-6"><CardContent className="grid gap-3 p-4 sm:grid-cols-2"><Requirement done={hasPhotos} label={hasPhotos ? `${assets?.photos.length} photos added` : "Add at least one photo"} /><Requirement done={hasMusic} label={hasMusic ? `${assets?.music.length} soundtrack${assets?.music.length === 1 ? "" : "s"} added` : "Add a soundtrack"} /></CardContent></Card>
+      {step === "media" && <WorkspaceSection step="media" description={t("media.description")} action={uploading ? <Badge variant="secondary" className="border-0"><RefreshCw className="mr-1 size-3 animate-spin" /> {t("media.uploading")}</Badge> : undefined}>
+        <Card className="mb-6"><CardContent className="grid gap-3 p-4 sm:grid-cols-2"><Requirement done={hasPhotos} label={hasPhotos ? t("media.photosAdded", { count: assets?.photos.length ?? 0 }) : t("media.needPhoto")} /><Requirement done={hasMusic} label={hasMusic ? t("media.tracksAdded", { count: assets?.music.length ?? 0 }) : t("media.needMusic")} /></CardContent></Card>
         <div className="space-y-6">
-          <AssetSection projectId={project.id} kind="photo" title="Wedding photos" description="JPEG, PNG, WebP or HEIC · up to 50 MB each" icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
-          <AssetSection projectId={project.id} kind="music" title="Soundtrack" description="MP3, WAV, M4A, AAC, FLAC or OGG · up to 200 MB each" icon={Music2} assets={assets?.music || []} queue={queue.filter((item) => item.kind === "music")} deleting={deleting} onFiles={(files) => addFiles("music", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
+          <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
+          <AssetSection projectId={project.id} kind="music" title={t("media.music")} description={t("media.musicHint")} icon={Music2} assets={assets?.music || []} queue={queue.filter((item) => item.kind === "music")} deleting={deleting} onFiles={(files) => addFiles("music", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
         </div>
         <AnalysisPanel project={currentProject} music={assets?.music || []} />
-        <NextAction title={mediaReady ? "Media is ready" : "Complete the media checklist"} detail={mediaReady ? "Continue to direct the story and inspect the edit." : "A film needs photos and at least one soundtrack before it can be created."} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
+        <NextAction title={mediaReady ? t("media.ready") : t("media.incomplete")} detail={mediaReady ? t("media.readyDetail") : t("media.incompleteDetail")} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
       </WorkspaceSection>}
 
-      {step === "direct" && <WorkspaceSection step="direct" description={currentProject.tier === "template" ? "This project follows its selected style. Create the video in the next step, then come back here to inspect the edit." : "Shape the story with AI Director, then inspect scenes and request focused revisions."}>
+      {step === "direct" && <WorkspaceSection step="direct" description={currentProject.tier === "template" ? t("direct.templateDescription") : t("direct.aiDescription")}>
         {focus !== "timeline" && (currentProject.tier === "template" ? <StylePreview recipe={recipe} name={recipeName} /> : <DirectorPanel project={currentProject} />)}
         {focus !== "director" && <TimelineViewer project={currentProject} photos={assets?.photos || []} />}
-        <NextAction title="Ready to create the video" detail="Rendering and quality checks will run automatically." next="review" disabled={!mediaReady} onClick={() => goToStep("review")} />
+        <NextAction title={t("direct.ready")} detail={t("direct.readyDetail")} next="review" disabled={!mediaReady} onClick={() => goToStep("review")} />
       </WorkspaceSection>}
 
-      {step === "review" && <WorkspaceSection step="review" description="Create the video, follow its progress, then watch the result and check the quality report.">
-        {!mediaReady ? <BlockedNotice message="Add photos and a soundtrack in Media before creating the video." onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} styleName={recipeName} renderBlocked={renderBlocked} blockedReason={planExhaustedReason(plan)} onUpgrade={onUpgrade} onRenderStarted={onRenderStarted} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: projectStatusFromJob(job), currentPhase: job.currentPhase, progress: job.progress, error: job.error, warnings: job.warnings, manuallyCompleted: job.manuallyCompleted, phases: job.phases, updatedAt: job.updatedAt }))} />}
-        <details className="mt-6 rounded-xl border bg-card" open={currentProject.status === "paused" || currentProject.status === "failed" ? true : undefined}><summary className="cursor-pointer list-none px-6 py-5 text-sm font-medium">Quality report <span className="ml-2 text-xs font-normal text-muted-foreground">Checks, automatic repairs, and anything needing a human look</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
-        <NextAction title={manuallyCompleted ? "Project completed manually" : deliveryReady ? "Delivery package is ready" : reviewReady ? "Your video passed quality checks" : renderReady ? `Video rendered; quality checks are running (${currentProject.progress}%)` : "Create a video first"} detail={manuallyCompleted ? "The rendered video was accepted and the project no longer requires the automated delivery gate." : deliveryReady ? "Continue to approve the exact preview and release the master." : reviewReady ? "Review the video, then continue to approval and delivery." : renderReady ? "The film is rendered. Quality checks run automatically and this page updates live." : "The video and quality report are produced automatically."} next="deliver" disabled={!reviewReady && !deliveryAccessible} onClick={() => goToStep("deliver")} />
+      {step === "review" && <WorkspaceSection step="review" description={t("review.description")}>
+        {!mediaReady ? <BlockedNotice message={t("review.blocked")} onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} styleName={recipeName} renderBlocked={renderBlocked} blockedReason={planExhaustedReason(plan, t)} onUpgrade={onUpgrade} onRenderStarted={onRenderStarted} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: projectStatusFromJob(job), currentPhase: job.currentPhase, progress: job.progress, error: job.error, warnings: job.warnings, manuallyCompleted: job.manuallyCompleted, phases: job.phases, updatedAt: job.updatedAt }))} />}
+        <details className="mt-6 rounded-xl border bg-card" open={currentProject.status === "paused" || currentProject.status === "failed" ? true : undefined}><summary className="cursor-pointer list-none px-6 py-5 text-sm font-medium">{t("review.qualityReport")} <span className="ml-2 text-xs font-normal text-muted-foreground">{t("review.qualityReportHint")}</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
+        <NextAction
+          title={manuallyCompleted ? t("review.manualComplete") : deliveryReady ? t("review.deliveryReady") : reviewReady ? t("review.passedQa") : renderReady ? t("review.qaRunning", { progress: currentProject.progress }) : t("review.createFirst")}
+          detail={manuallyCompleted ? t("review.manualCompleteDetail") : deliveryReady ? t("review.deliveryReadyDetail") : reviewReady ? t("review.passedQaDetail") : renderReady ? t("review.qaRunningDetail") : t("review.createFirstDetail")}
+          next="deliver" disabled={!reviewReady && !deliveryAccessible} onClick={() => goToStep("deliver")} />
       </WorkspaceSection>}
 
-      {step === "deliver" && <WorkspaceSection step="deliver" description="Review the current preview, approve its exact version, then release the final files.">
-        {manuallyCompleted ? <Card className="border-success/40 bg-success/5"><CardContent className="flex gap-3 p-5 text-sm"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-success"><Check className="size-5" /></span><div><p className="font-medium">Project completed manually</p><p className="mt-1 text-muted-foreground">The rendered video was accepted in {stepLabel("review")}. Automated delivery approval is not required for this project.</p></div></CardContent></Card> : !deliveryReady ? <BlockedNotice message={`Use “Create video” in ${stepLabel("review")} to produce the preview and full master.`} onClick={() => goToStep("review")} /> : <DeliveryPanel project={currentProject} />}
+      {step === "deliver" && <WorkspaceSection step="deliver" description={t("deliver.description")}>
+        {manuallyCompleted ? <Card className="border-success/40 bg-success/5"><CardContent className="flex gap-3 p-5 text-sm"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-success"><Check className="size-5" /></span><div><p className="font-medium">{t("review.manualComplete")}</p><p className="mt-1 text-muted-foreground">{t("deliver.manualCompleteDetail", { step: stepLabel("review", t) })}</p></div></CardContent></Card> : !deliveryReady ? <BlockedNotice message={t("deliver.needPreview", { step: stepLabel("review", t) })} onClick={() => goToStep("review")} /> : <DeliveryPanel project={currentProject} />}
       </WorkspaceSection>}
       </>}
     </div>
@@ -222,11 +235,14 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
 }
 
 function WorkspaceSection({ step, description, action, children }: { step: WorkspaceStep; description: string; action?: React.ReactNode; children: React.ReactNode }) {
+  const { t } = useI18n()
   const index = stepIndex(step)
-  return <section><div className="mb-7 flex flex-wrap items-end justify-between gap-4"><div><Badge variant="secondary" className="mb-3 border-0">Step {index + 1} of {workflow.length}</Badge><h2 className="font-serif text-3xl font-semibold">{workflow[index].heading}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p></div>{action}</div>{children}</section>
+  return <section><div className="mb-7 flex flex-wrap items-end justify-between gap-4"><div><Badge variant="secondary" className="mb-3 border-0">{t("workspace.stepCounter", { current: index + 1, total: workflow.length })}</Badge><h2 className="font-serif text-3xl font-semibold">{t(workflow[index].heading)}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p></div>{action}</div>{children}</section>
 }
 
-function ProjectFact({ label, value }: { label: string; value: string }) { return <div><p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p><p className="mt-1.5 text-sm font-medium capitalize">{value}</p></div> }
+// No `capitalize`: the values are translated labels or a project name, and the
+// rule title-cased every Vietnamese word.
+function ProjectFact({ label, value }: { label: string; value: string }) { return <div><p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p><p className="mt-1.5 text-sm font-medium">{value}</p></div> }
 
 /**
  * What a Template project gets instead of the AI Director panel.
@@ -237,10 +253,11 @@ function ProjectFact({ label, value }: { label: string; value: string }) { retur
  * a customer actually has here: "what is my film going to be like?"
  */
 function StylePreview({ recipe, name }: { recipe: RecipeSummary | null; name: string | null }) {
+  const { t } = useI18n()
   if (!recipe) {
-    return <Card><CardContent className="flex gap-4 p-6"><span className="grid size-11 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><Clapperboard className="size-5" /></span><div><p className="font-medium">The style sets the direction</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{name || "The selected style"} decides the look, pacing and transitions of this film, so there is nothing to direct by hand here.</p></div></CardContent></Card>
+    return <Card><CardContent className="flex gap-4 p-6"><span className="grid size-11 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><Clapperboard className="size-5" /></span><div><p className="font-medium">{t("style.setsDirection")}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{t("style.setsDirectionDetail", { name: name || t("style.selectedStyle") })}</p></div></CardContent></Card>
   }
-  const range = photoRange(recipe)
+  const range = photoRange(recipe, t)
   return <Card className="overflow-hidden">
     <div className="grid md:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
       <RecipeSwatch recipe={recipe} className="h-full min-h-36" />
@@ -248,35 +265,40 @@ function StylePreview({ recipe, name }: { recipe: RecipeSummary | null; name: st
         <p className="text-sm leading-6 text-muted-foreground">{recipe.intro?.summary || recipe.notes}</p>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
           {range && <span className="flex items-center gap-1.5"><Image className="size-3.5" /> {range}</span>}
-          <span className="flex items-center gap-1.5"><Film className="size-3.5" /> {recipe.sceneCount} scenes · {recipe.signatureCount} looks</span>
-          {recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {humanizeTag(recipe.energy)} energy</span>}
+          <span className="flex items-center gap-1.5"><Film className="size-3.5" /> {t("style.scenesAndLooks", { scenes: recipe.sceneCount, looks: recipe.signatureCount })}</span>
+          {recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {t("style.energy", { energy: humanizeTag(recipe.energy) })}</span>}
         </div>
         {recipe.storyArc.length > 0 && <div className="mt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">How the film is told</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("style.howToldTitle")}</p>
           <ol className="mt-2 flex flex-wrap items-center gap-1.5">{recipe.storyArc.map((beat, index) => <li key={`${beat}-${index}`} className="flex items-center gap-1.5"><span className="rounded-full bg-secondary px-2.5 py-1 text-xs capitalize">{humanizeTag(beat)}</span>{index < recipe.storyArc.length - 1 && <ArrowRight className="size-3 text-muted-foreground" aria-hidden="true" />}</li>)}</ol>
         </div>}
-        {recipe.intro?.photos && <p className="mt-4 text-xs leading-5 text-muted-foreground"><span className="font-medium text-foreground">Works best with:</span> {recipe.intro.photos}</p>}
-        <p className="mt-4 text-xs leading-5 text-muted-foreground">This style controls the look, pacing and transitions, so there is nothing to direct by hand. The scene-by-scene edit appears below once the video has been created.</p>
+        {recipe.intro?.photos && <p className="mt-4 text-xs leading-5 text-muted-foreground"><span className="font-medium text-foreground">{t("style.worksBestWith")}</span> {recipe.intro.photos}</p>}
+        <p className="mt-4 text-xs leading-5 text-muted-foreground">{t("style.noHandDirection")}</p>
       </CardContent>
     </div>
   </Card>
 }
 function Requirement({ done, label }: { done: boolean; label: string }) { const Icon = done ? Check : Circle; return <div className={cn("flex items-center gap-3 rounded-lg border px-4 py-3 text-sm", done && "border-success/30 bg-success/5")}><Icon className={cn("size-4", done ? "text-success" : "text-muted-foreground")} /> {label}</div> }
 function NextAction({ title, detail, next, disabled = false, onClick }: { title: string; detail: string; next: WorkspaceStep; disabled?: boolean; onClick: () => void }) {
+  const { t } = useI18n()
   // `detail` already explains the state (and the reason, when blocked) in the
   // left-hand block; repeating it under the button just said the same sentence
   // twice side by side.
   return <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-sidebar p-5 text-white">
     <div><p className="text-sm font-medium">{title}</p><p id="next-action-detail" className="mt-1 text-xs leading-5 text-sidebar-muted">{detail}</p></div>
-    <Button size="lg" disabled={disabled} aria-describedby={disabled ? "next-action-detail" : undefined} onClick={onClick}>Continue to {stepLabel(next)} <ArrowRight className="size-4" /></Button>
+    <Button size="lg" disabled={disabled} aria-describedby={disabled ? "next-action-detail" : undefined} onClick={onClick}>{t("workspace.continueTo", { step: stepLabel(next, t) })} <ArrowRight className="size-4" /></Button>
   </div>
 }
-function BlockedNotice({ message, onClick }: { message: string; onClick: () => void }) { return <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-center gap-2"><AlertCircle className="size-4" /> {message}</span><Button variant="outline" size="sm" onClick={onClick}>Fix prerequisite</Button></CardContent></Card> }
+function BlockedNotice({ message, onClick }: { message: string; onClick: () => void }) {
+  const { t } = useI18n()
+  return <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-center gap-2"><AlertCircle className="size-4" /> {message}</span><Button variant="outline" size="sm" onClick={onClick}>{t("workspace.fixPrerequisite")}</Button></CardContent></Card>
+}
 
 function AssetSection({ projectId, kind, title, description, icon: Icon, assets, queue, deleting, onFiles, onRetry, onRemoveQueue, onDelete }: {
   projectId: string; kind: AssetKind; title: string; description: string; icon: typeof Image; assets: ProjectAsset[]; queue: UploadItem[]; deleting: Set<string>
   onFiles: (files: File[]) => void; onRetry: (item: UploadItem) => void; onRemoveQueue: (id: string) => void; onDelete: (asset: ProjectAsset) => void
 }) {
+  const { t } = useI18n()
   const [dragging, setDragging] = useState(false)
   function drop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault()
@@ -287,22 +309,23 @@ function AssetSection({ projectId, kind, title, description, icon: Icon, assets,
   // has nothing to look at and stays a compact list.
   const isPhoto = kind === "photo"
   return <Card className="overflow-hidden"><CardHeader><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><Icon className="size-5" /></div><div><CardTitle className="text-base">{title}</CardTitle><CardDescription className="mt-1">{description}</CardDescription></div><Badge variant="outline" className="ml-auto font-normal">{assets.length}</Badge></div></CardHeader><CardContent className="space-y-4">
-    <div onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(event) => event.preventDefault()} onDrop={drop} className={cn("grid place-items-center rounded-xl border border-dashed p-6 text-center transition-colors", assets.length ? "min-h-0 py-5" : "min-h-36", dragging ? "border-primary bg-primary/5" : "bg-card-soft")}><div><Upload className="mx-auto size-7 text-primary" /><p className="mt-3 text-sm font-medium">Drop {isPhoto ? "photos" : "music"} here</p><p className="mt-1 text-xs text-muted-foreground">Files upload automatically after selection</p><label className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-4")}><input type="file" multiple className="sr-only" accept={accepted[kind].input} onChange={(event) => { onFiles(Array.from(event.target.files || [])); event.target.value = "" }} />Choose files</label></div></div>
+    <div onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(event) => event.preventDefault()} onDrop={drop} className={cn("grid place-items-center rounded-xl border border-dashed p-6 text-center transition-colors", assets.length ? "min-h-0 py-5" : "min-h-36", dragging ? "border-primary bg-primary/5" : "bg-card-soft")}><div><Upload className="mx-auto size-7 text-primary" /><p className="mt-3 text-sm font-medium">{t(isPhoto ? "media.dropPhotos" : "media.dropMusic")}</p><p className="mt-1 text-xs text-muted-foreground">{t("media.autoUpload")}</p><label className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-4")}><input type="file" multiple className="sr-only" accept={accepted[kind].input} onChange={(event) => { onFiles(Array.from(event.target.files || [])); event.target.value = "" }} />{t("media.chooseFiles")}</label></div></div>
     {queue.length > 0 && <div className="divide-y rounded-lg border">{queue.map((item) => <QueueRow key={item.id} item={item} onRetry={() => onRetry(item)} onRemove={() => onRemoveQueue(item.id)} />)}</div>}
     {assets.length > 0 && (isPhoto
       ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{assets.map((asset) => <PhotoTile key={asset.id} projectId={projectId} asset={asset} deleting={deleting.has(asset.id)} onDelete={() => onDelete(asset)} />)}</div>
-      : <div className="divide-y rounded-lg border">{assets.map((asset) => <div key={asset.id} className="flex items-center gap-3 p-3"><span className="grid size-8 shrink-0 place-items-center rounded-md bg-success/10 text-success"><Check className="size-4" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{asset.originalName}</p><p className="mt-0.5 text-xs text-muted-foreground">#{asset.uploadIndex + 1} · {formatBytes(asset.size)}</p></div><Button variant="ghost" size="icon" aria-label={`Delete ${asset.originalName}`} disabled={deleting.has(asset.id)} onClick={() => onDelete(asset)}><Trash2 className="size-4" /></Button></div>)}</div>)}
+      : <div className="divide-y rounded-lg border">{assets.map((asset) => <div key={asset.id} className="flex items-center gap-3 p-3"><span className="grid size-8 shrink-0 place-items-center rounded-md bg-success/10 text-success"><Check className="size-4" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{asset.originalName}</p><p className="mt-0.5 text-xs text-muted-foreground">#{asset.uploadIndex + 1} · {formatBytes(asset.size)}</p></div><Button variant="ghost" size="icon" aria-label={t("media.deleteAsset", { name: asset.originalName })} disabled={deleting.has(asset.id)} onClick={() => onDelete(asset)}><Trash2 className="size-4" /></Button></div>)}</div>)}
   </CardContent></Card>
 }
 
 function PhotoTile({ projectId, asset, deleting, onDelete }: { projectId: string; asset: ProjectAsset; deleting: boolean; onDelete: () => void }) {
+  const { t } = useI18n()
   return <figure className={cn("group relative overflow-hidden rounded-lg border bg-card-soft transition-opacity", deleting && "opacity-40")}>
     <LazyApiImage path={`/projects/${encodeURIComponent(projectId)}/assets/${encodeURIComponent(asset.id)}/thumbnail`} alt={asset.originalName} className="aspect-square" />
     <span className="absolute left-1.5 top-1.5 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white">{asset.uploadIndex + 1}</span>
     <Button
       variant="ghost"
       size="icon"
-      aria-label={`Delete ${asset.originalName}`}
+      aria-label={t("media.deleteAsset", { name: asset.originalName })}
       disabled={deleting}
       onClick={onDelete}
       // Always reachable by keyboard and on touch; only fades in on hover for pointers.
@@ -313,11 +336,12 @@ function PhotoTile({ projectId, asset, deleting, onDelete }: { projectId: string
 }
 
 function QueueRow({ item, onRetry, onRemove }: { item: UploadItem; onRetry: () => void; onRemove: () => void }) {
-  return <div className="p-3"><div className="flex items-center gap-3"><span className={cn("grid size-8 shrink-0 place-items-center rounded-md", item.status === "error" ? "bg-destructive/10 text-destructive" : "bg-secondary text-primary")}>{item.status === "error" ? <AlertCircle className="size-4" /> : <Upload className="size-4" />}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{item.file.name}</p><p className={cn("mt-0.5 truncate text-xs", item.error ? "text-destructive" : "text-muted-foreground")}>{item.error || `${formatBytes(item.file.size)} · ${item.status}`}</p></div>{item.status === "error" && <Button variant="ghost" size="icon" onClick={onRetry} aria-label={`Retry ${item.file.name}`}><RotateCcw className="size-4" /></Button>}{item.status !== "uploading" && <Button variant="ghost" size="icon" onClick={onRemove} aria-label={`Remove ${item.file.name}`}><X className="size-4" /></Button>}</div>{item.status === "uploading" && <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary transition-[width]" style={{ width: `${item.progress}%` }} /></div>}</div>
+  const { t } = useI18n()
+  const statusText = item.status === "uploading" ? t("media.uploadingStatus") : item.status === "error" ? t("media.errorStatus") : t("media.queued")
+  return <div className="p-3"><div className="flex items-center gap-3"><span className={cn("grid size-8 shrink-0 place-items-center rounded-md", item.status === "error" ? "bg-destructive/10 text-destructive" : "bg-secondary text-primary")}>{item.status === "error" ? <AlertCircle className="size-4" /> : <Upload className="size-4" />}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{item.file.name}</p><p className={cn("mt-0.5 truncate text-xs", item.error ? "text-destructive" : "text-muted-foreground")}>{item.error || `${formatBytes(item.file.size)} · ${statusText}`}</p></div>{item.status === "error" && <Button variant="ghost" size="icon" onClick={onRetry} aria-label={t("media.retryUpload", { name: item.file.name })}><RotateCcw className="size-4" /></Button>}{item.status !== "uploading" && <Button variant="ghost" size="icon" onClick={onRemove} aria-label={t("media.removeFromQueue", { name: item.file.name })}><X className="size-4" /></Button>}</div>{item.status === "uploading" && <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary transition-[width]" style={{ width: `${item.progress}%` }} /></div>}</div>
 }
 
 function byUploadIndex(left: ProjectAsset, right: ProjectAsset) { return left.uploadIndex - right.uploadIndex }
-function messageOf(reason: unknown) { return reason instanceof Error ? reason.message : String(reason) }
 function formatBytes(bytes: number) { return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB` }
 
 function projectStatusFromJob(job: JobSnapshot): ProjectStatus {
@@ -328,7 +352,8 @@ function projectStatusFromJob(job: JobSnapshot): ProjectStatus {
 }
 
 function WorkspaceSkeleton() {
-  return <div aria-label="Loading project media" className="animate-pulse space-y-5">
+  const { t } = useI18n()
+  return <div aria-label={t("workspace.loadingMedia")} className="animate-pulse space-y-5">
     <div className="h-8 w-48 rounded bg-muted" />
     <div className="h-20 rounded-xl bg-muted" />
     <div className="grid gap-6 lg:grid-cols-2"><div className="h-80 rounded-xl bg-muted" /><div className="h-80 rounded-xl bg-muted" /></div>

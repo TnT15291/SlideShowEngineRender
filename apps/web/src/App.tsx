@@ -1,97 +1,98 @@
 import { useEffect, useMemo, useState } from "react"
 import {
   ArrowRight,
-  Activity,
   Check,
-  ChevronDown,
   Clapperboard,
   Film,
   FolderOpen,
-  Image,
   Layers3,
-  Lightbulb,
   LayoutDashboard,
   KeyRound,
   LogOut,
   Menu,
-  MoreHorizontal,
-  Music2,
-  Paperclip,
-  Play,
   Plus,
-  SlidersHorizontal,
   Sparkles,
-  WandSparkles,
   X,
   ShieldAlert,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { AssetsPage } from "@/AssetsPage"
+import { AssetsPage, type WorkspaceFocus } from "@/AssetsPage"
 import { BillingPage } from "@/BillingPage"
 import { AdminIncidentsPage } from "@/AdminIncidentsPage"
 import { ChangePasswordDialog } from "@/ChangePasswordDialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { LanguageToggle } from "@/components/LanguageToggle"
 import { cn } from "@/lib/utils"
 import { GalleryPage } from "@/GalleryPage"
 import { useAuth } from "@/hooks/useAuth"
 import { useProjects } from "@/hooks/useProjects"
+import { useI18n, type Translate } from "@/lib/i18n"
 import { IntakeWizard } from "@/IntakeWizard"
 import { LoginPage } from "@/LoginPage"
 import { apiGet } from "@/lib/api"
+import type { StringKey } from "@/lib/strings"
 import { useApiObjectUrl } from "@/lib/use-api-object-url"
-import { formatDate, initials, statusClass, statusLabel } from "@/projectFormat"
+import { planIsExhausted, planSummary } from "@/planFormat"
+import { formatDate, initials, phaseLabelKey, statusClass, statusDotClass, statusLabelKey, tierLabelKey } from "@/projectFormat"
 import { ProjectsPage } from "@/ProjectsPage"
 import { RecipeLibrary } from "@/RecipeLibrary"
-import type { IncidentList, Plan, ProjectSummary, StudioUser } from "@/types"
+import type { IncidentList, ProjectSummary, StudioUser } from "@/types"
 
-const starterBrief = `Bạn là một đạo diễn phim cưới theo phong cách điện ảnh Hàn Quốc.
-
-Kể câu chuyện của Linh và Nam từ những ngày yêu xa đến lễ cưới. Mở đầu nhẹ nhàng, phát triển cảm xúc chậm, cao trào tại khoảnh khắc trao nhẫn và kết thúc bằng cảnh hai người rời lễ đường.
-
-Ưu tiên ảnh có tương tác tự nhiên, ánh mắt và gia đình. Màu phim ấm, ít hiệu ứng, chuyển cảnh mềm. Không dùng caption sáo rỗng.`
-
-const moods = ["Cinematic", "Emotional", "Warm", "Elegant", "Documentary"]
-const nav = [
-  [WandSparkles, "AI Director", true],
-  [FolderOpen, "Projects", false],
-  [Image, "Assets", false],
-  [Layers3, "Timeline", false],
-  [Film, "Render queue", false],
-] as const
-
-type AppView = "dashboard" | "director" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin"
+type AppView = "dashboard" | "director" | "timeline" | "render" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin"
 
 function routeFromUrl(): { view: AppView; projectId: string | null } {
   const params = new URLSearchParams(window.location.search)
   const raw = params.get("view")
   const view = raw === "project" ? "assets"
-    : raw === "director" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" ? raw
+    : raw === "director" || raw === "timeline" || raw === "render" || raw === "assets" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" ? raw
     : "dashboard"
   return { view, projectId: params.get("project") }
 }
 
 export function App() {
+  const { t } = useI18n()
   const { user, loading, login, register, logout, reloadUser } = useAuth()
   const initialRoute = useMemo(routeFromUrl, [])
   const [view, setView] = useState<AppView>(initialRoute.view)
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null)
-  const [routeLoading, setRouteLoading] = useState(initialRoute.view === "assets")
+  const [routeLoading, setRouteLoading] = useState(["assets", "director", "timeline", "render"].includes(initialRoute.view) && Boolean(initialRoute.projectId))
+  const [navOpen, setNavOpen] = useState(false)
 
   function navigate(next: AppView, project?: ProjectSummary) {
+    const projectView = ["assets", "director", "timeline", "render"].includes(next)
+    const retainedProject = project || (projectView ? activeProject : null)
+    if (projectView && !retainedProject) {
+      const retainedId = window.sessionStorage.getItem("storeel.activeProjectId")
+      if (retainedId) {
+        setRouteLoading(true)
+        apiGet<ProjectSummary>(`/projects/${encodeURIComponent(retainedId)}`)
+          .then((savedProject) => navigate(next, savedProject))
+          .catch(() => {
+            window.sessionStorage.removeItem("storeel.activeProjectId")
+            setView(next)
+            setRouteLoading(false)
+          })
+        return
+      }
+    }
     setView(next)
-    if (project) setActiveProject(project)
+    if (retainedProject) {
+      setActiveProject(retainedProject)
+      window.sessionStorage.setItem("storeel.activeProjectId", retainedProject.id)
+    }
     setRouteLoading(false)
     const url = new URL(window.location.href)
     url.searchParams.set("view", next === "assets" ? "project" : next)
-    const projectId = project?.id || (next === "assets" ? activeProject?.id : null)
+    const projectId = retainedProject?.id
     if (projectId) url.searchParams.set("project", projectId)
     else url.searchParams.delete("project")
-    if (next !== "assets") url.searchParams.delete("step")
+    url.searchParams.delete("step")
     window.history.pushState({}, "", url)
   }
+
+  useEffect(() => { setNavOpen(false) }, [view])
 
   useEffect(() => {
     if (!user) return
@@ -99,7 +100,10 @@ export function App() {
     async function syncRoute() {
       const route = routeFromUrl()
       setView(route.view)
-      if (route.view !== "assets" || !route.projectId) { if (active) setRouteLoading(false); return }
+      if (!["assets", "director", "timeline", "render"].includes(route.view) || !route.projectId) {
+        if (active) setRouteLoading(false)
+        return
+      }
       setRouteLoading(true)
       try {
         const project = await apiGet<ProjectSummary>(`/projects/${encodeURIComponent(route.projectId)}`)
@@ -116,27 +120,127 @@ export function App() {
     return () => { active = false; window.removeEventListener("popstate", onPopState) }
   }, [user])
 
-  if (loading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">Loading…</main>
+  if (loading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">{t("common.loading")}</main>
   // Reachable with zero login — checked before the auth gate below.
   if (view === "gallery") return <GalleryPage onBack={() => navigate("dashboard")} />
   if (!user) return <LoginPage onLogin={login} onRegister={register} onBrowseGallery={() => navigate("gallery")} />
-  if (routeLoading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">Opening project…</main>
+  if (routeLoading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">{t("app.openingProject")}</main>
 
-  if (view === "director") return <DirectorWorkspace onBack={() => navigate("dashboard")} />
+  // The intake wizard is a focused, linear, exit-avoiding flow and isn't a
+  // top-level nav destination, so it intentionally stays outside the shell.
   if (view === "intake") return <IntakeWizard onBack={() => navigate("dashboard")} onCreated={(project) => navigate("assets", project)} />
-  if (view === "projects") return <ProjectsPage onBack={() => navigate("dashboard")} onOpen={(project) => navigate("assets", project)} />
-  if (view === "assets" && activeProject) return <AssetsPage project={activeProject} onBack={() => navigate("projects")} onRenderStarted={reloadUser} />
-  if (view === "recipes") return <RecipeLibrary onBack={() => navigate("dashboard")} />
-  if (view === "billing") return <BillingPage onBack={() => navigate("dashboard")} />
-  if (view === "admin") return <AdminIncidentsPage onBack={() => navigate("dashboard")} />
-  return <Dashboard user={user} onLogout={logout} onCreate={() => navigate("intake")} onDirector={() => navigate("projects")} onBrowseProjects={() => navigate("projects")} onBrowseRecipes={() => navigate("recipes")} onUpgrade={() => navigate("billing")} onAdmin={() => navigate("admin")} onReloadUser={reloadUser} />
+
+  const onOpenNav = () => setNavOpen(true)
+  const shell = { user, active: view, navOpen, onCloseNav: () => setNavOpen(false), onNavigate: navigate, onCreate: () => navigate("intake"), onUpgrade: () => navigate("billing"), onAdmin: () => navigate("admin"), onLogout: logout }
+
+  if (view === "projects") return <AppShell {...shell}><ProjectsPage onOpenNav={onOpenNav} onOpen={(project) => navigate("assets", project)} /></AppShell>
+  if (["assets", "director", "timeline", "render"].includes(view) && !activeProject) {
+    const labels = toolRoute(view, t)
+    return <AppShell {...shell}><ProjectsPage onOpenNav={onOpenNav} title={labels.title} description={labels.description} onOpen={(project) => navigate(view, project)} /></AppShell>
+  }
+  if (activeProject && ["assets", "director", "timeline", "render"].includes(view)) {
+    const config: Record<"assets" | "director" | "timeline" | "render", { step: "media" | "direct" | "review"; focus: WorkspaceFocus }> = {
+      assets: { step: "media", focus: "all" },
+      director: { step: "direct", focus: "director" },
+      timeline: { step: "direct", focus: "timeline" },
+      render: { step: "review", focus: "all" },
+    }
+    const selected = config[view as keyof typeof config]
+    return <AppShell {...shell}><AssetsPage key={`${activeProject.id}:${view}`} project={activeProject} initialStep={selected.step} focus={selected.focus} plan={user.plan} onOpenNav={onOpenNav} onUpgrade={() => navigate("billing")} onRenderStarted={reloadUser} /></AppShell>
+  }
+  if (view === "recipes") return <AppShell {...shell}><RecipeLibrary onOpenNav={onOpenNav} /></AppShell>
+  if (view === "billing") return <AppShell {...shell}><BillingPage onOpenNav={onOpenNav} /></AppShell>
+  if (view === "admin") return <AppShell {...shell}><AdminIncidentsPage onOpenNav={onOpenNav} /></AppShell>
+  return <AppShell {...shell}><Dashboard onOpenNav={onOpenNav} onCreate={() => navigate("intake")} onNavigate={navigate} onReloadUser={reloadUser} /></AppShell>
 }
 
-function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onBrowseRecipes, onUpgrade, onAdmin, onReloadUser }: { user: StudioUser; onLogout: () => void; onCreate: () => void; onDirector: () => void; onBrowseProjects: () => void; onBrowseRecipes: () => void; onUpgrade: () => void; onAdmin: () => void; onReloadUser: () => void }) {
-  const [navOpen, setNavOpen] = useState(false)
+function toolRoute(view: AppView, t: Translate) {
+  if (view === "assets") return { title: t("route.assets.title"), description: t("route.assets.description") }
+  if (view === "director") return { title: t("route.director.title"), description: t("route.director.description") }
+  if (view === "timeline") return { title: t("route.timeline.title"), description: t("route.timeline.description") }
+  return { title: t("route.render.title"), description: t("route.render.description") }
+}
+
+// Persistent app shell used by every authenticated, top-level section so the
+// sidebar (and its active-item highlight) stays consistent no matter which
+// page is open — previously only the Dashboard rendered it, so navigating
+// anywhere else lost the sidebar entirely.
+function AppShell({ user, active, navOpen, onCloseNav, onNavigate, onCreate, onUpgrade, onAdmin, onLogout, children }: {
+  user: StudioUser
+  active: AppView
+  navOpen: boolean
+  onCloseNav: () => void
+  onNavigate: (view: AppView) => void
+  onCreate: () => void
+  onUpgrade: () => void
+  onAdmin: () => void
+  onLogout: () => void
+  children: React.ReactNode
+}) {
+  const { t } = useI18n()
   const [changingPassword, setChangingPassword] = useState(false)
+  const [incidentList, setIncidentList] = useState<IncidentList | null>(null)
+
+  useEffect(() => {
+    if (!user.isAdmin) return
+    apiGet<IncidentList>("/admin/incidents").then(setIncidentList).catch(() => undefined)
+  }, [user.isAdmin])
+
+  // Only true top-level destinations live here. Assets / AI Director /
+  // Timeline / Render used to sit alongside them, but they are steps *inside* a
+  // project, so picking one without a project just bounced you to a project
+  // picker — and they duplicated the workspace stepper under different names.
+  // Deep links to those views still resolve; they are simply not nav items.
+  const navItems = [
+    [LayoutDashboard, "nav.dashboard", "dashboard"],
+    [FolderOpen, "nav.projects", "projects"],
+    [Sparkles, "nav.recipes", "recipes"],
+  ] as const satisfies ReadonlyArray<readonly [typeof Film, StringKey, AppView]>
+  const projectViews: AppView[] = ["assets", "director", "timeline", "render"]
+
+  return (
+    <main className="flex min-h-screen bg-background text-foreground">
+      {navOpen && <div className="fixed inset-0 z-20 bg-black/40 lg:hidden" onClick={onCloseNav} />}
+      <aside className={cn("fixed inset-y-0 left-0 z-30 w-72 flex-col border-r border-white/10 bg-sidebar px-4 py-6 text-sidebar-foreground lg:static lg:z-auto lg:flex lg:w-64", navOpen ? "flex" : "hidden lg:flex")}>
+        <div className="flex items-center justify-between">
+          <button onClick={() => onNavigate("dashboard")} className="flex items-center gap-3 px-2 text-left">
+            <div className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20"><Clapperboard className="size-5" /></div>
+            <div><div className="font-serif text-xl font-semibold tracking-tight">StoReel</div><div className="text-[10px] uppercase tracking-[0.2em] text-sidebar-muted">{t("brand.tagline")}</div></div>
+          </button>
+          <button aria-label={t("common.closeNavigation")} onClick={onCloseNav} className="grid size-11 place-items-center rounded-md text-sidebar-muted hover:bg-white/5 hover:text-white lg:hidden"><X className="size-4" /></button>
+        </div>
+        <Button onClick={onCreate} className="mt-8 w-full justify-start bg-white text-sidebar hover:bg-white/90" size="lg"><Plus className="size-4" /> {t("app.newFilm")}</Button>
+        <nav className="mt-8 space-y-1">
+          {navItems.map(([Icon, labelKey, id]) => {
+            // A project workspace is reached through Projects, so keep that
+            // item lit while the user is inside one.
+            const current = active === id || (id === "projects" && projectViews.includes(active))
+            return <button key={id} onClick={() => onNavigate(id)} aria-current={current ? "page" : undefined} className={cn("flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors", current ? "bg-white/10 text-white" : "text-sidebar-muted hover:bg-white/5 hover:text-white")}><Icon className="size-[18px]" /> {t(labelKey)}</button>
+          })}
+        </nav>
+        <div className="mt-auto border-t border-white/10 pt-5">
+          <p className="truncate text-sm font-medium">{user.username}</p>
+          <p className={cn("mt-1 text-xs", planIsExhausted(user.plan) ? "text-amber-400" : "text-sidebar-muted")}>{planSummary(user.plan, t)}</p>
+          <button onClick={onUpgrade} className={cn("mt-2 text-xs transition-colors hover:text-white", active === "billing" ? "font-semibold text-white" : "text-sidebar-muted")}>{t("nav.billing")}</button>
+          <button onClick={() => setChangingPassword(true)} className="mt-3 flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm text-sidebar-muted transition-colors hover:bg-white/5 hover:text-white"><KeyRound className="size-4" /> {t("nav.changePassword")}</button>
+          {user.isAdmin && <button onClick={onAdmin} className={cn("flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm transition-colors", active === "admin" ? "bg-white/10 text-white" : "text-sidebar-muted hover:bg-white/5 hover:text-white")}><ShieldAlert className="size-4" /> {t("nav.incidents")}{incidentList && incidentList.openCount > 0 && <Badge className="ml-auto border-0 bg-warning text-warning-foreground">{incidentList.openCount}</Badge>}</button>}
+          <button onClick={onLogout} className="flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm text-sidebar-muted transition-colors hover:bg-white/5 hover:text-white"><LogOut className="size-4" /> {t("nav.signOut")}</button>
+          <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/10 pt-4">
+            <span className="text-xs text-sidebar-muted">{t("common.language")}</span>
+            <LanguageToggle tone="dark" />
+          </div>
+        </div>
+      </aside>
+
+      <div className="min-w-0 flex-1">{children}</div>
+      {changingPassword && <ChangePasswordDialog onClose={() => setChangingPassword(false)} />}
+    </main>
+  )
+}
+
+function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNav: () => void; onCreate: () => void; onNavigate: (view: AppView, project?: ProjectSummary) => void; onReloadUser: () => void }) {
+  const { t, locale } = useI18n()
   const [checkoutBanner, setCheckoutBanner] = useState<"success" | "cancelled" | null>(null)
-  const [incidentCount, setIncidentCount] = useState(0)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -150,19 +254,6 @@ function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onB
     window.history.replaceState({}, "", url)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  useEffect(() => {
-    if (user.username !== "storeel") return
-    apiGet<IncidentList>("/admin/incidents").then((result) => setIncidentCount(result.openCount)).catch(() => undefined)
-  }, [user.username])
-  const dashboardNav = [
-    [LayoutDashboard, "Dashboard", true],
-    [FolderOpen, "Projects", false],
-    [Sparkles, "Recipe Library", false],
-    [Image, "Assets", false],
-    [WandSparkles, "AI Director", false],
-    [Layers3, "Timeline", false],
-    [Film, "Render queue", false],
-  ] as const
 
   const { data, error, loading, reload } = useProjects()
   const projects = data?.projects || []
@@ -173,253 +264,90 @@ function Dashboard({ user, onLogout, onCreate, onDirector, onBrowseProjects, onB
     paused: projects.filter((project) => project.status === "paused").length,
     completed: projects.filter((project) => project.status === "completed").length,
   }
+  const onBrowseProjects = () => onNavigate("projects")
+
+  // "Needs attention" and the invalid-data banner used to read from different
+  // sources, so the page could warn "1 project has invalid data" directly above
+  // a panel insisting "No paused, failed, or invalid projects". Unreadable
+  // folders never reach `projects` at all, so they have to be merged in here.
+  const attentionItems: AttentionItem[] = [
+    ...(data?.issues || []).map((issue) => ({
+      key: `issue:${issue.projectId}`,
+      title: t("dashboard.issueTitle", { id: issue.projectId }),
+      detail: issue.message,
+      severe: true,
+      onSelect: onBrowseProjects,
+    })),
+    ...projects
+      .filter((project) => project.status === "paused" || project.status === "failed" || project.status === "invalid" || project.status === "completed_with_warning")
+      .map((project) => ({
+        key: `project:${project.id}`,
+        title: `${project.name}: ${t(statusLabelKey[project.status])}`,
+        detail: t("dashboard.updatedAt", { date: formatDate(project.updatedAt, locale) }),
+        severe: project.status === "failed" || project.status === "invalid",
+        onSelect: () => onNavigate("assets", project),
+      })),
+  ]
 
   return (
-    <main className="flex min-h-screen bg-background text-foreground">
-      {navOpen && <div className="fixed inset-0 z-20 bg-black/40 lg:hidden" onClick={() => setNavOpen(false)} />}
-      <aside className={cn("fixed inset-y-0 left-0 z-30 w-72 flex-col border-r border-white/10 bg-sidebar px-4 py-6 text-sidebar-foreground lg:static lg:z-auto lg:flex lg:w-64", navOpen ? "flex" : "hidden lg:flex")}>
-        <div className="flex items-center justify-between">
-          <button onClick={() => undefined} className="flex items-center gap-3 px-2 text-left">
-            <div className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20"><Clapperboard className="size-5" /></div>
-            <div><div className="font-serif text-xl font-semibold tracking-tight">StoReel</div><div className="text-[10px] uppercase tracking-[0.2em] text-sidebar-muted">Moments That Move</div></div>
-          </button>
-          <button onClick={() => setNavOpen(false)} className="grid size-8 place-items-center rounded-md text-sidebar-muted hover:bg-white/5 hover:text-white lg:hidden"><X className="size-4" /></button>
+    <>
+      <header className="flex h-20 items-center justify-between gap-3 border-b px-4 md:px-10">
+        <div className="flex min-w-0 items-center gap-3">
+          <button aria-label={t("common.openNavigation")} onClick={onOpenNav} className="grid size-11 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-5" /></button>
+          <div className="min-w-0"><p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">{t("common.studio")}</p><h1 className="font-serif text-base font-semibold sm:text-xl">{t("dashboard.welcome")}</h1></div>
         </div>
-        <Button onClick={onCreate} className="mt-8 w-full justify-start bg-white text-sidebar hover:bg-white/90" size="lg"><Plus className="size-4" /> New film</Button>
-        <nav className="mt-8 space-y-1">
-          {dashboardNav.map(([Icon, label, active]) => {
-            const onClick = label === "AI Director" ? onDirector : label === "Projects" ? onBrowseProjects : label === "Recipe Library" ? onBrowseRecipes : undefined
-            return <button key={label} onClick={() => { onClick?.(); setNavOpen(false) }} className={cn("flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors", active ? "bg-white/10 text-white" : "text-sidebar-muted hover:bg-white/5 hover:text-white")}><Icon className="size-[18px]" /> {label}</button>
-          })}
-        </nav>
-        <div className="mt-auto border-t border-white/10 pt-5">
-          <p className="truncate text-sm font-medium">{user.username}</p>
-          <p className={cn("mt-1 text-xs", planIsExhausted(user.plan) ? "text-amber-400" : "text-sidebar-muted")}>{planSummary(user.plan)}</p>
-          <button onClick={onUpgrade} className="mt-2 text-xs text-primary underline underline-offset-2 hover:text-primary/80">{user.plan.type === "subscription" ? "Manage billing" : "Upgrade"}</button>
-          <button onClick={() => setChangingPassword(true)} className="mt-3 flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm text-sidebar-muted transition-colors hover:bg-white/5 hover:text-white"><KeyRound className="size-4" /> Change password</button>
-          {user.username === "storeel" && <button onClick={onAdmin} className="flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm text-sidebar-muted transition-colors hover:bg-white/5 hover:text-white"><ShieldAlert className="size-4" /> Technical incidents {incidentCount > 0 && <Badge className="ml-auto border-0 bg-amber-500 text-white">{incidentCount}</Badge>}</button>}
-          <button onClick={onLogout} className="flex h-9 w-full items-center gap-2 rounded-lg px-3 text-sm text-sidebar-muted transition-colors hover:bg-white/5 hover:text-white"><LogOut className="size-4" /> Sign out</button>
-        </div>
-      </aside>
+        <Button onClick={onCreate} size="lg" className="shrink-0"><Plus className="size-4" /> <span className="hidden sm:inline">{t("dashboard.createFilm")}</span></Button>
+      </header>
 
-      <section className="min-w-0 flex-1">
-        <header className="flex h-20 items-center justify-between gap-3 border-b px-4 md:px-10">
-          <div className="flex min-w-0 items-center gap-3">
-            <button onClick={() => setNavOpen(true)} className="grid size-9 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-5" /></button>
-            <div className="min-w-0"><p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Project workspace</p><h1 className="truncate font-serif text-xl font-semibold">Good morning, welcome back</h1></div>
-          </div>
-          <Button onClick={onCreate} size="lg" className="shrink-0"><Plus className="size-4" /> <span className="hidden sm:inline">Create new film</span></Button>
-        </header>
-
-        <div className="mx-auto max-w-[1440px] space-y-6 px-6 py-8 md:px-10">
-          {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success"><span>Payment submitted — your plan will update as soon as the payment provider confirms it.</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>Dismiss</Button></CardContent></Card>}
-          {checkoutBanner === "cancelled" && <Card className="border-amber-300 bg-amber-50"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-amber-900"><span>Checkout was cancelled — no charge was made.</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>Dismiss</Button></CardContent></Card>}
-          {error && <Card className="border-destructive/40 bg-destructive/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-destructive"><span>{error}</span><Button variant="outline" size="sm" onClick={reload}>Retry</Button></CardContent></Card>}
-          {data && data.issues.length > 0 && <Card className="border-amber-300 bg-amber-50"><CardContent className="p-5 text-sm text-amber-900">{data.issues.length} project folder(s) contain invalid data. Open Projects for details.</CardContent></Card>}
-          <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
-            {featured ? <Card className="relative min-h-[360px] overflow-hidden border-0 bg-[linear-gradient(135deg,#3a302b_0%,#7b5a42_52%,#c9a878_100%)] text-white shadow-xl">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,.22),transparent_35%),linear-gradient(to_top,rgba(14,12,11,.78),transparent_65%)]" />
-              <ProjectAvatar project={featured} className="absolute right-10 top-12 size-36 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm" textClassName="text-5xl" />
-              <div className="relative flex min-h-[360px] flex-col justify-end p-8">
-                <Badge className="mb-4 w-fit border-0 bg-white/15 text-white">{statusLabel[featured.status]}</Badge>
-                <h2 className="font-serif text-4xl font-semibold">{featured.name}</h2><p className="mt-1 text-white/75 capitalize">{featured.tier} · {featured.currentPhase || "Not started"} · Updated {formatDate(featured.updatedAt)}</p>
-                <div className="mt-6 flex gap-3"><Button variant="secondary" onClick={onBrowseProjects}><FolderOpen className="size-4" /> Open projects</Button><Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white"><MoreHorizontal className="size-5" /></Button></div>
-              </div>
-            </Card> : <Card className="grid min-h-[360px] place-items-center border-dashed"><CardContent className="text-center"><FolderOpen className="mx-auto size-10 text-muted-foreground" /><h2 className="mt-4 font-serif text-2xl font-semibold">No projects yet</h2><p className="mt-2 text-sm text-muted-foreground">Create a new film to begin.</p><Button className="mt-5" onClick={onCreate}><Plus className="size-4" /> Create new film</Button></CardContent></Card>}
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Metric icon={FolderOpen} value={String(counts.total)} label="Projects" detail="All project folders" />
-              <Metric icon={Film} value={String(counts.running)} label="Running" detail="Active pipeline jobs" />
-              <Metric icon={Layers3} value={String(counts.paused)} label="Paused" detail="Waiting for a decision" />
-              <Metric icon={Check} value={String(counts.completed)} label="Completed" detail="Delivered or finished" />
+      <div className="mx-auto max-w-[1440px] space-y-6 px-6 py-8 md:px-10">
+        {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success"><span>{t("dashboard.checkoutSuccess")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
+        {checkoutBanner === "cancelled" && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-warning"><span>{t("dashboard.checkoutCancelled")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
+        {error && <Card className="border-destructive/40 bg-destructive/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-destructive"><span>{error}</span><Button variant="outline" size="sm" onClick={reload}>{t("common.retry")}</Button></CardContent></Card>}
+        {data && data.issues.length > 0 && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5 text-sm text-warning"><div><p className="font-medium">{t("dashboard.issuesTitle", { count: data.issues.length })}</p><p className="mt-1 text-xs text-warning">{t("dashboard.issuesDetail")}</p></div><Button variant="outline" size="sm" onClick={onBrowseProjects}>{t("dashboard.reviewIssues", { count: data.issues.length })} <ArrowRight className="size-4" /></Button></CardContent></Card>}
+        <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
+          {loading && !data ? <DashboardHeroSkeleton /> : featured ? <Card className="relative min-h-[360px] overflow-hidden border-0 bg-[linear-gradient(135deg,#3a302b_0%,#7b5a42_52%,#c9a878_100%)] text-white shadow-xl">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,.22),transparent_35%),linear-gradient(to_top,rgba(14,12,11,.78),transparent_65%)]" />
+            <ProjectAvatar project={featured} className="absolute right-10 top-12 size-36 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm" textClassName="text-5xl" />
+            <div className="relative flex min-h-[360px] flex-col justify-end p-8">
+              <Badge className="mb-4 w-fit border-0 bg-white/15 text-white">{t(statusLabelKey[featured.status])}</Badge>
+              <h2 className="font-serif text-4xl font-semibold">{featured.name}</h2><p className="mt-1 text-white/75">{t(tierLabelKey[featured.tier] ?? "tier.template")} · {featured.currentPhase ? t(phaseLabelKey[featured.currentPhase]) : t("status.not_started")} · {t("dashboard.updatedAt", { date: formatDate(featured.updatedAt, locale) })}</p>
+              <div className="mt-6 flex gap-3"><Button variant="secondary" onClick={() => onNavigate("assets", featured)}><FolderOpen className="size-4" /> {t("dashboard.openProject")}</Button></div>
             </div>
-          </div>
+          </Card> : <Card className="grid min-h-[360px] place-items-center border-dashed"><CardContent className="text-center"><FolderOpen className="mx-auto size-10 text-muted-foreground" /><h2 className="mt-4 font-serif text-2xl font-semibold">{t("dashboard.noProjects")}</h2><p className="mt-2 text-sm text-muted-foreground">{t("dashboard.noProjectsDetail")}</p><Button className="mt-5" onClick={onCreate}><Plus className="size-4" /> {t("dashboard.createFilm")}</Button></CardContent></Card>}
 
-          {featured && <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Pipeline progress</CardTitle><CardDescription>{featured.name} · <span className="capitalize">{featured.currentPhase || "not started"}</span></CardDescription></div><span className="font-serif text-3xl font-semibold text-primary">{featured.progress}%</span></CardHeader><CardContent><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${featured.progress}%` }} /></div><div className="mt-3 flex justify-between text-xs text-muted-foreground"><span className="flex items-center gap-2"><span className={cn("size-2 rounded-full", featured.status === "failed" || featured.status === "invalid" ? "bg-red-500" : featured.status === "paused" ? "bg-amber-500" : "bg-success")} /> {statusLabel[featured.status]}</span><span>Updated {formatDate(featured.updatedAt)}</span></div>{featured.error && <p className="mt-3 text-xs text-destructive">{featured.error}</p>}</CardContent></Card>}
-
-          <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
-            <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">Recent projects</CardTitle><CardDescription>{loading ? "Loading project folders…" : "Ordered by latest job update"}</CardDescription></div><Button variant="ghost" size="sm" onClick={onBrowseProjects}>View all <ArrowRight className="size-4" /></Button></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{projects.slice(0, 4).map((project, index) => <button onClick={onBrowseProjects} key={project.id} className="overflow-hidden rounded-lg border bg-background text-left"><ProjectAvatar project={project} className={cn("h-28 w-full", ["bg-[#8b7869]", "bg-[#65705f]", "bg-[#9b745d]", "bg-[#687a87]"][index])} textClassName="text-2xl" /><div className="p-3"><p className="text-sm font-medium">{project.name}</p><p className="mt-0.5 text-xs capitalize text-muted-foreground">{project.tier} · {project.currentPhase || "not started"}</p><Badge className={cn("mt-3 border-0", statusClass[project.status])}>{statusLabel[project.status]}</Badge></div></button>)}{!loading && projects.length === 0 && <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No recent projects.</p>}</CardContent></Card>
-            <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Activity className="size-4 text-primary" /> Activity</CardTitle><CardDescription>Latest project updates</CardDescription></CardHeader><CardContent className="space-y-4 text-sm">{projects.slice(0, 4).map((project) => <ActivityRow key={project.id} title={`${project.name}: ${statusLabel[project.status]}`} time={formatDate(project.updatedAt)} />)}{!loading && projects.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No activity yet.</p>}</CardContent></Card>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Metric icon={FolderOpen} value={String(counts.total)} label={t("dashboard.metric.projects")} detail={t("dashboard.metric.projectsDetail")} />
+            <Metric icon={Film} value={String(counts.running)} label={t("dashboard.metric.running")} detail={t("dashboard.metric.runningDetail")} />
+            <Metric icon={Layers3} value={String(counts.paused)} label={t("dashboard.metric.paused")} detail={t("dashboard.metric.pausedDetail")} />
+            <Metric icon={Check} value={String(counts.completed)} label={t("dashboard.metric.completed")} detail={t("dashboard.metric.completedDetail")} />
           </div>
         </div>
-      </section>
-      {changingPassword && <ChangePasswordDialog onClose={() => setChangingPassword(false)} />}
-    </main>
+
+        {featured && <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">{t("dashboard.pipelineProgress")}</CardTitle><CardDescription>{featured.name} · {featured.currentPhase ? t(phaseLabelKey[featured.currentPhase]) : t("status.not_started")}</CardDescription></div><span className="font-serif text-3xl font-semibold text-primary">{featured.progress}%</span></CardHeader><CardContent><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${featured.progress}%` }} /></div><div className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground"><span className="flex items-center gap-2"><span className={cn("size-2 rounded-full", statusDotClass[featured.status])} /> {t(statusLabelKey[featured.status])}</span><span>{featured.status === "running" ? t("dashboard.lastProgress") : t("dashboard.updated")} {formatDate(featured.updatedAt, locale)}</span></div>{featured.error && <p className="mt-3 text-xs text-destructive">{featured.error}</p>}</CardContent></Card>}
+
+        <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
+          <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">{t("dashboard.recentProjects")}</CardTitle><CardDescription>{loading ? t("dashboard.loadingProjects") : t("dashboard.orderedByUpdate")}</CardDescription></div><Button variant="ghost" size="sm" onClick={onBrowseProjects}>{t("dashboard.viewAll")} <ArrowRight className="size-4" /></Button></CardHeader>{/* auto-fit (not a fixed 4) so one project fills the row instead of sitting
+    in a quarter-width tile beside three empty tracks. */}
+<CardContent className="grid gap-3 sm:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">{projects.slice(0, 4).map((project, index) => <button onClick={() => onNavigate("assets", project)} key={project.id} className="overflow-hidden rounded-lg border bg-background text-left transition hover:border-primary/40 hover:shadow-sm"><ProjectAvatar project={project} className={cn("h-28 w-full", ["bg-[#8b7869]", "bg-[#65705f]", "bg-[#9b745d]", "bg-[#687a87]"][index])} textClassName="text-2xl" /><div className="p-3"><p className="text-sm font-medium">{project.name}</p><p className="mt-0.5 text-xs text-muted-foreground">{t(tierLabelKey[project.tier] ?? "tier.template")} · {project.currentPhase ? t(phaseLabelKey[project.currentPhase]) : t("status.not_started")}</p><Badge className={cn("mt-3 border-0", statusClass[project.status])}>{t(statusLabelKey[project.status])}</Badge></div></button>)}{!loading && projects.length === 0 && <p className="col-span-full py-8 text-center text-sm text-muted-foreground">{t("dashboard.noRecentProjects")}</p>}</CardContent></Card>
+          <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><ShieldAlert className="size-4 text-primary" /> {t("dashboard.needsAttention")}</CardTitle><CardDescription>{t("dashboard.needsAttentionDetail")}</CardDescription></CardHeader><CardContent className="space-y-4 text-sm">{attentionItems.slice(0, 4).map((item) => <button onClick={item.onSelect} key={item.key} className="flex w-full gap-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-ring"><span className={cn("mt-1 size-2 shrink-0 rounded-full", item.severe ? "bg-destructive" : "bg-warning")} /><span className="min-w-0 flex-1"><span className="block truncate">{item.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{item.detail}</span></span></button>)}{attentionItems.length > 4 && <p className="text-xs text-muted-foreground">{t("dashboard.andMore", { count: attentionItems.length - 4 })}</p>}{!loading && attentionItems.length === 0 && <div className="py-8 text-center"><Check className="mx-auto size-6 text-success" /><p className="mt-2 text-sm font-medium">{t("dashboard.allClear")}</p><p className="mt-1 text-xs text-muted-foreground">{t("dashboard.allClearDetail")}</p></div>}</CardContent></Card>
+        </div>
+      </div>
+    </>
   )
 }
 
-function DirectorWorkspace({ onBack }: { onBack: () => void }) {
-  const [brief, setBrief] = useState(starterBrief)
-  const [selectedMoods, setSelectedMoods] = useState(["Cinematic", "Warm"])
-  const [generated, setGenerated] = useState(false)
-  const [navOpen, setNavOpen] = useState(false)
-  const wordCount = useMemo(() => brief.trim().split(/\s+/).filter(Boolean).length, [brief])
+type AttentionItem = { key: string; title: string; detail: string; severe: boolean; onSelect: () => void }
 
-  function toggleMood(mood: string) {
-    setSelectedMoods((current) => current.includes(mood) ? current.filter((item) => item !== mood) : [...current, mood])
-  }
-
-  return (
-    <main className="flex min-h-screen bg-background text-foreground">
-      {navOpen && <div className="fixed inset-0 z-20 bg-black/40 lg:hidden" onClick={() => setNavOpen(false)} />}
-      <aside className={cn("fixed inset-y-0 left-0 z-30 w-72 flex-col border-r border-white/10 bg-sidebar px-4 py-6 text-sidebar-foreground lg:static lg:z-auto lg:flex lg:w-64", navOpen ? "flex" : "hidden lg:flex")}>
-        <div className="flex items-center justify-between">
-          <button onClick={onBack} className="flex items-center gap-3 px-2 text-left">
-            <div className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-              <Clapperboard className="size-5" />
-            </div>
-            <div>
-              <div className="font-serif text-xl font-semibold tracking-tight">StoReel</div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-sidebar-muted">Moments That Move</div>
-            </div>
-          </button>
-          <button onClick={() => setNavOpen(false)} className="grid size-8 place-items-center rounded-md text-sidebar-muted hover:bg-white/5 hover:text-white lg:hidden"><X className="size-4" /></button>
-        </div>
-
-        <Button className="mt-8 w-full justify-start bg-white text-sidebar hover:bg-white/90" size="lg">
-          <Plus className="size-4" /> New film
-        </Button>
-
-        <nav className="mt-8 space-y-1">
-          {nav.map(([Icon, label, active]) => (
-            <button key={label} onClick={() => { if (label === "Projects") onBack(); setNavOpen(false) }} className={cn("flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors", active ? "bg-white/10 text-white" : "text-sidebar-muted hover:bg-white/5 hover:text-white")}>
-              <Icon className="size-[18px]" /> {label}
-            </button>
-          ))}
-        </nav>
-
-        <div className="mt-auto rounded-xl border border-white/10 bg-white/5 p-4">
-          <div className="flex items-center gap-2 text-sm font-medium"><Lightbulb className="size-4 text-primary" /> Director tip</div>
-          <p className="mt-2 text-xs leading-5 text-sidebar-muted">Describe the feeling and key moments. StoReel will shape the structure for you.</p>
-        </div>
-      </aside>
-
-      <section className="min-w-0 flex-1">
-        <header className="flex h-20 items-center justify-between gap-3 border-b bg-background/90 px-4 backdrop-blur md:px-10">
-          <div className="flex min-w-0 items-center gap-3">
-            <button onClick={() => setNavOpen(true)} className="grid size-9 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-5" /></button>
-            <div className="min-w-0">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">AI Director</p>
-              <h1 className="truncate font-serif text-xl font-semibold">Create a new film</h1>
-            </div>
-          </div>
-          <button className="hidden items-center gap-3 rounded-lg border bg-card px-3 py-2 text-left shadow-sm sm:flex">
-            <div className="grid size-8 place-items-center rounded-md bg-secondary text-xs font-semibold">LN</div>
-            <div className="hidden sm:block"><div className="text-xs font-medium">Linh & Nam</div><div className="text-[11px] text-muted-foreground">Wedding film</div></div>
-            <ChevronDown className="size-4 text-muted-foreground" />
-          </button>
-        </header>
-
-        <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-10">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <Badge variant="secondary" className="mb-3 gap-1.5 border-0"><Sparkles className="size-3" /> Creative brief</Badge>
-              <h2 className="max-w-3xl font-serif text-4xl font-semibold tracking-tight md:text-5xl">Tell us the story you want to create.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Give your AI Director a role, story outline, mood, important moments, pacing, music notes, and anything it should follow.</p>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground"><span className="grid size-5 place-items-center rounded-full bg-success text-white"><Check className="size-3" /></span> Draft saved</div>
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(340px,.75fr)]">
-            <div className="space-y-6">
-              <Card className="overflow-hidden border-border/80 shadow-[0_20px_60px_-40px_rgba(62,43,27,.35)]">
-                <CardHeader className="flex-row items-center justify-between space-y-0 border-b bg-card-soft px-6 py-4">
-                  <div><CardTitle className="text-base">Director instructions</CardTitle><CardDescription className="mt-1">Write naturally. Details help StoReel make better choices.</CardDescription></div>
-                  <Badge variant="outline" className="font-normal">{wordCount} words</Badge>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <textarea
-                    value={brief}
-                    onChange={(event) => { setBrief(event.target.value); setGenerated(false) }}
-                    className="min-h-[330px] w-full resize-none bg-card px-7 py-6 text-[15px] leading-7 outline-none placeholder:text-muted-foreground/70"
-                    placeholder="Describe the story, emotions, visual direction, important moments, pacing, music, and anything the AI Director should follow…"
-                  />
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-t bg-card-soft px-5 py-4">
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm"><Paperclip className="size-4" /> Attach brief</Button>
-                      <Button variant="ghost" size="sm"><Image className="size-4" /> Add references</Button>
-                    </div>
-                    <span className="text-xs text-muted-foreground">⌘ + Enter to generate</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader><CardTitle className="text-base">Creative direction</CardTitle><CardDescription>Optional signals that guide the first set of directions.</CardDescription></CardHeader>
-                <CardContent className="grid gap-6 md:grid-cols-3">
-                  <label className="space-y-2 text-sm font-medium">Duration<select className="field"><option>3–5 minutes</option><option>Under 3 minutes</option><option>5–8 minutes</option></select></label>
-                  <label className="space-y-2 text-sm font-medium">Format<select className="field"><option>16:9 Landscape</option><option>9:16 Vertical</option><option>1:1 Square</option></select></label>
-                  <label className="space-y-2 text-sm font-medium">Music direction<select className="field"><option>Let AI decide</option><option>Follow selected track</option><option>Soft and cinematic</option></select></label>
-                  <div className="md:col-span-3">
-                    <p className="mb-3 text-sm font-medium">Mood</p>
-                    <div className="flex flex-wrap gap-2">{moods.map((mood) => <button key={mood} onClick={() => toggleMood(mood)} className={cn("rounded-full border px-3.5 py-2 text-xs font-medium transition-colors", selectedMoods.includes(mood) ? "border-primary bg-primary/10 text-primary" : "bg-background text-muted-foreground hover:bg-muted")}>{selectedMoods.includes(mood) && <Check className="mr-1.5 inline size-3" />}{mood}</button>)}</div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-sidebar p-5 text-white">
-                <div><p className="text-sm font-medium">Ready to explore the story?</p><p className="mt-1 text-xs text-sidebar-muted">StoReel will create 3 distinct directorial approaches for review.</p></div>
-                <Button onClick={() => setGenerated(true)} size="lg" disabled={!brief.trim()}><Sparkles className="size-4" /> Generate directions <ArrowRight className="size-4" /></Button>
-              </div>
-            </div>
-
-            <aside className="space-y-6">
-              <Card className={cn("transition-colors", generated && "border-primary/40")}>
-                <CardHeader className="flex-row items-start justify-between space-y-0">
-                  <div><CardTitle className="flex items-center gap-2 text-base"><Sparkles className="size-4 text-primary" /> AI understanding</CardTitle><CardDescription className="mt-1">What your director will follow</CardDescription></div>
-                  <Badge variant={generated ? "default" : "secondary"}>{generated ? "Updated" : "Live"}</Badge>
-                </CardHeader>
-                <CardContent className="space-y-5 text-sm">
-                  <Summary label="Director role" value="Korean cinematic wedding filmmaker" />
-                  <Separator />
-                  <Summary label="Story arc" value="Long-distance love → wedding day → leaving the ceremony together" />
-                  <Separator />
-                  <Summary label="Emotional peak" value="Ring exchange and family connection" />
-                  <Separator />
-                  <Summary label="Visual language" value="Warm palette, soft transitions, natural interaction, minimal effects" />
-                  <Separator />
-                  <Summary label="Avoid" value="Cliché captions and overly dramatic effects" />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader><CardTitle className="text-base">Proposed story flow</CardTitle><CardDescription>The structure updates as you refine the brief.</CardDescription></CardHeader>
-                <CardContent className="space-y-1">
-                  <Chapter number="01" title="Distance" detail="Quiet opening · letters and waiting" />
-                  <Chapter number="02" title="Coming home" detail="Momentum builds · shared moments" />
-                  <Chapter number="03" title="The promise" detail="Emotional peak · ring exchange" />
-                  <Chapter number="04" title="Together" detail="Warm resolution · leaving as one" last />
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card-soft">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="grid size-11 shrink-0 place-items-center rounded-lg bg-secondary"><Music2 className="size-5 text-primary" /></div>
-                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">a thousand years.mp3</p><p className="text-xs text-muted-foreground">04:45 · selected soundtrack</p></div>
-                  <Button variant="ghost" size="icon"><Play className="size-4" /></Button>
-                </CardContent>
-              </Card>
-            </aside>
-          </div>
-        </div>
-      </section>
-    </main>
-  )
-}
-
-function planSummary(plan: Plan): string {
-  if (plan.type === "per_video") {
-    return plan.creditsRemaining === 1 ? "1 render credit left" : `${plan.creditsRemaining} render credits left`
-  }
-  return `${plan.rendersUsedThisPeriod} of ${plan.monthlyRenderQuota} renders used this period`
-}
-
-function planIsExhausted(plan: Plan): boolean {
-  return plan.type === "per_video" ? plan.creditsRemaining <= 0 : plan.rendersUsedThisPeriod >= plan.monthlyRenderQuota
-}
-
-function Summary({ label, value }: { label: string; value: string }) {
-  return <div><p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</p><p className="leading-6">{value}</p></div>
+function DashboardHeroSkeleton() {
+  const { t } = useI18n()
+  return <Card aria-label={t("dashboard.loadingHero")} className="min-h-[360px] animate-pulse overflow-hidden border-0 bg-muted">
+    <CardContent className="flex min-h-[360px] flex-col justify-end gap-4 p-8">
+      <div className="h-6 w-24 rounded-full bg-background/70" />
+      <div className="h-10 w-2/3 rounded bg-background/70" />
+      <div className="h-4 w-1/2 rounded bg-background/70" />
+      <div className="mt-2 h-10 w-36 rounded bg-background/70" />
+    </CardContent>
+  </Card>
 }
 
 // The representative photo for a finished project — same thumbnail.jpg the
@@ -436,14 +364,9 @@ function ProjectAvatar({ project, className, textClassName }: { project: Project
   </div>
 }
 
+// `detail` is a neutral description of what the number counts ("All project
+// folders"), not a verdict — it used to be painted success-green, which read
+// as "0 running is good news".
 function Metric({ icon: Icon, value, label, detail }: { icon: typeof Film; value: string; label: string; detail: string }) {
-  return <Card><CardContent className="p-5"><div className="grid size-9 place-items-center rounded-lg bg-secondary text-primary"><Icon className="size-4" /></div><p className="mt-5 font-serif text-3xl font-semibold">{value}</p><p className="mt-1 text-sm text-muted-foreground">{label}</p><p className="mt-3 text-xs text-success">{detail}</p></CardContent></Card>
-}
-
-function ActivityRow({ title, time }: { title: string; time: string }) {
-  return <div className="flex gap-3"><span className="mt-1 size-2 shrink-0 rounded-full bg-primary" /><div className="min-w-0 flex-1"><p className="truncate">{title}</p><p className="mt-1 text-xs text-muted-foreground">{time}</p></div></div>
-}
-
-function Chapter({ number, title, detail, last = false }: { number: string; title: string; detail: string; last?: boolean }) {
-  return <div className="relative flex gap-3 pb-5"><div className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border bg-background text-[10px] font-semibold text-primary">{number}</div>{!last && <div className="absolute left-[15px] top-8 h-full w-px bg-border" />}<div className="pt-1"><p className="text-sm font-medium">{title}</p><p className="mt-0.5 text-xs leading-5 text-muted-foreground">{detail}</p></div></div>
+  return <Card><CardContent className="p-5"><div className="grid size-9 place-items-center rounded-lg bg-secondary text-primary"><Icon className="size-4" /></div><p className="mt-5 font-serif text-3xl font-semibold">{value}</p><p className="mt-1 text-sm text-muted-foreground">{label}</p><p className="mt-3 text-xs text-muted-foreground/80">{detail}</p></CardContent></Card>
 }

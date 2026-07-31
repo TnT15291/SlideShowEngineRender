@@ -19,7 +19,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
@@ -33,7 +40,7 @@
   --card: oklch(0.995 0.005 80);
   --card-foreground: oklch(0.21 0.015 60);
   --card-soft: oklch(0.982 0.01 79);
-  --primary: oklch(0.57 0.12 65);
+  --primary: oklch(0.56 0.12 65);
   --primary-foreground: oklch(0.99 0.006 80);
   --secondary: oklch(0.93 0.025 75);
   --secondary-foreground: oklch(0.29 0.025 58);
@@ -44,7 +51,14 @@
   --border: oklch(0.875 0.018 74);
   --input: oklch(0.875 0.018 74);
   --ring: oklch(0.57 0.12 65);
+  --destructive: oklch(0.48 0.18 28);
+  --destructive-foreground: oklch(0.98 0.01 80);
   --success: oklch(0.58 0.12 145);
+  --success-foreground: oklch(0.98 0.01 145);
+  --warning: oklch(0.55 0.16 55);
+  --warning-foreground: oklch(0.98 0.02 80);
+  --info: oklch(0.55 0.14 240);
+  --info-foreground: oklch(0.98 0.01 240);
   --sidebar: oklch(0.19 0.012 55);
   --sidebar-foreground: oklch(0.97 0.008 78);
   --sidebar-muted: oklch(0.72 0.018 72);
@@ -54,5 +68,12 @@
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
-.field { margin-top: .5rem; height: 2.5rem; width: 100%; appearance: none; border-radius: .5rem; border: 1px solid var(--input); background: var(--background); padding: 0 .75rem; color: var(--foreground); font-size: .875rem; outline: none; }
-.field:focus { box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 35%, transparent); }
+.field { margin-top: .5rem; height: 2.75rem; width: 100%; appearance: none; border-radius: .5rem; border: 1px solid var(--input); background: var(--card); padding: 0 .75rem; color: var(--foreground); font-size: .875rem; outline: none; transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease; }
+.field:hover { border-color: color-mix(in oklab, var(--foreground) 24%, var(--input)); }
+.field:focus { border-color: var(--ring); background: var(--background); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 16%, transparent); }
+
+.login-canvas {
+  background-image:
+    radial-gradient(circle at 50% 34%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 28rem),
+    linear-gradient(145deg, color-mix(in oklab, var(--sidebar) 88%, black), var(--sidebar));
+}
