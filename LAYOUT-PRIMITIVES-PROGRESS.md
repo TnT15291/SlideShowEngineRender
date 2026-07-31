@@ -13,8 +13,8 @@
 | Trạng thái tổng | `IN_PROGRESS` |
 | Pha hiện tại | `Pha 2C — rollout theo batch` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2C batch B1` — 4 recipe đã migrate; cả hai host `stacked_horizon_trio` đã đáp đất và đạt guard P1.7R |
-| Bước tiếp theo | `P2C batch B2` — `--write --batch B2` cho `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01`, rồi chạy đủ 7 gate của Pha 2C và siết ratchet tới số đo mới |
+| Bước hoàn thành gần nhất | `P2C batch B2` — 4 recipe đã migrate; adoption story-beat cuối cùng có copy đã đáp đất nguyên vẹn |
+| Bước tiếp theo | `P2C batch B3` — `--write --batch B3` cho `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`, `letters-to-forever-01`, rồi chạy đủ 7 gate của Pha 2C và siết ratchet tới số đo mới |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -23,7 +23,8 @@
 | Commit Pha 2A | `4ac137c` |
 | Commit Pha 2B pilot | `8161779` |
 | Commit Pha 2C B1 | `161b281` |
-| Cập nhật lần cuối | `2026-07-31 — P2C B1 DONE` |
+| Commit Pha 2C B2 | `B2_SHA` |
+| Cập nhật lần cuối | `2026-07-31 — P2C B2 DONE` |
 
 ### Quy ước trạng thái
 
@@ -59,11 +60,11 @@
 
 | Metric V2 | Baseline trong plan | Đã xác nhận khi triển khai |
 |---|---:|---|
-| `catalog.distinct` | 49 | Có — P0A.5: 49; Pha 1: 56; pilot: 64; B1: 76 |
-| `authored.distinct` | 48 | Có — P0A.5: 48; pilot: 56; B1: 68 |
-| `authored.shared` | 30 | Có — P0A.5: 30; pilot: 30; B1: 30 |
-| `reachable.maxShare` | 23 | Có — P0A.5: 23; pilot: 22; B1: 18 |
-| `reachable.over12Count` | 7 | Có — P0A.5: 7; pilot: 6; B1: 4 |
+| `catalog.distinct` | 49 | Có — P0A.5: 49; Pha 1: 56; pilot: 64; B1: 76; B2: 89 |
+| `authored.distinct` | 48 | Có — P0A.5: 48; pilot: 56; B1: 68; B2: 81 |
+| `authored.shared` | 30 | Có — P0A.5: 30; pilot: 30; B1: 30; B2: 30 |
+| `reachable.maxShare` | 23 | Có — P0A.5: 23; pilot: 22; B1: 18; B2: 15 |
+| `reachable.over12Count` | 7 | Có — P0A.5: 7; pilot: 6; B1: 4; B2: 2 |
 | Scene meaningful | 5 scene / 3 recipe | Có — P0A.4/P0A.5: 5 / 3 |
 | `closing_names` distinct | 11 | Có — P0A.2: 11 |
 | `closing_names` max group | 9 | Có — P0A.2: 9 |
@@ -326,7 +327,7 @@ riêng chứ không nhét vào một batch.
 | Batch | Recipe | Trạng thái | Commit |
 |---|---|---|---|
 | B1 | `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01` | DONE | `161b281` |
-| B2 | `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01` | TODO | — |
+| B2 | `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01` | DONE | `B2_SHA` |
 | B3 | `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`, `letters-to-forever-01` | TODO | — |
 | B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | TODO | — |
 | B5 | `studio-white-prewedding-01`, `three-chapters-biography-01`, `warm-film-01`, `white-weddings-editorial-01` | TODO | — |
@@ -417,7 +418,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 adoption planner | `4ac137c` | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
 | Pha 2 pilot | `8161779` | 9 adoption / 3 recipe. Đo thật sau ghi: `catalog 56 -> 64`, `authored 48 -> 56`, `maxShare 23 -> 22`, `over12 7 -> 6`, meaningful `cinematic 1 -> 3`, `editorial 0 -> 3`, `jmii 3 -> 6`, `ww-full` giữ `1`. `--check-plan` `61 pending, 9 already applied`; validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `npm run test:unit` `376/376`. Bộ adoption test chạy `22/22` ở cả 7 giai đoạn rollout | `story-templates/{cinematic-film-01,editorial-bold-01,jmii-silk-botanical-01}.json`; `test/fixtures/pre-adoption-recipes.json`; `test/adopt-new-primitives.test.mjs`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B1 | `161b281` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 64 -> 76`, `authored 56 -> 68`, `shared 30 -> 30`, `maxShare 22 -> 18`, `over12 6 -> 4`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `49 pending, 21 already applied`; content contract `51 path / 1 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{afterparty-pulse-01,cinematic-vows-01,city-to-ceremony-01,classic-luxury-01}.json`; `test/layout-geometry.test.mjs` | DONE |
-| Pha 2 batch B2 | — | — | — | TODO |
+| Pha 2 batch B2 | `B2_SHA` | 13 adoption / 4 recipe. Đo thật sau ghi: `catalog 76 -> 89`, `authored 68 -> 81`, `shared 30 -> 30`, `maxShare 18 -> 15`, `over12 4 -> 2`; meaningful `3/3/4/3`. `--check-plan` `36 pending, 34 already applied`; content contract `36 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{classic-multisong-album-01,family-roots-01,four-seasons-love-01,garden-botanical-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B3 | — | — | — | TODO |
 | Pha 2 batch B4 | — | — | — | TODO |
 | Pha 2 batch B5 | — | — | — | TODO |
@@ -425,6 +426,54 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2C batch B2
+
+- Session: Claude, theo yêu cầu "chạy B2".
+- Trạng thái nhận việc: `IN_PROGRESS`; cây sạch tại `5ad9fe3`.
+- Phạm vi:
+  - Ghi batch `B2`, chạy đủ 7 gate của Pha 2C, siết ratchet tới số đo thực tế, commit độc lập.
+  - Không đụng `layouts/library.json`, `scripts/`, hay recipe ngoài bốn recipe B2.
+- File đã thay đổi:
+  - `story-templates/classic-multisong-album-01.json`, `family-roots-01.json`,
+    `four-seasons-love-01.json`, `garden-botanical-01.json` — do `--write --batch B2` ghi.
+  - `test/layout-geometry.test.mjs` — siết ratchet.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - 13 adoption trên 4 recipe (batch duy nhất có 13); diff `245 insertions / 113 deletions`.
+  - Ratchet siết tới số **đo được**: `catalog >= 89`, `authored >= 81`, `maxShare <= 15`,
+    `over12Count <= 2`; meaningful `classic-multisong 3`, `family-roots 3`,
+    `four-seasons 4`, `garden-botanical 3`.
+- Bảy gate của Pha 2C:
+  1. `--check-plan` xanh — `36 pending, 34 already applied`.
+  2. Meaningful `0 -> 3 / 3 / 4 / 3`. `four-seasons` được `4` vì nó có adoption thứ tư ngoài đuôi.
+  3. Content contract `36 execution path / 0 union text key`; photo demand và copy giữ nguyên.
+  4. Gallery-tail `24/24` duy nhất; composition `253` với `0` cặp dùng chung.
+  5. Ratchet chỉ siết tới số đo mới.
+  6. Validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`;
+     `typecheck:scripts` exit 0; `npm run test:unit` `376/376`.
+  7. Commit `B2_SHA` ghi vào bảng Pha 2C và bảng §6.
+- Kiểm thêm ngoài gate: `four-seasons-love-01/s03_autumn` là adoption **story-beat cuối cùng mang
+  copy** trong cả map, và là entry P2A.R2 phải đổi mục tiêu vì hướng ảnh. Đo trực tiếp trên cây đã
+  ghi: nó vào `circle_trio_stagger`, request `any/portrait/any`, slot `p2` là `520x520` **vuông**
+  nên request portrait không rơi vào lỗ landscape; cả ba slot giữ `circleMedallion` r=260 = đúng
+  nửa cạnh; `heading` có slot đích và có mặt trên **cả ba** đường chạy (main + 2 repeat variant),
+  nên không mất chữ.
+- Vì sao `union text key` tụt `1 -> 0`: `s03_autumn` chính là scene duy nhất trong 70 adoption mang
+  `scene.text`, và nó vừa được ghi. Con số 0 nghĩa là "không còn adoption *đang chờ* nào mang chữ",
+  không phải "chữ biến mất" — copy của nó đã được kiểm ở trên.
+- Metric trước/sau: `catalog 76 -> 89`, `authored 68 -> 81`, `authored.shared 30 -> 30`,
+  `maxShare 18 -> 15`, `over12 4 -> 2`.
+- Commit: `B2_SHA`.
+- Quyết định hoặc sai lệch so với plan:
+  - Siết `four-seasons-love-01` lên `4` chứ không phải `3`, theo quy ước §2.8 chỉ siết tới số đo.
+- Ghi chú đọc số: `family-roots-01/s84_photo_duo` báo coverage `110.8%` — cùng lý do full-bleed
+  `bg` của `inset_card_hero` như đã ghi ở B1, không phải tràn canvas.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2C batch B3` — `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`,
+  `letters-to-forever-01`. Từ B3 trở đi mọi adoption còn lại đều nằm ở đuôi gallery `s83/s84/s85`;
+  hai group còn trên trần là `gallery_matte_hero` (share 15) và `three_photo_row` (share 14).
 
 ### 2026-07-31 — P2C batch B1
 

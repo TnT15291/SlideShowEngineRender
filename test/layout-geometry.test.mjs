@@ -29,6 +29,11 @@ const meaningfulBaseline = {
   "cinematic-vows-01": 3,
   "city-to-ceremony-01": 3,
   "classic-luxury-01": 3,
+  // Phase 2C batch B2
+  "classic-multisong-album-01": 3,
+  "family-roots-01": 3,
+  "four-seasons-love-01": 4,
+  "garden-botanical-01": 3,
   // faithful to its source, exempt from the rollout
   "white-weddings-full-01": 1,
 };
@@ -51,11 +56,11 @@ test("meaningful custom geometry does not regress per recipe", () => {
 });
 
 test("catalog, authored, and reachable geometry ratchets do not regress", () => {
-  assert.ok(stats.catalog.distinct >= 76, `catalog distinct fell to ${stats.catalog.distinct}`);
-  assert.ok(stats.authored.distinct >= 68, `authored distinct fell to ${stats.authored.distinct}`);
-  assert.ok(stats.reachable.maxShare <= 18, `reachable maxShare rose to ${stats.reachable.maxShare}`);
+  assert.ok(stats.catalog.distinct >= 89, `catalog distinct fell to ${stats.catalog.distinct}`);
+  assert.ok(stats.authored.distinct >= 81, `authored distinct fell to ${stats.authored.distinct}`);
+  assert.ok(stats.reachable.maxShare <= 15, `reachable maxShare rose to ${stats.reachable.maxShare}`);
   assert.ok(
-    stats.reachable.over12Count <= 4,
+    stats.reachable.over12Count <= 2,
     `reachable over12Count rose to ${stats.reachable.over12Count}`,
   );
 });

@@ -23,21 +23,6 @@
       "layout": "feature_plus_duo",
       "frame": "album_mount"
     },
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "album_mount"
-    },
-    "duo_tinted_spread_plate": {
-      "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
-      "layout": "duo_tinted_spread",
-      "frame": "album_mount"
-    },
-    "arch_trio_plate": {
-      "intent": "wordless arch trio beat, wearing this recipe's own frame",
-      "layout": "arch_trio",
-      "frame": "album_mount"
-    },
     "full_bleed_quote_album": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
       "layout": "full_bleed_quote",
@@ -91,6 +76,50 @@
           "date": {
             "sizePx": 40,
             "y": 650
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 130,
+            "y": 80,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_golden_pair": {
+      "intent": "Phase 2 adoption of golden_column_pair for s84_arch_trio.",
+      "layout": "golden_column_pair",
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "minor": {
+            "x": 1190,
+            "y": 260,
+            "width": 520,
+            "height": 560
+          }
+        }
+      }
+    },
+    "p2_circle_trio": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s85_feature_duo.",
+      "layout": "circle_trio_stagger",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": {
+            "y": 150
+          },
+          "p2": {
+            "y": 250
           }
         }
       }
@@ -738,7 +767,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -752,17 +781,17 @@
     {
       "id": "s84_arch_trio",
       "effect": "layer_scene",
-      "look": "duo_tinted_spread_plate",
+      "look": "p2_golden_pair",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "major",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "minor",
           "orient": "any",
           "quality": "best"
         }
@@ -771,22 +800,22 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "look": "arch_trio_plate",
+      "look": "p2_circle_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "p1",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "p3",
           "orient": "any",
           "quality": "good"
         }
