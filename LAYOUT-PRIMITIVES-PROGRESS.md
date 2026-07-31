@@ -22,7 +22,7 @@
 | Commit Pha 1 | `5871122` |
 | Commit Pha 2A | `4ac137c` |
 | Commit Pha 2B pilot | `8161779` |
-| Commit Pha 2C B1 | `B1_SHA` |
+| Commit Pha 2C B1 | `161b281` |
 | Cập nhật lần cuối | `2026-07-31 — P2C B1 DONE` |
 
 ### Quy ước trạng thái
@@ -325,7 +325,7 @@ riêng chứ không nhét vào một batch.
 
 | Batch | Recipe | Trạng thái | Commit |
 |---|---|---|---|
-| B1 | `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01` | DONE | `B1_SHA` |
+| B1 | `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01` | DONE | `161b281` |
 | B2 | `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01` | TODO | — |
 | B3 | `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`, `letters-to-forever-01` | TODO | — |
 | B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | TODO | — |
@@ -416,7 +416,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 1 Premium comparison | `5871122` | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
 | Pha 2 adoption planner | `4ac137c` | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
 | Pha 2 pilot | `8161779` | 9 adoption / 3 recipe. Đo thật sau ghi: `catalog 56 -> 64`, `authored 48 -> 56`, `maxShare 23 -> 22`, `over12 7 -> 6`, meaningful `cinematic 1 -> 3`, `editorial 0 -> 3`, `jmii 3 -> 6`, `ww-full` giữ `1`. `--check-plan` `61 pending, 9 already applied`; validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `npm run test:unit` `376/376`. Bộ adoption test chạy `22/22` ở cả 7 giai đoạn rollout | `story-templates/{cinematic-film-01,editorial-bold-01,jmii-silk-botanical-01}.json`; `test/fixtures/pre-adoption-recipes.json`; `test/adopt-new-primitives.test.mjs`; `test/layout-geometry.test.mjs` | DONE |
-| Pha 2 batch B1 | `B1_SHA` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 64 -> 76`, `authored 56 -> 68`, `shared 30 -> 30`, `maxShare 22 -> 18`, `over12 6 -> 4`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `49 pending, 21 already applied`; content contract `51 path / 1 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{afterparty-pulse-01,cinematic-vows-01,city-to-ceremony-01,classic-luxury-01}.json`; `test/layout-geometry.test.mjs` | DONE |
+| Pha 2 batch B1 | `161b281` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 64 -> 76`, `authored 56 -> 68`, `shared 30 -> 30`, `maxShare 22 -> 18`, `over12 6 -> 4`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `49 pending, 21 already applied`; content contract `51 path / 1 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{afterparty-pulse-01,cinematic-vows-01,city-to-ceremony-01,classic-luxury-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B2 | — | — | — | TODO |
 | Pha 2 batch B3 | — | — | — | TODO |
 | Pha 2 batch B4 | — | — | — | TODO |
@@ -450,7 +450,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
   5. Ratchet chỉ siết tới số đo mới, không tới mục tiêu `12/0`.
   6. Validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`;
      `typecheck:scripts` exit 0; `npm run test:unit` `376/376`.
-  7. Commit `B1_SHA` ghi vào bảng Pha 2C và bảng §6.
+  7. Commit `161b281` ghi vào bảng Pha 2C và bảng §6.
 - Kiểm thêm ngoài gate: B1 là batch đáp đất **cả hai** host `stacked_horizon_trio`, primitive có
   guard P1.7R ngặt nhất. Đo trực tiếp trên cây đã ghi: `afterparty-pulse-01/s03_dinner` và
   `cinematic-vows-01/s02_anticipation` đều `landscape/landscape/landscape`, mỗi dải
@@ -459,7 +459,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
   khác nhau nên không tạo composition chung.
 - Metric trước/sau: `catalog 64 -> 76`, `authored 56 -> 68`, `authored.shared 30 -> 30`,
   `maxShare 22 -> 18`, `over12 6 -> 4`.
-- Commit: `B1_SHA`.
+- Commit: `161b281`.
 - Quyết định hoặc sai lệch so với plan: Không có. Map, library và planner không đổi ở bước này.
 - Ghi chú đọc số: `city-to-ceremony-01/s84_photo_duo` báo coverage `109%` vì `inset_card_hero` có
   slot `bg` full-bleed `1920x1080` cộng thêm slot `inset` chồng lên; tổng diện tích slot vượt 100%
