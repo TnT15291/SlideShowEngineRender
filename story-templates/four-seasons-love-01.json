@@ -4,41 +4,84 @@
   "name": "Four Seasons of Us",
   "tier": "smart_lite",
   "libraryTheme": "warm_film",
+  "layoutPresets": {
+    "season_round": {
+      "radius": 44,
+      "border": 10,
+      "borderColor": "#FFFBF4",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
-      },
+      "frame": "season_round",
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.09
       }
     },
     "duo_tinted_spread_plate": {
       "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
       "layout": "duo_tinted_spread",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
-      },
+      "frame": "season_round",
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.09
       }
     },
     "three_photo_row_plate": {
       "intent": "wordless three photo row beat, wearing this recipe's own frame",
       "layout": "three_photo_row",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
+      "frame": "season_round",
+      "photoTreatment": {
+        "saturation": 1.09
+      }
+    },
+    "photo_left_text_right_season": {
+      "intent": "the photo-left spread, wearing the recipe's season_round frame",
+      "layout": "photo_left_text_right",
+      "frame": "season_round"
+    },
+    "paper_collage_season": {
+      "intent": "the layered paper collage, wearing the recipe's season_round frame",
+      "layout": "paper_collage",
+      "frame": "season_round"
+    },
+    "two_photo_story_season": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's season_round frame",
+      "layout": "two_photo_story",
+      "frame": "season_round"
+    },
+    "full_bleed_quote_season": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 58,
+            "y": 802,
+            "height": 204
+          }
+        }
       },
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.05
+      }
+    },
+    "closing_names_season": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 132,
+            "y": 395
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 655
+          }
+        }
       }
     }
   },
@@ -220,7 +263,6 @@
     {
       "id": "s01_spring",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -239,7 +281,8 @@
           "Một cuộc gặp dịu dàng như mùa đầu tiên.",
           "Gặp nhau nhẹ nhàng, như cách mùa xuân đến."
         ]
-      }
+      },
+      "look": "photo_left_text_right_season"
     },
     {
       "id": "s02_summer",
@@ -273,7 +316,6 @@
     {
       "id": "s03_autumn",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -313,12 +355,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "paper_collage_season"
     },
     {
       "id": "s04_winter",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
@@ -338,12 +380,12 @@
           "Đông · Học cách sưởi ấm cho nhau.",
           "Đông · Học cách giữ ấm cho nhau qua từng mùa lạnh."
         ]
-      }
+      },
+      "look": "two_photo_story_season"
     },
     {
       "id": "s05_newspring",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -359,7 +401,8 @@
           "Một mùa xuân mới · Một lời hẹn trăm năm",
           "Một mùa xuân mới bắt đầu · Một lời hẹn ước dài lâu"
         ]
-      }
+      },
+      "look": "full_bleed_quote_season"
     },
     {
       "id": "s06_wedding",
@@ -455,7 +498,36 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
+      "id": "s80_photo_strip_up",
+      "effect": "photo_strip_up",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_collage_grid",
       "effect": "collage_grid",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -463,45 +535,11 @@
         {
           "slot": "grid",
           "count": 6,
-          "fixedCount": true,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
       ]
-    },
-    {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
-      "durationRole": "montage",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "memories",
-          "count": 6,
-          "orient": "any",
-          "quality": "good",
-          "preferVariety": true
-        }
-      ],
-      "params": {
-        "background": "#3B332B"
-      }
     },
     {
       "id": "s83_gallery_matte",
@@ -563,14 +601,14 @@
     {
       "id": "s07_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{date}}"
-      }
+      },
+      "look": "closing_names_season"
     }
   ]
 }

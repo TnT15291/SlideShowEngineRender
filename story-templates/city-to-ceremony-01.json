@@ -4,32 +4,84 @@
   "name": "City to Ceremony",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "layoutPresets": {
+    "kerb_block": {
+      "radius": 0,
+      "border": 14,
+      "borderColor": "#17171B",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "kerb_block"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "kerb_block"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
+      "frame": "kerb_block"
+    },
+    "magazine_page_turn_kerb": {
+      "intent": "the magazine page turn, wearing the recipe's kerb_block frame",
+      "layout": "magazine_page_turn",
+      "frame": "kerb_block"
+    },
+    "masonry_grid_wall_kerb": {
+      "intent": "the masonry wall, wearing the recipe's kerb_block frame",
+      "layout": "masonry_grid_wall",
+      "frame": "kerb_block"
+    },
+    "full_bleed_quote_kerb": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "x": 140,
+            "width": 1180,
+            "align": "left",
+            "sizePx": 62,
+            "y": 790,
+            "height": 216
+          }
+        }
+      },
+      "photoTreatment": {
+        "contrast": 1.1
+      }
+    },
+    "duo_tinted_spread_kerb": {
+      "intent": "the tinted two-photo spread, wearing the recipe's kerb_block frame",
+      "layout": "duo_tinted_spread",
+      "frame": "kerb_block"
+    },
+    "closing_names_kerb": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "x": 200,
+            "width": 1400,
+            "align": "left",
+            "sizePx": 118,
+            "y": 400
+          },
+          "date": {
+            "x": 200,
+            "width": 1400,
+            "align": "left",
+            "sizePx": 34,
+            "y": 660
+          }
+        }
       }
     }
   },
@@ -236,7 +288,6 @@
     {
       "id": "s02_street",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -269,12 +320,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "magazine_page_turn_kerb"
     },
     {
       "id": "s03_dates",
       "effect": "layer_scene",
-      "layout": "masonry_grid_wall",
       "durationRole": "montage",
       "transitionRole": "peak",
       "photoSlots": [
@@ -339,12 +390,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "masonry_grid_wall_kerb"
     },
     {
       "id": "s04_proposal",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
@@ -360,12 +411,12 @@
           "Giữa triệu ánh đèn · mình chọn nhau",
           "Giữa phố xá đông người · chỉ cần tìm thấy nhau"
         ]
-      }
+      },
+      "look": "full_bleed_quote_kerb"
     },
     {
       "id": "s05_ready",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
@@ -385,7 +436,8 @@
           "GETTING READY",
           "THE FINAL TOUCHES"
         ]
-      }
+      },
+      "look": "duo_tinted_spread_kerb"
     },
     {
       "id": "s06_ceremony",
@@ -484,13 +536,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_photo_strip_right",
+      "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -499,37 +551,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_tilt_shift",
+      "effect": "tilt_shift",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#1C2B30"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -591,14 +639,14 @@
     {
       "id": "s08_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_kerb"
     }
   ]
 }

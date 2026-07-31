@@ -4,53 +4,75 @@
   "name": "Classic Luxury",
   "tier": "smart_lite",
   "libraryTheme": "dark_film",
+  "layoutPresets": {
+    "gold_mount": {
+      "radius": 0,
+      "border": 22,
+      "borderColor": "#C9A86A",
+      "shadow": true
+    }
+  },
   "looks": {
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "gold_mount",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 0.88,
+        "contrast": 1.08
       }
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "gold_mount",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 0.88,
+        "contrast": 1.08
       }
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "gold_mount",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 0.88,
+        "contrast": 1.08
       }
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 5,
-        "borderColor": "#C9A86A"
-      },
+      "frame": "gold_mount",
       "photoTreatment": {
-        "saturation": 0.92
+        "saturation": 0.88,
+        "contrast": 1.08
+      }
+    },
+    "hero_title_card_mount": {
+      "intent": "the hero title card, wearing the recipe's gold_mount frame",
+      "layout": "hero_title_card",
+      "frame": "gold_mount"
+    },
+    "three_photo_row_mount": {
+      "intent": "the three-photo row, wearing the recipe's gold_mount frame",
+      "layout": "three_photo_row",
+      "frame": "gold_mount"
+    },
+    "closing_names_mount": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 130,
+            "y": 400
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 680
+          }
+        }
       }
     }
   },
@@ -287,7 +309,6 @@
     {
       "id": "s02_title",
       "effect": "layer_scene",
-      "layout": "hero_title_card",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -315,12 +336,12 @@
       "text": {
         "eyebrow": "Trân trọng",
         "date": "{{date}}"
-      }
+      },
+      "look": "hero_title_card_mount"
     },
     {
       "id": "s03_ceremony",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -369,7 +390,8 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "three_photo_row_mount"
     },
     {
       "id": "s55_gallery_trio",
@@ -485,13 +507,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_up",
+      "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -500,37 +522,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
+          "slot": "hero",
+          "orient": "portrait",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_right",
+      "effect": "film_roll_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#2B2B32"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -592,7 +610,6 @@
     {
       "id": "s07_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_art_deco_01.png",
@@ -600,7 +617,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_mount"
     }
   ]
 }

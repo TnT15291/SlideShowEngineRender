@@ -4,35 +4,90 @@
   "name": "Three Chapters · Two Lives, One Story",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "chapter_plate": {
+      "radius": 12,
+      "border": 10,
+      "borderColor": "#2D2D33",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "chapter_plate"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "chapter_plate"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "chapter_plate"
+    },
+    "welcome_title_page_chapter": {
+      "intent": "the welcome title page, wearing the recipe's chapter_plate frame",
+      "layout": "welcome_title_page",
+      "frame": "chapter_plate"
+    },
+    "photo_left_text_right_chapter": {
+      "intent": "the photo-left spread, wearing the recipe's chapter_plate frame",
+      "layout": "photo_left_text_right",
+      "frame": "chapter_plate"
+    },
+    "full_bleed_quote_chapter": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 56,
+            "y": 810,
+            "height": 194
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.97
+      }
+    },
+    "text_left_photo_right_chapter": {
+      "intent": "the text-left spread, wearing the recipe's chapter_plate frame",
+      "layout": "text_left_photo_right",
+      "frame": "chapter_plate"
+    },
+    "journey_duo_chapter": {
+      "intent": "the journey pair, wearing the recipe's chapter_plate frame",
+      "layout": "journey_duo",
+      "frame": "chapter_plate"
+    },
+    "three_photo_row_chapter": {
+      "intent": "the three-photo row, wearing the recipe's chapter_plate frame",
+      "layout": "three_photo_row",
+      "frame": "chapter_plate"
+    },
+    "photo_network_hero_chapter": {
+      "intent": "the photo network, wearing the recipe's chapter_plate frame",
+      "layout": "photo_network_hero",
+      "frame": "chapter_plate"
+    },
+    "closing_names_chapter": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 128,
+            "y": 404
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 654
+          }
+        }
       }
     }
   },
@@ -214,7 +269,6 @@
     {
       "id": "s01_prologue",
       "effect": "layer_scene",
-      "layout": "welcome_title_page",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -228,7 +282,8 @@
         "eyebrow": "CHƯƠNG I · HAI CUỘC ĐỜI",
         "names": "{{bride}} & {{groom}}",
         "date": "Trước khi chúng mình gặp nhau"
-      }
+      },
+      "look": "welcome_title_page_chapter"
     },
     {
       "id": "s70_hero_filmstrip",
@@ -267,7 +322,6 @@
     {
       "id": "s02_bride",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -288,7 +342,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -296,7 +349,8 @@
             "quality": "good",
             "fit": "cover"
           }
-        ]
+        ],
+        "look": "full_bleed_quote_chapter"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -314,12 +368,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "photo_left_text_right_chapter"
     },
     {
       "id": "s03_groom",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -366,7 +420,8 @@
             }
           }
         ]
-      }
+      },
+      "look": "text_left_photo_right_chapter"
     },
     {
       "id": "s04_meeting",
@@ -391,7 +446,6 @@
     {
       "id": "s05_journey",
       "effect": "layer_scene",
-      "layout": "journey_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -411,7 +465,6 @@
         "caption": "{{yearsTogether}} năm của những chuyến đi, tiếng cười và trưởng thành bên nhau."
       },
       "muteFallback": {
-        "layout": "photo_duo",
         "photoSlots": [
           {
             "slot": "left",
@@ -423,8 +476,10 @@
             "orient": "portrait",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "photo_duo_plate"
+      },
+      "look": "journey_duo_chapter"
     },
     {
       "id": "s06_memories",
@@ -451,7 +506,6 @@
     {
       "id": "s07_wedding",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
@@ -474,7 +528,8 @@
       "text": {
         "heading": "CHƯƠNG III · VỀ CHUNG MỘT NHÀ",
         "caption": "Ngày hai hành trình trở thành một."
-      }
+      },
+      "look": "three_photo_row_chapter"
     },
     {
       "id": "s07b_torn_paper",
@@ -519,7 +574,6 @@
     {
       "id": "s07d_story_network",
       "effect": "layer_scene",
-      "layout": "photo_network_hero",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
@@ -568,16 +622,17 @@
           "orient": "landscape",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_network_hero_chapter"
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_up",
+      "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -586,37 +641,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
+          "slot": "hero",
+          "orient": "portrait",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#4A4139"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -678,14 +729,14 @@
     {
       "id": "s08_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_chapter"
     }
   ]
 }

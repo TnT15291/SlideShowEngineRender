@@ -4,45 +4,69 @@
   "name": "Garden Diary",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "diary_tape": {
+      "radius": 4,
+      "border": 18,
+      "borderColor": "#EFE4D2",
+      "shadow": false
+    }
+  },
   "looks": {
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "diary_tape"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "diary_tape"
     },
     "magazine_page_turn_plate": {
       "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
       "layout": "magazine_page_turn",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "diary_tape"
     },
     "three_photo_row_plate": {
       "intent": "wordless three photo row beat, wearing this recipe's own frame",
       "layout": "three_photo_row",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "diary_tape"
+    },
+    "save_date_card_diary": {
+      "intent": "the floating save-the-date card, wearing the recipe's diary_tape frame",
+      "layout": "save_date_card",
+      "frame": "diary_tape"
+    },
+    "journey_duo_diary": {
+      "intent": "the journey pair, wearing the recipe's diary_tape frame",
+      "layout": "journey_duo",
+      "frame": "diary_tape"
+    },
+    "photo_duo_diary": {
+      "intent": "the bare photo pair, wearing the recipe's diary_tape frame",
+      "layout": "photo_duo",
+      "frame": "diary_tape"
+    },
+    "paper_collage_diary": {
+      "intent": "the layered paper collage, wearing the recipe's diary_tape frame",
+      "layout": "paper_collage",
+      "frame": "diary_tape"
+    },
+    "closing_names_diary": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 122,
+            "y": 405
+          },
+          "date": {
+            "sizePx": 34,
+            "y": 655
+          }
+        }
       }
     }
   },
@@ -222,7 +246,6 @@
     {
       "id": "s01_morning",
       "effect": "layer_scene",
-      "layout": "save_date_card",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -253,7 +276,8 @@
           "OUR GARDEN STORY"
         ],
         "date": "{{date}}"
-      }
+      },
+      "look": "save_date_card_diary"
     },
     {
       "id": "s02_portraits",
@@ -282,7 +306,6 @@
     {
       "id": "s04_walk",
       "effect": "layer_scene",
-      "layout": "journey_duo",
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
@@ -308,7 +331,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "photo_duo",
         "photoSlots": [
           {
             "slot": "left",
@@ -320,7 +342,8 @@
             "orient": "portrait",
             "quality": "good"
           }
-        ]
+        ],
+        "look": "photo_duo_diary"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -338,7 +361,8 @@
             }
           }
         ]
-      }
+      },
+      "look": "journey_duo_diary"
     },
     {
       "id": "s05_vows",
@@ -361,7 +385,6 @@
     {
       "id": "s55_diary_pages",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -399,7 +422,8 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "paper_collage_diary"
     },
     {
       "id": "s06_golden",
@@ -493,13 +517,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_up",
+      "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -508,37 +532,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_panel_flip",
+      "effect": "panel_flip",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_photo_strip_right",
+      "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#253B32"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -600,14 +620,14 @@
     {
       "id": "s07_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_diary"
     }
   ]
 }

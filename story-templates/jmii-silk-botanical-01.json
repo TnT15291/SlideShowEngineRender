@@ -89,6 +89,57 @@
       "photoTreatment": {
         "saturation": 0.92
       }
+    },
+    "hero_title_card_silk": {
+      "intent": "the hero title card, wearing the recipe's arch frame",
+      "layout": "hero_title_card",
+      "frame": "arch"
+    },
+    "text_left_photo_right_silk": {
+      "intent": "the text-left spread, wearing the recipe's arch frame",
+      "layout": "text_left_photo_right",
+      "frame": "arch"
+    },
+    "photo_left_text_right_silk": {
+      "intent": "the photo-left spread, wearing the recipe's arch frame",
+      "layout": "photo_left_text_right",
+      "frame": "arch"
+    },
+    "invitation_row_silk": {
+      "intent": "the invitation row, wearing the recipe's arch frame",
+      "layout": "invitation_row",
+      "frame": "arch"
+    },
+    "gallery_matte_hero_silk": {
+      "intent": "the matted gallery hero, wearing the recipe's arch frame",
+      "layout": "gallery_matte_hero",
+      "frame": "arch"
+    },
+    "magazine_page_turn_silk": {
+      "intent": "the magazine page turn, wearing the recipe's arch frame",
+      "layout": "magazine_page_turn",
+      "frame": "arch"
+    },
+    "polaroid_scatter_silk": {
+      "intent": "the scattered prints, wearing the recipe's arch frame",
+      "layout": "polaroid_scatter",
+      "frame": "arch"
+    },
+    "closing_names_silk": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 140,
+            "y": 385
+          },
+          "date": {
+            "sizePx": 34,
+            "y": 648
+          }
+        }
+      }
     }
   },
   "storyArc": {
@@ -277,7 +328,6 @@
     {
       "id": "s01_save_the_date",
       "effect": "layer_scene",
-      "layout": "hero_title_card",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -311,7 +361,8 @@
           "value": "{{date}}",
           "sizePx": 108
         }
-      }
+      },
+      "look": "hero_title_card_silk"
     },
     {
       "id": "s02_silk_title",
@@ -429,7 +480,6 @@
     {
       "id": "s06_we_meet",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -467,14 +517,14 @@
         "maxRepeats": 4,
         "variants": [
           {
-            "layout": "photo_left_text_right",
             "text": {
               "heading": {
                 "value": "OUR DAY",
                 "sizePx": 76
               },
               "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
-            }
+            },
+            "look": "photo_left_text_right_silk"
           },
           {
             "look": "quiet_quote",
@@ -489,14 +539,14 @@
             "text": {}
           },
           {
-            "layout": "photo_left_text_right",
             "text": {
               "heading": {
                 "value": "FOREVER",
                 "sizePx": 76
               },
               "body": "Từ hôm nay, và trong mọi ngày sắp tới, mình vẫn luôn bên nhau."
-            }
+            },
+            "look": "photo_left_text_right_silk"
           },
           {
             "text": {
@@ -508,12 +558,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "text_left_photo_right_silk"
     },
     {
       "id": "s08_story",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -551,14 +601,14 @@
         "maxRepeats": 4,
         "variants": [
           {
-            "layout": "text_left_photo_right",
             "text": {
               "heading": {
                 "value": "TOGETHER",
                 "sizePx": 68
               },
               "body": "Cảm ơn vì đã luôn ở đây, cùng nhau đi hết chặng đường."
-            }
+            },
+            "look": "text_left_photo_right_silk"
           },
           {
             "look": "quiet_quote",
@@ -573,14 +623,14 @@
             "text": {}
           },
           {
-            "layout": "text_left_photo_right",
             "text": {
               "heading": {
                 "value": "SWEET",
                 "sizePx": 68
               },
               "body": "Những ánh nhìn, những nụ cười — tất cả đều là yêu thương."
-            }
+            },
+            "look": "text_left_photo_right_silk"
           },
           {
             "text": {
@@ -592,12 +642,12 @@
             }
           }
         ]
-      }
+      },
+      "look": "photo_left_text_right_silk"
     },
     {
       "id": "s09_invitation",
       "effect": "layer_scene",
-      "layout": "invitation_row",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -629,7 +679,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "invite": "Trân trọng kính mời · {{location}} · {{date}}"
-      }
+      },
+      "look": "invitation_row_silk"
     },
     {
       "id": "s10_moment",
@@ -672,14 +723,14 @@
         "maxRepeats": 4,
         "variants": [
           {
-            "layout": "photo_left_text_right",
             "text": {
               "heading": {
                 "value": "MOMENTS",
                 "sizePx": 68
               },
               "body": "Sánh bước bên nhau, đây là nơi chương mới của chúng mình bắt đầu."
-            }
+            },
+            "look": "photo_left_text_right_silk"
           },
           {
             "look": "quiet_quote",
@@ -694,14 +745,14 @@
             "text": {}
           },
           {
-            "layout": "photo_left_text_right",
             "text": {
               "heading": {
                 "value": "YOU & ME",
                 "sizePx": 68
               },
               "body": "Một tình yêu, một đời người, một khởi đầu thật đẹp."
-            }
+            },
+            "look": "photo_left_text_right_silk"
           },
           {
             "text": {
@@ -801,7 +852,7 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
+      "id": "s80_collage_grid",
       "effect": "collage_grid",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -816,42 +867,37 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
+          "slot": "hero",
+          "orient": "portrait",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_photo_strip_up",
+      "effect": "photo_strip_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#3B332B"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "layout": "gallery_matte_hero",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -860,12 +906,12 @@
           "orient": "any",
           "quality": "best"
         }
-      ]
+      ],
+      "look": "gallery_matte_hero_silk"
     },
     {
       "id": "s84_feature_duo",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -879,12 +925,12 @@
           "orient": "any",
           "quality": "best"
         }
-      ]
+      ],
+      "look": "magazine_page_turn_silk"
     },
     {
       "id": "s85_paper_collage",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -903,19 +949,20 @@
           "orient": "any",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "polaroid_scatter_silk"
     },
     {
       "id": "s12_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Thank you for celebrating with us · {{date}}"
-      }
+      },
+      "look": "closing_names_silk"
     }
   ]
 }

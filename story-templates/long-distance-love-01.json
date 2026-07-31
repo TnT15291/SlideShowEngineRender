@@ -4,41 +4,96 @@
   "name": "Across the Miles",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "layoutPresets": {
+    "postmark_rule": {
+      "radius": 0,
+      "border": 12,
+      "borderColor": "#2E6F6A",
+      "shadow": true
+    }
+  },
   "looks": {
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "postmark_rule"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "postmark_rule"
     },
     "magazine_page_turn_plate": {
       "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
       "layout": "magazine_page_turn",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "postmark_rule"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
+      "frame": "postmark_rule"
+    },
+    "journey_story_plate": {
+      "intent": "readable journey chapter with a consistent modern type scale",
+      "layout": "journey_duo",
+      "layoutOverrides": {
+        "textSlots": {
+          "heading": {
+            "sizePx": 76
+          },
+          "caption": {
+            "sizePx": 32
+          }
+        }
+      }
+    },
+    "miles_title_plate": {
+      "intent": "restrained chapter title using the recipe heading scale",
+      "layout": "polaroid_scatter",
+      "layoutOverrides": {
+        "textSlots": {
+          "heading": {
+            "sizePx": 76
+          }
+        }
+      }
+    },
+    "reunion_quote_plate": {
+      "intent": "large readable reunion quote over the full-bleed photograph",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 68
+          }
+        }
+      }
+    },
+    "two_cities_plate": {
+      "intent": "balanced two-city statement using the recipe heading scale",
+      "layout": "duo_tinted_spread",
+      "layoutOverrides": {
+        "textSlots": {
+          "heading": {
+            "sizePx": 72
+          }
+        }
+      }
+    },
+    "closing_names_postmark": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 130,
+            "y": 398
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 656
+          }
+        }
       }
     }
   },
@@ -149,7 +204,7 @@
     },
     "overlays": [],
     "fonts": {
-      "title": "fonts/JosefinSans-Regular.ttf",
+      "title": "fonts/Montserrat-Regular.ttf",
       "heading": "fonts/Montserrat-Regular.ttf",
       "body": "fonts/BeVietnamPro-Regular.ttf"
     },
@@ -280,7 +335,7 @@
     {
       "id": "s03_visits",
       "effect": "layer_scene",
-      "layout": "journey_duo",
+      "look": "journey_story_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -306,7 +361,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "photo_duo",
         "photoSlots": [
           {
             "slot": "left",
@@ -318,7 +372,8 @@
             "orient": "portrait",
             "quality": "good"
           }
-        ]
+        ],
+        "look": "photo_duo_plate"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -341,7 +396,7 @@
     {
       "id": "s04_miles",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
+      "look": "miles_title_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -371,7 +426,7 @@
     {
       "id": "s05_reunion",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
+      "look": "reunion_quote_plate",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -392,7 +447,7 @@
     {
       "id": "s55_two_cities",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
+      "look": "two_cities_plate",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -484,13 +539,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_photo_strip_left",
+      "effect": "photo_strip_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -499,7 +554,7 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
+      "id": "s81_double_exposure",
       "effect": "double_exposure",
       "signature": true,
       "durationRole": "calm",
@@ -514,22 +569,19 @@
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_photo_strip_right",
+      "effect": "photo_strip_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#1C2B30"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -591,14 +643,14 @@
     {
       "id": "s07_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Cùng một mái nhà · {{date}}"
-      }
+      },
+      "look": "closing_names_postmark"
     }
   ]
 }

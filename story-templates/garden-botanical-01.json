@@ -4,32 +4,75 @@
   "name": "Garden Botanical",
   "tier": "smart_lite",
   "libraryTheme": "modern_teal",
+  "layoutPresets": {
+    "arbour_arch": {
+      "radius": 120,
+      "border": 7,
+      "borderColor": "#B8C79C",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "arbour_arch"
     },
     "duo_tinted_spread_plate": {
       "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
       "layout": "duo_tinted_spread",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
-      }
+      "frame": "arbour_arch"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 0,
-        "border": 8,
-        "borderColor": "#2E6F6A"
+      "frame": "arbour_arch"
+    },
+    "full_bleed_quote_arbour": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 56,
+            "y": 804,
+            "height": 200
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.06
+      }
+    },
+    "collage_cluster_text_arbour": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's arbour_arch frame",
+      "layout": "collage_cluster_text",
+      "frame": "arbour_arch"
+    },
+    "paper_collage_arbour": {
+      "intent": "the layered paper collage, wearing the recipe's arbour_arch frame",
+      "layout": "paper_collage",
+      "frame": "arbour_arch"
+    },
+    "three_photo_row_arbour": {
+      "intent": "the three-photo row, wearing the recipe's arbour_arch frame",
+      "layout": "three_photo_row",
+      "frame": "arbour_arch"
+    },
+    "closing_names_arbour": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 128,
+            "y": 400
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 660
+          }
+        }
       }
     }
   },
@@ -216,7 +259,6 @@
     {
       "id": "s01_open",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -229,12 +271,12 @@
       ],
       "text": {
         "quote": "{{bride}} & {{groom}}"
-      }
+      },
+      "look": "full_bleed_quote_arbour"
     },
     {
       "id": "s02_garden",
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -280,7 +322,6 @@
             }
           },
           {
-            "layout": "paper_collage",
             "photoSlots": [
               {
                 "slot": "back",
@@ -298,12 +339,12 @@
                 "quality": "good"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "paper_collage_arbour"
           }
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -320,8 +361,10 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_arbour"
+      },
+      "look": "collage_cluster_text_arbour"
     },
     {
       "id": "s03_flowers",
@@ -338,7 +381,6 @@
     {
       "id": "s04_family",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -387,7 +429,8 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "three_photo_row_arbour"
     },
     {
       "id": "s05_breath",
@@ -493,13 +536,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_photo_strip_left",
+      "effect": "photo_strip_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -508,22 +551,21 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
+          "slot": "hero",
+          "orient": "portrait",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
+      "id": "s82_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -600,7 +642,6 @@
     {
       "id": "s07_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_03.png",
@@ -608,7 +649,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_arbour"
     }
   ]
 }

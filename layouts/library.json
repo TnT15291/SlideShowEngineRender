@@ -32,8 +32,8 @@
           "contrast": 1.03
         },
         "fonts": {
-          "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/GreatVibes-Regular.ttf",
+          "heading": "fonts/CormorantGaramond-Regular.ttf",
+          "script_accent": "fonts/Allura-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -53,8 +53,8 @@
           "temperature": 5200
         },
         "fonts": {
-          "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/Italianno-Regular.ttf",
+          "heading": "fonts/YesevaOne-Regular.ttf",
+          "script_accent": "fonts/AlexBrush-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -70,14 +70,14 @@
         "mood": "editorial, bold, fashion-magazine, high-contrast, generous whitespace (2026 trend: cursive out, big expressive serif headlines + clean sans companions)",
         "colorGrade": {
           "temperature": 6200,
-          "saturation": 1.0,
+          "saturation": 1,
           "contrast": 1.07,
           "brightness": 0.01,
           "glow": 0.05
         },
         "fonts": {
           "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/JosefinSans-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -101,8 +101,8 @@
           "vignette": true
         },
         "fonts": {
-          "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/DancingScript.ttf",
+          "heading": "fonts/Fraunces-Regular.ttf",
+          "script_accent": "fonts/Allura-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -123,8 +123,8 @@
           "glow": 0.06
         },
         "fonts": {
-          "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "heading": "fonts/Montserrat-Regular.ttf",
+          "script_accent": "fonts/JosefinSans-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -146,7 +146,7 @@
         },
         "fonts": {
           "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/PlayfairDisplay.ttf",
+          "script_accent": "fonts/AlexBrush-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         }
       },
@@ -182,20 +182,36 @@
           }
         ],
         "fonts": {
-          "heading": "fonts/PlayfairDisplay.ttf",
-          "script_accent": "fonts/DancingScript.ttf",
+          "heading": "fonts/Fraunces-Regular.ttf",
+          "script_accent": "fonts/Merienda-Regular.ttf",
           "body": "fonts/BeVietnamPro-Regular.ttf"
         },
         "note": "moody_earth_01.cube is also bundled in assets/luts/ for a desaturated earthy variant."
       }
     },
     "fontRegistry": {
-      "note": "VIETNAMESE RULE: any text with Vietnamese diacritics MUST use body (BeVietnamPro) or heading (PlayfairDisplay) — both carry full VN marks. Script/decorative fonts are Latin-only; use them for English words like 'the', 'save', or the couple's romanized names, never for Vietnamese sentences.",
+      "note": "VIETNAMESE: every file in fonts/ was cmap-scanned against the full precomposed VN set (134 chars) and all 18 cover it, so ANY face here may set Vietnamese copy — the earlier 'only BeVietnamPro and PlayfairDisplay are VN-safe' rule was wrong, and it is what kept every caption in a plain UI sans. Recipe copy must stay NFC (precomposed); decomposed NFD text is NOT covered and would drop its marks. Choose a face for legibility, not for coverage: the script faces below are thin and high-flourish, so reserve them for a few large words, never for a running sentence.",
       "vietnamese_safe": [
+        "fonts/AlexBrush-Regular.ttf",
+        "fonts/Allura-Regular.ttf",
         "fonts/BeVietnamPro-Regular.ttf",
-        "fonts/PlayfairDisplay.ttf"
+        "fonts/Charm-Regular.ttf",
+        "fonts/CormorantGaramond-Regular.ttf",
+        "fonts/DancingScript.ttf",
+        "fonts/Fraunces-Regular.ttf",
+        "fonts/GreatVibes-Regular.ttf",
+        "fonts/Italianno-Regular.ttf",
+        "fonts/JosefinSans-Regular.ttf",
+        "fonts/Lobster-Regular.ttf",
+        "fonts/MeaCulpa-Regular.ttf",
+        "fonts/Merienda-Regular.ttf",
+        "fonts/Montserrat-Regular.ttf",
+        "fonts/Pacifico-Regular.ttf",
+        "fonts/PlayfairDisplay.ttf",
+        "fonts/WindSong-Medium.ttf",
+        "fonts/YesevaOne-Regular.ttf"
       ],
-      "latin_decorative": [
+      "script_display": [
         "fonts/GreatVibes-Regular.ttf",
         "fonts/DancingScript.ttf",
         "fonts/Italianno-Regular.ttf",
@@ -284,15 +300,15 @@
       ],
       "standard_scene": [
         4.5,
-        6.0
+        6
       ],
       "hero_or_emotional": [
-        6.0,
-        8.0
+        6,
+        8
       ],
       "closing_hold": [
-        7.0,
-        10.0
+        7,
+        10
       ],
       "transitionByMood": {
         "calm": [
@@ -304,8 +320,8 @@
           0.6
         ],
         "hard_cut": [
-          0.0,
-          0.0
+          0,
+          0
         ]
       }
     }
@@ -413,8 +429,8 @@
         }
       ],
       "durationRange": [
-        5.0,
-        7.0
+        5,
+        7
       ]
     },
     {
@@ -476,7 +492,7 @@
         }
       ],
       "durationRange": [
-        5.0,
+        5,
         6.5
       ]
     },
@@ -527,7 +543,7 @@
         }
       ],
       "durationRange": [
-        5.0,
+        5,
         6.5
       ]
     },
@@ -559,27 +575,27 @@
           "suggestedAnimation": "slide_up",
           "role": "tall centre"
         },
-        {
-          "id": "right",
-          "x": 1262,
-          "y": 434,
-          "width": 551,
-          "height": 551,
-          "fit": "cover",
-          "suggestedAnimation": "slide_left"
-        }
+      {
+        "id": "right",
+        "x": 1262,
+        "y": 384,
+        "width": 551,
+        "height": 460,
+        "fit": "cover",
+        "suggestedAnimation": "slide_left"
+      }
       ],
       "textSlots": [
         {
           "id": "heading",
-          "role": "heading",
-          "x": 96,
-          "y": 91,
-          "width": 700,
-          "height": 160,
-          "align": "left",
-          "fontRole": "heading",
-          "sizePx": 90
+        "role": "heading",
+        "x": 96,
+        "y": 91,
+        "width": 600,
+        "height": 160,
+        "align": "left",
+        "fontRole": "heading",
+        "sizePx": 64
         },
         {
           "id": "caption",
@@ -596,7 +612,7 @@
       ],
       "durationRange": [
         4.5,
-        6.0
+        6
       ]
     },
     {
@@ -655,7 +671,7 @@
       ],
       "durationRange": [
         4.5,
-        6.0
+        6
       ]
     },
     {
@@ -775,8 +791,8 @@
         }
       ],
       "durationRange": [
-        5.0,
-        8.0
+        5,
+        8
       ]
     },
     {
@@ -834,7 +850,7 @@
       ],
       "durationRange": [
         4.5,
-        6.0
+        6
       ]
     },
     {
@@ -871,8 +887,8 @@
         }
       ],
       "durationRange": [
-        7.0,
-        10.0
+        7,
+        10
       ]
     },
     {
@@ -880,77 +896,302 @@
       "kind": "layer_scene",
       "intent": "Layered paper scrapbook with three offset prints and a handwritten note area.",
       "bestFor": "travel, candid memories, playful chapter",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "back", "x": 100, "y": 130, "width": 720, "height": 720, "fit": "cover", "rotation": -5, "suggestedAnimation": "slide_right" },
-        { "id": "centre", "x": 610, "y": 180, "width": 700, "height": 720, "fit": "cover", "rotation": 3, "suggestedAnimation": "slide_up" },
-        { "id": "front", "x": 1160, "y": 110, "width": 650, "height": 720, "fit": "cover", "rotation": -2, "suggestedAnimation": "slide_left" }
+        {
+          "id": "back",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "rotation": -5,
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "centre",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "rotation": 3,
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "front",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "rotation": -2,
+          "suggestedAnimation": "slide_left"
+        }
       ],
       "panels": [
-        { "id": "paper_note", "type": "rect", "x": 520, "y": 805, "width": 880, "height": 190, "color": "#FFF9E9", "opacity": 0.94, "z": "over_photos" }
+        {
+          "id": "paper_note",
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94,
+          "z": "over_photos"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 570, "y": 840, "width": 780, "height": 100, "align": "center", "fontRole": "heading", "sizePx": 62 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 62
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "magazine_page_turn",
       "kind": "layer_scene",
       "intent": "Editorial spread that fakes a page turn with an incoming full-height page and receding side page.",
       "bestFor": "fashion editorial, chapter transition, formal portraits",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "page_left", "x": 70, "y": 90, "width": 760, "height": 900, "fit": "cover", "rotation": -1, "suggestedAnimation": "slide_right" },
-        { "id": "page_right", "x": 920, "y": 70, "width": 930, "height": 940, "fit": "cover", "rotation": 1, "suggestedAnimation": "slide_left" }
+      {
+        "id": "page_left",
+        "x": 70,
+        "y": 300,
+        "width": 760,
+        "height": 690,
+        "fit": "cover",
+        "rotation": -1,
+        "suggestedAnimation": "slide_right"
+        },
+        {
+        "id": "page_right",
+        "x": 920,
+        "y": 70,
+        "width": 930,
+        "height": 770,
+        "fit": "cover",
+        "rotation": 1,
+        "suggestedAnimation": "slide_left"
+        }
       ],
       "panels": [
-        { "id": "spine", "type": "rect", "x": 855, "y": 70, "width": 18, "height": 940, "color": "#191919", "opacity": 0.18, "z": "over_photos" }
+        {
+          "id": "spine",
+          "type": "rect",
+          "x": 855,
+          "y": 70,
+          "width": 18,
+          "height": 940,
+          "color": "#191919",
+          "opacity": 0.18,
+          "z": "over_photos"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 120, "y": 125, "width": 620, "height": 150, "align": "left", "fontRole": "heading", "sizePx": 72 },
-        { "id": "caption", "role": "caption", "x": 1040, "y": 880, "width": 680, "height": 90, "align": "right", "fontRole": "body", "sizePx": 30 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 120,
+          "y": 125,
+          "width": 620,
+          "height": 150,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 72
+        },
+        {
+          "id": "caption",
+          "role": "caption",
+          "x": 1040,
+          "y": 880,
+          "width": 680,
+          "height": 90,
+          "align": "right",
+          "fontRole": "body",
+          "sizePx": 30
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "masonry_grid_wall",
       "kind": "layer_scene",
       "intent": "Nine-tile photo wall with the centre tile swapped for a text/date card — full-loop keepsake grid.",
       "bestFor": "memories montage, date card, wordless breather with one accent tile",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "g1", "x": 110, "y": 95, "width": 580, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g2", "x": 720, "y": 95, "width": 580, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g3", "x": 1330, "y": 95, "width": 480, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g4", "x": 110, "y": 425, "width": 580, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g5", "x": 1330, "y": 425, "width": 480, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g6", "x": 110, "y": 755, "width": 580, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g7", "x": 720, "y": 755, "width": 580, "height": 300, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "g8", "x": 1330, "y": 755, "width": 480, "height": 300, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "g1",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g2",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g3",
+          "x": 1330,
+          "y": 95,
+          "width": 480,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g4",
+          "x": 110,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g5",
+          "x": 1330,
+          "y": 425,
+          "width": 480,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g6",
+          "x": 110,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g7",
+          "x": 720,
+          "y": 755,
+          "width": 580,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "g8",
+          "x": 1330,
+          "y": 755,
+          "width": 480,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
       "panels": [
-        { "id": "tile_bg", "type": "rect", "x": 720, "y": 425, "width": 580, "height": 300, "color": "#FFFFFF", "opacity": 1 }
+        {
+          "id": "tile_bg",
+          "type": "rect",
+          "x": 720,
+          "y": 425,
+          "width": 580,
+          "height": 300,
+          "color": "#FFFFFF",
+          "opacity": 1
+        }
       ],
       "textSlots": [
-        { "id": "tile_text", "role": "heading", "x": 760, "y": 495, "width": 500, "height": 160, "align": "center", "fontRole": "heading", "sizePx": 42 }
+        {
+          "id": "tile_text",
+          "role": "heading",
+          "x": 760,
+          "y": 495,
+          "width": 500,
+          "height": 160,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 42
+        }
       ],
-      "durationRange": [7, 10]
+      "durationRange": [
+        7,
+        10
+      ]
     },
     {
       "id": "duo_tinted_spread",
       "kind": "layer_scene",
       "intent": "Tinted full-frame background with a centred heading over two large landscape photos.",
       "bestFor": "a soft 'breath' beat between chapters",
-      "background": { "type": "tint", "color": "theme.blush_bg" },
+      "background": {
+        "type": "tint",
+        "color": "theme.blush_bg"
+      },
       "photoSlots": [
-        { "id": "left", "x": 140, "y": 300, "width": 800, "height": 520, "fit": "cover", "suggestedAnimation": "slide_right" },
-        { "id": "right", "x": 980, "y": 300, "width": 800, "height": 520, "fit": "cover", "suggestedAnimation": "slide_left" }
+        {
+          "id": "left",
+          "x": 140,
+          "y": 300,
+          "width": 800,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "right",
+          "x": 980,
+          "y": 300,
+          "width": 800,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 460, "y": 120, "width": 1000, "height": 90, "align": "center", "fontRole": "heading", "sizePx": 60 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 460,
+          "y": 120,
+          "width": 1000,
+          "height": 90,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 60
+        }
       ],
-      "durationRange": [4.5, 6]
+      "durationRange": [
+        4.5,
+        6
+      ]
     },
     {
       "id": "welcome_title_page",
@@ -958,34 +1199,134 @@
       "intent": "Tall hero portrait on the left; 'welcome to the wedding of' + script names + date stacked on the right.",
       "bestFor": "an alternate opener or mid-film title card",
       "textRequired": true,
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "hero", "x": 110, "y": 95, "width": 700, "height": 890, "fit": "cover", "suggestedAnimation": "slide_right" }
+        {
+          "id": "hero",
+          "x": 110,
+          "y": 95,
+          "width": 700,
+          "height": 890,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        }
       ],
       "textSlots": [
-        { "id": "eyebrow", "role": "eyebrow", "x": 900, "y": 220, "width": 900, "height": 60, "align": "center", "fontRole": "body", "sizePx": 30 },
-        { "id": "names", "role": "names", "x": 900, "y": 330, "width": 900, "height": 300, "align": "center", "fontRole": "script_accent", "sizePx": 110 },
-        { "id": "date", "role": "subheading", "x": 900, "y": 700, "width": 900, "height": 50, "align": "center", "fontRole": "body", "sizePx": 26 }
+        {
+          "id": "eyebrow",
+          "role": "eyebrow",
+          "x": 900,
+          "y": 220,
+          "width": 900,
+          "height": 60,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 30
+        },
+        {
+          "id": "names",
+          "role": "names",
+          "x": 900,
+          "y": 330,
+          "width": 900,
+          "height": 300,
+          "align": "center",
+          "fontRole": "script_accent",
+          "sizePx": 110
+        },
+        {
+          "id": "date",
+          "role": "subheading",
+          "x": 900,
+          "y": 700,
+          "width": 900,
+          "height": 50,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 26
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "invitation_row",
       "kind": "layer_scene",
       "intent": "Couple names centred top, four portrait photos in a row, one invitation line along the bottom.",
       "bestFor": "the formal invitation beat",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "p1", "x": 195, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p2", "x": 585, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p3", "x": 975, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p4", "x": 1365, "y": 290, "width": 360, "height": 510, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "p1",
+          "x": 195,
+          "y": 290,
+          "width": 360,
+          "height": 510,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p2",
+          "x": 585,
+          "y": 290,
+          "width": 360,
+          "height": 510,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p3",
+          "x": 975,
+          "y": 290,
+          "width": 360,
+          "height": 510,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p4",
+          "x": 1365,
+          "y": 290,
+          "width": 360,
+          "height": 510,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
       "textSlots": [
-        { "id": "names", "role": "display", "x": 350, "y": 130, "width": 1220, "height": 110, "align": "center", "fontRole": "heading", "sizePx": 64 },
-        { "id": "invite", "role": "caption", "x": 460, "y": 880, "width": 1000, "height": 60, "align": "center", "fontRole": "body", "sizePx": 26 }
+        {
+          "id": "names",
+          "role": "display",
+          "x": 350,
+          "y": 130,
+          "width": 1220,
+          "height": 110,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 64
+        },
+        {
+          "id": "invite",
+          "role": "caption",
+          "x": 460,
+          "y": 880,
+          "width": 1000,
+          "height": 60,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 26
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "journey_duo",
@@ -993,16 +1334,58 @@
       "intent": "One wide landscape photo with a smaller portrait overlapping its corner; heading + caption bottom-left.",
       "bestFor": "'our journey', 'how we met' beats",
       "textRequired": true,
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "wide", "x": 620, "y": 95, "width": 1000, "height": 570, "fit": "cover", "suggestedAnimation": "slide_up" },
-        { "id": "accent", "x": 1360, "y": 450, "width": 380, "height": 520, "fit": "cover", "suggestedAnimation": "fade", "role": "overlap accent" }
+        {
+          "id": "wide",
+          "x": 620,
+          "y": 95,
+          "width": 1000,
+          "height": 570,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "accent",
+          "x": 1360,
+          "y": 450,
+          "width": 380,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "fade",
+          "role": "overlap accent"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 110, "y": 680, "width": 640, "height": 110, "align": "left", "fontRole": "heading", "sizePx": 72 },
-        { "id": "caption", "role": "body", "x": 115, "y": 800, "width": 500, "height": 40, "align": "left", "fontRole": "body", "sizePx": 26 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 110,
+          "y": 680,
+          "width": 640,
+          "height": 110,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 72
+        },
+        {
+          "id": "caption",
+          "role": "body",
+          "x": 115,
+          "y": 800,
+          "width": 500,
+          "height": 40,
+          "align": "left",
+          "fontRole": "body",
+          "sizePx": 26
+        }
       ],
-      "durationRange": [4.5, 6.5]
+      "durationRange": [
+        4.5,
+        6.5
+      ]
     },
     {
       "id": "polaroid_feature",
@@ -1010,108 +1393,574 @@
       "intent": "One large white-bordered polaroid photo on the right; heading + one line of copy on the left.",
       "bestFor": "'our future together', 'thank you' — a single emotional photo with a message",
       "textRequired": true,
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "feature", "x": 740, "y": 105, "width": 900, "height": 870, "fit": "cover", "frame": "card", "suggestedAnimation": "fade" }
+        {
+          "id": "feature",
+          "x": 740,
+          "y": 105,
+          "width": 900,
+          "height": 870,
+          "fit": "cover",
+          "frame": "card",
+          "suggestedAnimation": "fade"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 110, "y": 300, "width": 520, "height": 260, "align": "left", "fontRole": "heading", "sizePx": 60 },
-        { "id": "body", "role": "body", "x": 110, "y": 600, "width": 430, "height": 90, "align": "left", "fontRole": "body", "sizePx": 26 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 110,
+          "y": 300,
+          "width": 520,
+          "height": 260,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 60
+        },
+        {
+          "id": "body",
+          "role": "body",
+          "x": 110,
+          "y": 600,
+          "width": 430,
+          "height": 90,
+          "align": "left",
+          "fontRole": "body",
+          "sizePx": 26
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "quad_grid_caption",
       "kind": "layer_scene",
       "intent": "Heading upper-left over a four-photo asymmetric grid (tall hero + two stacked + one wide), caption lower-right.",
       "bestFor": "'our wedding day' recap, a busier celebration beat",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "hero", "x": 110, "y": 400, "width": 560, "height": 580, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "top1", "x": 700, "y": 120, "width": 360, "height": 520, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "top2", "x": 1080, "y": 95, "width": 480, "height": 560, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "wide", "x": 700, "y": 670, "width": 520, "height": 330, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "hero",
+          "x": 110,
+          "y": 400,
+          "width": 560,
+          "height": 580,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "top1",
+          "x": 700,
+          "y": 120,
+          "width": 360,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "top2",
+          "x": 1080,
+          "y": 95,
+          "width": 480,
+          "height": 560,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "wide",
+          "x": 700,
+          "y": 670,
+          "width": 520,
+          "height": 330,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 110, "y": 95, "width": 520, "height": 260, "align": "left", "fontRole": "heading", "sizePx": 58, "lineSpacing": 6 },
-        { "id": "caption", "role": "body", "x": 1280, "y": 760, "width": 420, "height": 130, "align": "center", "fontRole": "body", "sizePx": 26, "lineSpacing": 12 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 110,
+          "y": 95,
+          "width": 520,
+          "height": 260,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 58,
+          "lineSpacing": 6
+        },
+        {
+          "id": "caption",
+          "role": "body",
+          "x": 1280,
+          "y": 760,
+          "width": 420,
+          "height": 130,
+          "align": "center",
+          "fontRole": "body",
+          "sizePx": 26,
+          "lineSpacing": 12
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "arch_trio",
       "kind": "layer_scene",
       "intent": "Three equal full-height photos side by side, no text — a wordless visual breather.",
       "bestFor": "pacing break between text-heavy chapters",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "left", "x": 110, "y": 95, "width": 540, "height": 890, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "centre", "x": 680, "y": 95, "width": 540, "height": 890, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "right", "x": 1250, "y": 95, "width": 560, "height": 890, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "left",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "centre",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "right",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
-      "durationRange": [4, 5.5]
+      "durationRange": [
+        4,
+        5.5
+      ]
     },
     {
       "id": "feature_plus_duo",
       "kind": "layer_scene",
       "intent": "One large hero photo (two-thirds width) with two smaller photos stacked beside it, no text.",
       "bestFor": "a venue/scenery breather beat",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "hero", "x": 110, "y": 95, "width": 1060, "height": 890, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "top", "x": 1210, "y": 95, "width": 600, "height": 430, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "bottom", "x": 1210, "y": 565, "width": 600, "height": 420, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "hero",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "top",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "bottom",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
-      "durationRange": [4.5, 6]
+      "durationRange": [
+        4.5,
+        6
+      ]
     },
     {
       "id": "save_date_card",
       "kind": "layer_scene",
       "intent": "Full-bleed photo behind a floating cream card carrying the heading, three small photos and the date.",
       "bestFor": "signature save-the-date beat, an alternate opener",
-      "background": { "type": "photo_full_bleed", "slot": "bg" },
+      "background": {
+        "type": "photo_full_bleed",
+        "slot": "bg"
+      },
       "photoSlots": [
-        { "id": "bg", "x": 0, "y": 0, "width": 1920, "height": 1080, "fit": "cover", "suggestedAnimation": "none" },
-        { "id": "p1", "x": 430, "y": 400, "width": 330, "height": 400, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p2", "x": 790, "y": 400, "width": 330, "height": 400, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "p3", "x": 1150, "y": 400, "width": 330, "height": 400, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "bg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "suggestedAnimation": "none"
+        },
+        {
+          "id": "p1",
+          "x": 430,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p2",
+          "x": 790,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p3",
+          "x": 1150,
+          "y": 400,
+          "width": 330,
+          "height": 400,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
       "panels": [
-        { "id": "card", "type": "rect", "x": 360, "y": 180, "width": 1200, "height": 720, "color": "theme.cream_bg", "opacity": 0.96 }
+        {
+          "id": "card",
+          "type": "rect",
+          "x": 360,
+          "y": 180,
+          "width": 1200,
+          "height": 720,
+          "color": "theme.cream_bg",
+          "opacity": 0.96
+        }
       ],
       "textSlots": [
-        { "id": "heading", "role": "heading", "x": 610, "y": 250, "width": 700, "height": 90, "align": "center", "fontRole": "heading", "sizePx": 60 },
-        { "id": "date", "role": "subheading", "x": 610, "y": 820, "width": 700, "height": 60, "align": "center", "fontRole": "heading", "sizePx": 42 }
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 610,
+          "y": 250,
+          "width": 700,
+          "height": 90,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 60
+        },
+        {
+          "id": "date",
+          "role": "subheading",
+          "x": 610,
+          "y": 820,
+          "width": 700,
+          "height": 60,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 42
+        }
       ],
-      "durationRange": [5, 7]
+      "durationRange": [
+        5,
+        7
+      ]
     },
     {
       "id": "photo_grid_6",
       "kind": "layer_scene",
       "intent": "Even 3x2 photo grid, no text — a photo-rich breather that soaks up a generous pool.",
       "bestFor": "photo-rich jobs, a wordless montage-like beat",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "a", "x": 110, "y": 95, "width": 580, "height": 470, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "b", "x": 720, "y": 95, "width": 580, "height": 470, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "c", "x": 1330, "y": 95, "width": 480, "height": 470, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "d", "x": 110, "y": 595, "width": 580, "height": 390, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "e", "x": 720, "y": 595, "width": 580, "height": 390, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "f", "x": 1330, "y": 595, "width": 480, "height": 390, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "a",
+          "x": 110,
+          "y": 95,
+          "width": 580,
+          "height": 470,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "b",
+          "x": 720,
+          "y": 95,
+          "width": 580,
+          "height": 470,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "c",
+          "x": 1330,
+          "y": 95,
+          "width": 480,
+          "height": 470,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "d",
+          "x": 110,
+          "y": 595,
+          "width": 580,
+          "height": 390,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "e",
+          "x": 720,
+          "y": 595,
+          "width": 580,
+          "height": 390,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "f",
+          "x": 1330,
+          "y": 595,
+          "width": 480,
+          "height": 390,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
-      "durationRange": [6, 9]
+      "durationRange": [
+        6,
+        9
+      ]
+    },
+    {
+      "id": "photo_network_hero",
+      "kind": "layer_scene",
+      "intent": "One large hero photograph at the centre, connected visually to eight smaller photographs surrounding it.",
+      "bestFor": "a relationship map, family and friends, one defining moment supported by surrounding memories",
+      "background": {
+        "type": "cream"
+      },
+      "panels": [
+        {
+          "id": "horizontal_link",
+          "type": "rect",
+          "x": 420,
+          "y": 535,
+          "width": 1080,
+          "height": 10,
+          "color": "theme.accent",
+          "opacity": 0.35
+        },
+        {
+          "id": "vertical_link",
+          "type": "rect",
+          "x": 955,
+          "y": 190,
+          "width": 10,
+          "height": 700,
+          "color": "theme.accent",
+          "opacity": 0.35
+        }
+      ],
+      "photoSlots": [
+        {
+          "id": "hero",
+          "x": 560,
+          "y": 260,
+          "width": 800,
+          "height": 560,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "top_left",
+          "x": 80,
+          "y": 40,
+          "width": 480,
+          "height": 220,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "top",
+          "x": 600,
+          "y": 40,
+          "width": 720,
+          "height": 170,
+          "fit": "cover",
+          "suggestedAnimation": "slide_down"
+        },
+        {
+          "id": "top_right",
+          "x": 1360,
+          "y": 40,
+          "width": 480,
+          "height": 220,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        },
+        {
+          "id": "left",
+          "x": 80,
+          "y": 280,
+          "width": 400,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "right",
+          "x": 1440,
+          "y": 280,
+          "width": 400,
+          "height": 520,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        },
+        {
+          "id": "bottom_left",
+          "x": 80,
+          "y": 820,
+          "width": 480,
+          "height": 220,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "bottom",
+          "x": 600,
+          "y": 870,
+          "width": 720,
+          "height": 170,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "bottom_right",
+          "x": 1360,
+          "y": 820,
+          "width": 480,
+          "height": 220,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
+      ],
+      "durationRange": [
+        6,
+        9
+      ]
+    },
+    {
+      "id": "gallery_matte_hero",
+      "kind": "layer_scene",
+      "intent": "One cinematic landscape photograph held inside a generous gallery matte with restrained accent rules.",
+      "bestFor": "a quiet hero beat, venue establishing frame, emotional portrait pause",
+      "background": {
+        "type": "cream"
+      },
+      "panels": [
+        {
+          "id": "matte_shadow",
+          "type": "rect",
+          "x": 222,
+          "y": 147,
+          "width": 1476,
+          "height": 806,
+          "color": "#000000",
+          "opacity": 0.12
+        },
+        {
+          "id": "accent_top",
+          "type": "rect",
+          "x": 240,
+          "y": 112,
+          "width": 320,
+          "height": 8,
+          "color": "theme.accent",
+          "opacity": 0.72
+        },
+        {
+          "id": "accent_bottom",
+          "type": "rect",
+          "x": 1360,
+          "y": 960,
+          "width": 320,
+          "height": 8,
+          "color": "theme.accent",
+          "opacity": 0.72
+        }
+      ],
+      "photoSlots": [
+        {
+          "id": "hero",
+          "x": 240,
+          "y": 135,
+          "width": 1440,
+          "height": 810,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6.5
+      ]
     },
     {
       "id": "photo_duo",
       "kind": "layer_scene",
       "intent": "Two large portrait photos side by side, no text — a simple breather beat.",
       "bestFor": "pacing break, venue/welcome-sign duo",
-      "background": { "type": "cream" },
+      "background": {
+        "type": "cream"
+      },
       "photoSlots": [
-        { "id": "left", "x": 150, "y": 120, "width": 790, "height": 840, "fit": "cover", "suggestedAnimation": "fade" },
-        { "id": "right", "x": 980, "y": 120, "width": 790, "height": 840, "fit": "cover", "suggestedAnimation": "fade" }
+        {
+          "id": "left",
+          "x": 150,
+          "y": 120,
+          "width": 790,
+          "height": 840,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "right",
+          "x": 980,
+          "y": 120,
+          "width": 790,
+          "height": 840,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
       ],
-      "durationRange": [4, 5.5]
+      "durationRange": [
+        4,
+        5.5
+      ]
     }
   ],
   "montageBeats": [
@@ -1259,32 +2108,109 @@
       "intent": "The photo is painted onto black by five broad alternating brush swipes with ragged dry-brush edges (mask plays 5s then holds open) — artistic/scrapbook opener or chapter break; use at most one mask_reveal beat per video."
     },
     {
-      "id": "ink_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/ink_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Organic ink blooms spread across the frame and merge into a complete reveal."
+      "id": "ink_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/ink_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Organic ink blooms spread across the frame and merge into a complete reveal."
     },
     {
-      "id": "watercolor_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/watercolor_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Soft irregular watercolor wash reveals a romantic hero frame."
+      "id": "watercolor_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/watercolor_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Soft irregular watercolor wash reveals a romantic hero frame."
     },
     {
-      "id": "torn_paper_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/torn_paper_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "A ragged paper edge tears horizontally to uncover the next photograph."
+      "id": "torn_paper_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/torn_paper_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "A ragged paper edge tears horizontally to uncover the next photograph."
     },
     {
-      "id": "petal_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/petal_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Eight petal lobes bloom from the centre into a floral reveal."
+      "id": "petal_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/petal_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Eight petal lobes bloom from the centre into a floral reveal."
     },
     {
-      "id": "gold_dust_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/gold_dust_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Fine dust grains accumulate into a luxury hero image."
+      "id": "gold_dust_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Fine dust grains accumulate into a luxury hero image."
     },
     {
-      "id": "stained_glass_reveal", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/stained_glass_reveal.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "Stained-glass cells illuminate in a deterministic mosaic sequence."
+      "id": "stained_glass_reveal",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/stained_glass_reveal.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "Stained-glass cells illuminate in a deterministic mosaic sequence."
     },
     {
-      "id": "geometric_teal_wipe", "kind": "effect", "effect": "mask_reveal", "mask": "assets/masks/geometric_teal_wipe.mp4",
-      "imageCount": [1, 1], "durationRange": [5, 8], "intent": "A crisp diagonal geometric wave for modern teal/editorial films."
+      "id": "geometric_teal_wipe",
+      "kind": "effect",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/geometric_teal_wipe.mp4",
+      "imageCount": [
+        1,
+        1
+      ],
+      "durationRange": [
+        5,
+        8
+      ],
+      "intent": "A crisp diagonal geometric wave for modern teal/editorial films."
     }
   ]
 }

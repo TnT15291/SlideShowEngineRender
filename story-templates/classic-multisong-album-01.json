@@ -4,55 +4,95 @@
   "name": "Classic Multisong Wedding Album",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "album_mount": {
+      "radius": 6,
+      "border": 34,
+      "borderColor": "#FFFDFC",
+      "shadow": true
+    }
+  },
   "looks": {
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "album_mount"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "album_mount"
     },
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "album_mount"
     },
     "duo_tinted_spread_plate": {
       "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
       "layout": "duo_tinted_spread",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "album_mount"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "album_mount"
+    },
+    "full_bleed_quote_album": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 58,
+            "y": 806,
+            "height": 200
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.02
+      }
+    },
+    "three_photo_row_album": {
+      "intent": "the three-photo row, wearing the recipe's album_mount frame",
+      "layout": "three_photo_row",
+      "frame": "album_mount"
+    },
+    "photo_grid_6_album": {
+      "intent": "the six-up grid, wearing the recipe's album_mount frame",
+      "layout": "photo_grid_6",
+      "frame": "album_mount"
+    },
+    "photo_network_hero_album": {
+      "intent": "the photo network, wearing the recipe's album_mount frame",
+      "layout": "photo_network_hero",
+      "frame": "album_mount"
+    },
+    "two_photo_story_album": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's album_mount frame",
+      "layout": "two_photo_story",
+      "frame": "album_mount"
+    },
+    "polaroid_scatter_album": {
+      "intent": "the scattered prints, wearing the recipe's album_mount frame",
+      "layout": "polaroid_scatter",
+      "frame": "album_mount"
+    },
+    "closing_names_album": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 136,
+            "y": 390
+          },
+          "date": {
+            "sizePx": 40,
+            "y": 650
+          }
+        }
       }
     }
   },
@@ -234,7 +274,6 @@
     {
       "id": "s01_opening",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -248,7 +287,8 @@
       ],
       "text": {
         "quote": "{{bride}} & {{groom}} · {{date}}"
-      }
+      },
+      "look": "full_bleed_quote_album"
     },
     {
       "id": "s02_portrait_bride",
@@ -298,7 +338,6 @@
     {
       "id": "s05_three_photo_row",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -319,23 +358,24 @@
         }
       ],
       "text": {
-        "heading": "OUR STORY",
-        "caption": "Every photograph keeps a little piece of forever."
+        "heading": "CHUYỆN CỦA MÌNH",
+        "caption": "Mỗi tấm ảnh giữ lại một phần của mãi mãi."
       },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
           {
             "text": {
-              "heading": "TOGETHER",
-              "caption": "The best memories are the ones we made together."
+              "heading": "BÊN NHAU",
+              "caption": "Những kỷ niệm đẹp nhất là những gì mình cùng nhau tạo nên."
             }
           },
           {
             "text": {}
           }
         ]
-      }
+      },
+      "look": "three_photo_row_album"
     },
     {
       "id": "s06_page_turn",
@@ -422,7 +462,6 @@
     {
       "id": "s10_photo_grid",
       "effect": "layer_scene",
-      "layout": "photo_grid_6",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
@@ -456,12 +495,12 @@
           "orient": "any",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_grid_6_album"
     },
     {
       "id": "s10_photo_network",
       "effect": "layer_scene",
-      "layout": "photo_network_hero",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
@@ -510,7 +549,8 @@
           "orient": "landscape",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_network_hero_album"
     },
     {
       "id": "s11_film_roll",
@@ -558,7 +598,6 @@
     {
       "id": "s14_story_pair",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -574,21 +613,22 @@
         }
       ],
       "text": {
-        "body": "From the first hello to every tomorrow."
+        "body": "Từ lời chào đầu tiên, đến mọi ngày mai."
       },
       "repeatable": {
         "maxRepeats": 4,
         "variants": [
           {
             "text": {
-              "body": "A thousand little moments became one beautiful story."
+              "body": "Ngàn khoảnh khắc nhỏ góp lại thành một câu chuyện đẹp."
             }
           },
           {
             "text": {}
           }
         ]
-      }
+      },
+      "look": "two_photo_story_album"
     },
     {
       "id": "s15_flash_burst",
@@ -611,7 +651,6 @@
     {
       "id": "s16_polaroid_memories",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -635,8 +674,9 @@
         }
       ],
       "text": {
-        "heading": "MEMORIES"
-      }
+        "heading": "KỶ NIỆM"
+      },
+      "look": "polaroid_scatter_album"
     },
     {
       "id": "s17_final_portrait",
@@ -652,13 +692,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_right",
+      "effect": "film_roll_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -667,37 +707,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_panel_flip",
+      "effect": "panel_flip",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#2B2B32"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -759,14 +795,14 @@
     {
       "id": "s18_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Beautiful in every tomorrow · {{date}}"
-      }
+        "date": "Trọn vẹn từng ngày mai · {{date}}"
+      },
+      "look": "closing_names_album"
     }
   ]
 }

@@ -4,32 +4,90 @@
   "name": "Playful Scrapbook",
   "tier": "smart_lite",
   "libraryTheme": "editorial_bold",
+  "layoutPresets": {
+    "print_border": {
+      "radius": 2,
+      "border": 20,
+      "borderColor": "#FFFFFF",
+      "shadow": true
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "print_border"
     },
     "photo_duo_plate": {
       "intent": "wordless photo duo beat, wearing this recipe's own frame",
       "layout": "photo_duo",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
-      }
+      "frame": "print_border"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 0,
-        "border": 6,
-        "borderColor": "#17171B"
+      "frame": "print_border"
+    },
+    "polaroid_scatter_print": {
+      "intent": "the scattered prints, wearing the recipe's print_border frame",
+      "layout": "polaroid_scatter",
+      "frame": "print_border"
+    },
+    "collage_cluster_text_print": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's print_border frame",
+      "layout": "collage_cluster_text",
+      "frame": "print_border"
+    },
+    "paper_collage_print": {
+      "intent": "the layered paper collage, wearing the recipe's print_border frame",
+      "layout": "paper_collage",
+      "frame": "print_border"
+    },
+    "two_photo_story_print": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's print_border frame",
+      "layout": "two_photo_story",
+      "frame": "print_border"
+    },
+    "journey_duo_print": {
+      "intent": "the journey pair, wearing the recipe's print_border frame",
+      "layout": "journey_duo",
+      "frame": "print_border"
+    },
+    "polaroid_feature_print": {
+      "intent": "the single featured print, wearing the recipe's print_border frame",
+      "layout": "polaroid_feature",
+      "frame": "print_border"
+    },
+    "full_bleed_quote_print": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 60,
+            "y": 798,
+            "height": 206
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.08
+      }
+    },
+    "closing_names_print": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 138,
+            "y": 388
+          },
+          "date": {
+            "sizePx": 40,
+            "y": 650
+          }
+        }
       }
     }
   },
@@ -219,7 +277,6 @@
     {
       "id": "s01_open",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -241,12 +298,12 @@
       ],
       "text": {
         "heading": "{{bride}} + {{groom}}"
-      }
+      },
+      "look": "polaroid_scatter_print"
     },
     {
       "id": "s02_start",
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -292,7 +349,6 @@
             }
           },
           {
-            "layout": "paper_collage",
             "photoSlots": [
               {
                 "slot": "back",
@@ -310,12 +366,12 @@
                 "quality": "good"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "paper_collage_print"
           }
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -332,8 +388,10 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_print"
+      },
+      "look": "collage_cluster_text_print"
     },
     {
       "id": "s70_corner_fly_four",
@@ -389,7 +447,6 @@
     {
       "id": "s04_pair",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -427,12 +484,12 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "two_photo_story_print"
     },
     {
       "id": "s04b_travel_duo",
       "effect": "layer_scene",
-      "layout": "journey_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -458,7 +515,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "photo_duo",
         "photoSlots": [
           {
             "slot": "left",
@@ -470,8 +526,10 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "photo_duo_plate"
+      },
+      "look": "journey_duo_print"
     },
     {
       "id": "s05_grid",
@@ -524,7 +582,6 @@
     {
       "id": "s06b_polaroid_feature",
       "effect": "layer_scene",
-      "layout": "polaroid_feature",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -535,14 +592,14 @@
         }
       ],
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
             "orient": "any",
             "quality": "good"
           }
-        ]
+        ],
+        "look": "full_bleed_quote_print"
       },
       "text": {
         "heading": [
@@ -553,7 +610,8 @@
           "Một tấm hình, giữ trọn một kỷ niệm.",
           "Chỉ một khoảnh khắc, nhớ mãi không quên."
         ]
-      }
+      },
+      "look": "polaroid_feature_print"
     },
     {
       "id": "s07_breath",
@@ -614,7 +672,7 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
+      "id": "s80_collage_grid",
       "effect": "collage_grid",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -629,37 +687,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_panel_flip",
+      "effect": "panel_flip",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
+          "slot": "hero",
           "orient": "any",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#34322E"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -721,7 +775,6 @@
     {
       "id": "s08_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_particle_02.png",
@@ -729,7 +782,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_print"
     }
   ]
 }

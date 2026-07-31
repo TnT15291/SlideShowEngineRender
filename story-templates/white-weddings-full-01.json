@@ -4,16 +4,25 @@
   "name": "White Weddings Full Collection",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "page_round": {
+      "radius": 24,
+      "border": 0,
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte": {
       "intent": "one photograph matted on cream — the reference's gallery page",
-      "layout": "gallery_matte_hero"
+      "layout": "gallery_matte_hero",
+      "frame": "page_round"
     },
     "quiet_quote": {
       "intent": "wordless recurrence: full bleed, softened away from the announcement beat",
       "layout": "full_bleed_quote",
       "photoTreatment": {
-        "saturation": 0.9
+        "saturation": 0.92,
+        "contrast": 0.97
       }
     },
     "row_reprise": {
@@ -32,6 +41,143 @@
           "right": {
             "y": 220,
             "height": 640
+          }
+        }
+      }
+    },
+    "save_date_card_page": {
+      "intent": "the floating save-the-date card, wearing the recipe's page_round frame",
+      "layout": "save_date_card",
+      "frame": "page_round"
+    },
+    "welcome_title_page_page": {
+      "intent": "the welcome title page, wearing the recipe's page_round frame",
+      "layout": "welcome_title_page",
+      "frame": "page_round"
+    },
+    "full_bleed_quote_page": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 74,
+            "y": 762,
+            "height": 242
+          }
+        }
+      },
+      "photoTreatment": {
+        "brightness": 0.03
+      }
+    },
+    "photo_left_text_right_page": {
+      "intent": "the photo-left spread, wearing the recipe's page_round frame",
+      "layout": "photo_left_text_right",
+      "frame": "page_round"
+    },
+    "text_left_photo_right_page": {
+      "intent": "the text-left spread, wearing the recipe's page_round frame",
+      "layout": "text_left_photo_right",
+      "frame": "page_round"
+    },
+    "journey_duo_page": {
+      "intent": "the journey pair, wearing the recipe's page_round frame",
+      "layout": "journey_duo",
+      "frame": "page_round"
+    },
+    "photo_duo_page": {
+      "intent": "the bare photo pair, wearing the recipe's page_round frame",
+      "layout": "photo_duo",
+      "frame": "page_round"
+    },
+    "three_photo_row_page": {
+      "intent": "the three-photo row, wearing the recipe's page_round frame",
+      "layout": "three_photo_row",
+      "frame": "page_round"
+    },
+    "duo_tinted_spread_page": {
+      "intent": "the tinted two-photo spread, wearing the recipe's page_round frame",
+      "layout": "duo_tinted_spread",
+      "frame": "page_round"
+    },
+    "invitation_row_page": {
+      "intent": "the invitation row, wearing the recipe's page_round frame",
+      "layout": "invitation_row",
+      "frame": "page_round"
+    },
+    "polaroid_feature_page": {
+      "intent": "the single featured print, wearing the recipe's page_round frame",
+      "layout": "polaroid_feature",
+      "frame": "page_round"
+    },
+    "collage_cluster_text_page": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's page_round frame",
+      "layout": "collage_cluster_text",
+      "frame": "page_round"
+    },
+    "paper_collage_page": {
+      "intent": "the layered paper collage, wearing the recipe's page_round frame",
+      "layout": "paper_collage",
+      "frame": "page_round"
+    },
+    "arch_trio_page": {
+      "intent": "the arched triptych, wearing the recipe's page_round frame",
+      "layout": "arch_trio",
+      "frame": "page_round"
+    },
+    "feature_plus_duo_page": {
+      "intent": "the hero with two stacked beside it, wearing the recipe's page_round frame",
+      "layout": "feature_plus_duo",
+      "frame": "page_round"
+    },
+    "masonry_grid_wall_page": {
+      "intent": "the masonry wall, wearing the recipe's page_round frame",
+      "layout": "masonry_grid_wall",
+      "frame": "page_round"
+    },
+    "photo_grid_6_page": {
+      "intent": "the six-up grid, wearing the recipe's page_round frame",
+      "layout": "photo_grid_6",
+      "frame": "page_round"
+    },
+    "two_photo_story_page": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's page_round frame",
+      "layout": "two_photo_story",
+      "frame": "page_round"
+    },
+    "polaroid_scatter_page": {
+      "intent": "the scattered prints, wearing the recipe's page_round frame",
+      "layout": "polaroid_scatter",
+      "frame": "page_round"
+    },
+    "quad_grid_caption_page": {
+      "intent": "the captioned quad grid, wearing the recipe's page_round frame",
+      "layout": "quad_grid_caption",
+      "frame": "page_round"
+    },
+    "photo_network_hero_page": {
+      "intent": "the photo network, wearing the recipe's page_round frame",
+      "layout": "photo_network_hero",
+      "frame": "page_round"
+    },
+    "magazine_page_turn_page": {
+      "intent": "the magazine page turn, wearing the recipe's page_round frame",
+      "layout": "magazine_page_turn",
+      "frame": "page_round"
+    },
+    "closing_names_page": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 120,
+            "y": 406
+          },
+          "date": {
+            "sizePx": 34,
+            "y": 658
           }
         }
       }
@@ -68,7 +214,7 @@
   },
   "source": {
     "origin": "reference_adaptation",
-    "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement. Three recipe `looks` depart from a literal page-for-page reading, and each is a move TOWARD the reference's variety rather than away from it: the reference gives every page its own composition, while this adaptation had full_bleed_quote carrying the announcement, a second beat and the wordless fallback of four scenes at once."
+    "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement. Every page now names a `look` on the `page_round` frame preset (radius 24, no matte). That is a move TOWARD the reference, not away from it: the source pages have rounded photo corners and the original port could not express them, so it shipped square. Three of those looks also depart from a literal page-for-page reading, and each is a move TOWARD the reference's variety rather than away from it: the reference gives every page its own composition, while this adaptation had full_bleed_quote carrying the announcement, a second beat and the wordless fallback of four scenes at once."
   },
   "intro": {
     "summary": "Bộ sưu tập đầy đủ nhất của dòng White Weddings — nhiều 'trang' giai điệu ngà ấm, phù hợp video dài hơi.",
@@ -216,7 +362,6 @@
     {
       "id": "s01_save_the_date",
       "effect": "layer_scene",
-      "layout": "save_date_card",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "calm",
@@ -248,12 +393,12 @@
           "WE'RE GETTING MARRIED"
         ],
         "date": "{{date}}"
-      }
+      },
+      "look": "save_date_card_page"
     },
     {
       "id": "s02_welcome_title",
       "effect": "layer_scene",
-      "layout": "welcome_title_page",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -278,12 +423,12 @@
           }
         ],
         "look": "gallery_matte"
-      }
+      },
+      "look": "welcome_title_page_page"
     },
     {
       "id": "s03_getting_married",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -296,12 +441,12 @@
       ],
       "text": {
         "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED"
-      }
+      },
+      "look": "full_bleed_quote_page"
     },
     {
       "id": "s04_about_bride",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -334,12 +479,12 @@
           }
         ],
         "look": "quiet_quote"
-      }
+      },
+      "look": "photo_left_text_right_page"
     },
     {
       "id": "s05_about_groom",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -372,12 +517,12 @@
           }
         ],
         "look": "quiet_quote"
-      }
+      },
+      "look": "text_left_photo_right_page"
     },
     {
       "id": "s06_our_journey",
       "effect": "layer_scene",
-      "layout": "journey_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -403,7 +548,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "photo_duo",
         "photoSlots": [
           {
             "slot": "left",
@@ -415,13 +559,14 @@
             "orient": "portrait",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "photo_duo_page"
+      },
+      "look": "journey_duo_page"
     },
     {
       "id": "s07_fall_in_love",
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "memory",
@@ -465,12 +610,12 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "three_photo_row_page"
     },
     {
       "id": "s08_love_is_in_the_air",
       "effect": "layer_scene",
-      "layout": "duo_tinted_spread",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -490,12 +635,12 @@
           "LOVE IS IN THE AIR",
           "LOVE ALL AROUND"
         ]
-      }
+      },
+      "look": "duo_tinted_spread_page"
     },
     {
       "id": "s09_invitation",
       "effect": "layer_scene",
-      "layout": "invitation_row",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -523,12 +668,12 @@
       "text": {
         "names": "Together, {{bride}} & {{groom}}",
         "invite": "WE WOULD LIKE TO INVITE YOU TO OUR SPECIAL WEDDING DAY."
-      }
+      },
+      "look": "invitation_row_page"
     },
     {
       "id": "s10_future_together",
       "effect": "layer_scene",
-      "layout": "polaroid_feature",
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
@@ -552,7 +697,6 @@
             }
           },
           {
-            "layout": "full_bleed_quote",
             "photoSlots": [
               {
                 "slot": "bg",
@@ -561,7 +705,8 @@
                 "fit": "cover"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "full_bleed_quote_page"
           }
         ]
       },
@@ -575,7 +720,8 @@
           }
         ],
         "look": "gallery_matte"
-      }
+      },
+      "look": "polaroid_feature_page"
     },
     {
       "id": "s10b_intimate_reveal",
@@ -598,7 +744,6 @@
     {
       "id": "s11_one_love_one_lifetime",
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -629,7 +774,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -646,13 +790,14 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_page"
+      },
+      "look": "collage_cluster_text_page"
     },
     {
       "id": "s12_arch_trio",
       "effect": "layer_scene",
-      "layout": "arch_trio",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
@@ -671,12 +816,12 @@
           "orient": "portrait",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "arch_trio_page"
     },
     {
       "id": "s13_gazebo_feature",
       "effect": "layer_scene",
-      "layout": "feature_plus_duo",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
@@ -695,12 +840,12 @@
           "orient": "landscape",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "feature_plus_duo_page"
     },
     {
       "id": "s14_welcome_duo",
       "effect": "layer_scene",
-      "layout": "photo_duo",
       "durationRole": "build",
       "transitionRole": "default",
       "photoSlots": [
@@ -714,12 +859,12 @@
           "orient": "portrait",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_duo_page"
     },
     {
       "id": "s15_memories_wall",
       "effect": "layer_scene",
-      "layout": "masonry_grid_wall",
       "signature": true,
       "durationRole": "montage",
       "transitionRole": "peak",
@@ -785,12 +930,12 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "masonry_grid_wall_page"
     },
     {
       "id": "s16_photo_grid",
       "effect": "layer_scene",
-      "layout": "photo_grid_6",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
@@ -824,12 +969,12 @@
           "orient": "any",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_grid_6_page"
     },
     {
       "id": "s17_one_lifetime_story",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -846,12 +991,12 @@
       ],
       "text": {
         "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."
-      }
+      },
+      "look": "two_photo_story_page"
     },
     {
       "id": "s18_paper_story",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -876,12 +1021,12 @@
           "Written in Time",
           "A Moment in Time"
         ]
-      }
+      },
+      "look": "paper_collage_page"
     },
     {
       "id": "s19_polaroid_scatter",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -906,12 +1051,12 @@
       ],
       "text": {
         "heading": "A Little More Love"
-      }
+      },
+      "look": "polaroid_scatter_page"
     },
     {
       "id": "s19b_grid_recap",
       "effect": "layer_scene",
-      "layout": "quad_grid_caption",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -935,7 +1080,8 @@
           "orient": "any",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "quad_grid_caption_page"
     },
     {
       "id": "s70_corner_fly_four",
@@ -975,7 +1121,6 @@
     {
       "id": "s19c_photo_network",
       "effect": "layer_scene",
-      "layout": "photo_network_hero",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
@@ -1024,10 +1169,11 @@
           "orient": "landscape",
           "quality": "good"
         }
-      ]
+      ],
+      "look": "photo_network_hero_page"
     },
     {
-      "id": "s80_gallery_six",
+      "id": "s80_collage_grid",
       "effect": "collage_grid",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -1042,37 +1188,33 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
+      "id": "s81_portrait_reflection",
+      "effect": "portrait_reflection",
       "signature": true,
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
+          "slot": "hero",
+          "orient": "portrait",
           "quality": "best"
         }
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#F7F4EE"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -1091,7 +1233,6 @@
     {
       "id": "s84_title_reprise",
       "effect": "layer_scene",
-      "layout": "magazine_page_turn",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -1109,7 +1250,8 @@
       "text": {
         "eyebrow": "{{bride}} & {{groom}}",
         "date": "{{date}}"
-      }
+      },
+      "look": "magazine_page_turn_page"
     },
     {
       "id": "s85_magazine_reprise",
@@ -1138,14 +1280,14 @@
     {
       "id": "s20_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "Thank you for celebrating with us · {{date}}"
-      }
+      },
+      "look": "closing_names_page"
     }
   ]
 }

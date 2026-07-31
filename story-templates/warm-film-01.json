@@ -4,41 +4,98 @@
   "name": "Warm Film",
   "tier": "smart_lite",
   "libraryTheme": "warm_film",
+  "layoutPresets": {
+    "sprocket_edge": {
+      "radius": 0,
+      "border": 6,
+      "borderColor": "#B4643C",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
-      },
+      "frame": "sprocket_edge",
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.02,
+        "contrast": 1.06
       }
     },
     "duo_tinted_spread_plate": {
       "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
       "layout": "duo_tinted_spread",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
-      },
+      "frame": "sprocket_edge",
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.02,
+        "contrast": 1.06
       }
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 8,
-        "border": 16,
-        "borderColor": "#F4ECE0"
+      "frame": "sprocket_edge",
+      "photoTreatment": {
+        "saturation": 1.02,
+        "contrast": 1.06
+      }
+    },
+    "hero_title_card_sprocket": {
+      "intent": "the hero title card, wearing the recipe's sprocket_edge frame",
+      "layout": "hero_title_card",
+      "frame": "sprocket_edge"
+    },
+    "polaroid_scatter_sprocket": {
+      "intent": "the scattered prints, wearing the recipe's sprocket_edge frame",
+      "layout": "polaroid_scatter",
+      "frame": "sprocket_edge"
+    },
+    "collage_cluster_text_sprocket": {
+      "intent": "the photo cluster beside its paragraph, wearing the recipe's sprocket_edge frame",
+      "layout": "collage_cluster_text",
+      "frame": "sprocket_edge"
+    },
+    "paper_collage_sprocket": {
+      "intent": "the layered paper collage, wearing the recipe's sprocket_edge frame",
+      "layout": "paper_collage",
+      "frame": "sprocket_edge"
+    },
+    "full_bleed_quote_sprocket": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 58,
+            "y": 804,
+            "height": 200
+          }
+        }
       },
       "photoTreatment": {
-        "saturation": 1.03
+        "saturation": 1.07,
+        "brightness": 0.02
+      }
+    },
+    "three_photo_row_sprocket": {
+      "intent": "the three-photo row, wearing the recipe's sprocket_edge frame",
+      "layout": "three_photo_row",
+      "frame": "sprocket_edge"
+    },
+    "closing_names_sprocket": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 130,
+            "y": 396
+          },
+          "date": {
+            "sizePx": 38,
+            "y": 652
+          }
+        }
       }
     }
   },
@@ -240,7 +297,6 @@
     {
       "id": "s01_open",
       "effect": "layer_scene",
-      "layout": "hero_title_card",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -276,7 +332,8 @@
           "value": "{{date}}",
           "sizePx": 110
         }
-      }
+      },
+      "look": "hero_title_card_sprocket"
     },
     {
       "id": "s02_candid",
@@ -299,7 +356,6 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -321,7 +377,8 @@
       ],
       "text": {
         "heading": "Chuyện mình"
-      }
+      },
+      "look": "polaroid_scatter_sprocket"
     },
     {
       "id": "s03_chapter",
@@ -341,7 +398,6 @@
             }
           },
           {
-            "layout": "paper_collage",
             "photoSlots": [
               {
                 "slot": "back",
@@ -359,12 +415,12 @@
                 "quality": "good"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "paper_collage_sprocket"
           }
         ]
       },
       "effect": "layer_scene",
-      "layout": "collage_cluster_text",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -395,7 +451,6 @@
         ]
       },
       "muteFallback": {
-        "layout": "paper_collage",
         "photoSlots": [
           {
             "slot": "back",
@@ -412,8 +467,10 @@
             "orient": "any",
             "quality": "good"
           }
-        ]
-      }
+        ],
+        "look": "paper_collage_sprocket"
+      },
+      "look": "collage_cluster_text_sprocket"
     },
     {
       "id": "s04_flowers",
@@ -448,7 +505,6 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -465,7 +521,8 @@
           "Nắng của mình, là nhau.",
           "Ánh nắng đẹp nhất, là khi có nhau."
         ]
-      }
+      },
+      "look": "full_bleed_quote_sprocket"
     },
     {
       "id": "s06_family",
@@ -490,7 +547,6 @@
         ]
       },
       "effect": "layer_scene",
-      "layout": "three_photo_row",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -520,7 +576,8 @@
           "Tình yêu hôm nay có thêm lời chúc phúc của những người thương.",
           "Tình yêu hôm nay được vun đắp bằng lời chúc phúc của người thân."
         ]
-      }
+      },
+      "look": "three_photo_row_sprocket"
     },
     {
       "id": "s07_montage",
@@ -627,37 +684,7 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
-      "durationRole": "montage",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "grid",
-          "count": 6,
-          "orient": "any",
-          "quality": "good",
-          "preferVariety": true
-        }
-      ]
-    },
-    {
-      "id": "s81_signature_double_exposure",
-      "effect": "double_exposure",
-      "signature": true,
-      "durationRole": "calm",
-      "transitionRole": "default",
-      "photoSlots": [
-        {
-          "slot": "pair",
-          "count": 2,
-          "orient": "any",
-          "quality": "best"
-        }
-      ]
-    },
-    {
-      "id": "s82_memory_six",
+      "id": "s80_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -673,6 +700,36 @@
       "params": {
         "background": "#3B332B"
       }
+    },
+    {
+      "id": "s81_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_photo_strip_right",
+      "effect": "photo_strip_right",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -734,7 +791,6 @@
     {
       "id": "s09_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "frameOverlay": "assets/frames/custom-wedding-frames-20/wedding_frame_botanical_01.png",
@@ -742,7 +798,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_sprocket"
     }
   ]
 }

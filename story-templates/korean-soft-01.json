@@ -4,35 +4,75 @@
   "name": "Korean Soft",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "soft_round": {
+      "radius": 56,
+      "border": 0,
+      "shadow": true
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "soft_round"
     },
     "magazine_page_turn_plate": {
       "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
       "layout": "magazine_page_turn",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "soft_round"
     },
     "arch_trio_plate": {
       "intent": "wordless arch trio beat, wearing this recipe's own frame",
       "layout": "arch_trio",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "soft_round"
+    },
+    "text_left_photo_right_soft": {
+      "intent": "the text-left spread, wearing the recipe's soft_round frame",
+      "layout": "text_left_photo_right",
+      "frame": "soft_round"
+    },
+    "two_photo_story_soft": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's soft_round frame",
+      "layout": "two_photo_story",
+      "frame": "soft_round"
+    },
+    "full_bleed_quote_soft": {
+      "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 50,
+            "y": 820,
+            "height": 182
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.94,
+        "brightness": 0.03
+      }
+    },
+    "photo_left_text_right_soft": {
+      "intent": "the photo-left spread, wearing the recipe's soft_round frame",
+      "layout": "photo_left_text_right",
+      "frame": "soft_round"
+    },
+    "closing_names_soft": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 118,
+            "y": 410
+          },
+          "date": {
+            "sizePx": 32,
+            "y": 660
+          }
+        }
       }
     }
   },
@@ -212,7 +252,6 @@
     {
       "id": "s01_open",
       "effect": "layer_scene",
-      "layout": "text_left_photo_right",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -228,7 +267,8 @@
           "Một câu chuyện dịu dàng, bắt đầu từ hai người.",
           "Một câu chuyện nhẹ nhàng, chỉ thuộc về hai người."
         ]
-      }
+      },
+      "look": "text_left_photo_right_soft"
     },
     {
       "id": "s02_portrait",
@@ -251,7 +291,6 @@
     {
       "id": "s03_pair",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -289,12 +328,12 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "two_photo_story_soft"
     },
     {
       "id": "s04_quote",
       "effect": "layer_scene",
-      "layout": "full_bleed_quote",
       "durationRole": "calm",
       "transitionRole": "default",
       "photoSlots": [
@@ -328,7 +367,8 @@
             "text": {}
           }
         ]
-      }
+      },
+      "look": "full_bleed_quote_soft"
     },
     {
       "id": "s04b_blush_pause",
@@ -342,7 +382,6 @@
     {
       "id": "s05_story",
       "effect": "layer_scene",
-      "layout": "photo_left_text_right",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -378,7 +417,6 @@
             }
           },
           {
-            "layout": "full_bleed_quote",
             "photoSlots": [
               {
                 "slot": "bg",
@@ -387,12 +425,12 @@
                 "fit": "cover"
               }
             ],
-            "text": {}
+            "text": {},
+            "look": "full_bleed_quote_soft"
           }
         ]
       },
       "muteFallback": {
-        "layout": "full_bleed_quote",
         "photoSlots": [
           {
             "slot": "bg",
@@ -400,8 +438,10 @@
             "quality": "good",
             "fit": "cover"
           }
-        ]
-      }
+        ],
+        "look": "full_bleed_quote_soft"
+      },
+      "look": "photo_left_text_right_soft"
     },
     {
       "id": "s06_peak",
@@ -489,13 +529,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_left",
+      "effect": "film_roll_left",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -504,7 +544,7 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
+      "id": "s81_double_exposure",
       "effect": "double_exposure",
       "signature": true,
       "durationRole": "calm",
@@ -519,22 +559,19 @@
       ]
     },
     {
-      "id": "s82_memory_six",
-      "effect": "memory_wall",
+      "id": "s82_film_roll_up",
+      "effect": "film_roll_up",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "memories",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
           "preferVariety": true
         }
-      ],
-      "params": {
-        "background": "#F4ECE0"
-      }
+      ]
     },
     {
       "id": "s83_gallery_matte",
@@ -596,7 +633,6 @@
     {
       "id": "s07_closing",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
@@ -604,7 +640,8 @@
       "text": {
         "names": "{{bride}} & {{groom}}",
         "date": "{{location}} · {{date}}"
-      }
+      },
+      "look": "closing_names_soft"
     }
   ]
 }

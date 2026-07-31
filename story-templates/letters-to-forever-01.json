@@ -4,35 +4,64 @@
   "name": "Letters to Forever",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
+  "layoutPresets": {
+    "envelope_edge": {
+      "radius": 0,
+      "border": 26,
+      "borderColor": "#F3E9D9",
+      "shadow": false
+    }
+  },
   "looks": {
     "gallery_matte_plate": {
       "intent": "wordless gallery matte beat, wearing this recipe's own frame",
       "layout": "gallery_matte_hero",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "envelope_edge"
     },
     "magazine_page_turn_plate": {
       "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
       "layout": "magazine_page_turn",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
-      }
+      "frame": "envelope_edge"
     },
     "feature_plus_duo_plate": {
       "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
       "layout": "feature_plus_duo",
-      "frame": {
-        "radius": 20,
-        "border": 12,
-        "borderColor": "#FFFDFC",
-        "shadow": true
+      "frame": "envelope_edge"
+    },
+    "welcome_title_page_envelope": {
+      "intent": "the welcome title page, wearing the recipe's envelope_edge frame",
+      "layout": "welcome_title_page",
+      "frame": "envelope_edge"
+    },
+    "paper_collage_envelope": {
+      "intent": "the layered paper collage, wearing the recipe's envelope_edge frame",
+      "layout": "paper_collage",
+      "frame": "envelope_edge"
+    },
+    "two_photo_story_envelope": {
+      "intent": "the portrait-and-wide story pair, wearing the recipe's envelope_edge frame",
+      "layout": "two_photo_story",
+      "frame": "envelope_edge"
+    },
+    "polaroid_scatter_envelope": {
+      "intent": "the scattered prints, wearing the recipe's envelope_edge frame",
+      "layout": "polaroid_scatter",
+      "frame": "envelope_edge"
+    },
+    "closing_names_envelope": {
+      "intent": "the closing card, set in this recipe's own type scale",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 124,
+            "y": 402
+          },
+          "date": {
+            "sizePx": 34,
+            "y": 658
+          }
+        }
       }
     }
   },
@@ -212,7 +241,6 @@
     {
       "id": "s01_dear",
       "effect": "layer_scene",
-      "layout": "welcome_title_page",
       "durationRole": "calm",
       "transitionRole": "calm",
       "photoSlots": [
@@ -226,12 +254,12 @@
         "eyebrow": "DEAR YOU,",
         "names": "{{bride}} & {{groom}}",
         "date": "Một lá thư gửi đến ngày mai"
-      }
+      },
+      "look": "welcome_title_page_envelope"
     },
     {
       "id": "s02_first",
       "effect": "layer_scene",
-      "layout": "paper_collage",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
@@ -271,7 +299,8 @@
             }
           }
         ]
-      }
+      },
+      "look": "paper_collage_envelope"
     },
     {
       "id": "s03_pages",
@@ -317,7 +346,6 @@
     {
       "id": "s04_promise",
       "effect": "layer_scene",
-      "layout": "two_photo_story",
       "durationRole": "calm",
       "transitionRole": "memory",
       "photoSlots": [
@@ -337,7 +365,8 @@
           "Mình đã viết nên rất nhiều ngày bình thường, để hôm nay cùng ký tên vào một lời hứa.",
           "Bao ngày bình thường mình đã viết cùng nhau, để hôm nay ký tên vào một lời hứa."
         ]
-      }
+      },
+      "look": "two_photo_story_envelope"
     },
     {
       "id": "s05_vows",
@@ -360,7 +389,6 @@
     {
       "id": "s06_postscript",
       "effect": "layer_scene",
-      "layout": "polaroid_scatter",
       "durationRole": "montage",
       "transitionRole": "peak",
       "photoSlots": [
@@ -385,7 +413,8 @@
           "P.S. · Và câu chuyện vẫn tiếp tục",
           "P.S. · Chuyện của mình chưa bao giờ dừng lại"
         ]
-      }
+      },
+      "look": "polaroid_scatter_envelope"
     },
     {
       "id": "s06b_glow",
@@ -454,13 +483,13 @@
       ]
     },
     {
-      "id": "s80_gallery_six",
-      "effect": "collage_grid",
+      "id": "s80_film_roll_right",
+      "effect": "film_roll_right",
       "durationRole": "montage",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "grid",
+          "slot": "film_roll",
           "count": 6,
           "orient": "any",
           "quality": "good",
@@ -469,7 +498,7 @@
       ]
     },
     {
-      "id": "s81_signature_double_exposure",
+      "id": "s81_double_exposure",
       "effect": "double_exposure",
       "signature": true,
       "durationRole": "calm",
@@ -484,7 +513,7 @@
       ]
     },
     {
-      "id": "s82_memory_six",
+      "id": "s82_memory_wall",
       "effect": "memory_wall",
       "durationRole": "montage",
       "transitionRole": "default",
@@ -561,14 +590,14 @@
     {
       "id": "s07_close",
       "effect": "layer_scene",
-      "layout": "closing_names",
       "durationRole": "closing",
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
         "names": "Yours, always",
         "date": "{{bride}} & {{groom}} · {{date}}"
-      }
+      },
+      "look": "closing_names_envelope"
     }
   ]
 }
