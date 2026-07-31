@@ -11,15 +11,15 @@
 | Trường | Giá trị |
 |---|---|
 | Trạng thái tổng | `IN_PROGRESS` |
-| Pha hiện tại | `Pha 1 — thêm 7 primitive active` |
+| Pha hiện tại | `Pha 2B — pilot ba recipe` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `PRE-0.6` — baseline metric V2 đã chốt; **Pha 0 đóng hoàn toàn và đã commit** |
-| Bước tiếp theo | `P1.1` — thêm frame preset `circleMedallion` |
+| Bước hoàn thành gần nhất | `P2A.R2` — nghiệm thu lại Pha 2A: 4 lỗi chặn rollout đã sửa, gate chạy được trên cây nửa migrate |
+| Bước tiếp theo | `P2B pilot` — áp batch `pilot` (`--write --batch pilot`), rồi chạy `--check-plan` + targeted tests và nâng ratchet đúng ba recipe |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
 | Commit Pha 0 | `d5e8d0f` baseline snapshot → `b83d601` Pha 0 → `e43dad3` refactor |
-| Cập nhật lần cuối | `2026-07-30 19:40 +07:00 — PRE-0.6 DONE, Pha 0 đã commit` |
+| Cập nhật lần cuối | `2026-07-31 — P2A.R2 DONE` |
 
 ### Quy ước trạng thái
 
@@ -144,15 +144,24 @@
 
 | ID | Trạng thái | Công việc | Gate / bằng chứng |
 |---|---|---|---|
-| P1.1 | TODO | Thêm frame preset `circleMedallion` | Radius 260 cho slot 520x520 |
-| P1.2 | TODO | Append 7 primitive vào cuối mảng `layouts` | Tổng 32 layout; không xáo thứ tự cũ |
-| P1.3 | TODO | Validate library bằng G1–G8 | 0 error; G1–G3 và G6–G8 sạch; **không có offender G4 mới** (3 G4 cũ được grandfather, xem ghi chú dưới); G5 chỉ warning |
-| P1.4 | TODO | Chạy targeted tests | Tất cả xanh |
-| P1.5 | TODO | Nâng ratchet `catalog.distinct` | `>=56`; authored vẫn `>=48` |
-| P1.6 | TODO | Dựng timeline probe 7 scene | Mỗi primitive xuất hiện đúng một lần |
-| P1.7 | TODO | Xoá scene cache và render probe | Ghi output và kết quả review bằng mắt |
-| P1.8 | TODO | Chạy Premium dry-run sau thay đổi | Lưu `temp/premium-after.txt` |
-| P1.9 | TODO | So sánh Premium trước/sau | Không đổi scene/photo demand; không có card 4/5 |
+| P1.1 | DONE | Thêm frame preset `circleMedallion` | Radius 260, border 10, trắng, shadow; targeted 10/10 |
+| P1.2 | DONE | Append 7 primitive vào cuối mảng `layouts` | Tổng 32; tail đúng 7 ID; bucket 1/2/3 = 7/8/9 |
+| P1.3 | DONE | Validate library bằng G1–G8 | 32/32 pass, 0 error; G1–G3/G6–G8 sạch; 3 G4 + 17 G5 đều là baseline; 7 primitive mới có 0 finding |
+| P1.4 | DONE | Chạy targeted tests | Geometry/layout/template 28/28 pass |
+| P1.5 | DONE | Nâng ratchet `catalog.distinct` | Đo thực tế 56 và khóa `>=56`; authored 48; reachable maxShare/over12Count 23/7; targeted 28/28 |
+| P1.6 | DONE | Dựng timeline probe 7 scene | 7 ID đúng thứ tự, mỗi primitive đúng một lần; 3 ảnh nguồn chung; dry-run 7/7 |
+| P1.7 | DONE | Xoá scene cache và render probe | **Bằng chứng cũ lỗi thời**: probe nhiễu synthetic không thể lộ crop/chiều sâu; xem P1.7R |
+| P1.7R | DONE | Nghiệm thu lại bằng 6 ảnh cưới thật và probe đọc trực tiếp library | Bản P1.7 cũ lỗi thời; sửa 4 primitive; validator 32/32, targeted 28/28, Premium không đổi |
+| P1.8 | DONE | Chạy Premium dry-run sau thay đổi | Exit 0; STUB; 38/38 slide, 82/82 ảnh; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8` |
+| P1.9 | DONE | So sánh Premium trước/sau | Log chuẩn hoá 176/176 dòng và 38/38 scene signature giống nhau; ảnh/scene 1×0, 28×1, 9×6; 82 unique, 0 card 4/5 |
+| P1.7R | DONE | **Chạy lại gate P1.7 bằng ảnh cưới thật** (bản 22:25 dùng ảnh nhiễu nên không thể fail) | `scripts/renderPrimitiveProbe.mjs` đọc thẳng library; 6 ảnh thật; bắt 4 lỗi thiết kế, đã sửa 4 layout; validator 32/32 + lint 24/24 + targeted 28/28 + metric 56/48/23/7 không đổi + Premium 176/176 dòng giống hệt. Chi tiết: [LAYOUT-PRIMITIVES-P1-REAUDIT.md](LAYOUT-PRIMITIVES-P1-REAUDIT.md) |
+
+> ⚠️ `P1.7R` đổi toạ độ `stacked_horizon_trio`, `offset_portrait_hero`,
+> `diagonal_staircase_trio` và thêm `frame` cho `overlap_stack_duo.front`.
+> **46/69 entry trong `scripts/newPrimitiveAdoptionMap.json` đặt `layoutOverrides` lên bốn
+> layout này và được suy ra từ hình học cũ** — riêng override của `stacked_horizon_trio`
+> dựng lại đúng tỉ lệ cắt mặt vừa được sửa. Phiên sở hữu Pha 2A phải suy lại 46 override đó
+> rồi chạy lại `--check-plan`. Xem §5 của bản nghiệm thu lại.
 
 Primitive active:
 
@@ -193,14 +202,66 @@ hoặc một pha dọn dẹp riêng.
 
 | ID | Trạng thái | Công việc | Gate / bằng chứng |
 |---|---|---|---|
-| P2A.1 | TODO | Tạo adoption map machine-readable | Recipe → scene/look → primitive → override |
-| P2A.2 | TODO | Tạo `scripts/adoptNewPrimitives.mjs` | Theo khuôn `diversifyRecipeLooks.mjs` |
-| P2A.3 | TODO | Cài `--check-plan` in-memory, không ghi file | Hash/source không đổi sau lệnh |
-| P2A.4 | TODO | Report mọi occurrence của 7 key quá rộng | Gồm main/fallback/repeat variant |
-| P2A.5 | TODO | Kiểm photo demand và union text key | Không mất ảnh hoặc copy |
-| P2A.6 | TODO | Kiểm gallery-tail toàn cục | Mỗi recipe có chuỗi duy nhất |
-| P2A.7 | TODO | Kiểm mỗi primitive có >=2 host | Không có entry Pha 1b |
-| P2A.8 | TODO | Mô phỏng đồng thời sáu recipe chỉ có 3 ứng viên | Không xung đột gallery-tail |
+| P2A.1 | DONE | Tạo adoption map machine-readable | 23 recipe, 69 scene; source/target/override hợp lệ; mỗi primitive có 7–22 host |
+| P2A.2 | DONE | Tạo `scripts/adoptNewPrimitives.mjs` | Guarded batch writer; 4 unit test + in-memory 23/69 resolve sạch |
+| P2A.3 | DONE | Cài `--check-plan` in-memory, không ghi file | 23 recipe / 69 adoption; SHA-256 24 recipe không đổi |
+| P2A.4 | DONE | Report mọi occurrence của 7 key quá rộng | 7 group; 161 occurrence = 100 main + 21 fallback + 40 variant |
+| P2A.R1 | DONE | Rebase map/guard/tài liệu theo hình học P1.7R | 70 adoption; guard xanh; simulated maxShare 12 / over12 0 |
+| P2A.5 | DONE | Kiểm photo demand và union text key | 72 execution path; 1 union text key; không mất ảnh hoặc copy |
+| P2A.6 | DONE | Kiểm gallery-tail toàn cục | 24/24 chuỗi `s83 > s84 > s85` duy nhất |
+| P2A.7 | DONE | Kiểm mỗi primitive có >=2 host | 7 primitive đạt 2–22 recipe host; Pha 1b = 0 |
+| P2A.8 | DONE | Mô phỏng đồng thời sáu recipe chỉ có 3 ứng viên | 6/6 dùng đủ tail và không xung đột |
+| P2A.R2 | DONE | Nghiệm thu lại toàn bộ Pha 2A trên cây mô phỏng | 4 lỗi chặn rollout đã sửa; `--check-plan` chạy được sau khi ghi batch; ghi thử pilot → 28/28 committed test xanh → khôi phục |
+
+#### Bốn lỗi `P2A.R2` tìm ra và đã sửa
+
+Toàn bộ bằng chứng "xanh" của P2A.1–P2A.8 (`lint 24/24`, `validator 32/32`, `targeted 42/42`) được đo
+trên **cây nguồn chưa migrate**. Chạy lại đúng các gate đó trên cây **sau adoption** lộ ra bốn vấn đề:
+
+1. **`--check-plan` không idempotent.** `applyRecipePlan()` bắt buộc `scene.look === source.look`,
+   nên ngay sau khi batch đầu được ghi, gate số 1 của mọi batch còn lại throw. Đã sửa: adoption đã
+   ghi thì đi nhánh verify (đúng primitive, đúng override, không mang field lạ, slot id khớp).
+   Bằng chứng: ghi thật batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`.
+2. **Batch pilot làm đỏ một test đã commit.** `cinematic-film-01/s83_gallery_matte` resolve
+   `background {"type":"tint","color":"#D8CFC0"}` nhờ `layoutOverrides.background` của look
+   `film_gallery`; whitelist ba trường của look đích bỏ nó, nền thành `cream`, và
+   `test/template-recipes.test.mjs` → `cinematic gallery keeps portrait-safe contain crops on a light
+   matte` deepEqual đúng giá trị đó. Đã sửa: map mang background sang look đích, và content audit từ
+   nay từ chối mọi look field bị bỏ ngoài chính sách (`frame` trên primitive sở hữu frame).
+3. **14/143 slot đảo hướng do ghép request↔slot theo index**, trong đó 2 là request ghi rõ
+   `orient: "portrait"` rơi vào slot landscape (`jmii-silk-botanical-01/s11_side_by_side` →
+   `golden_column_pair.major`, `four-seasons-love-01/s03_autumn` → `diagonal_staircase_trio.mid`).
+   Guard hướng ảnh trước đó chỉ tồn tại cho `stacked_horizon_trio`. Đã sửa: guard tổng quát; hai ca
+   cứng được sửa bằng map (`major` thu còn 940px → vuông; `s03_autumn` chuyển sang
+   `circle_trio_stagger` slot vuông); 11 slot `orient: "any"` còn lại phải ký nhận
+   `accepts: ["orientation"]`.
+4. **Map tạo composition trùng xuyên recipe đầu tiên của catalogue.** `cinematic-film-01`,
+   `jmii-silk-botanical-01` và `classic-multisong-album-01` cùng khai `circle_trio_stagger` với
+   override giống hệt `{p2:{y:250}}`; vì primitive này sở hữu frame nên không recipe nào giữ được
+   frame riêng, ba scene ra cùng một `visualSignature`. Trước migration catalogue có **0** cặp dùng
+   chung composition. Không gate nào bắt: bar committed là 1/3 (đo được 8%), còn `galleryTailAudit`
+   so cả chuỗi ba scene. Đã sửa: mỗi entry một override riêng, và thêm audit giữ mức 0.
+
+**Một lỗi Pha 1 lộ ra khi chạy `npm run test:unit`.** `diagonal_staircase_trio.heading` (do P1.7R dời
+tới `1210,75 620×180`) có mép phải ở 1830, vượt lề title-safe 5% (1824) đúng 6px, làm đỏ
+`test/tier1-quality.test.mjs` → `every library text slot sits inside the 5% title-safe margin`. Nó
+không bị bắt vì `G4` của validator dùng lề **70px** (1850) còn test dùng **5% = 96px**, và P1.7R chỉ
+chạy targeted tests chứ không chạy `test:unit`. Đã sửa `width` 620 → 614; `test:unit` 375/375.
+Bài học cho các bước sau: **validator xanh không thay thế được `test:unit`**, và hai luật lề an toàn
+trong repo đang lệch nhau — đáng hợp nhất ở một pha dọn dẹp riêng.
+
+Ngoài ra `--check-plan` giờ assert mục tiêu Pha 2 trên cây mô phỏng (trước đây chỉ in report của cây
+nguồn; mục tiêu chỉ được khoá trong `test/adopt-new-primitives.test.mjs`), lint authoring-rules chạy
+trên cây mô phỏng, nhánh `--write` chạy đúng bộ gate của nhánh kiểm, và cohort sáu recipe chuyển từ
+hằng số trong script vào `map.constrainedCohort`.
+
+Một ghi chú về phạm vi, không phải lỗi: 64/70 adoption nằm ở đuôi gallery `s83/s84/s85`, chỉ 6 chạm
+story beat thật. 20 trên 23 recipe đạt sàn "≥3 scene meaningful" hoàn toàn bằng phần đuôi. Đã ghi vào
+plan §7.3.
+
+Gate P2A.5 cũng cần đọc đúng mức: trong 70 scene được adopt chỉ có **1** scene mang `scene.text` và
+**1** scene có `repeatable`; không scene nào có `muteFallback`. Con số "72 execution path, 1 union
+text key" là đúng nhưng chỉ chạm một scene, nên nó không chứng minh được gì nhiều về an toàn copy.
 
 ### Pha 2B — Pilot ba recipe
 
@@ -307,10 +368,10 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 |---|---|---|---|---|
 | Baseline sạch | `d5e8d0f` (snapshot đã commit; parent `82d59a5`) | `npm run check`: exit 0; API 74/74; unit 340/340; integration 1/1; audit 0 vulnerability | Worktree `D:\Claude\Projects\SlideshowRenderEngine-layout-primitives` | DONE |
 | Pha 0 metric/validator | `b83d601`, refactor `e43dad3` | P0A–P0C hoàn tất; validator 25/25 (0 error, 20 warning), lint 24/24, targeted 53/53, `test:unit` 352/352, full typecheck xanh | `scripts/lib/geometrySignature.mjs`; `scripts/lib/lookResolver.mjs`; `scripts/validateLayoutPrimitive.mjs`; targeted tests | DONE |
-| Pha 1 primitives | — | — | — | TODO |
-| Pha 1 visual probe | — | — | `temp/probe-primitives.json` | TODO |
-| Pha 1 Premium comparison | — | Before: 38 scene, 82/82 ảnh, 188.83s, không card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; after chưa có | IN_PROGRESS |
-| Pha 2 adoption planner | — | — | adoption map/report | TODO |
+| Pha 1 primitives | — | P1.1–P1.9 hoàn tất: library 32 layout, catalog V2 56, targeted 28/28, probe render/review và Premium comparison đều đạt | `layouts/library.json`; targeted tests; probe/Premium artefact | DONE |
+| Pha 1 visual probe | — | Render mới 7/7 scene; H.264 1920x1080, 30 fps, 36,466667 giây; review đủ 7 layout và 28 frame mở đầu/ổn định/xfade đạt | `temp/probe-primitives.json` SHA-256 `90D07EE0...F8DA2E8`; `temp/probe-primitives.mp4` SHA-256 `44D7325E...1721ED9` | DONE |
+| Pha 1 Premium comparison | — | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
+| Pha 2 adoption planner | — | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
 | Pha 2 pilot | — | — | — | TODO |
 | Pha 2 batch B1 | — | — | — | TODO |
 | Pha 2 batch B2 | — | — | — | TODO |
@@ -321,6 +382,893 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2A.R2 (nghiệm thu lại Pha 2A)
+
+- Session: Claude, theo yêu cầu người dùng đánh giá lại Pha 2 rồi sửa theo đề xuất.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Chạy lại mọi gate của Pha 2A trên cây **sau adoption** thay vì cây nguồn.
+  - Sửa những gì cản rollout; không đụng `layouts/library.json` và không ghi `story-templates/`.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `scripts/newPrimitiveAdoptionMap.json`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `layouts/library.json` — sửa 6px lề title-safe của `diagonal_staircase_trio.heading` (lỗi Pha 1).
+  - `LAYOUT-PRIMITIVES-PLAN.md` (§7.3).
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - `applyRecipePlan()` thành verify-or-apply; thêm `adoptionStatus()`.
+  - Content audit thêm hợp đồng dressing: look field bị bỏ ngoài chính sách và override
+    `background` do recipe vẽ bị bỏ đều là lỗi.
+  - Thêm `orientationAudit()`: `orient` tường minh là lỗi cứng, `any` đổi lớp hình dạng phải khai
+    `accepts: ["orientation"]`.
+  - Thêm `compositionUniquenessAudit()` giữ catalogue ở mức 0 cặp recipe dùng chung composition.
+  - Thêm `simulatedTargetAudit()`: đo `maxShare`/`over12`/meaningful **và** lint authoring-rules
+    trên cây mô phỏng; ngưỡng chuyển vào `map.targets`.
+  - Gộp gate của `--check-plan` và `--write` vào một hàm `auditWholeMap()`.
+  - Cohort sáu recipe chuyển vào `map.constrainedCohort`.
+  - Map: cinematic `s83` mang lại nền `#D8CFC0`; `jmii/s11` thu `major` còn 940px; `four-seasons/s03`
+    chuyển sang `circle_trio_stagger`; ba entry circle nhận override riêng; 7 adoption khai
+    `accepts: ["orientation"]`.
+- Lệnh đã chạy:
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - `node --test --test-timeout=60000 test/adopt-new-primitives.test.mjs`.
+  - `node --test --test-timeout=60000 test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`; `node scripts/lintStoryTemplates.mjs`.
+  - `npm run typecheck:scripts`.
+  - `npm run test:unit`.
+  - `node scripts/adoptNewPrimitives.mjs --write --batch pilot` → chạy lại `--check-plan` và bộ test
+    → `git checkout -- story-templates`.
+- Kết quả:
+  - Adoption test `21/21`; targeted `28/28`; validator `32/32` (0 error, 20 warning baseline);
+    lint `24/24`; `typecheck:scripts` exit 0.
+  - `npm run test:unit`: 374/375 ở lần chạy đầu — lỗi duy nhất là bug lề title-safe của Pha 1 nói
+    trên; sau khi sửa 6px là **375/375**.
+  - `--check-plan` trên cây nguồn: `70 pending, 0 already applied`; sau khi ghi pilot:
+    `61 pending, 9 already applied` — gate sống sót qua batch, đúng điều P2B cần.
+  - Với pilot đã ghi, `test/template-recipes.test.mjs` xanh **28/28**, gồm
+    `cinematic gallery keeps portrait-safe contain crops on a light matte` — chính test mà bản map
+    trước sẽ làm đỏ.
+  - `story-templates/` đã khôi phục sạch sau lần ghi thử.
+- Metric trước/sau:
+  - Cây nguồn không đổi: reachable vẫn `23/7`.
+  - Mô phỏng toàn map: `maxShare=12`, `over12=0`, 253 composition / 0 dùng chung, meaningful ≥3
+    (ww-full=1). Host: circle `11`, overlap `8`, portrait `22`, golden `8`, diagonal `11`, inset `7`,
+    horizon `2` — diagonal giảm 12→11 vì `four-seasons/s03` chuyển sang circle.
+- Commit: xem mục 6.
+- Quyết định hoặc sai lệch so với plan:
+  - Không khai `accepts` cho 26 lần bỏ `frame` trên primitive sở hữu frame: đó là chính sách P1.7R
+    đặt tên trong code, không phải ngoại lệ từng dòng.
+  - 11 slot `orient: "any"` đổi hình dạng được ký nhận thay vì thiết kế lại: 7 primitive đã được
+    nghiệm thu bằng ảnh thật ở P1.7R, và request `any` vốn không hứa hướng ảnh nào.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2B pilot` — `--write --batch pilot`, rồi `--check-plan`, targeted tests, nâng
+  ratchet đúng ba recipe và chỉ siết `maxShare/over12` tới số đo thực tế.
+
+### 2026-07-31 06:20 — P2A.8
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Khoá đúng cohort sáu recipe chỉ có ba ứng viên theo plan.
+  - Bắt buộc mỗi recipe áp đủ ba scene `s83/s84/s85`.
+  - Mô phỏng cả sáu đồng thời và tái sử dụng gallery-tail audit để từ chối chuỗi trùng.
+  - Nối gate vào `--check-plan`; không sửa map, library hoặc recipe.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Đủ sáu recipe; mỗi recipe có đúng ba adoption tại `s83/s84/s85`.
+  - Cohort trải trên `pilot`, `B2`, `B3`, `B5`, nên gate phải chạy toàn map thay vì từng batch.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - Thêm `constrainedCohortAudit()` khoá đúng sáu recipe trong plan.
+  - Mỗi recipe phải có chính xác adoption `s83/s84/s85`.
+  - Cả sáu recipe được lấy từ trạng thái full-map đã mô phỏng rồi kiểm đồng thời bằng
+    `galleryTailAudit()`.
+  - `--check-plan` fail khi cohort thiếu adoption/recipe hoặc có signature trùng.
+- Lệnh/kiểm tra đã chạy:
+  - Probe cohort/batch/adoption hiện tại bằng Node.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - SHA-256 24 recipe trước/sau `--check-plan`.
+  - `git diff --check`.
+- Kết quả:
+  - `Constrained cohort contract: 6/6 unique gallery-tail signature(s); each adopts s83 > s84 > s85.`
+  - Fixture bắt được một recipe thiếu tail adoption và xung đột chỉ lộ ra khi hai recipe được mô
+    phỏng đồng thời.
+  - Adoption test `14/14` pass; targeted adoption/geometry/library/template `42/42` pass.
+  - Lint `24/24` clean; `typecheck:scripts` xanh.
+  - SHA-256 `24/24` recipe không đổi (`HASH_CHANGED=0`).
+  - `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Source không đổi; cohort mô phỏng giữ `6/6` gallery-tail duy nhất.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Tái sử dụng `galleryTailAudit()` của P2A.6 và chỉ bổ sung contract về membership/adoption để
+    tránh hai định nghĩa signature khác nhau.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2B pilot` — áp batch `pilot` cho `cinematic-film-01`,
+  `jmii-silk-botanical-01`, `editorial-bold-01`, sau đó chạy `--check-plan`, nâng ratchet đúng ba
+  recipe và chỉ siết maxShare/over12 tới số đo thực tế.
+
+### 2026-07-31 06:17 — P2A.7
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Đếm số recipe host duy nhất cho từng primitive active trên toàn adoption map.
+  - Từ chối primitive active có dưới hai recipe host, target ngoài danh sách active và mọi entry
+    dùng primitive Pha 1b.
+  - Nối gate vào `--check-plan`; không sửa map, library hoặc recipe.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Phân bố host đo được: overlap `8`, inset `7`, circle `11`, diagonal `12`, golden `8`,
+    horizon `2`, portrait `22`.
+  - `offset_quad_pinwheel` và `filmstrip_band` có `0` adoption; không có target lạ.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - Thêm `primitiveHostAudit()` đếm recipe host duy nhất cho từng primitive active.
+  - Từ chối primitive active dưới hai host, target không active, giao nhau active/Pha 1b và mọi
+    adoption dùng `offset_quad_pinwheel` hoặc `filmstrip_band`.
+  - `--check-plan` fail khi contract lỗi và in distribution host đã kiểm.
+- Lệnh/kiểm tra đã chạy:
+  - Probe distribution toàn map bằng Node.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - SHA-256 24 recipe trước/sau `--check-plan`.
+  - `git diff --check`.
+- Kết quả:
+  - Host theo recipe: overlap `8`, inset `7`, circle `11`, diagonal `12`, golden `8`,
+    horizon `2`, portrait `22`; cả 7 primitive đạt sàn.
+  - `0` adoption Pha 1b và `0` target lạ.
+  - Fixture bắt được horizon tụt `2 -> 1` host và adoption lén dùng `offset_quad_pinwheel`.
+  - Adoption test `13/13` pass; targeted adoption/geometry/library/template `41/41` pass.
+  - Lint `24/24` clean; `typecheck:scripts` xanh.
+  - SHA-256 `24/24` recipe không đổi (`HASH_CHANGED=0`).
+  - `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Source không đổi; host distribution giữ `8/7/11/12/8/2/22`.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Đếm recipe host duy nhất thay vì số adoption để bám đúng yêu cầu “được ≥2 recipe dùng”.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.8` — mô phỏng đồng thời sáu recipe chỉ có ba ứng viên và khóa không xung
+  đột gallery-tail.
+
+### 2026-07-31 05:46 — P2A.6
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Áp toàn bộ adoption map in-memory rồi resolve đuôi `s83 > s84 > s85` của đủ 24 recipe.
+  - Từ chối recipe thiếu/sai thứ tự ba scene hoặc trùng chuỗi `visualSignature`.
+  - Nối gate vào `--check-plan`; không ghi `story-templates/*.json`.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Probe read-only trên trạng thái mô phỏng cho `RECIPES=24`, `DISTINCT=24`, `CLASHES=[]`.
+  - Worktree giữ thay đổi Pha 1/P2A trước đó; session này không sửa map, library hoặc recipe.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - Thêm `galleryTailAudit()` resolve đúng trạng thái mô phỏng của đủ 24 recipe.
+  - Mỗi recipe phải có đúng ba scene theo thứ tự `s83 > s84 > s85`.
+  - Chuỗi `visualSignature` của ba scene phải duy nhất trên toàn catalogue.
+  - `--check-plan` fail khi contract lỗi và in số chuỗi duy nhất đã kiểm.
+- Lệnh/kiểm tra đã chạy:
+  - Probe read-only toàn map bằng `applyRecipePlan()` + `resolveTemplate()` + `visualSignature()`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - SHA-256 24 recipe trước/sau `--check-plan`.
+  - `git diff --check`.
+- Kết quả:
+  - `Gallery-tail contract: 24/24 unique s83 > s84 > s85 signature(s).`
+  - Fixture bắt được hai recipe dùng chung một chuỗi và thứ tự sai `s84 > s83 > s85`.
+  - Adoption test `12/12` pass; targeted adoption/geometry/library/template `40/40` pass.
+  - Lint `24/24` clean; `typecheck:scripts` xanh.
+  - SHA-256 `24/24` recipe không đổi (`HASH_CHANGED=0`).
+  - `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Source không đổi; mô phỏng giữ `24/24` gallery-tail signature duy nhất.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Dùng cùng `visualSignature` với regression hiện hữu để CLI và test không định nghĩa hai chuẩn
+    gallery-tail khác nhau.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.7` — kiểm mỗi primitive active có ít nhất hai host và không có Pha 1b.
+
+### 2026-07-31 05:41 — P2A.5
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - So photo demand trước/sau trên scene chính, `muteFallback` và mọi repeatable variant.
+  - Bảo toàn union text key và từ chối đường chạy có copy không còn text slot đích.
+  - Nối gate vào `--check-plan`; không ghi bất kỳ recipe nào.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Worktree giữ các thay đổi Pha 1/P2A.1–P2A.R1 chưa commit; session này chỉ nối tiếp đúng ba
+    file trên và không ghi `story-templates/*.json`.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi:
+  - Thêm `adoptionContentAudit()` duyệt độc lập scene chính, `muteFallback` và từng
+    `repeatable.variants[n]`.
+  - Mỗi đường chạy resolve geometry thật rồi so photo demand trước/sau.
+  - Union text key authored trước/sau phải bằng nhau; mọi key sau adoption phải có text slot
+    tương ứng trong layout đã resolve.
+  - `--check-plan` fail khi content contract lỗi và in số đường chạy/text key đã kiểm.
+- Lệnh/kiểm tra đã chạy:
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - `npm run typecheck:scripts`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - SHA-256 24 recipe trước/sau `--check-plan`.
+  - `git diff --check` và `git status --short -- story-templates`.
+- Kết quả:
+  - Map thật kiểm `72` execution path của `70` adoption trên `23` recipe; photo demand không đổi.
+  - Union text contract có `1` key (`heading`) và không key nào thiếu slot sau adoption.
+  - Regression fixture bắt được đổi demand `1 -> 2`, copy thiếu slot, union text key thay đổi và
+    đường `muteFallback` drift độc lập.
+  - Adoption test `11/11` pass; targeted adoption/geometry/library/template `39/39` pass.
+  - `typecheck:scripts` xanh; SHA-256 `24/24` recipe không đổi (`HASH_CHANGED=0`).
+  - `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Không đổi source geometry; bước này chỉ thêm gate read-only cho content.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Gate kiểm cả equality của union key lẫn khả năng layout sau adoption render từng key, vì chỉ
+    so union authored sẽ không phát hiện builder âm thầm bỏ copy.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.6` — mô phỏng toàn map và kiểm chuỗi gallery-tail toàn cục vẫn duy nhất.
+
+### 2026-07-30 22:38 — P2A.R1 / gộp P1.7R
+
+- Session: Codex; nguồn nghiệm thu lại: Claude trong `LAYOUT-PRIMITIVES-P1-REAUDIT.md`.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Ghi nhận P1.7 cũ lỗi thời và gộp bằng chứng P1.7R vào tracker.
+  - Rebase adoption map khỏi hình học cũ của horizon/portrait/diagonal.
+  - Không giữ global look frame trên primitive có frame nội tại.
+  - Thu hẹp `stacked_horizon_trio` còn host có toàn bộ request landscape.
+  - Thêm guard P1.7R vào `--check-plan` và cập nhật phần Pha 2 trong plan.
+- File dự kiến thay đổi:
+  - `scripts/newPrimitiveAdoptionMap.json`.
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PLAN.md`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - P1.7R đã sửa library và thêm `scripts/renderPrimitiveProbe.mjs`; session này giữ nguyên các
+    thay đổi đó, chỉ cập nhật phần Pha 2 phụ thuộc vào chúng.
+  - 46/69 adoption hiện nhắm bốn primitive đã được P1.7R sửa; map cũ chưa an toàn để rollout.
+- File đã thay đổi:
+  - `scripts/newPrimitiveAdoptionMap.json`.
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PLAN.md`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Thay đổi Pha 2:
+  - 22 `offset_portrait_hero` giữ kích thước P1.7R `1240×900`; chỉ nudge vị trí.
+  - 12 `diagonal_staircase_trio` giữ slot `620×500`, coverage `≥44%`.
+  - `stacked_horizon_trio` thu từ 8 xuống đúng 2 host all-landscape:
+    `afterparty-pulse-01/s03_dinner` và `cinematic-vows-01/s02_anticipation`; aspect `≤4:1`,
+    coverage `≥50%`, giữ thế so le.
+  - Pilot `cinematic-film-01/s08c_breather` chuyển từ horizon sang `circle_trio_stagger` vì
+    ba request đều portrait.
+  - `circle_trio_stagger`, `overlap_stack_duo`, `inset_card_hero` không giữ global look frame,
+    nên frame nội tại không bị precedence đè mất.
+  - Thêm adoption thứ 70 cho `four-seasons-love-01/s03_autumn` cùng repeat variants để hạ group
+    `paper_collage` dự kiến từ share 13 xuống 12.
+  - Plan ghi guard P1.7R, thu hẹp host horizon và cập nhật risk R2.
+- Lệnh/kiểm tra đã chạy:
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - Mô phỏng toàn map bằng `applyRecipePlan()` + `geometryStats()`.
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`.
+  - `node scripts/lintStoryTemplates.mjs`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - SHA-256 24 recipe trước/sau check và `git diff --check`.
+- Kết quả:
+  - `--check-plan`: `Checked 70 adoption(s) across 23 recipe(s); no files written.`
+  - Guard P1.7R kiểm intrinsic frame, horizon orientation/aspect/stagger/coverage và
+    portrait/diagonal coverage; fixture stale 1020px bị từ chối.
+  - Mô phỏng sau toàn map: `catalog=121`, `authored=113`, `reachable.maxShare=12`,
+    `reachable.over12Count=0`; 23 recipe tự do đều meaningful `≥3`,
+    `white-weddings-full-01=1`.
+  - Host: circle `11`, overlap `8`, portrait `22`, golden `8`, diagonal `12`, inset `7`,
+    horizon `2`; không có primitive Pha 1b.
+  - Validator `32/32`, 0 error, 20 baseline warning; lint `24/24` clean.
+  - Targeted adoption/geometry/library/template `36/36` pass; `typecheck:scripts` xanh.
+  - SHA-256 24 recipe không đổi (`HASH_CHANGED=0`); map SHA-256
+    `463D80B8BA8ECC373A6D4621A158D09076D9BD6B53962B340A9FA1C59228C1BD`.
+  - `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau:
+  - Source hiện tại chưa đổi: reachable vẫn baseline 23/7.
+  - Mô phỏng full adoption sau rebase: maxShare `12`, over12 `0`, meaningful đạt mục tiêu.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Map tăng 69 → 70 adoption để xử lý group `paper_collage` còn share 13; vẫn đúng luật mỗi
+    recipe có ít nhất ba scene meaningful.
+  - Horizon cố ý chỉ có số host tối thiểu 2 để ưu tiên crop an toàn trên ảnh thật.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.5` — kiểm photo demand và union text key trước/sau trên main,
+  `muteFallback` và repeatable variants.
+
+### 2026-07-30 22:29 — P2A.4
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Dùng `geometryStats().reachable.groups` trên đủ 24 source recipe trước khi áp map.
+  - In bảy group có `share > 12` theo geometry key → recipe → mọi occurrence.
+  - Mỗi occurrence ghi location, source, look và layout; giữ main, `muteFallback` và repeat variant.
+  - Chưa thêm gate photo/text, gallery-tail hoặc host P2A.5–P2A.8.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Baseline đo lại có đúng bảy group, share `23/15/15/14/14/13/13`.
+  - Bảy group chứa tổng hợp đủ ba source kind: main, `muteFallback`, repeatable variant.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh/kiểm tra đã chạy:
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan` và parse report bằng regex.
+  - Tính SHA-256 24 recipe trước/sau check.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `git diff --check`.
+- Kết quả:
+  - Check mode đo `geometryStats()` trên đủ 24 source recipe trước khi áp map.
+  - Report in đúng `7` group với share `23/15/15/14/14/13/13`.
+  - Mỗi group in full geometry key, recipe và từng location/source/look/layout.
+  - Tổng `161` occurrence được giữ nguyên: `100` main, `21` `muteFallback`,
+    `40` repeatable variant.
+  - Regression test đếm số dòng occurrence bằng chính tổng `group.occurrences.length` và bắt buộc
+    report có đủ ba source kind cùng index `.repeatable.variants[n]`.
+  - SHA-256 24 recipe không đổi; check mode vẫn báo 23 recipe / 69 adoption và không ghi file.
+  - Unit adoption `6/6` pass; targeted adoption/geometry/layout/template `34/34` pass.
+  - `typecheck:scripts` xanh; `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Không đổi source; baseline reachable report là 7 group / 161 occurrence.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Report dùng source của đủ 24 recipe, không chỉ 23 recipe có adoption, để recipe ngoại lệ vẫn
+    được tính đúng vào share baseline.
+  - Chỉ group `share > 12` được in; các group khác chưa tham gia P2A.4.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.5` — so photo demand và union text key trước/sau cho main,
+  `muteFallback` và mọi repeatable variant.
+
+### 2026-07-30 22:25 — P2A.3
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Thêm `--check-plan` để áp toàn bộ adoption map in-memory và resolve 23 recipe.
+  - Cấm kết hợp `--check-plan` với `--write`; không ghi file trong check mode.
+  - Thêm regression test so nội dung toàn bộ `story-templates/*.json` trước/sau command.
+  - Chưa thêm occurrence report hoặc gate P2A.4–P2A.8.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - P2A.2 đã có hàm thuần `applyRecipePlan()` và guarded batch writer.
+  - Không file recipe nào đang thay đổi; `scripts/renderPrimitiveProbe.mjs` vẫn ngoài phạm vi.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh/kiểm tra đã chạy:
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `npm run typecheck:scripts`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan`.
+  - Tính SHA-256 riêng cho 24 file `story-templates/*.json` trước/sau `--check-plan`.
+  - `node scripts/adoptNewPrimitives.mjs --check-plan --write`.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `git diff --check` và `git status --short -- story-templates`.
+- Kết quả:
+  - `--check-plan` áp toàn bộ map bằng `applyRecipePlan()` trong bộ nhớ, resolve từng recipe và
+    báo `Checked 69 adoption(s) across 23 recipe(s); no files written.`
+  - Cả 24 SHA-256 recipe không đổi: `HASH_FILES=24`, `HASH_CHANGED=0`.
+  - Tổ hợp `--check-plan --write` bị từ chối với exit 1; check mode không nhận `--batch`.
+  - Regression test mới đọc toàn bộ recipe trước/sau subprocess và xác nhận byte-for-byte không đổi.
+  - Unit adoption `5/5` pass; targeted adoption/geometry/layout/template `33/33` pass.
+  - `typecheck:scripts` xanh; `git diff --check` sạch ngoài warning line ending có sẵn.
+- Metric trước/sau: Không có source geometry nào đổi; `--check-plan` chỉ dựng 23 recipe / 69 adoption
+  trong bộ nhớ.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Check mode luôn kiểm toàn bộ map, không nhận batch, để bằng chứng read-only không vô tình chỉ
+    bao phủ một phần rollout.
+  - Resolve error cơ bản chặn cả check và write mode; các gate chuyên biệt vẫn thuộc P2A.4–P2A.8.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.4` — thêm report đầy đủ mọi occurrence của bảy reachable geometry key
+  đang bị dùng quá rộng, gồm main, `muteFallback` và repeatable variant.
+
+### 2026-07-30 22:17 — P2A.2
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Tạo `scripts/adoptNewPrimitives.mjs` đọc map P2A.1 và áp một batch có kiểm tra source expectation.
+  - Tạo look riêng cho từng adoption, remap ID photo slot theo thứ tự và dọn look nguồn chỉ khi
+    không còn đường chạy nào tham chiếu.
+  - Chỉ cho phép ghi khi truyền rõ `--write --batch <pilot|B1|...|B5>`.
+  - Chưa cài `--check-plan`, report key rộng hoặc các gate toàn cục P2A.3–P2A.8.
+- File dự kiến thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `tsconfig.scripts.json`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Map P2A.1 parse được và có 23 recipe / 69 adoption.
+  - `scripts/renderPrimitiveProbe.mjs` là file untracked ngoài phạm vi; session này giữ nguyên.
+- File đã thay đổi:
+  - `scripts/adoptNewPrimitives.mjs`.
+  - `test/adopt-new-primitives.test.mjs`.
+  - `tsconfig.scripts.json`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh/kiểm tra đã chạy:
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs`.
+  - `npm run typecheck:scripts`.
+  - Áp cả 23 recipe / 69 adoption in-memory rồi chạy `resolveTemplate()` cho từng recipe.
+  - `node scripts/adoptNewPrimitives.mjs --batch pilot` để xác nhận thiếu `--write` bị từ chối.
+  - `node --test --test-timeout=30000 test/adopt-new-primitives.test.mjs test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `git diff --check` và `git status --short -- story-templates`.
+- Kết quả:
+  - Script đọc nguồn chuẩn P2A.1, áp đúng một batch và kiểm scene/look/layout nguồn trước khi ghi.
+  - Mỗi adoption tạo look riêng, chỉ giữ `frame`/`photoTreatment`/`motion` được map cho phép,
+    thay hoàn toàn layout override cũ và remap `photoSlots[].slot` theo ID của primitive đích.
+  - Look nguồn chỉ bị xoá khi không còn main, `muteFallback` hoặc repeatable variant tham chiếu.
+  - Toàn bộ batch được chuẩn bị trong bộ nhớ trước; chỉ ghi sau khi tất cả recipe đã hợp lệ và
+    command có đủ `--write --batch`.
+  - Unit test mới `4/4` pass; targeted geometry/layout/template + adoption `32/32` pass.
+  - `typecheck:scripts` xanh.
+  - Mô phỏng 23 recipe / 69 adoption có `0` resolve error.
+  - Invocation không có `--write` exit 1 như dự kiến; không file `story-templates/*.json` nào đổi.
+  - `git diff --check` sạch; chỉ có warning line ending trên file tracked hiện hữu.
+- Metric trước/sau: Chưa ghi adoption vào recipe; metric geometry runtime không đổi.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Thêm guard `--write --batch` để P2A.2 không thể vô tình rollout trước khi `--check-plan`
+    của P2A.3 tồn tại và xanh.
+  - Script export `applyRecipePlan()` thuần để P2A.3 tái sử dụng cùng logic khi mô phỏng in-memory.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.3` — thêm `--check-plan` áp toàn map in-memory và chứng minh hash/source
+  không đổi; chưa triển khai report/gate P2A.4–P2A.8 trong bước đó.
+
+### 2026-07-30 22:11 — P2A.1
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Tạo nguồn chuẩn machine-readable cho 23 recipe được phép migrate.
+  - Mỗi recipe chỉ rõ scene, look/layout nguồn, primitive đích, look đích và override hình học.
+  - Giữ `white-weddings-full-01` ngoài map; từ chối hai primitive Pha 1b.
+  - Chưa viết hoặc chạy chế độ áp map; phần đó thuộc `P2A.2`–`P2A.3`.
+- File dự kiến thay đổi:
+  - `scripts/newPrimitiveAdoptionMap.json`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Worktree có bốn file tracked đang thay đổi từ Pha 1; P2A.1 không ghi đè nội dung source/test đó.
+  - Candidate snapshot và ba pilot đã được đối chiếu với source recipe hiện tại.
+- File đã thay đổi:
+  - `scripts/newPrimitiveAdoptionMap.json`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh/kiểm tra đã chạy:
+  - Parse JSON và duyệt toàn bộ map bằng Node.
+  - Đối chiếu từng `sceneId`, source look và source layout với 23 recipe hiện tại.
+  - Đối chiếu photo demand của scene/source/primitive đích.
+  - Dựng look đích in-memory từ `preserveLookFields` + `layoutOverrides`, rồi chạy `validateLook()`.
+  - Kiểm đúng 23 recipe / 69 adoption, không có `white-weddings-full-01`, không có primitive Pha 1b,
+    không trùng scene/look đích trong cùng recipe và mỗi primitive có ít nhất hai host.
+  - `git diff --check`.
+- Kết quả:
+  - Map parse thành công; đúng 23 recipe và mỗi recipe có đúng ba adoption (`69` tổng cộng).
+  - Cả 69 source scene/look/layout đều khớp source hiện tại; photo demand không đổi.
+  - Cả 69 look đích qua validator, `0` error.
+  - Host theo primitive:
+    `overlap_stack_duo=8`, `inset_card_hero=7`, `circle_trio_stagger=8`,
+    `diagonal_staircase_trio=8`, `golden_column_pair=8`, `stacked_horizon_trio=8`,
+    `offset_portrait_hero=22`.
+  - Recipe ngoại lệ không có trong map; `offset_quad_pinwheel` và `filmstrip_band` chỉ nằm trong
+    danh sách cấm, không có adoption.
+  - SHA-256 map:
+    `5EA17DD192D42C049260B59D255B7FAE21255780EE5C22AA0C06BA73666A1E99`.
+  - `git diff --check` sạch; chỉ có cảnh báo line ending có sẵn trên bốn file tracked.
+  - Ở lần `git status` cuối, `scripts/renderPrimitiveProbe.mjs` xuất hiện untracked ngoài phạm vi
+    P2A.1; session này không đọc, sửa hoặc xoá file đó.
+- Metric trước/sau: Chưa áp map vào recipe; geometry metric runtime chưa đổi. Map tĩnh khóa 23/69
+  và phân bố host `8/7/8/8/8/8/22`.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Mỗi adoption tạo look đích riêng thay vì sửa look nguồn dùng chung; map ghi rõ các trường look
+    được giữ lại để script P2A.2 không vô tình mang `layoutOverrides` cũ sang primitive có slot khác.
+  - Với primitive tròn, không giữ global `frame` của look nguồn để frame recipe không đè
+    `circleMedallion`.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.2` — tạo `scripts/adoptNewPrimitives.mjs` đọc map và áp dụng có kiểm tra
+  source expectation; chưa cài `--check-plan` trong bước đó.
+
+### 2026-07-30 21:59 — P1.9
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`; trạng thái kết thúc: `DONE`.
+- Phạm vi:
+  - Đối chiếu `temp/premium-before.txt` và `temp/premium-after.txt` theo dữ liệu ổn định:
+    scene ID/thời lượng/renderer, số ảnh, duration và danh sách layout/effect.
+  - Kiểm phân bố ảnh/scene trên timeline after và xác nhận không có card 4/5 ảnh.
+  - Không sửa source; chỉ cập nhật bằng chứng và trạng thái Pha 1.
+- File dự kiến thay đổi:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Hai snapshot before/after và timeline after đều tồn tại.
+  - Worktree còn đúng bốn file tracked đã thay đổi từ Pha 1; P1.9 không ghi đè source/test.
+- File đã thay đổi:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh/kiểm tra đã chạy:
+  - Parse hai log bằng regex và so sánh từng chữ ký
+    `scene index | scene ID | duration | renderer`.
+  - Chuẩn hoá toàn log bằng cách bỏ timestamp và các dòng chỉ khác do thu stderr
+    (SQLite ExperimentalWarning và thông báo placeholder), sau đó `Compare-Object`.
+  - Chuẩn hoá và so sánh riêng tập preflight warning.
+  - Parse `projects/layout-primitives-premium-baseline/timeline/timeline.json` để đếm ảnh từng scene,
+    ảnh unique, ảnh chưa dùng, card 4/5 và phân bố effect.
+- Kết quả:
+  - Log chuẩn hoá before/after cùng `176` dòng, diff `0`.
+  - Hai snapshot cùng `38` render row; toàn bộ scene ID, duration và renderer khớp theo thứ tự,
+    diff `0`; canonical render SHA-256
+    `542E69238D4F267F6F31C5CE606D6C08D18A9A00B80BB3CC0F87DD4325F099E0`.
+  - Ba preflight warning ở hai phía giống hệt sau khi bỏ timestamp; warning diff `0`.
+  - Shape phim giữ nguyên: `38` scene, estimated final duration `188,83` giây, `82` photo refs
+    và `82` ảnh unique; `unusedPhotos=0`.
+  - Phân bố ảnh/scene khớp baseline: một scene 0 ảnh, 28 scene 1 ảnh, chín scene 6 ảnh.
+    Không có scene 4 hoặc 5 ảnh.
+  - Phân bố effect authored khớp đủ 11 nhóm baseline:
+    `layer_scene=5`, `film_roll_up=3`, `slow_zoom_in=4`, `memory_wall=3`,
+    `kenburns_tl=4`, `pan_right=4`, `collage_grid=3`, `slow_zoom_out=3`,
+    `dark_feather=3`, `portrait_blur_background=3`, `circle_focus=3`.
+  - Khác biệt hash/file-size giữa hai log chỉ đến từ timestamp và cách snapshot after thu stderr;
+    không phải khác biệt hành vi.
+  - Không cần sửa source trong P1.9.
+- Metric trước/sau: Không đổi scene count, duration, photo demand, effect distribution hoặc warning set;
+  card 4/5 vẫn bằng 0.
+- Commit: Chưa commit.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2A.1` — tạo adoption map machine-readable.
+
+### 2026-07-30 21:49 — P1.8
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`; trạng thái kết thúc: `DONE`.
+- Phạm vi:
+  - Chạy lại Premium dry-run trên project cố định `projects/layout-primitives-premium-baseline`.
+  - Giữ `--choice A --music-choice full`, provider STUB và không dùng `--resume`, giống snapshot before.
+  - Lưu stdout/stderr và kiểm kết thúc thành công của `temp/premium-after.txt`; chưa làm so sánh
+    before/after chi tiết vì phần đó thuộc P1.9.
+- File/artefact dự kiến thay đổi:
+  - `temp/premium-after.txt` (ignored).
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Project baseline và `temp/premium-before.txt` đều tồn tại; `temp/premium-after.txt` chưa tồn tại.
+  - Worktree còn đúng bốn file tracked đã thay đổi từ Pha 1; P1.8 không sửa các file source/test đó.
+- File/artefact đã thay đổi:
+  - `temp/premium-after.txt` (ignored).
+  - Các artefact analysis/timeline trong project baseline được dry-run tái sinh; không có tracked file mới.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - Xoá `VISION_API_KEY`, `OPENAI_API_KEY`, `DEEPSEEK_API_KEY` khỏi process.
+  - `npm run premium -- --project projects/layout-primitives-premium-baseline --dry-run --choice A --music-choice full`.
+  - `Get-FileHash -Algorithm SHA256 temp/premium-after.txt` và kiểm các marker kết thúc.
+- Kết quả:
+  - Exit 0; photo content, brief, story options/plan và director notes đều xác nhận provider STUB.
+  - Giữ `82/82` ảnh; timeline validation đạt ngay attempt 1/3.
+  - Dry-run load và compile đủ `38/38` slide; preflight có `82` image refs unique, một music track,
+    thời lượng ước tính `188,83` giây; xfade chia ba batch và pipeline kết thúc `SUCCESS (premium)`.
+  - Có ba advisory crop-risk ở `s01`, `s24`, `s31` và một Node SQLite ExperimentalWarning;
+    không có error hoặc validation fallback.
+  - `temp/premium-after.txt`: `31.584` byte, `208` dòng, SHA-256
+    `0A2DCB818C834D0D2836B023408626BC6D3B9514D8EE4DEAC20685D1061E1AA8`.
+  - Chưa diễn giải chênh lệch before/after trong bước này; phần đó thuộc P1.9.
+- Metric trước/sau: Chưa kết luận; P1.8 chỉ tạo snapshot after.
+- Commit: Chưa commit; artefact after bị `.gitignore` loại khỏi Git.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.9` — đối chiếu snapshot Premium trước/sau, scene/photo demand và card 4/5.
+
+### 2026-07-30 21:25 — P1.7
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`; trạng thái kết thúc: `DONE`.
+- Phạm vi:
+  - Xác nhận `temp/scene-cache` không tồn tại trước render; nếu có thì chỉ xoá đúng thư mục đó.
+  - Render thật `temp/probe-primitives.json`.
+  - Kiểm metadata/output và review bằng mắt cả bảy primitive.
+- File/artefact dự kiến thay đổi:
+  - `temp/scene-cache/` và `temp/probe-primitives.mp4` (đều ignored).
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Trạng thái hiện tại:
+  - Đã resolve target cache tuyệt đối bên trong worktree; cache hiện không tồn tại nên không có
+    dữ liệu nào cần xoá.
+  - Probe JSON tồn tại; render thật đã hoàn tất từ cache sạch.
+- File/artefact đã thay đổi:
+  - `temp/scene-cache/`: 7 clip scene mới.
+  - `temp/probe-primitives.mp4`: output nghiệm thu mới.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`: cập nhật trạng thái và bằng chứng P1.7.
+- Lệnh đã chạy:
+  - Resolve `temp/scene-cache` về đường dẫn tuyệt đối và `Test-Path` trước render.
+  - `npm run render -- --timeline temp/probe-primitives.json`.
+  - `ffprobe` kiểm codec, kích thước, fps, duration và stream; `Get-FileHash -Algorithm SHA256`.
+  - Watch probe ở mức `balanced` với 7 cue giữa cảnh, sau đó probe chính xác 28 timestamp tại
+    mở đầu, trạng thái ổn định và quanh cả sáu điểm xfade; toàn bộ frame liệt kê đã được xem.
+- Kết quả:
+  - Cache không tồn tại trước render, vì vậy không có dữ liệu cũ để xoá; renderer tạo mới đủ
+    7/7 clip scene và ghép xfade thành công, không reuse scene clip.
+  - Video H.264 `1920x1080`, `30 fps`, không audio, dài `36,466667` giây, kích thước
+    `4.669.960` byte; SHA-256
+    `44D7325EC4ADA3B7DB796040E6B3E2FE2D62C70045D851A72F57FD0511721ED9`.
+  - Review trạng thái ổn định đạt cho cả 7 primitive: overlap/rotation, inset card, ba mask tròn,
+    diagonal staircase, golden columns, ba dải ngang và portrait offset đều đúng silhouette,
+    thứ tự lớp, khoảng trắng; không clipping hoặc tràn canvas.
+  - Review 28 frame chính xác xác nhận animation vào cảnh và cả sáu xfade liên tục; frame
+    `0,05s` là nền mở đầu trước khi fade-in có chủ đích, không có khung trắng bất thường giữa cảnh.
+  - Cảnh báo crop-risk đều là advisory dự kiến từ các slot `fit:"cover"`; không có lỗi render.
+  - Không cần sửa source trong P1.7.
+- Metric trước/sau: Không thay đổi metric geometry; đây là gate render/review bằng mắt.
+- Commit: Chưa commit; video và scene cache là artefact ignored.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.8` — chạy Premium dry-run sau thay đổi và lưu `temp/premium-after.txt`.
+
+### 2026-07-30 19:59 — P1.6
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Dựng `temp/probe-primitives.json` với đúng 7 `layer_scene`.
+  - Mỗi primitive active xuất hiện đúng một lần và dùng chung một bộ ảnh nguồn.
+  - Kiểm JSON/timeline/preflight; chưa xoá cache hoặc render thật, phần đó thuộc P1.7.
+- File dự kiến thay đổi:
+  - `temp/probe-primitives.json`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- File đã thay đổi:
+  - `temp/probe-primitives.json` (artefact local trong `temp/`, bị `.gitignore` loại khỏi Git).
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - Probe Node đối chiếu slide ID, photo/text geometry với `layouts/library.json` và pool ảnh chung.
+  - `npm run render -- --timeline temp/probe-primitives.json --dry-run` (hai lần).
+  - `Get-FileHash -Algorithm SHA256 temp/probe-primitives.json`.
+  - `git diff --check -- LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - Probe có đúng 7 `layer_scene`, theo đúng thứ tự primitive active; 7 ID unique.
+  - Mỗi slide khớp photo count, slot ID, geometry, fit và rotation của primitive tương ứng.
+  - Mọi image layer lấy từ cùng pool ba ảnh `002.jpg`, `003.jpg`, `029.jpg`;
+    tổng 16 image refs và 3 ảnh unique.
+  - Dry-run cuối exit 0: timeline validation/preflight xanh, 7/7 slide được compile,
+    thời lượng ước tính 36,50 giây, không có music.
+  - Preflight chỉ có advisory crop-risk do các slot chủ đích dùng `fit:"cover"`; không có error.
+  - Lần dry-run đầu fail vì token theme trỏ tới font không có trên đĩa
+    `fonts/CormorantGaramond-Regular.ttf`; probe đổi sang font hiện có và hỗ trợ tiếng Việt
+    `fonts/PlayfairDisplay.ttf`, không sửa library.
+  - Artefact 10.482 byte; SHA-256
+    `90D07EE000E0E4BDCCE3EA1668B39EE9BAB8A8F1AE84EFE76071A07DCF8DA2E8`.
+- Metric trước/sau: Không thay đổi metric geometry; đây là artefact nghiệm thu hình ảnh.
+- Commit: Chưa commit; `temp/probe-primitives.json` là artefact ignored.
+- Quyết định hoặc sai lệch so với plan:
+  - Dùng cú pháp thực của renderer `--timeline temp/probe-primitives.json`; đối số positional
+    ghi trong plan không được `src/index.ts` đọc.
+  - P1.6 chỉ dry-run; chưa xoá cache hoặc render video thật để giữ đúng ranh giới P1.7.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.7` — xoá `temp/scene-cache`, render probe thật và review bằng mắt.
+
+### 2026-07-30 19:56 — P1.5
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Đo lại metric V2 trên library 32 layout và 24 recipe hiện tại.
+  - Nâng ratchet `catalog.distinct` tới đúng số đo thực tế; giữ các ratchet authored/reachable.
+  - Chạy lại geometry test và targeted gate liên quan.
+- File dự kiến thay đổi:
+  - `test/layout-geometry.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- File đã thay đổi:
+  - `test/layout-geometry.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - Probe Node gọi `geometryStats()` trên 32 layout và 24 recipe.
+  - `node --test --test-timeout=30000 test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `git diff --check -- test/layout-geometry.test.mjs LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - Metric đo trước khi sửa: `catalog.distinct=56`, `catalog.shared=30`,
+    `catalog.maxShare=23`, `catalog.over12Count=6`, 265 occurrence.
+  - `authored.distinct=48`, `authored.shared=30`, `authored.maxShare=23`,
+    `authored.over12Count=6`, 233 occurrence.
+  - `reachable.distinct=49`, `reachable.shared=30`, `reachable.maxShare=23`,
+    `reachable.over12Count=7`, 396 occurrence.
+  - Nâng đúng một ratchet `catalog.distinct` từ `>=49` lên `>=56`.
+  - Targeted geometry/layout/template 28/28 pass; 0 fail.
+- Metric trước/sau: Ratchet catalog 49 → 56 theo số đo thực; không thay đổi source geometry trong bước này.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Giữ nguyên `authored.distinct >=48`, `reachable.maxShare <=23` và
+    `reachable.over12Count <=7` đúng phạm vi P1.5.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.6` — dựng timeline probe 7 scene, mỗi primitive xuất hiện đúng một lần.
+
+### 2026-07-30 19:55 — P1.4
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Chạy đúng bộ targeted geometry/layout/template được quy định trong §9.1 của plan.
+  - Chỉ sửa regression trực tiếp từ P1.1–P1.3 nếu test phát hiện.
+- File dự kiến thay đổi:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+  - Source/test Pha 1 chỉ khi targeted test thất bại vì thay đổi hiện tại.
+- File đã thay đổi trong bước này:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+  - Không cần sửa source hoặc test.
+- Lệnh đã chạy:
+  - `node --test --test-timeout=30000 test/layout-geometry.test.mjs test/library.test.mjs test/template-recipes.test.mjs`.
+  - `git diff --check -- LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - 28/28 test pass; 0 fail, 0 cancelled, 0 skipped.
+  - Geometry ratchets, library invariants và template recipe contracts đều xanh.
+- Metric trước/sau: Không đổi geometry/source trong P1.4; phép đo `catalog.distinct` thuộc P1.5.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan: Không có; dùng đúng ba test file trong §9.1.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.5` — đo số thực tế rồi nâng ratchet `catalog.distinct`.
+
+### 2026-07-30 19:52 — P1.3
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Chạy validator G1–G8 trên đủ 32 layout.
+  - Đối chiếu G4 với đúng ba offender cũ và xác nhận bảy primitive mới không thêm offender.
+  - Chỉ sửa source nếu validator phát hiện lỗi trực tiếp trong bảy primitive mới.
+- File dự kiến thay đổi:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+  - `layouts/library.json` chỉ khi cần sửa lỗi validator.
+- File đã thay đổi trong bước này:
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+  - Không cần sửa `layouts/library.json` hoặc test.
+- Lệnh đã chạy:
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`.
+  - Probe Node gọi `validateLayouts()` để nhóm finding theo gate, layout và bảy ID mới.
+  - `git diff --check -- LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - Validator 32/32 pass, 0 error, 20 warning.
+  - G1–G3 và G6–G8 có 0 finding.
+  - G4 còn đúng ba offender baseline đã grandfather:
+    `three_photo_row.caption`, `two_photo_story.body`, `collage_cluster_text.body`.
+  - G5 còn 17 warning baseline; đây là advisory warning theo gate.
+  - Bảy primitive mới có 0 error và 0 warning trên mọi gate.
+- Metric trước/sau: Không thay đổi source/geometry trong P1.3; chỉ nghiệm thu trạng thái 32 layout.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan: Không có; áp dụng đúng ghi chú grandfather G4.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.4` — chạy targeted tests.
+
+### 2026-07-30 19:44 — P1.2
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Append nguyên văn 7 primitive active từ §6.2 vào cuối `layouts`.
+  - Khóa tổng 32 layout, prefix 25 ID cũ và thứ tự 7 ID mới bằng test.
+  - Chưa nghiệm thu đầy đủ G1–G8; phần đó thuộc P1.3.
+- File dự kiến thay đổi:
+  - `layouts/library.json`.
+  - `test/library.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- File đã thay đổi:
+  - `layouts/library.json`.
+  - `test/library.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - `node --test --test-timeout=30000 test/library.test.mjs` trước khi append.
+  - `node --test --test-timeout=30000 test/library.test.mjs` sau khi append.
+  - Probe Node in tổng layout, 7 ID tail và phân bố photo bucket.
+  - `git diff --check -- layouts/library.json test/library.test.mjs LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - Regression đầu tiên fail đúng vì 7 ID chưa có: 6/7 pass, 1 fail.
+  - Library có đúng 32 layout; 25 ID cũ giữ nguyên prefix và thứ tự.
+  - Bảy ID tail đúng thứ tự: `overlap_stack_duo`, `inset_card_hero`, `circle_trio_stagger`,
+    `diagonal_staircase_trio`, `golden_column_pair`, `stacked_horizon_trio`,
+    `offset_portrait_hero`.
+  - Photo bucket 1/2/3 tăng đúng từ 6/5/6 lên 7/8/9; bucket 4/6/8/9 giữ 4/1/1/1.
+  - Library tests 7/7 pass; diff check sạch.
+- Metric trước/sau: Chưa đo `catalog.distinct` ở bước này; phép đo và nâng ratchet thuộc P1.5.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - Append vào cuối duy nhất mảng `layouts`, ngay trước `montageBeats`; không append vào cuối file.
+  - Chưa dùng kết quả validator làm nghiệm thu P1.3 trong bước này.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.3` — chạy validator G1–G8 trên library 32 layout và kiểm không có G4 offender mới.
+
+### 2026-07-30 19:40 — P1.1
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS`.
+- Phạm vi:
+  - Thêm đúng preset `circleMedallion` theo §6.1 của plan.
+  - Khóa radius 260 và frame treatment bằng regression test.
+  - Chưa thêm bảy primitive; phần đó thuộc P1.2.
+- File dự kiến thay đổi:
+  - `layouts/library.json`.
+  - `test/library.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- File đã thay đổi:
+  - `layouts/library.json`.
+  - `test/library.test.mjs`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Lệnh đã chạy:
+  - `node --test --test-timeout=30000 test/library.test.mjs` trước khi thêm preset.
+  - `node --test --test-timeout=30000 test/library.test.mjs test/layout-primitive-validator.test.mjs`.
+  - `node scripts/validateLayoutPrimitive.mjs layouts/library.json`.
+  - `git diff --check -- layouts/library.json test/library.test.mjs LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả:
+  - Regression đầu tiên fail đúng vì `circleMedallion` chưa tồn tại: 5/6 pass, 1 fail.
+  - Preset mới có `radius:260`, `border:10`, `borderColor:"#FFFFFF"`, `shadow:true`.
+  - `radius 260 = 520/2`, tạo hình tròn thật cho slot 520x520 và nằm dưới cap 400.
+  - Library + validator tests 10/10 pass.
+  - Validator library giữ 25/25 pass, 0 error, 20 warning cũ; diff check sạch.
+- Metric trước/sau: Không đổi layout/geometry; chỉ thêm một named frame preset.
+- Commit: Chưa commit.
+- Quyết định hoặc sai lệch so với plan:
+  - `PRE-0.6` đã được session song song hoàn tất và commit trước khi lượt này nhận việc; không tạo bản ghi trùng.
+  - Append preset sau `softCard`; không thay thứ tự hoặc nội dung preset cũ.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P1.2` — append đúng 7 primitive active vào cuối mảng `layouts`.
 
 ### 2026-07-30 19:40 — PRE-0.6 và đóng Pha 0 vào Git
 

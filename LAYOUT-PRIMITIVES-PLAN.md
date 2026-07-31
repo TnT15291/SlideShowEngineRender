@@ -520,6 +520,11 @@ trong adoption plan; nếu không đạt thì tiếp tục để ở tài liệu
 
 Pha 1 mở trần. Pha 2 mới là chỗ con số "24 recipe chung 1 hình học" tụt xuống.
 
+> **P1.7R supersedes các toạ độ Pha 2 cũ.** Probe ảnh cưới thật đã sửa
+> `stacked_horizon_trio`, `offset_portrait_hero`, `diagonal_staircase_trio` và thêm frame nội tại
+> cho `overlap_stack_duo`. Mọi adoption/override bên dưới phải qua guard §7.2; map được rebase có
+> 70 adoption vì `four-seasons-love-01/s03_autumn` xử lý thêm group `paper_collage` còn share 13.
+
 ### 7.1 Pilot (làm trước, 3 recipe)
 
 Ba recipe pilot dưới đây lấy từ snapshot ứng viên đã quét (§7.4) — mọi dòng đều cùng photo
@@ -527,7 +532,7 @@ demand và tương thích text-slot trên toàn bộ đường chạy, nên hoá
 
 | Recipe | Scene thay | Đang dùng | Chuyển sang | Vì sao hợp |
 |---|---|---|---|---|
-| `cinematic-film-01` | `s08c_breather` | `arch_trio` (3 ảnh, không chữ) | `stacked_horizon_trio` | nhịp nghỉ không chữ, dải ngang hợp chất điện ảnh |
+| `cinematic-film-01` | `s08c_breather` | `arch_trio` (3 ảnh portrait, không chữ) | `circle_trio_stagger` | ảnh dọc hợp medallion; không dùng dải ngang cho portrait |
 | | `s84_photo_duo` | `photo_duo` (2 ảnh, không chữ) | `overlap_stack_duo` | cùng 2 ảnh → ngân sách không đổi |
 | | `s83_gallery_matte` | `gallery_matte_hero` (1 ảnh) | `offset_portrait_hero` | hạ key 23× |
 | `jmii-silk-botanical-01` | `s05_arch_gallery` | `arch_trio` (3 ảnh, không chữ) | `circle_trio_stagger` | medallion tròn hợp lụa/thực vật |
@@ -595,6 +600,20 @@ mới bằng nửa cạnh — nếu không, slot 600px đeo `circleMedallion` (r
 không phải hình tròn. Cách sạch: mỗi recipe khai preset tròn riêng trong `layoutPresets`
 (`circle_silk: {radius: 280, ...}` cho slot 560px), vừa đúng hình vừa cộng vào bản sắc riêng.
 
+#### Guard bắt buộc sau P1.7R
+
+- `circle_trio_stagger`, `overlap_stack_duo` và `inset_card_hero` sở hữu frame ở photo slot.
+  Look đích **không được** giữ global `frame`, và scene request cũng không được gắn frame riêng,
+  vì precedence `def.frame → resolvedFrame → slot.frame` sẽ xoá frame nội tại.
+- `stacked_horizon_trio` chỉ dùng cho scene mà **mọi** request có `orient: "landscape"`.
+  Override chỉ nudge vị trí, giữ aspect từng dải `≤4:1`, coverage `≥50%` và thế so le
+  (`band2` lệch phải rõ ràng, `band1/band3` gần cùng trục). Map active chỉ còn hai host:
+  `afterparty-pulse-01/s03_dinner` và `cinematic-vows-01/s02_anticipation`.
+- `offset_portrait_hero` giữ slot tối thiểu `1240×900` và coverage `≥53%`; chỉ nudge vị trí.
+  Không thu ảnh về `1020×900` vì sẽ tái tạo khoảng chết mà P1.7R vừa sửa.
+- `diagonal_staircase_trio` giữ từng slot tối thiểu `620×500` và coverage `≥44%`.
+  Nudge phải dựa trên base `x=90/650/1210`, không dùng lại toạ độ của bản 560×460.
+
 ### 7.3 Khoá adoption plan trước khi ghi file
 
 Tạo một adoption map machine-readable (recipe → scene/look → primitive → override) làm **nguồn
@@ -607,9 +626,34 @@ không ghi file, rồi fail nếu bất kỳ điều kiện nào sau đây sai:
 3. Photo demand của từng đường chạy không đổi; union text key trước/sau được bảo toàn.
 4. Chuỗi gallery-tail của mỗi recipe vẫn duy nhất.
 5. Mỗi primitive active được ≥2 recipe dùng; không có entry Pha 1b lọt vào map.
+6. Guard P1.7R ở §7.2 xanh: không frame nội tại nào bị look đè, không dải ngang nào quay lại
+   >4:1/host portrait, và coverage của portrait/diagonal không thụt lùi.
+7. **Không đường chạy nào mất phần dressing recipe tự viết.** Look field bị bỏ chỉ hợp lệ khi có
+   chính sách đặt tên (hiện chỉ có một: `frame` bị bỏ trên primitive sở hữu frame nội tại). Override
+   `background` do look nguồn vẽ phải được mang sang look đích — nó là thứ duy nhất trong
+   `layoutOverrides` đi được sang một layout khác, và mất nó thì không gate đếm ảnh/đếm text nào thấy.
+8. **Không request nào rơi vào slot sai hướng.** Request ghi rõ `orient` mà slot đích không cùng lớp
+   hình dạng là lỗi cứng. Request `orient: "any"` đổi lớp hình dạng so với slot nguồn thì phải được
+   ký nhận bằng `accepts: ["orientation"]` ngay trong adoption.
+9. **Không hai recipe nào dùng chung một composition.** Bar đã commit trong
+   `test/template-recipes.test.mjs` là 1/3, nhưng catalogue đang đứng ở 0; audit gallery-tail so cả
+   chuỗi `s83 > s84 > s85` nên một scene trùng lẻ nằm bên trong vẫn vô hình. Giữ nguyên mức 0.
+10. Mục tiêu ở (1) và (2) phải được đo trên **cây mô phỏng sau adoption**, kèm lint authoring-rules
+    trên chính cây đó. Đo trên cây nguồn chỉ nói lên trạng thái trước khi migrate.
 
 Chỉ khi dry-run này xanh mới cho phép chế độ ghi. Sau khi mỗi batch được ghi, chạy lại
-`--check-plan` trên trạng thái còn lại để phát hiện drift giữa map và source sớm.
+`--check-plan` trên trạng thái còn lại để phát hiện drift giữa map và source sớm — nghĩa là gate
+phải chạy được trên cây **nửa migrate**: adoption đã ghi thì verify lại theo map (look đích đúng
+primitive, đúng override, không mang thêm field lạ), không áp lần hai. Chế độ ghi chạy đúng bộ gate
+của chế độ kiểm, không ít hơn.
+
+**Phần đa dạng hoá rơi vào đâu.** 64 trong 70 adoption nằm ở đuôi gallery co giãn `s83/s84/s85`; chỉ
+6 chạm story beat thật (`cinematic-film-01/s08c_breather`, `jmii-silk-botanical-01/s05_arch_gallery`,
+`jmii-silk-botanical-01/s11_side_by_side`, `afterparty-pulse-01/s03_dinner`,
+`cinematic-vows-01/s02_anticipation`, `four-seasons-love-01/s03_autumn`). 20 trên 23 recipe đạt sàn
+"≥3 scene meaningful" hoàn toàn bằng phần đuôi. Đây là lựa chọn có chủ đích — đuôi là nơi hình học bị
+dùng chung nặng nhất nên hạ `maxShare` ở đó là rẻ nhất — nhưng nó có nghĩa là **thân phim gần như
+không đổi**. Muốn đổi cả thân phim thì đó là một pha riêng, không phải hệ quả tự nhiên của Pha 2.
 
 ### 7.4 Rollout 23 recipe + 1 ngoại lệ trung thành nguồn
 
@@ -633,31 +677,34 @@ Viết tắt: overlap=`overlap_stack_duo`, inset=`inset_card_hero`,
 golden=`golden_column_pair`, circle=`circle_trio_stagger`, diagonal=`diagonal_staircase_trio`,
 horizon=`stacked_horizon_trio`, portrait=`offset_portrait_hero`.
 
+Snapshot đã được đồng bộ theo P1.7R: chỉ hai host all-landscape được liệt kê trong guard §7.2
+có lựa chọn `horizon`; mọi scene 3 ảnh khác chỉ dùng `circle` hoặc `diagonal`.
+
 | Recipe | #ứng viên | Scene có thể nhận primitive nào |
 |---|---:|---|
-| `afterparty-pulse-01` | 5 | s02c_cheers_duo (2ả)→overlap/golden; s03_dinner (3ả)→circle/diagonal/horizon; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `cinematic-film-01` | 4 | s08c_breather (3ả)→circle/diagonal/horizon; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal/horizon |
-| `cinematic-vows-01` | 5 | s02_anticipation (3ả)→circle/diagonal/horizon; s02b_anticipation_detail (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `city-to-ceremony-01` | 4 | s05_ready (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `classic-luxury-01` | 4 | s55_gallery_trio (3ả)→circle/diagonal/horizon; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal/horizon |
-| `classic-multisong-album-01` | 6 | s04_photo_duo (2ả)→overlap/inset/golden; s08_paper_collage (3ả)→circle/diagonal/horizon; s16_polaroid_memories (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_arch_trio (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal/horizon |
-| `editorial-bold-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `family-roots-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `four-seasons-love-01` | 4 | s03_autumn (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `garden-botanical-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `garden-diary-01` | 5 | s02_portraits (3ả)→circle/diagonal/horizon; s55_diary_pages (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal/horizon |
-| `heritage-ceremony-01` | 5 | s02_details (3ả)→circle/diagonal; s05b_ceremony_detail (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `jmii-silk-botanical-01` | 5 | s05_arch_gallery (3ả)→circle/diagonal/horizon; s11_side_by_side (2ả)→overlap/inset/golden; s83_gallery_matte (1ả)→portrait; s84_feature_duo (2ả)→overlap/inset/golden; s85_paper_collage (3ả)→circle/diagonal/horizon |
-| `korean-soft-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `letters-to-forever-01` | 5 | s02_first (3ả)→circle/diagonal; s06_postscript (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `long-distance-love-01` | 6 | s01_places (2ả)→overlap/inset/golden; s04_miles (3ả)→circle/diagonal; s55_two_cities (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_arch_trio (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal/horizon |
-| `luminous-editorial-motion-01` | 6 | s03_fragments (3ả)→circle/diagonal; s07_visual_breath (3ả)→circle/diagonal/horizon; s12_afterglow (3ả)→circle/diagonal/horizon; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_tinted_duo (3ả)→circle/diagonal/horizon |
-| `modern-teal-01` | 4 | s02b_minimal_duo (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `playful-scrapbook-01` | 4 | s01_open (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `studio-white-prewedding-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `three-chapters-biography-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `warm-film-01` | 4 | s02_candid (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
-| `white-weddings-editorial-01` | 5 | s07_editorial_scatter (3ả)→circle/diagonal; s10_paper_story (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal/horizon |
+| `afterparty-pulse-01` | 5 | s02c_cheers_duo (2ả)→overlap/golden; s03_dinner (3ả)→circle/diagonal/horizon; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `cinematic-film-01` | 4 | s08c_breather (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal |
+| `cinematic-vows-01` | 5 | s02_anticipation (3ả)→circle/diagonal/horizon; s02b_anticipation_detail (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `city-to-ceremony-01` | 4 | s05_ready (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `classic-luxury-01` | 4 | s55_gallery_trio (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal |
+| `classic-multisong-album-01` | 6 | s04_photo_duo (2ả)→overlap/inset/golden; s08_paper_collage (3ả)→circle/diagonal; s16_polaroid_memories (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_arch_trio (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal |
+| `editorial-bold-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `family-roots-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `four-seasons-love-01` | 4 | s03_autumn (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `garden-botanical-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `garden-diary-01` | 5 | s02_portraits (3ả)→circle/diagonal; s55_diary_pages (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal |
+| `heritage-ceremony-01` | 5 | s02_details (3ả)→circle/diagonal; s05b_ceremony_detail (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `jmii-silk-botanical-01` | 5 | s05_arch_gallery (3ả)→circle/diagonal; s11_side_by_side (2ả)→overlap/inset/golden; s83_gallery_matte (1ả)→portrait; s84_feature_duo (2ả)→overlap/inset/golden; s85_paper_collage (3ả)→circle/diagonal |
+| `korean-soft-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `letters-to-forever-01` | 5 | s02_first (3ả)→circle/diagonal; s06_postscript (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `long-distance-love-01` | 6 | s01_places (2ả)→overlap/inset/golden; s04_miles (3ả)→circle/diagonal; s55_two_cities (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_arch_trio (2ả)→overlap/inset/golden; s85_feature_duo (3ả)→circle/diagonal |
+| `luminous-editorial-motion-01` | 6 | s03_fragments (3ả)→circle/diagonal; s07_visual_breath (3ả)→circle/diagonal; s12_afterglow (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_tinted_duo (3ả)→circle/diagonal |
+| `modern-teal-01` | 4 | s02b_minimal_duo (2ả)→overlap/golden; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `playful-scrapbook-01` | 4 | s01_open (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `studio-white-prewedding-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `three-chapters-biography-01` | 3 | s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `warm-film-01` | 4 | s02_candid (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
+| `white-weddings-editorial-01` | 5 | s07_editorial_scatter (3ả)→circle/diagonal; s10_paper_story (3ả)→circle/diagonal; s83_gallery_matte (1ả)→portrait; s84_photo_duo (2ả)→overlap/inset/golden; s85_arch_trio (3ả)→circle/diagonal |
 | `white-weddings-full-01` | 9 | *(không migrate — xem dưới; giữ ratchet baseline riêng)* |
 
 **Đọc bảng này ra ba kết luận bắt buộc:**
@@ -675,7 +722,8 @@ horizon=`stacked_horizon_trio`, portrait=`offset_portrait_hero`.
 trong Pha 1 và không xuất hiện trong adoption map Pha 2.
 
 Bảy primitive còn lại (`overlap`, `inset`, `golden`, `circle`, `diagonal`, `horizon`, `portrait`)
-có host thật ở mọi recipe và gánh toàn bộ mục tiêu của Pha 2.
+gánh toàn bộ mục tiêu của Pha 2. Sáu primitive đầu/cuối có host rộng; riêng `horizon` cố ý chỉ có
+hai host all-landscape để không đổi diversity lấy crop khuôn mặt.
 
 `white-weddings-full-01` — 25 scene bám sát nguồn Canva — **không nhận primitive mới**. Recipe
 này giữ ratchet riêng `≥1` scene lệch gốc (baseline hiện có), vì thêm ba hình học mới sẽ phá lời
@@ -809,7 +857,7 @@ bạn đang nghiệm thu frame cũ và sẽ kết luận sai. Đây là cái b�
 | # | Rủi ro | Xác suất | Hậu quả | Giảm thiểu |
 |---|---|---|---|---|
 | R1 | Rotor 1/2/3 ảnh đổi lựa chọn Premium ngoài dự kiến | trung bình | nhịp card không đổi nhưng layout xấu hơn | §9.2 dry-run cùng input; card 4/5 ảnh là lỗi |
-| R2 | `look.frame` của recipe đè chết frame tròn | **cao** | medallion ra hình vuông bo góc, im lặng | §3.6; Pha 2 dùng `layoutOverrides.photoSlots.*.frame` |
+| R2 | `look.frame` của recipe đè frame nội tại | **cao** | circle mất medallion; overlap/inset mất viền thẻ, im lặng | §3.6 và §7.2; look đích không giữ global frame trên ba primitive này |
 | R3 | Nghiệm thu nhầm trên `temp/scene-cache` cũ | **cao** | kết luận sai về cả pha | §9.3, xoá cache trước mọi lần render kiểm |
 | R4 | Primitive có vùng dành cho chữ bị gắn vào scene không chữ | trung bình | khung hình trông thiếu nội dung dù gate kỹ thuật xanh | primitive active ưu tiên host-semantic; probe cả trường hợp có/không copy, không dùng nếu khoảng trống mất cân bằng |
 | R5 | Phiên Claude song song ghi đè cùng file | **cao** (đã xảy ra nhiều lần) | mất việc | commit theo pha, `git status` trước mỗi pha, không để cây bẩn qua đêm |
