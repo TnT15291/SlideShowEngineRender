@@ -32,10 +32,31 @@ export const TEXT_SAFE_MARGIN = 0.05;   // title-safe margin as a fraction of ea
 export const MAX_LAYOUT_RUN = 3;        // identical effect:layout states tolerated in a row
 export const MIN_CLOSING_SECONDS = 2.5; // a closing card shorter than this reads as a glitch
 
+/**
+ * Title-safe insets in pixels, per axis.
+ *
+ * There used to be two rules. tier1QualityGate — the gate that actually blocks a customer
+ * job — measured 5% of each edge, while the library validator and the look resolver used a
+ * flat 70px. On a 1920x1080 canvas that is 96px horizontally and 54px vertically, so the
+ * flat margin was 26px too permissive across the frame and 16px too strict down it. The gap
+ * let a heading overhang the right edge by 6px through the validator and fail only later, in
+ * the test suite. One definition now, and it is the one the runtime gate enforces.
+ */
+export function textSafeInsets(canvas, fraction = TEXT_SAFE_MARGIN) {
+  const width = canvas?.width ?? 1920;
+  const height = canvas?.height ?? 1080;
+  return { x: width * fraction, y: height * fraction };
+}
+
 // --- crop / focus ----------------------------------------------------------------
 export const FOCUS_SAFE_MIN = 0.08;      // focusX/focusY outside [MIN, MAX] crops into the bleed
 export const FOCUS_SAFE_MAX = 0.92;
 export const FACE_CONTAIN_MARGIN = 0.015; // slack when testing that a face box fits the visible crop
+// A face box covering this much of an axis carries no position along it. analyzePhotos falls
+// back to the bounding box of all skin-coloured pixels when the detector finds nothing
+// (faceDetection: "skin_estimate_fallback", confidence 0.35), and on a wide warm-lit shot that
+// box is the whole frame — an unsatisfiable containment constraint rather than a real face.
+export const DEGENERATE_FACE_AXIS = 0.9;
 
 // --- audio / video ---------------------------------------------------------------
 export const AUDIO_DRIFT_MAX_SEC = 0.25; // muxed audio and video stream durations may differ by this much

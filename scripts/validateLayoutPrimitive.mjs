@@ -12,10 +12,10 @@ import {
   SCENE_PHOTO_COVERAGE_MIN_TEXTED,
   SLOT_AREA_FLOOR,
   SLOT_AREA_FLOOR_GRID,
+  textSafeInsets,
 } from "./lib/rules/thresholds.mjs";
 
 const DEFAULT_CANVAS = { width: 1920, height: 1080 };
-const DEFAULT_SAFE_MARGIN = 70;
 const isFiniteBox = (slot) => [slot?.x, slot?.y, slot?.width, slot?.height]
   .every(Number.isFinite) && slot.width > 0 && slot.height > 0;
 const intersection = (a, b) => {
@@ -58,7 +58,7 @@ function validateLayout(layout, context) {
     );
   };
   const canvas = context.canvas ?? DEFAULT_CANVAS;
-  const safeMargin = context.safeMargin ?? DEFAULT_SAFE_MARGIN;
+  const safe = textSafeInsets(canvas, context.textSafeMargin);
   const framePresets = context.framePresets ?? {};
   const canvasArea = canvas.width * canvas.height;
   const photoSlots = layout.photoSlots ?? [];
@@ -108,10 +108,11 @@ function validateLayout(layout, context) {
   // G4/G5 — safe area is advisory; type scale is intentionally warning-only.
   for (const slot of textSlots) {
     if (isFiniteBox(slot)
-      && (slot.x < safeMargin || slot.y < safeMargin
-        || slot.x + slot.width > canvas.width - safeMargin
-        || slot.y + slot.height > canvas.height - safeMargin)) {
-      add("G4", "warning", slot.id, `lies outside the ${safeMargin}px text safe margin`);
+      && (slot.x < safe.x || slot.y < safe.y
+        || slot.x + slot.width > canvas.width - safe.x
+        || slot.y + slot.height > canvas.height - safe.y)) {
+      add("G4", "warning", slot.id,
+        `lies outside the title-safe margin (${safe.x}px across, ${safe.y}px down)`);
     }
     const minimum = slot.fontRole === "body" ? 32 : 68;
     if (!Number.isFinite(slot.sizePx) || slot.sizePx < minimum) {
@@ -194,7 +195,7 @@ function validationContext(input, root = process.cwd()) {
     : JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
   return {
     canvas: input.document?.meta?.canvas ?? canonical.meta?.canvas ?? DEFAULT_CANVAS,
-    safeMargin: input.document?.meta?.safeMargin ?? canonical.meta?.safeMargin ?? DEFAULT_SAFE_MARGIN,
+    textSafeMargin: input.document?.meta?.textSafeMargin ?? canonical.meta?.textSafeMargin,
     framePresets: {
       ...(canonical.designTokens?.framePreset ?? {}),
       ...(input.document?.designTokens?.framePreset ?? {}),

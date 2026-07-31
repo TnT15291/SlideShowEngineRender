@@ -6,8 +6,8 @@
       "width": 1920,
       "height": 1080
     },
-    "safeMargin": 70,
-    "coordinateNote": "Slot x/y/width/height are pixels on 1920x1080. Slot x/y must be non-negative, and every slot—including its rendered bounding box after rotation—must stay inside the canvas. Photo slots use fit=cover to fill the frame (crop, no letterbox). Full-bleed means filling the canvas, not extending beyond it.",
+    "textSafeMargin": 0.05,
+    "coordinateNote": "Slot x/y/width/height are pixels on 1920x1080. Text slots must also sit inside the title-safe margin, textSafeMargin as a fraction of each edge (5% = 96px across, 54px down) — one rule shared by the runtime tier-1 gate, the library validator and the look resolver. Slot x/y must be non-negative, and every slot—including its rendered bounding box after rotation—must stay inside the canvas. Photo slots use fit=cover to fill the frame (crop, no letterbox). Full-bleed means filling the canvas, not extending beyond it.",
     "layoutRules": "textRequired:true marks layouts whose composition NEEDS copy — a dedicated text region balances the photos, so blank text leaves half the frame empty. Template rule (scripts/lib/rules/templateRules.mjs): a body scene on such a layout must keep non-empty text in every repeat variant and declare a muteFallback layout of equal photo demand. Photo-slot floors: <6 slots => each slot >=8% of canvas; >=6 slots (grid) => >=5%; per-scene photo coverage >=35% unless the background is a full-bleed photo or the layout is textRequired (>=25%)."
   },
   "designTokens": {
@@ -581,27 +581,27 @@
           "suggestedAnimation": "slide_up",
           "role": "tall centre"
         },
-      {
-        "id": "right",
-        "x": 1262,
-        "y": 384,
-        "width": 551,
-        "height": 460,
-        "fit": "cover",
-        "suggestedAnimation": "slide_left"
-      }
+        {
+          "id": "right",
+          "x": 1262,
+          "y": 384,
+          "width": 551,
+          "height": 460,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
       ],
       "textSlots": [
         {
           "id": "heading",
-        "role": "heading",
-        "x": 96,
-        "y": 91,
-        "width": 600,
-        "height": 160,
-        "align": "left",
-        "fontRole": "heading",
-        "sizePx": 64
+          "role": "heading",
+          "x": 96,
+          "y": 91,
+          "width": 600,
+          "height": 160,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 64
         },
         {
           "id": "caption",
@@ -977,25 +977,25 @@
         "type": "cream"
       },
       "photoSlots": [
-      {
-        "id": "page_left",
-        "x": 70,
-        "y": 300,
-        "width": 760,
-        "height": 690,
-        "fit": "cover",
-        "rotation": -1,
-        "suggestedAnimation": "slide_right"
+        {
+          "id": "page_left",
+          "x": 70,
+          "y": 300,
+          "width": 760,
+          "height": 690,
+          "fit": "cover",
+          "rotation": -1,
+          "suggestedAnimation": "slide_right"
         },
         {
-        "id": "page_right",
-        "x": 920,
-        "y": 70,
-        "width": 930,
-        "height": 770,
-        "fit": "cover",
-        "rotation": 1,
-        "suggestedAnimation": "slide_left"
+          "id": "page_right",
+          "x": 920,
+          "y": 70,
+          "width": 930,
+          "height": 770,
+          "fit": "cover",
+          "rotation": 1,
+          "suggestedAnimation": "slide_left"
         }
       ],
       "panels": [

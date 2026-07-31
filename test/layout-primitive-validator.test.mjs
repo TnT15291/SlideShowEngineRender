@@ -15,7 +15,9 @@ const run = (input) => spawnSync(process.execPath, [script, input], {
 
 const context = {
   canvas: { width: 100, height: 100 },
-  safeMargin: 10,
+  // A fraction of each edge now, not a flat pixel count — 10% of this 100x100 fixture is the
+  // 10px the gate fixture was written against.
+  textSafeMargin: 0.1,
   framePresets: { card: { radius: 8 } },
 };
 const reportFor = ({ photo, text, panels } = {}) => validateLayouts([{

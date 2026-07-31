@@ -25,6 +25,7 @@
 //   I4  A scene with no look resolves to the library layout unchanged — recipes that
 //       have not migrated render byte-for-byte as before.
 import { hashSeed } from "./copyVariants.mjs";
+import { textSafeInsets } from "./rules/thresholds.mjs";
 
 /** Slot fields a look may override. `id` is absent on purpose (I1). */
 const PHOTO_SLOT_OVERRIDABLE = new Set([
@@ -248,7 +249,7 @@ export function resolveTemplate(template, { library }) {
 export function validateLook(lookId, look, { template, library }) {
   const out = [];
   const canvas = library?.meta?.canvas || { width: 1920, height: 1080 };
-  const safe = library?.meta?.safeMargin ?? 70;
+  const safe = textSafeInsets(canvas, library?.meta?.textSafeMargin);
 
   if (!look?.layout) {
     out.push(finding("look_overrides", lookId, "look has no layout"));
@@ -315,10 +316,11 @@ export function validateLook(lookId, look, { template, library }) {
   // Text has no such licence: a heading cropped by the frame edge is never intended.
   for (const slot of resolved.textSlots || []) {
     if (!overrides.textSlots?.[slot.id]) continue;
-    if (slot.x < safe || slot.y < safe
-      || slot.x + slot.width > canvas.width - safe || slot.y + slot.height > canvas.height - safe) {
+    if (slot.x < safe.x || slot.y < safe.y
+      || slot.x + slot.width > canvas.width - safe.x || slot.y + slot.height > canvas.height - safe.y) {
       out.push(finding("look_overrides", lookId,
-        `text slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height}, outside the ${safe}px safe margin`)); // V4
+        `text slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height}, outside the title-safe margin `
+        + `(${safe.x}px across, ${safe.y}px down)`)); // V4
     }
   }
 
