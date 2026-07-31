@@ -10,11 +10,11 @@
 
 | Trường | Giá trị |
 |---|---|
-| Trạng thái tổng | `IN_PROGRESS` |
-| Pha hiện tại | `Pha 2D — nghiệm thu và tài liệu` |
+| Trạng thái tổng | `READY_TO_MERGE` |
+| Pha hiện tại | `Xong Pha 0–2D; chờ merge` |
 | Bước đang thực hiện | Không có |
 | Bước hoàn thành gần nhất | `P2D` — nghiệm thu cuối: 8/8 bước xanh; `npm run check` exit 0 |
-| Bước tiếp theo | Merge `agent/layout-primitives` về nhánh đích. **Chưa làm được ngay**: cây chính có 179 file chưa commit của phiên song song — xem nhật ký P2D |
+| Bước tiếp theo | **Chỉ còn một lệnh**: khi cây chính sạch, `git merge agent/layout-primitives` (fast-forward, 21+2 commit). Đang chờ phiên song song commit 179 file của họ — xem nhật ký Merge |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,7 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — P2D DONE, chờ merge` |
+| Cập nhật lần cuối | `2026-07-31 — P2D DONE + fonts committed; chờ cây chính sạch để merge` |
 
 ### Quy ước trạng thái
 
@@ -429,6 +429,32 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — Merge: đã sẵn sàng, đang bị chặn bởi cây chính
+
+- Session: Claude. Người dùng chọn "dừng, chờ phiên kia commit" và "commit 6 font".
+- **Font đã commit** (`012e831`): 6 file `.ttf` mà `layouts/library.json` tham chiếu nhưng git
+  chưa từng track. Sau commit này: referenced `18` / tracked `18`, không còn file nào thiếu.
+  Người clone mới không còn gặp `font not found` trên 22/24 recipe nữa.
+- **Merge chưa chạy, và đó là quyết định có chủ đích.** `agent/layout-primitives` là hậu duệ
+  thẳng của `82d59a5` — tức đúng HEAD hiện tại của `agent/refactor-engine-and-add-momo` — nên
+  merge là **fast-forward**, không có xung đột nội dung ở mức commit.
+  Vướng duy nhất nằm ở **cây làm việc**: thư mục chính đang giữ **179 file chưa commit** của một
+  phiên Claude khác, trong đó **109 file trùng** với những file nhánh này sửa, gồm
+  `layouts/library.json` (+1094/−168 so với HEAD của nó), cả **24** story-template, và
+  `test/template-recipes.test.mjs` (+269/−1). Git sẽ từ chối fast-forward để khỏi ghi đè, và ép
+  merge sẽ xoá mất phần việc đang dở đó.
+- **Điều kiện gỡ chặn**: phiên song song commit hoặc stash 179 file kia. Sau đó merge là đúng một
+  lệnh, chạy từ thư mục chính:
+
+  ```powershell
+  git merge agent/layout-primitives
+  ```
+
+  Rồi dọn worktree nếu muốn: `git worktree remove ../SlideshowRenderEngine-layout-primitives`.
+- Cần biết trước khi merge: hai bên đã sửa nặng cùng một tập file. Fast-forward nghĩa là **bản của
+  nhánh này thắng** trên 109 file đó. Nếu phần việc chưa commit kia cũng sửa `layouts/library.json`
+  và các story-template một cách có chủ đích thì phải hoà tay, không thể fast-forward mù.
 
 ### 2026-07-31 — P2D nghiệm thu cuối
 
