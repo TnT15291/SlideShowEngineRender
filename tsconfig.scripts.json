@@ -6,11 +6,13 @@
     "strict": false
   },
   "include": [
+    "scripts/adoptNewPrimitives.mjs",
     "scripts/lib/colorNormalizer.mjs",
     "scripts/lib/diversityPlanner.mjs",
     "scripts/lib/feedbackLedger.mjs",
     "scripts/lib/geometrySignature.mjs",
     "scripts/validateLayoutPrimitive.mjs",
+    "scripts/renderPrimitiveProbe.mjs",
     "scripts/lib/motionPlanner.mjs",
     "scripts/lib/musicAnalysis.mjs",
     "scripts/lib/musicRetime.mjs",

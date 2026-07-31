@@ -287,6 +287,12 @@
         "border": 8,
         "borderColor": "#FFFFFF",
         "shadow": true
+      },
+      "circleMedallion": {
+        "radius": 260,
+        "border": 10,
+        "borderColor": "#FFFFFF",
+        "shadow": true
       }
     },
     "textWrap": {
@@ -1960,6 +1966,331 @@
       "durationRange": [
         4,
         5.5
+      ]
+    },
+    {
+      "id": "overlap_stack_duo",
+      "kind": "layer_scene",
+      "intent": "Ảnh lớn phía sau, ảnh nhỏ nghiêng đè lên góc dưới phải — chiều sâu, không phải lưới.",
+      "bestFor": "khoảnh khắc có lớp lang: hậu trường + chân dung, trước/sau",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "back",
+          "x": 180,
+          "y": 110,
+          "width": 900,
+          "height": 780,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "front",
+          "x": 880,
+          "y": 430,
+          "width": 620,
+          "height": 560,
+          "fit": "cover",
+          "rotation": -3,
+          "frame": {
+            "border": 14,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "suggestedAnimation": "slide_up"
+        }
+      ],
+      "textSlots": [
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 1160,
+          "y": 140,
+          "width": 640,
+          "height": 200,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 72
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6
+      ]
+    },
+    {
+      "id": "inset_card_hero",
+      "kind": "layer_scene",
+      "intent": "Ảnh full-bleed làm nền, một card nhỏ chèn góc dưới phải như ảnh ghim.",
+      "bestFor": "cảnh chính + chi tiết phụ (nhẫn, hoa, thiệp)",
+      "background": {
+        "type": "photo_full_bleed",
+        "slot": "bg"
+      },
+      "photoSlots": [
+        {
+          "id": "bg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover"
+        },
+        {
+          "id": "inset",
+          "x": 1180,
+          "y": 620,
+          "width": 560,
+          "height": 380,
+          "fit": "cover",
+          "frame": {
+            "border": 12,
+            "borderColor": "#FFFFFF",
+            "shadow": true
+          },
+          "suggestedAnimation": "slide_up"
+        }
+      ],
+      "durationRange": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "circle_trio_stagger",
+      "kind": "layer_scene",
+      "intent": "Ba medallion tròn lệch tầng trên nền cream, heading dưới chân.",
+      "bestFor": "chân dung gia đình, ba khoảnh khắc song song",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "p1",
+          "x": 120,
+          "y": 90,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "frame": "circleMedallion",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "p2",
+          "x": 700,
+          "y": 280,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "frame": "circleMedallion",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "p3",
+          "x": 1280,
+          "y": 90,
+          "width": 520,
+          "height": 520,
+          "fit": "cover",
+          "frame": "circleMedallion",
+          "suggestedAnimation": "slide_down"
+        }
+      ],
+      "textSlots": [
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 96,
+          "y": 850,
+          "width": 1728,
+          "height": 150,
+          "align": "center",
+          "fontRole": "heading",
+          "sizePx": 72
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6
+      ]
+    },
+    {
+      "id": "diagonal_staircase_trio",
+      "kind": "layer_scene",
+      "intent": "Ba ảnh tụt chéo từ trên trái xuống dưới phải, chữ nằm ở khoảng trống góc trên phải.",
+      "bestFor": "hành trình, tiến triển thời gian",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "top",
+          "x": 90,
+          "y": 70,
+          "width": 620,
+          "height": 500,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "mid",
+          "x": 650,
+          "y": 290,
+          "width": 620,
+          "height": 500,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "low",
+          "x": 1210,
+          "y": 510,
+          "width": 620,
+          "height": 500,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
+      ],
+      "textSlots": [
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 1210,
+          "y": 75,
+          "width": 614,
+          "height": 180,
+          "align": "right",
+          "fontRole": "heading",
+          "sizePx": 68
+        }
+      ],
+      "durationRange": [
+        5,
+        6.5
+      ]
+    },
+    {
+      "id": "golden_column_pair",
+      "kind": "layer_scene",
+      "intent": "Một ảnh lớn chiếm 2/3 trái, một ảnh cao hẹp bên phải, chữ dưới cột hẹp.",
+      "bestFor": "cảnh chính + chân dung phụ, bố cục tạp chí",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "major",
+          "x": 110,
+          "y": 100,
+          "width": 1050,
+          "height": 880,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "minor",
+          "x": 1210,
+          "y": 250,
+          "width": 490,
+          "height": 580,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        }
+      ],
+      "textSlots": [
+        {
+          "id": "heading",
+          "role": "heading",
+          "x": 1210,
+          "y": 870,
+          "width": 600,
+          "height": 120,
+          "align": "left",
+          "fontRole": "heading",
+          "sizePx": 68
+        }
+      ],
+      "durationRange": [
+        5,
+        6.5
+      ]
+    },
+    {
+      "id": "stacked_horizon_trio",
+      "kind": "layer_scene",
+      "intent": "Ba dải ngang so le — ba đường chân trời lệch nhau, không chữ.",
+      "bestFor": "phong cảnh, chuyển chương, nhịp thở",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "band1",
+          "x": 180,
+          "y": 60,
+          "width": 1180,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        },
+        {
+          "id": "band2",
+          "x": 560,
+          "y": 390,
+          "width": 1180,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "slide_left"
+        },
+        {
+          "id": "band3",
+          "x": 180,
+          "y": 720,
+          "width": 1180,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "slide_right"
+        }
+      ],
+      "durationRange": [
+        4,
+        5.5
+      ]
+    },
+    {
+      "id": "offset_portrait_hero",
+      "kind": "layer_scene",
+      "intent": "Một ảnh lớn lệch trái, cân bằng bằng một đường accent dọc ôm sát lề phải — không giả định có chữ.",
+      "bestFor": "chân dung đơn, khoảnh khắc lặng không lời",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "hero",
+          "x": 150,
+          "y": 90,
+          "width": 1240,
+          "height": 900,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
+      ],
+      "panels": [
+        {
+          "x": 1700,
+          "y": 90,
+          "width": 14,
+          "height": 900,
+          "color": "theme.accent",
+          "opacity": 0.55
+        }
+      ],
+      "durationRange": [
+        4.5,
+        6
       ]
     }
   ],

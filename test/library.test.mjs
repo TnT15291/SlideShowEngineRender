@@ -64,6 +64,56 @@ test("coordinate metadata documents the same hard canvas boundary as validation"
   assert.doesNotMatch(note, /negative x\/y intentionally/i);
 });
 
+test("circleMedallion is a true circle frame for a 520x520 slot", () => {
+  assert.deepEqual(library.designTokens?.framePreset?.circleMedallion, {
+    radius: 260,
+    border: 10,
+    borderColor: "#FFFFFF",
+    shadow: true,
+  });
+});
+
+test("seven active primitives are appended without reordering the original layouts", () => {
+  const originalIds = [
+    "hero_title_card",
+    "text_left_photo_right",
+    "photo_left_text_right",
+    "three_photo_row",
+    "two_photo_story",
+    "collage_cluster_text",
+    "full_bleed_quote",
+    "polaroid_scatter",
+    "closing_names",
+    "paper_collage",
+    "magazine_page_turn",
+    "masonry_grid_wall",
+    "duo_tinted_spread",
+    "welcome_title_page",
+    "invitation_row",
+    "journey_duo",
+    "polaroid_feature",
+    "quad_grid_caption",
+    "arch_trio",
+    "feature_plus_duo",
+    "save_date_card",
+    "photo_grid_6",
+    "photo_network_hero",
+    "gallery_matte_hero",
+    "photo_duo",
+  ];
+  const activeIds = [
+    "overlap_stack_duo",
+    "inset_card_hero",
+    "circle_trio_stagger",
+    "diagonal_staircase_trio",
+    "golden_column_pair",
+    "stacked_horizon_trio",
+    "offset_portrait_hero",
+  ];
+  assert.deepEqual(library.layouts.map((layout) => layout.id), [...originalIds, ...activeIds]);
+  assert.equal(library.layouts.length, 32);
+});
+
 test("every layout declares the slot ids a recipe is allowed to fill", () => {
   for (const layout of library.layouts ?? []) {
     for (const slot of layout.textSlots ?? []) {

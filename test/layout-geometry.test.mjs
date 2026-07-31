@@ -41,7 +41,7 @@ test("meaningful custom geometry does not regress per recipe", () => {
 });
 
 test("catalog, authored, and reachable geometry ratchets do not regress", () => {
-  assert.ok(stats.catalog.distinct >= 49, `catalog distinct fell to ${stats.catalog.distinct}`);
+  assert.ok(stats.catalog.distinct >= 56, `catalog distinct fell to ${stats.catalog.distinct}`);
   assert.ok(stats.authored.distinct >= 48, `authored distinct fell to ${stats.authored.distinct}`);
   assert.ok(stats.reachable.maxShare <= 23, `reachable maxShare rose to ${stats.reachable.maxShare}`);
   assert.ok(
