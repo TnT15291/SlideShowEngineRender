@@ -1,0 +1,4666 @@
+{
+  "baselineCommit": "6538338d4393423cb6e1a92b53958cc2f5867817",
+  "note": "story-templates/<id>.json as of the last commit before any Phase 2 batch was written. Frozen so the planner-audit fixtures keep a pending source to mutate once the rollout has migrated the live files.",
+  "recipes": {
+    "cinematic-film-01": {
+      "id": "cinematic-film-01",
+      "version": 1,
+      "name": "Cinematic Film",
+      "tier": "smart_lite",
+      "libraryTheme": "dark_film",
+      "layoutPresets": {
+        "reel_hairline": {
+          "radius": 0,
+          "border": 3,
+          "borderColor": "#8E8B84",
+          "shadow": true
+        }
+      },
+      "looks": {
+        "title_plate": {
+          "intent": "the title card, drained to near-monochrome so it is not another quote beat",
+          "layout": "full_bleed_quote",
+          "photoTreatment": {
+            "saturation": 0.5
+          }
+        },
+        "film_gallery": {
+          "intent": "a portrait-safe photograph on a luminous warm matte, cropped to the theme's own 2.39 frame",
+          "layout": "gallery_matte_hero",
+          "layoutOverrides": {
+            "background": {
+              "type": "tint",
+              "color": "#D8CFC0"
+            },
+            "photoSlots": {
+              "hero": {
+                "y": 239,
+                "height": 602
+              }
+            }
+          }
+        },
+        "feature_trio": {
+          "intent": "one hero with two stacked beside it — what this beat's id always claimed",
+          "layout": "feature_plus_duo",
+          "frame": "reel_hairline"
+        },
+        "collage_cluster_text_reel": {
+          "intent": "the photo cluster beside its paragraph, wearing the recipe's reel_hairline frame",
+          "layout": "collage_cluster_text",
+          "frame": "reel_hairline"
+        },
+        "paper_collage_reel": {
+          "intent": "the layered paper collage, wearing the recipe's reel_hairline frame",
+          "layout": "paper_collage",
+          "frame": "reel_hairline"
+        },
+        "full_bleed_quote_reel": {
+          "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+          "layout": "full_bleed_quote",
+          "layoutOverrides": {
+            "textSlots": {
+              "quote": {
+                "x": 360,
+                "width": 1200,
+                "y": 800,
+                "height": 200,
+                "sizePx": 46
+              }
+            }
+          },
+          "photoTreatment": {
+            "saturation": 0.82,
+            "contrast": 1.1
+          }
+        },
+        "two_photo_story_reel": {
+          "intent": "the portrait-and-wide story pair, wearing the recipe's reel_hairline frame",
+          "layout": "two_photo_story",
+          "frame": "reel_hairline"
+        },
+        "journey_duo_reel": {
+          "intent": "the journey pair, wearing the recipe's reel_hairline frame",
+          "layout": "journey_duo",
+          "frame": "reel_hairline"
+        },
+        "photo_duo_reel": {
+          "intent": "the bare photo pair, wearing the recipe's reel_hairline frame",
+          "layout": "photo_duo",
+          "frame": "reel_hairline"
+        },
+        "arch_trio_reel": {
+          "intent": "the arched triptych, wearing the recipe's reel_hairline frame",
+          "layout": "arch_trio",
+          "frame": "reel_hairline"
+        },
+        "closing_names_reel": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 108,
+                "y": 430
+              },
+              "date": {
+                "sizePx": 32,
+                "y": 660
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "silhouette",
+          "recognition",
+          "closeness",
+          "tension",
+          "belonging",
+          "vow",
+          "stillness",
+          "forever"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "fade_slow",
+          "dissolve",
+          "smooth_left",
+          "none",
+          "blur",
+          "distance"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 2,
+          "peak": 1
+        }
+      },
+      "source": {
+        "origin": "original",
+        "notes": "Moody cinematic documentary / fashion-film look (2026 trend: editorial pacing, intentional color grade, the line between wedding video and fashion film fading). Letterbox + grain + dark scenes. Original recipe."
+      },
+      "intro": {
+        "summary": "Phong cách phim điện ảnh u tịch, tông tối, letterbox và hạt phim — như một bộ phim ngắn hơn là video cưới thông thường.",
+        "photos": "Hợp ảnh có ánh sáng kịch tính, tông trầm, ảnh phóng sự chân thật cả ngày cưới; cần lượng ảnh khá lớn (35–70) để giữ nhịp chậm mà vẫn đủ chất liệu.",
+        "story": "Kể hành trình tình yêu đầy cảm xúc — gặp gỡ, gắn kết, gia đình, đến cao trào — theo nhịp phim tài liệu chậm rãi, sâu lắng.",
+        "music": "Hợp nhạc điện ảnh, giao hưởng nhẹ, cảm xúc và chậm — năng lượng thấp, để hình ảnh dẫn dắt."
+      },
+      "fit": {
+        "bestFor": [
+          "cinematic",
+          "moody",
+          "wedding_day",
+          "couple_journey"
+        ],
+        "minPhotos": 35,
+        "idealPhotos": 70
+      },
+      "musicProfile": {
+        "moods": [
+          "cinematic",
+          "emotional",
+          "slow"
+        ],
+        "energy": "low"
+      },
+      "pacingVariants": [
+        {
+          "id": "restrained",
+          "maxEnergy": 0.38,
+          "durationMultiplier": 1.12
+        },
+        {
+          "id": "cinematic",
+          "maxEnergy": 0.68,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "trailer",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.86
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "meetingPlace",
+          "yearsTogether",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 5200,
+          "saturation": 0.92,
+          "contrast": 1.08,
+          "grain": 6,
+          "letterbox": 2.39,
+          "vignette": true,
+          "glow": 0.06,
+          "lut": "assets/luts/moody_earth_01.cube"
+        },
+        "audio": {
+          "fade_in": 2,
+          "fade_out": 3.5,
+          "crossfade": 0
+        },
+        "overlays": [
+          {
+            "path": "overlays/particles.mp4",
+            "position": "fullscreen",
+            "opacity": 0.18,
+            "blend": "screen",
+            "start": 0
+          }
+        ],
+        "fonts": {
+          "title": "fonts/AlexBrush-Regular.ttf",
+          "heading": "fonts/YesevaOne-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#101010",
+          "ink": "#EDE6D8",
+          "brown": "#EDE6D8",
+          "white": "#EDE6D8"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 6.5,
+          "calmSceneSec": 8,
+          "buildSceneSec": 5,
+          "montageSec": 13,
+          "closingSec": 9
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "fade_slow",
+              "duration": 1
+            },
+            {
+              "type": "blur",
+              "duration": 0.9
+            },
+            {
+              "type": "distance",
+              "duration": 1
+            }
+          ],
+          "calm": {
+            "type": "fade_slow",
+            "duration": 1.1
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.8
+          },
+          "peak": {
+            "type": "smooth_left",
+            "duration": 0.5
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore",
+            "skinFrac"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 45
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_cold_open",
+          "effect": "dark_feather",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best",
+              "preferHeroScore": true
+            }
+          ]
+        },
+        {
+          "id": "s02_title",
+          "effect": "layer_scene",
+          "look": "title_plate",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_in"
+            }
+          ],
+          "text": {
+            "quote": "{{bride}} & {{groom}}"
+          }
+        },
+        {
+          "id": "s70_hero_filmstrip",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "match_cut_windows",
+          "signature": true,
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 3,
+              "orient": "landscape",
+              "quality": "best",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s71_signature",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "light_rays",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s03_double_exposure",
+          "effect": "double_exposure",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "pair",
+              "count": 2,
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s04_memory_wall",
+          "repeatable": {
+            "variants": [
+              {
+                "captionPattern": "Ký ức xếp cạnh nhau, thành hình bóng hai người."
+              },
+              {
+                "captionPattern": ""
+              }
+            ]
+          },
+          "effect": "memory_wall",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "captionPattern": [
+            "Những ngày bình thường, giữ lại thành ký ức.",
+            "Không cần dịp gì đặc biệt, chỉ cần có nhau."
+          ],
+          "photoSlots": [
+            {
+              "slot": "memories",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "allowMixedOrientation": true
+            }
+          ],
+          "params": {
+            "background": "#2B2B32"
+          }
+        },
+        {
+          "id": "s04b_cluster",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "tl",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "bl",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Từng mảnh ghép",
+              "Những mảnh ghép nhỏ"
+            ],
+            "body": [
+              "Từng khoảnh khắc nhỏ, gộp lại thành yêu thương.",
+              "Gom từng điều nhỏ bé, thành một tình yêu lớn."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "back",
+                "orient": "any",
+                "quality": "good"
+              },
+              {
+                "slot": "centre",
+                "orient": "portrait",
+                "quality": "best"
+              },
+              {
+                "slot": "front",
+                "orient": "any",
+                "quality": "good"
+              }
+            ],
+            "look": "paper_collage_reel"
+          },
+          "look": "collage_cluster_text_reel"
+        },
+        {
+          "id": "s05_breath",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "quote": "Có những khoảnh khắc, im lặng là đủ."
+                }
+              },
+              {
+                "text": {
+                  "quote": "Ánh sáng nào rồi cũng tìm về phía hai người."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_out"
+            }
+          ],
+          "text": {
+            "quote": [
+              "Yêu là chọn nhau, mỗi ngày.",
+              "Không phải một khoảnh khắc, mà là một lựa chọn mỗi ngày."
+            ]
+          },
+          "look": "full_bleed_quote_reel"
+        },
+        {
+          "id": "s06_duo",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "body": "Hai thế giới, từ đây là một câu chuyện."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "portrait",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "body": "Có những khoảnh khắc chỉ cần nhìn nhau là đủ hiểu."
+          },
+          "look": "two_photo_story_reel"
+        },
+        {
+          "id": "s06b_journey",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "best"
+            },
+            {
+              "slot": "accent",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Hành trình này",
+              "Chặng đường này"
+            ],
+            "caption": [
+              "Không phải đích đến, mà là người đi cùng.",
+              "Quan trọng không phải đi đâu, mà là đi cùng ai."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "left",
+                "orient": "any",
+                "quality": "good"
+              },
+              {
+                "slot": "right",
+                "orient": "any",
+                "quality": "good"
+              }
+            ],
+            "look": "photo_duo_reel"
+          },
+          "look": "journey_duo_reel"
+        },
+        {
+          "id": "s07_montage",
+          "effect": "film_roll_up",
+          "durationRole": "montage",
+          "transitionRole": "peak",
+          "captionPattern": [
+            "Và hôm nay, câu chuyện bước sang một chương mới.",
+            "Từ đây, một hành trình mới bắt đầu."
+          ],
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 8,
+              "orient": "any",
+              "quality": "good",
+              "preferEmotion": true
+            }
+          ]
+        },
+        {
+          "id": "s08_promise",
+          "repeatable": {
+            "variants": [
+              {
+                "captionPattern": "Lời hứa không cần nói to, chỉ cần giữ thật lâu."
+              },
+              {
+                "captionPattern": ""
+              }
+            ]
+          },
+          "effect": "mask_reveal",
+          "mask": "assets/masks/particle_gather.mp4",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "calm",
+          "captionPattern": [
+            "Từ hôm nay, mình gọi nhau là nhà.",
+            "Từ hôm nay, đi đâu cũng là về nhà nếu có nhau."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best",
+              "preferHeroScore": true
+            }
+          ],
+          "params": {
+            "background": "#2B2B32"
+          }
+        },
+        {
+          "id": "s08b_spotlight",
+          "effect": "spotlight_focus",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Ánh sáng chỉ cần đủ, để thấy rõ một người.",
+            "Chỉ cần một ánh nhìn, cũng đủ nhận ra nhau."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s08c_breather",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ],
+          "look": "arch_trio_reel"
+        },
+        {
+          "id": "s80_photo_strip_left",
+          "effect": "photo_strip_left",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_tilt_shift",
+          "effect": "tilt_shift",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_photo_strip_right",
+          "effect": "photo_strip_right",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "look": "film_gallery",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s84_photo_duo",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ],
+          "look": "photo_duo_reel"
+        },
+        {
+          "id": "s85_feature_duo",
+          "effect": "layer_scene",
+          "look": "feature_trio",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "top",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "bottom",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s09_closing",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "{{location}} · {{date}}"
+          },
+          "look": "closing_names_reel"
+        }
+      ]
+    },
+    "classic-multisong-album-01": {
+      "id": "classic-multisong-album-01",
+      "version": 1,
+      "name": "Classic Multisong Wedding Album",
+      "tier": "smart_lite",
+      "libraryTheme": "white_weddings",
+      "layoutPresets": {
+        "album_mount": {
+          "radius": 6,
+          "border": 34,
+          "borderColor": "#FFFDFC",
+          "shadow": true
+        }
+      },
+      "looks": {
+        "photo_duo_plate": {
+          "intent": "wordless photo duo beat, wearing this recipe's own frame",
+          "layout": "photo_duo",
+          "frame": "album_mount"
+        },
+        "feature_plus_duo_plate": {
+          "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+          "layout": "feature_plus_duo",
+          "frame": "album_mount"
+        },
+        "gallery_matte_plate": {
+          "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+          "layout": "gallery_matte_hero",
+          "frame": "album_mount"
+        },
+        "duo_tinted_spread_plate": {
+          "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+          "layout": "duo_tinted_spread",
+          "frame": "album_mount"
+        },
+        "arch_trio_plate": {
+          "intent": "wordless arch trio beat, wearing this recipe's own frame",
+          "layout": "arch_trio",
+          "frame": "album_mount"
+        },
+        "full_bleed_quote_album": {
+          "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+          "layout": "full_bleed_quote",
+          "layoutOverrides": {
+            "textSlots": {
+              "quote": {
+                "sizePx": 58,
+                "y": 806,
+                "height": 200
+              }
+            }
+          },
+          "photoTreatment": {
+            "saturation": 1.02
+          }
+        },
+        "three_photo_row_album": {
+          "intent": "the three-photo row, wearing the recipe's album_mount frame",
+          "layout": "three_photo_row",
+          "frame": "album_mount"
+        },
+        "photo_grid_6_album": {
+          "intent": "the six-up grid, wearing the recipe's album_mount frame",
+          "layout": "photo_grid_6",
+          "frame": "album_mount"
+        },
+        "photo_network_hero_album": {
+          "intent": "the photo network, wearing the recipe's album_mount frame",
+          "layout": "photo_network_hero",
+          "frame": "album_mount"
+        },
+        "two_photo_story_album": {
+          "intent": "the portrait-and-wide story pair, wearing the recipe's album_mount frame",
+          "layout": "two_photo_story",
+          "frame": "album_mount"
+        },
+        "polaroid_scatter_album": {
+          "intent": "the scattered prints, wearing the recipe's album_mount frame",
+          "layout": "polaroid_scatter",
+          "frame": "album_mount"
+        },
+        "closing_names_album": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 136,
+                "y": 390
+              },
+              "date": {
+                "sizePx": 40,
+                "y": 650
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "opening",
+          "portraits",
+          "together",
+          "memories",
+          "celebration",
+          "forever",
+          "closing"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "fade_slow",
+          "dissolve",
+          "crossfade",
+          "slice_left",
+          "circle_open",
+          "none"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 4,
+          "peak": 3
+        }
+      },
+      "source": {
+        "origin": "reference_adaptation",
+        "notes": "Adapted from Tuan Tien Slideshow.mp4: an 18:37 classic wedding slideshow using five romantic/pop songs, portrait cards over blurred backdrops, photo stacks, grids, page turns, white flashes and checker mosaics. Designed for long playlists and roughly 140-220 photographs."
+      },
+      "intro": {
+        "summary": "Album cưới cổ điển dạng phim dài, nối nhiều bài nhạc và thay đổi nhịp theo từng chương.",
+        "photos": "Phù hợp bộ ảnh lớn 140–220 tấm, gồm ảnh chân dung, ngoại cảnh, đời thường, chi tiết và ảnh cưới.",
+        "story": "Mở đầu nhẹ nhàng, đi qua chân dung và kỷ niệm, tăng tốc ở chương vui, rồi kết bằng lời hứa cưới.",
+        "music": "Playlist 4–6 bài, tổng khoảng 14–20 phút; acoustic/ballad ở đầu và cuối, pop vừa hoặc nhanh ở chương celebration."
+      },
+      "fit": {
+        "bestFor": [
+          "wedding",
+          "pre_wedding",
+          "large_album",
+          "multisong",
+          "classic_slideshow"
+        ],
+        "minPhotos": 120,
+        "idealPhotos": 190
+      },
+      "musicProfile": {
+        "moods": [
+          "romantic",
+          "nostalgic",
+          "warm",
+          "celebratory"
+        ],
+        "energy": "low_to_high_to_low"
+      },
+      "pacingVariants": [
+        {
+          "id": "vow",
+          "maxEnergy": 0.36,
+          "durationMultiplier": 1.12
+        },
+        {
+          "id": "memory",
+          "maxEnergy": 0.66,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "celebration",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.86
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 5550,
+          "saturation": 1.03,
+          "contrast": 1.04,
+          "glow": 0.1,
+          "grain": 1
+        },
+        "audio": {
+          "fade_in": 1.5,
+          "fade_out": 4,
+          "crossfade": 2
+        },
+        "overlays": [],
+        "fonts": {
+          "title": "fonts/Allura-Regular.ttf",
+          "heading": "fonts/CormorantGaramond-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#F7F3EC",
+          "white": "#FFFDFC",
+          "ink": "#262422",
+          "warm": "#B9906A"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 5.2,
+          "calmSceneSec": 6.8,
+          "buildSceneSec": 4.2,
+          "montageSec": 8.5,
+          "closingSec": 9
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "dissolve",
+              "duration": 0.75
+            },
+            {
+              "type": "fade_slow",
+              "duration": 0.9
+            },
+            {
+              "type": "slice_left",
+              "duration": 0.65
+            }
+          ],
+          "calm": {
+            "type": "fade_slow",
+            "duration": 1.05
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.85
+          },
+          "peak": {
+            "type": "crossfade",
+            "duration": 0.5
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 74
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_opening",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_in"
+            }
+          ],
+          "text": {
+            "quote": "{{bride}} & {{groom}} · {{date}}"
+          },
+          "look": "full_bleed_quote_album"
+        },
+        {
+          "id": "s02_portrait_bride",
+          "effect": "portrait_blur_background",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s03_portrait_groom",
+          "effect": "portrait_reflection",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s04_photo_duo",
+          "effect": "layer_scene",
+          "look": "photo_duo_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s05_three_photo_row",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": "CHUYỆN CỦA MÌNH",
+            "caption": "Mỗi tấm ảnh giữ lại một phần của mãi mãi."
+          },
+          "repeatable": {
+            "maxRepeats": 4,
+            "variants": [
+              {
+                "text": {
+                  "heading": "BÊN NHAU",
+                  "caption": "Những kỷ niệm đẹp nhất là những gì mình cùng nhau tạo nên."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "look": "three_photo_row_album"
+        },
+        {
+          "id": "s06_page_turn",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "page_flip",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 2,
+              "orient": "any",
+              "quality": "best",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s07_memory_wall",
+          "effect": "memory_wall",
+          "durationRole": "montage",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "memories",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ],
+          "params": {
+            "background": "#F7F3EC"
+          }
+        },
+        {
+          "id": "s08_paper_collage",
+          "effect": "layer_scene",
+          "look": "feature_plus_duo_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "top",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "bottom",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s09_checker_mosaic",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "checker_mosaic",
+          "signature": true,
+          "durationRole": "build",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 2,
+              "orient": "any",
+              "quality": "best",
+              "preferVariety": true
+            }
+          ],
+          "params": {
+            "columns": 8,
+            "rows": 5
+          }
+        },
+        {
+          "id": "s10_photo_grid",
+          "effect": "layer_scene",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "a",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "b",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "c",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "d",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "e",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "f",
+              "orient": "any",
+              "quality": "good"
+            }
+          ],
+          "look": "photo_grid_6_album"
+        },
+        {
+          "id": "s10_photo_network",
+          "effect": "layer_scene",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best"
+            },
+            {
+              "slot": "top_left",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "top",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "top_right",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "bottom_left",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "bottom",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "bottom_right",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "look": "photo_network_hero_album"
+        },
+        {
+          "id": "s11_film_roll",
+          "effect": "film_roll_left",
+          "durationRole": "montage",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s12_collage_grid",
+          "effect": "collage_grid",
+          "durationRole": "montage",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "grid",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s13_slow_hero",
+          "effect": "slow_zoom_in",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s14_story_pair",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "portrait",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "body": "Từ lời chào đầu tiên, đến mọi ngày mai."
+          },
+          "repeatable": {
+            "maxRepeats": 4,
+            "variants": [
+              {
+                "text": {
+                  "body": "Ngàn khoảnh khắc nhỏ góp lại thành một câu chuyện đẹp."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "look": "two_photo_story_album"
+        },
+        {
+          "id": "s15_flash_burst",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "flash_burst",
+          "signature": true,
+          "durationRole": "build",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 2,
+              "orient": "any",
+              "quality": "best",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s16_polaroid_memories",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "p1",
+              "orient": "any",
+              "quality": "good",
+              "frame": "polaroid"
+            },
+            {
+              "slot": "p2",
+              "orient": "any",
+              "quality": "best",
+              "frame": "polaroid"
+            },
+            {
+              "slot": "p3",
+              "orient": "any",
+              "quality": "good",
+              "frame": "polaroid"
+            }
+          ],
+          "text": {
+            "heading": "KỶ NIỆM"
+          },
+          "look": "polaroid_scatter_album"
+        },
+        {
+          "id": "s17_final_portrait",
+          "effect": "dream_glow",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s80_film_roll_right",
+          "effect": "film_roll_right",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_panel_flip",
+          "effect": "panel_flip",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_film_roll_left",
+          "effect": "film_roll_left",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "look": "gallery_matte_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s84_arch_trio",
+          "effect": "layer_scene",
+          "look": "duo_tinted_spread_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s85_feature_duo",
+          "effect": "layer_scene",
+          "look": "arch_trio_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s18_closing",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "Trọn vẹn từng ngày mai · {{date}}"
+          },
+          "look": "closing_names_album"
+        }
+      ]
+    },
+    "editorial-bold-01": {
+      "id": "editorial-bold-01",
+      "version": 1,
+      "name": "Editorial Bold",
+      "tier": "smart_lite",
+      "libraryTheme": "editorial_bold",
+      "layoutPresets": {
+        "gutter_bleed": {
+          "radius": 0,
+          "border": 26,
+          "borderColor": "#F5F2EC",
+          "shadow": false
+        }
+      },
+      "looks": {
+        "gallery_matte_plate": {
+          "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+          "layout": "gallery_matte_hero",
+          "frame": "gutter_bleed"
+        },
+        "duo_tinted_spread_plate": {
+          "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+          "layout": "duo_tinted_spread",
+          "frame": "gutter_bleed"
+        },
+        "polaroid_scatter_plate": {
+          "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
+          "layout": "polaroid_scatter",
+          "frame": "gutter_bleed"
+        },
+        "breath_quote": {
+          "intent": "the recurring quiet beat, softened away from the opening it shares a page with",
+          "layout": "full_bleed_quote",
+          "photoTreatment": {
+            "saturation": 0.86,
+            "contrast": 1.04
+          }
+        },
+        "full_bleed_quote_gutter": {
+          "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+          "layout": "full_bleed_quote",
+          "layoutOverrides": {
+            "textSlots": {
+              "quote": {
+                "sizePx": 72,
+                "y": 764,
+                "height": 240
+              }
+            }
+          },
+          "photoTreatment": {
+            "contrast": 1.12
+          }
+        },
+        "collage_cluster_text_gutter": {
+          "intent": "the photo cluster beside its paragraph, wearing the recipe's gutter_bleed frame",
+          "layout": "collage_cluster_text",
+          "frame": "gutter_bleed"
+        },
+        "paper_collage_gutter": {
+          "intent": "the layered paper collage, wearing the recipe's gutter_bleed frame",
+          "layout": "paper_collage",
+          "frame": "gutter_bleed"
+        },
+        "three_photo_row_gutter": {
+          "intent": "the three-photo row, wearing the recipe's gutter_bleed frame",
+          "layout": "three_photo_row",
+          "frame": "gutter_bleed"
+        },
+        "two_photo_story_gutter": {
+          "intent": "the portrait-and-wide story pair, wearing the recipe's gutter_bleed frame",
+          "layout": "two_photo_story",
+          "frame": "gutter_bleed"
+        },
+        "closing_names_gutter": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 160,
+                "y": 350
+              },
+              "date": {
+                "sizePx": 34,
+                "y": 640
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "statement",
+          "form",
+          "proximity",
+          "pause",
+          "motion",
+          "unveil",
+          "spectrum",
+          "reflection"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "crossfade",
+          "fade_slow",
+          "dissolve",
+          "smooth_left",
+          "none",
+          "horz_open",
+          "vert_open"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 1,
+          "peak": 2
+        }
+      },
+      "source": {
+        "origin": "original",
+        "notes": "Fashion-magazine editorial look (2026 trend: cursive out, big expressive serif headlines, clean sans companion, generous whitespace, high contrast). Original recipe, not copied from any marketplace timeline."
+      },
+      "intro": {
+        "summary": "Phong cách tạp chí thời trang: tiêu đề chữ lớn, tối giản, tương phản cao.",
+        "photos": "Hợp ảnh prewedding chất lượng cao, bố cục đẹp, nhiều khoảng trống — ảnh cần sắc nét, chỉn chu như ảnh studio/editorial.",
+        "story": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tối giản — tập trung vào hai nhân vật chính, không đi sâu chi tiết gia đình.",
+        "music": "Hợp nhạc điện ảnh, thanh lịch, hiện đại, tiết tấu chậm đến vừa."
+      },
+      "fit": {
+        "bestFor": [
+          "prewedding",
+          "editorial",
+          "modern_minimal",
+          "couple_journey"
+        ],
+        "minPhotos": 30,
+        "idealPhotos": 60
+      },
+      "musicProfile": {
+        "moods": [
+          "cinematic",
+          "elegant",
+          "modern"
+        ],
+        "energy": "low_to_medium"
+      },
+      "pacingVariants": [
+        {
+          "id": "gallery",
+          "maxEnergy": 0.38,
+          "durationMultiplier": 1.12
+        },
+        {
+          "id": "editorial",
+          "maxEnergy": 0.68,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "runway",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.86
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "meetingPlace",
+          "yearsTogether",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 6200,
+          "saturation": 1,
+          "contrast": 1.07,
+          "brightness": 0.01,
+          "glow": 0.05
+        },
+        "audio": {
+          "fade_in": 1.5,
+          "fade_out": 3,
+          "crossfade": 0
+        },
+        "overlays": [
+          {
+            "variant": "soft",
+            "position": "fullscreen",
+            "opacity": 0.12,
+            "blend": "screen",
+            "start": 0
+          },
+          {
+            "path": "overlays/light_sweep.mp4",
+            "position": "fullscreen",
+            "opacity": 0.16,
+            "blend": "screen",
+            "start": 0
+          }
+        ],
+        "fonts": {
+          "title": "fonts/JosefinSans-Regular.ttf",
+          "heading": "fonts/PlayfairDisplay.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#F5F2EC",
+          "ink": "#17171B",
+          "brown": "#17171B",
+          "white": "#FFFFFF"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 5.5,
+          "calmSceneSec": 6.5,
+          "buildSceneSec": 4.2,
+          "montageSec": 11,
+          "closingSec": 8
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "crossfade",
+              "duration": 0.6
+            },
+            {
+              "type": "horz_open",
+              "duration": 0.5
+            },
+            {
+              "type": "vert_open",
+              "duration": 0.5
+            }
+          ],
+          "calm": {
+            "type": "fade_slow",
+            "duration": 0.9
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.6
+          },
+          "peak": {
+            "type": "smooth_left",
+            "duration": 0.4
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore",
+            "skinFrac"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 75
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_open",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_in"
+            }
+          ],
+          "text": {
+            "quote": "{{bride}} & {{groom}}"
+          },
+          "look": "full_bleed_quote_gutter"
+        },
+        {
+          "id": "s02_beginning",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "heading": "Gặp gỡ",
+                  "body": "Chuyện lớn nào cũng bắt đầu từ một điều rất nhỏ."
+                }
+              },
+              {
+                "photoSlots": [
+                  {
+                    "slot": "back",
+                    "orient": "any",
+                    "quality": "good"
+                  },
+                  {
+                    "slot": "centre",
+                    "orient": "portrait",
+                    "quality": "best"
+                  },
+                  {
+                    "slot": "front",
+                    "orient": "any",
+                    "quality": "good"
+                  }
+                ],
+                "text": {},
+                "look": "paper_collage_gutter"
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "tl",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "bl",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Khởi đầu",
+              "Điểm bắt đầu"
+            ],
+            "body": [
+              "Câu chuyện của mình bắt đầu thật khẽ, rồi lớn dần theo năm tháng.",
+              "Bắt đầu từ một điều rất nhỏ, rồi trở thành cả một câu chuyện."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "back",
+                "orient": "any",
+                "quality": "good"
+              },
+              {
+                "slot": "centre",
+                "orient": "portrait",
+                "quality": "best"
+              },
+              {
+                "slot": "front",
+                "orient": "any",
+                "quality": "good"
+              }
+            ],
+            "look": "paper_collage_gutter"
+          },
+          "look": "collage_cluster_text_gutter"
+        },
+        {
+          "id": "s03_chapter",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "heading": "Chương mới",
+                  "caption": "Mỗi khung hình là một trang tạp chí của riêng hai người."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "any",
+              "quality": "best",
+              "motion": "zoom_in"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Chuyện mình",
+              "Câu chuyện của mình"
+            ],
+            "caption": [
+              "Mỗi khung hình là một chương mình đã cùng nhau viết nên.",
+              "Từng khung hình, một trang trong câu chuyện của riêng mình."
+            ]
+          },
+          "look": "three_photo_row_gutter"
+        },
+        {
+          "id": "s04_breath",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "quote": "Một ánh nhìn, đủ thành tuyên ngôn."
+                }
+              },
+              {
+                "text": {
+                  "quote": "Tối giản, như cách mình chọn nhau."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "look": "breath_quote",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_out"
+            }
+          ],
+          "text": {
+            "quote": [
+              "Bình yên là khi có nhau.",
+              "Chỉ cần có nhau, là đủ bình yên."
+            ]
+          }
+        },
+        {
+          "id": "s05_duo",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "body": "Đứng cạnh nhau, mọi phông nền đều thành phụ."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "portrait",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "body": "Có những điều không cần nói, chỉ cần được ở cạnh nhau."
+          },
+          "look": "two_photo_story_gutter"
+        },
+        {
+          "id": "s06_grid",
+          "effect": "collage_grid",
+          "durationRole": "build",
+          "transitionRole": "peak",
+          "captionPattern": [
+            "Mình đi qua bao nhiêu nơi, điều đáng nhớ nhất vẫn là đi cùng nhau.",
+            "Đi qua bao nhiêu nơi, nhớ nhất vẫn là có nhau trên đường."
+          ],
+          "photoSlots": [
+            {
+              "slot": "grid",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s07_montage",
+          "effect": "photo_strip_right",
+          "durationRole": "montage",
+          "transitionRole": "peak",
+          "captionPattern": [
+            "Và rồi, ngày trọng đại cũng đến.",
+            "Và rồi, ngày mong đợi cũng đã tới."
+          ],
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 8,
+              "fixedCount": true,
+              "orient": "any",
+              "quality": "good",
+              "preferEmotion": true
+            }
+          ]
+        },
+        {
+          "id": "s08_portrait",
+          "effect": "moving_background_echo",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": "Một nét vẽ, một con người, không thể nhầm lẫn.",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s08b_prism",
+          "effect": "prism_split",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Một khung hình, nghìn sắc màu — như câu chuyện chỉ riêng hai người.",
+            "Nghìn sắc màu trong một khung hình, như câu chuyện của riêng hai người."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s08c_mirror",
+          "effect": "mirror_split",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": "Đối xứng hoàn hảo, khi hai người đã tìm thấy nhau.",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s70_corner_fly_four",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "contact_sheet_zoom",
+          "signature": true,
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 9,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s71_signature",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "panel_reveal",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s80_film_roll_up",
+          "effect": "film_roll_up",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_tilt_shift",
+          "effect": "tilt_shift",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_photo_strip_left",
+          "effect": "photo_strip_left",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "look": "gallery_matte_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s84_photo_duo",
+          "effect": "layer_scene",
+          "look": "duo_tinted_spread_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s85_arch_trio",
+          "effect": "layer_scene",
+          "look": "polaroid_scatter_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "p1",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "p2",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "p3",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s09_closing",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "{{location}} · {{date}}"
+          },
+          "look": "closing_names_gutter"
+        }
+      ]
+    },
+    "four-seasons-love-01": {
+      "id": "four-seasons-love-01",
+      "version": 1,
+      "name": "Four Seasons of Us",
+      "tier": "smart_lite",
+      "libraryTheme": "warm_film",
+      "layoutPresets": {
+        "season_round": {
+          "radius": 44,
+          "border": 10,
+          "borderColor": "#FFFBF4",
+          "shadow": false
+        }
+      },
+      "looks": {
+        "gallery_matte_plate": {
+          "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+          "layout": "gallery_matte_hero",
+          "frame": "season_round",
+          "photoTreatment": {
+            "saturation": 1.09
+          }
+        },
+        "duo_tinted_spread_plate": {
+          "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
+          "layout": "duo_tinted_spread",
+          "frame": "season_round",
+          "photoTreatment": {
+            "saturation": 1.09
+          }
+        },
+        "three_photo_row_plate": {
+          "intent": "wordless three photo row beat, wearing this recipe's own frame",
+          "layout": "three_photo_row",
+          "frame": "season_round",
+          "photoTreatment": {
+            "saturation": 1.09
+          }
+        },
+        "photo_left_text_right_season": {
+          "intent": "the photo-left spread, wearing the recipe's season_round frame",
+          "layout": "photo_left_text_right",
+          "frame": "season_round"
+        },
+        "paper_collage_season": {
+          "intent": "the layered paper collage, wearing the recipe's season_round frame",
+          "layout": "paper_collage",
+          "frame": "season_round"
+        },
+        "two_photo_story_season": {
+          "intent": "the portrait-and-wide story pair, wearing the recipe's season_round frame",
+          "layout": "two_photo_story",
+          "frame": "season_round"
+        },
+        "full_bleed_quote_season": {
+          "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+          "layout": "full_bleed_quote",
+          "layoutOverrides": {
+            "textSlots": {
+              "quote": {
+                "sizePx": 58,
+                "y": 802,
+                "height": 204
+              }
+            }
+          },
+          "photoTreatment": {
+            "saturation": 1.05
+          }
+        },
+        "closing_names_season": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 132,
+                "y": 395
+              },
+              "date": {
+                "sizePx": 36,
+                "y": 655
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "spring",
+          "summer",
+          "autumn",
+          "winter",
+          "new_spring",
+          "wedding",
+          "closing"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "dissolve",
+          "fade_slow",
+          "crossfade",
+          "none",
+          "distance"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 2,
+          "peak": 1
+        }
+      },
+      "source": {
+        "origin": "original",
+        "notes": "A seasonal chapter structure where changes in light, color and pace mirror a relationship maturing toward marriage."
+      },
+      "intro": {
+        "summary": "Cấu trúc theo bốn mùa — ánh sáng và màu sắc đổi theo mùa, phản chiếu một tình yêu trưởng thành dần tới hôn nhân.",
+        "photos": "Cần ảnh trải dài nhiều thời điểm/nhiều năm bên nhau — ảnh du lịch, ảnh theo mùa, ảnh ngoài trời ở nhiều bối cảnh khác nhau.",
+        "story": "Phù hợp cặp đôi yêu nhau lâu năm, có nhiều kỷ niệm theo thời gian, muốn kể hành trình 'trưởng thành cùng nhau' trước ngày cưới.",
+        "music": "Hợp nhạc acoustic, hoài niệm, dần tươi sáng lên, tiết tấu chậm đến vừa."
+      },
+      "fit": {
+        "bestFor": [
+          "multi_year",
+          "outdoor",
+          "travel",
+          "seasonal",
+          "love_story"
+        ],
+        "minPhotos": 28,
+        "idealPhotos": 68
+      },
+      "musicProfile": {
+        "moods": [
+          "acoustic",
+          "nostalgic",
+          "uplifting"
+        ],
+        "energy": "low_to_medium"
+      },
+      "pacingVariants": [
+        {
+          "id": "seasons",
+          "maxEnergy": 0.38,
+          "durationMultiplier": 1.15
+        },
+        {
+          "id": "album",
+          "maxEnergy": 0.7,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "festival",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.86
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "yearsTogether",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 4700,
+          "saturation": 1.05,
+          "contrast": 1.03,
+          "grain": 5,
+          "glow": 0.13,
+          "vignette": true
+        },
+        "audio": {
+          "fade_in": 2,
+          "fade_out": 3.5,
+          "crossfade": 0
+        },
+        "overlays": [],
+        "fonts": {
+          "title": "fonts/Allura-Regular.ttf",
+          "heading": "fonts/Fraunces-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#F4ECE0",
+          "ink": "#3A2E22",
+          "brown": "#A65F3B",
+          "white": "#FFFBF4"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 5.6,
+          "calmSceneSec": 7.2,
+          "buildSceneSec": 4.6,
+          "montageSec": 10,
+          "closingSec": 8
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "dissolve",
+              "duration": 0.75
+            },
+            {
+              "type": "fade_slow",
+              "duration": 0.85
+            },
+            {
+              "type": "distance",
+              "duration": 0.8
+            }
+          ],
+          "calm": {
+            "type": "fade_slow",
+            "duration": 1
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.9
+          },
+          "peak": {
+            "type": "crossfade",
+            "duration": 0.5
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 68
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_spring",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Xuân · Bắt đầu",
+              "Xuân · Khởi đầu"
+            ],
+            "body": [
+              "Một cuộc gặp dịu dàng như mùa đầu tiên.",
+              "Gặp nhau nhẹ nhàng, như cách mùa xuân đến."
+            ]
+          },
+          "look": "photo_left_text_right_season"
+        },
+        {
+          "id": "s02_summer",
+          "effect": "floating_card_gallery",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "captionPattern": [
+            "HẠ · NHỮNG CHUYẾN ĐI",
+            "HẠ · NHỮNG NGÀY RONG RUỔI"
+          ],
+          "repeatable": {
+            "maxRepeats": 3,
+            "variants": [
+              {
+                "captionPattern": "Từng khoảnh khắc bên nhau là một món quà."
+              },
+              {
+                "captionPattern": ""
+              }
+            ]
+          }
+        },
+        {
+          "id": "s03_autumn",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "back",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "front",
+              "orient": "any",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Thu · Trưởng thành",
+              "Thu · Chín chắn hơn"
+            ]
+          },
+          "repeatable": {
+            "maxRepeats": 3,
+            "variants": [
+              {
+                "text": {
+                  "heading": "Mùa chín"
+                }
+              },
+              {
+                "text": {
+                  "heading": "Vững vàng hơn"
+                }
+              }
+            ]
+          },
+          "look": "paper_collage_season"
+        },
+        {
+          "id": "s04_winter",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "portrait",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "body": [
+              "Đông · Học cách sưởi ấm cho nhau.",
+              "Đông · Học cách giữ ấm cho nhau qua từng mùa lạnh."
+            ]
+          },
+          "look": "two_photo_story_season"
+        },
+        {
+          "id": "s05_newspring",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "motion": "zoom_in"
+            }
+          ],
+          "text": {
+            "quote": [
+              "Một mùa xuân mới · Một lời hẹn trăm năm",
+              "Một mùa xuân mới bắt đầu · Một lời hẹn ước dài lâu"
+            ]
+          },
+          "look": "full_bleed_quote_season"
+        },
+        {
+          "id": "s06_wedding",
+          "effect": "memory_wall",
+          "durationRole": "montage",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "memories",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ],
+          "captionPattern": "{{yearsTogether}} NĂM · BỐN MÙA · MỘT TÌNH YÊU",
+          "params": {
+            "background": "#3B332B"
+          }
+        },
+        {
+          "id": "s06b_petal",
+          "effect": "mask_reveal",
+          "mask": "assets/masks/petal_reveal.mp4",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Một mùa xuân mới, nở cùng lời hẹn ước.",
+            "Lời hẹn ước nở cùng một mùa xuân mới."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ],
+          "params": {
+            "background": "#3B332B"
+          }
+        },
+        {
+          "id": "s06c_glow",
+          "effect": "dream_glow",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Và dù là mùa nào, có nhau là đủ đầy.",
+            "Bốn mùa có thể đổi thay, chỉ có nhau là mãi vẹn nguyên."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s70_corner_fly_four",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "radial_gallery",
+          "signature": true,
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s71_signature",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "filmstrip",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s80_photo_strip_up",
+          "effect": "photo_strip_up",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_portrait_reflection",
+          "effect": "portrait_reflection",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_collage_grid",
+          "effect": "collage_grid",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "grid",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "look": "gallery_matte_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s84_photo_duo",
+          "effect": "layer_scene",
+          "look": "duo_tinted_spread_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s85_arch_trio",
+          "effect": "layer_scene",
+          "look": "three_photo_row_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s07_close",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "{{date}}"
+          },
+          "look": "closing_names_season"
+        }
+      ]
+    },
+    "jmii-silk-botanical-01": {
+      "id": "jmii-silk-botanical-01",
+      "version": 3,
+      "name": "Silk Botanical Wedding",
+      "tier": "smart_lite",
+      "libraryTheme": "white_weddings",
+      "layoutPresets": {
+        "arch": {
+          "radius": 170,
+          "border": 9,
+          "borderColor": "#FFFDFC",
+          "shadow": true
+        }
+      },
+      "looks": {
+        "bride_arch": {
+          "intent": "the bride, as an arched ivory card on cream — the recipe's signature frame",
+          "layout": "text_left_photo_right",
+          "layoutOverrides": {
+            "photoSlots": {
+              "hero": {
+                "x": 1090,
+                "y": 90,
+                "width": 700,
+                "height": 900,
+                "suggestedAnimation": "fade"
+              }
+            }
+          },
+          "frame": "arch"
+        },
+        "groom_arch": {
+          "intent": "the groom, the same card mirrored to the other side of the spread",
+          "layout": "photo_left_text_right",
+          "layoutOverrides": {
+            "photoSlots": {
+              "hero": {
+                "x": 130,
+                "y": 90,
+                "width": 700,
+                "height": 900,
+                "suggestedAnimation": "fade"
+              }
+            }
+          },
+          "frame": "arch"
+        },
+        "moment_still": {
+          "intent": "a held beat: a taller portrait, slightly desaturated, entering more slowly",
+          "layout": "text_left_photo_right",
+          "layoutOverrides": {
+            "photoSlots": {
+              "hero": {
+                "x": 1020,
+                "y": 60,
+                "width": 820,
+                "height": 960,
+                "suggestedAnimation": "fade"
+              }
+            }
+          },
+          "photoTreatment": {
+            "saturation": 0.92
+          },
+          "motion": {
+            "stagger": 0.14
+          }
+        },
+        "arch_gallery": {
+          "intent": "three arched portraits in a row",
+          "layout": "arch_trio",
+          "frame": "arch"
+        },
+        "duo_arch": {
+          "intent": "two arched portraits side by side",
+          "layout": "photo_duo",
+          "frame": "arch"
+        },
+        "quiet_quote": {
+          "intent": "wordless recurrence: one photograph full bleed, softened",
+          "layout": "full_bleed_quote",
+          "photoTreatment": {
+            "saturation": 0.88
+          }
+        },
+        "quiet_matte": {
+          "intent": "the other wordless recurrence: one photograph matted on cream",
+          "layout": "gallery_matte_hero",
+          "photoTreatment": {
+            "saturation": 0.92
+          }
+        },
+        "hero_title_card_silk": {
+          "intent": "the hero title card, wearing the recipe's arch frame",
+          "layout": "hero_title_card",
+          "frame": "arch"
+        },
+        "text_left_photo_right_silk": {
+          "intent": "the text-left spread, wearing the recipe's arch frame",
+          "layout": "text_left_photo_right",
+          "frame": "arch"
+        },
+        "photo_left_text_right_silk": {
+          "intent": "the photo-left spread, wearing the recipe's arch frame",
+          "layout": "photo_left_text_right",
+          "frame": "arch"
+        },
+        "invitation_row_silk": {
+          "intent": "the invitation row, wearing the recipe's arch frame",
+          "layout": "invitation_row",
+          "frame": "arch"
+        },
+        "gallery_matte_hero_silk": {
+          "intent": "the matted gallery hero, wearing the recipe's arch frame",
+          "layout": "gallery_matte_hero",
+          "frame": "arch"
+        },
+        "magazine_page_turn_silk": {
+          "intent": "the magazine page turn, wearing the recipe's arch frame",
+          "layout": "magazine_page_turn",
+          "frame": "arch"
+        },
+        "polaroid_scatter_silk": {
+          "intent": "the scattered prints, wearing the recipe's arch frame",
+          "layout": "polaroid_scatter",
+          "frame": "arch"
+        },
+        "closing_names_silk": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 140,
+                "y": 385
+              },
+              "date": {
+                "sizePx": 34,
+                "y": 648
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "save_the_date",
+          "title",
+          "bride",
+          "groom",
+          "gallery",
+          "meet",
+          "signature",
+          "story",
+          "invitation",
+          "moment",
+          "together",
+          "closing"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "dissolve",
+          "fade_slow",
+          "crossfade",
+          "none",
+          "fade_to_white"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 2,
+          "peak": 1
+        }
+      },
+      "source": {
+        "origin": "reference_adaptation",
+        "url": "https://www.youtube.com/watch?v=GxXVVbvJ6W8",
+        "title": "Video slide ảnh trình chiếu ngày cưới đẹp, sang trọng | Họa tiết lá thanh lịch (Jmii Marketing)",
+        "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once. v3: bride/groom cards were the only Vietnamese headings in an otherwise EN-heading/VI-body film (fixed to match); their body was name-only (now a short, generic personality line per templateRules' repeat_depth pattern — 2 variants each); s10's body was silently English while its sibling body scenes (s06/s08) were Vietnamese (translated); the s06/s08/s10 repeat rounds all replayed their own base layout back-to-back (same photo-one-side/cream-text-panel frame every recurrence) — now alternate with their mirror layout and one full_bleed_quote photo-only breather per scene, so long songs don't visibly loop the same card."
+      },
+      "intro": {
+        "summary": "Phong cách save-the-date lụa ngà thanh lịch, dành cho bộ ảnh chân dung studio.",
+        "photos": "Cần bộ ảnh chân dung studio chất lượng cao (portrait-heavy), ít hoặc không có ảnh phóng sự đời thường — số ảnh không cần nhiều (18–40).",
+        "story": "Phù hợp cặp đôi muốn một video 'thiệp mời sống động' — giới thiệu cô dâu chú rể, lời mời, không kể chi tiết hành trình yêu.",
+        "music": "Hợp nhạc lãng mạn, thanh lịch, nhẹ nhàng, giàu cảm xúc, tiết tấu chậm đến vừa."
+      },
+      "fit": {
+        "bestFor": [
+          "wedding",
+          "save_the_date",
+          "studio",
+          "elegant",
+          "minimal",
+          "white_wedding",
+          "portrait_heavy"
+        ],
+        "minPhotos": 18,
+        "idealPhotos": 40
+      },
+      "musicProfile": {
+        "moods": [
+          "romantic",
+          "elegant",
+          "gentle",
+          "sentimental"
+        ],
+        "energy": "low_to_medium"
+      },
+      "pacingVariants": [
+        {
+          "id": "vow",
+          "maxEnergy": 0.38,
+          "durationMultiplier": 1.12
+        },
+        {
+          "id": "editorial",
+          "maxEnergy": 0.68,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "celebration",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.9
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 5400,
+          "saturation": 1.03,
+          "contrast": 1.02,
+          "glow": 0.07,
+          "grain": 0
+        },
+        "audio": {
+          "fade_in": 2,
+          "fade_out": 3.5,
+          "crossfade": 0
+        },
+        "overlays": [],
+        "fonts": {
+          "title": "fonts/Allura-Regular.ttf",
+          "heading": "fonts/CormorantGaramond-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#FBF6ED",
+          "ink": "#2D2D33",
+          "brown": "#634C31",
+          "white": "#FFFDFC"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 5.8,
+          "calmSceneSec": 7.2,
+          "buildSceneSec": 4.9,
+          "montageSec": 9.5,
+          "closingSec": 8.4
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "dissolve",
+              "duration": 0.85
+            },
+            {
+              "type": "crossfade",
+              "duration": 0.8
+            },
+            {
+              "type": "fade_to_white",
+              "duration": 0.7
+            }
+          ],
+          "calm": {
+            "type": "fade_slow",
+            "duration": 1.15
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.9
+          },
+          "peak": {
+            "type": "crossfade",
+            "duration": 0.6
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 78
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_save_the_date",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "strip_1",
+              "orient": "portrait",
+              "quality": "good",
+              "frame": "arch"
+            },
+            {
+              "slot": "strip_2",
+              "orient": "portrait",
+              "quality": "best",
+              "frame": "arch"
+            },
+            {
+              "slot": "strip_3",
+              "orient": "portrait",
+              "quality": "good",
+              "frame": "arch"
+            }
+          ],
+          "text": {
+            "eyebrow": "SAVE THE DATE",
+            "date": {
+              "value": "{{date}}",
+              "sizePx": 108
+            }
+          },
+          "look": "hero_title_card_silk"
+        },
+        {
+          "id": "s02_silk_title",
+          "effect": "video_background",
+          "background": "assets/backgrounds/editorial/champagne-silk-shadow.png",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [],
+          "captionPattern": [
+            "Save the Date · {{bride}} & {{groom}} · {{date}}",
+            "We're Getting Married · {{bride}} & {{groom}} · {{date}}"
+          ]
+        },
+        {
+          "id": "s03_bride",
+          "effect": "layer_scene",
+          "look": "bride_arch",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "MEET THE BRIDE",
+                "ABOUT THE BRIDE"
+              ],
+              "sizePx": 58
+            },
+            "body": [
+              "Cô dâu {{bride}} – dịu dàng, tinh tế và luôn mang đến sự ấm áp cho những người xung quanh.",
+              "Cô dâu {{bride}} – nhẹ nhàng, chu đáo và luôn khiến mọi khoảnh khắc trở nên ấm áp hơn."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "look": "quiet_quote"
+          }
+        },
+        {
+          "id": "s04_groom",
+          "effect": "layer_scene",
+          "look": "groom_arch",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "MEET THE GROOM",
+                "ABOUT THE GROOM"
+              ],
+              "sizePx": 58
+            },
+            "body": [
+              "Chú rể {{groom}} – điềm đạm, chân thành và luôn hết lòng vì người mình yêu thương.",
+              "Chú rể {{groom}} – ít nói nhưng sâu sắc, luôn âm thầm quan tâm bằng những điều nhỏ nhất."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "hero",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "look": "quiet_matte"
+          }
+        },
+        {
+          "id": "s05_arch_gallery",
+          "effect": "layer_scene",
+          "look": "arch_gallery",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s06_we_meet",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "WE MEET",
+                "OUR PATH"
+              ],
+              "sizePx": 76
+            },
+            "body": [
+              "Tình yêu là sự kết nối giữa hai trái tim, nơi mình cùng viết nên một câu chuyện thật dài.",
+              "Tình yêu là nơi hai trái tim gặp nhau, để cùng viết tiếp một câu chuyện dài."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "hero",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "look": "quiet_matte"
+          },
+          "repeatable": {
+            "maxRepeats": 4,
+            "variants": [
+              {
+                "text": {
+                  "heading": {
+                    "value": "OUR DAY",
+                    "sizePx": 76
+                  },
+                  "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
+                },
+                "look": "photo_left_text_right_silk"
+              },
+              {
+                "look": "quiet_quote",
+                "photoSlots": [
+                  {
+                    "slot": "bg",
+                    "orient": "any",
+                    "quality": "good",
+                    "fit": "cover"
+                  }
+                ],
+                "text": {}
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "FOREVER",
+                    "sizePx": 76
+                  },
+                  "body": "Từ hôm nay, và trong mọi ngày sắp tới, mình vẫn luôn bên nhau."
+                },
+                "look": "photo_left_text_right_silk"
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "ONE LOVE",
+                    "sizePx": 76
+                  },
+                  "body": "Chỉ cần hôm nay ta cùng nắm tay nhau, thế là đủ đầy."
+                }
+              }
+            ]
+          },
+          "look": "text_left_photo_right_silk"
+        },
+        {
+          "id": "s08_story",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "OUR STORY",
+                "OUR JOURNEY"
+              ],
+              "sizePx": 68
+            },
+            "body": [
+              "Bên nhau, mọi điều giản dị đều trở nên đặc biệt.",
+              "Khi có nhau, điều bình dị nhất cũng thành đặc biệt."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "look": "quiet_quote"
+          },
+          "repeatable": {
+            "maxRepeats": 4,
+            "variants": [
+              {
+                "text": {
+                  "heading": {
+                    "value": "TOGETHER",
+                    "sizePx": 68
+                  },
+                  "body": "Cảm ơn vì đã luôn ở đây, cùng nhau đi hết chặng đường."
+                },
+                "look": "text_left_photo_right_silk"
+              },
+              {
+                "look": "quiet_quote",
+                "photoSlots": [
+                  {
+                    "slot": "bg",
+                    "orient": "any",
+                    "quality": "good",
+                    "fit": "cover"
+                  }
+                ],
+                "text": {}
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "SWEET",
+                    "sizePx": 68
+                  },
+                  "body": "Những ánh nhìn, những nụ cười — tất cả đều là yêu thương."
+                },
+                "look": "text_left_photo_right_silk"
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "US",
+                    "sizePx": 68
+                  },
+                  "body": "Một khởi đầu thật đẹp cho câu chuyện của chúng mình."
+                }
+              }
+            ]
+          },
+          "look": "photo_left_text_right_silk"
+        },
+        {
+          "id": "s09_invitation",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "p1",
+              "orient": "portrait",
+              "quality": "good",
+              "frame": "arch"
+            },
+            {
+              "slot": "p2",
+              "orient": "portrait",
+              "quality": "best",
+              "frame": "arch"
+            },
+            {
+              "slot": "p3",
+              "orient": "portrait",
+              "quality": "good",
+              "frame": "arch"
+            },
+            {
+              "slot": "p4",
+              "orient": "portrait",
+              "quality": "good",
+              "frame": "arch"
+            }
+          ],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "invite": "Trân trọng kính mời · {{location}} · {{date}}"
+          },
+          "look": "invitation_row_silk"
+        },
+        {
+          "id": "s10_moment",
+          "effect": "layer_scene",
+          "look": "moment_still",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "BEAUTIFUL",
+                "TENDER"
+              ],
+              "sizePx": 68
+            },
+            "body": [
+              "Mỗi khoảnh khắc dịu dàng đều trở thành một phần của mãi mãi.",
+              "Mỗi khoảnh khắc nhỏ bé lặng lẽ trở thành một phần của chúng mình."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "bg",
+                "orient": "any",
+                "quality": "good",
+                "fit": "cover"
+              }
+            ],
+            "look": "quiet_quote"
+          },
+          "repeatable": {
+            "maxRepeats": 4,
+            "variants": [
+              {
+                "text": {
+                  "heading": {
+                    "value": "MOMENTS",
+                    "sizePx": 68
+                  },
+                  "body": "Sánh bước bên nhau, đây là nơi chương mới của chúng mình bắt đầu."
+                },
+                "look": "photo_left_text_right_silk"
+              },
+              {
+                "look": "quiet_quote",
+                "photoSlots": [
+                  {
+                    "slot": "bg",
+                    "orient": "any",
+                    "quality": "good",
+                    "fit": "cover"
+                  }
+                ],
+                "text": {}
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "YOU & ME",
+                    "sizePx": 68
+                  },
+                  "body": "Một tình yêu, một đời người, một khởi đầu thật đẹp."
+                },
+                "look": "photo_left_text_right_silk"
+              },
+              {
+                "text": {
+                  "heading": {
+                    "value": "AFTER THIS DAY",
+                    "sizePx": 68
+                  },
+                  "body": "Xin chào mọi ngày sẽ đến, sau ngày hôm nay."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "s11_side_by_side",
+          "effect": "layer_scene",
+          "look": "duo_arch",
+          "durationRole": "normal",
+          "transitionRole": "memory",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "portrait",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s11b_petal_reveal",
+          "effect": "mask_reveal",
+          "mask": "assets/masks/petal_reveal.mp4",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ],
+          "params": {
+            "background": "#4A4139"
+          }
+        },
+        {
+          "id": "s11c_glow",
+          "effect": "dream_glow",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s06b_corner_fly_four",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "ribbon_cascade",
+          "signature": true,
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 6,
+              "orient": "portrait",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s07_signature_frame",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "floating_frame",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s80_collage_grid",
+          "effect": "collage_grid",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "grid",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_portrait_reflection",
+          "effect": "portrait_reflection",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_photo_strip_up",
+          "effect": "photo_strip_up",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ],
+          "look": "gallery_matte_hero_silk"
+        },
+        {
+          "id": "s84_feature_duo",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "page_left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "page_right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ],
+          "look": "magazine_page_turn_silk"
+        },
+        {
+          "id": "s85_paper_collage",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "p1",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "p2",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "p3",
+              "orient": "any",
+              "quality": "good"
+            }
+          ],
+          "look": "polaroid_scatter_silk"
+        },
+        {
+          "id": "s12_closing",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "Thank you for celebrating with us · {{date}}"
+          },
+          "look": "closing_names_silk"
+        }
+      ]
+    },
+    "modern-teal-01": {
+      "id": "modern-teal-01",
+      "version": 1,
+      "name": "Modern Teal",
+      "tier": "smart_lite",
+      "libraryTheme": "modern_teal",
+      "layoutPresets": {
+        "edge_soft": {
+          "radius": 16,
+          "border": 0,
+          "shadow": false
+        }
+      },
+      "looks": {
+        "gallery_matte_plate": {
+          "intent": "wordless gallery matte beat, wearing this recipe's own frame",
+          "layout": "gallery_matte_hero",
+          "frame": "edge_soft"
+        },
+        "photo_duo_plate": {
+          "intent": "wordless photo duo beat, wearing this recipe's own frame",
+          "layout": "photo_duo",
+          "frame": "edge_soft"
+        },
+        "arch_trio_plate": {
+          "intent": "wordless arch trio beat, wearing this recipe's own frame",
+          "layout": "arch_trio",
+          "frame": "edge_soft"
+        },
+        "breath_quote": {
+          "intent": "the recurring quiet beat, softened away from the opening it shares a page with",
+          "layout": "full_bleed_quote",
+          "photoTreatment": {
+            "saturation": 0.9,
+            "brightness": 0.03
+          }
+        },
+        "full_bleed_quote_edge": {
+          "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
+          "layout": "full_bleed_quote",
+          "layoutOverrides": {
+            "textSlots": {
+              "quote": {
+                "sizePx": 70,
+                "y": 770,
+                "height": 232
+              }
+            }
+          },
+          "photoTreatment": {
+            "contrast": 1.06,
+            "saturation": 1.04
+          }
+        },
+        "two_photo_story_edge": {
+          "intent": "the portrait-and-wide story pair, wearing the recipe's edge_soft frame",
+          "layout": "two_photo_story",
+          "frame": "edge_soft"
+        },
+        "duo_tinted_spread_edge": {
+          "intent": "the tinted two-photo spread, wearing the recipe's edge_soft frame",
+          "layout": "duo_tinted_spread",
+          "frame": "edge_soft"
+        },
+        "three_photo_row_edge": {
+          "intent": "the three-photo row, wearing the recipe's edge_soft frame",
+          "layout": "three_photo_row",
+          "frame": "edge_soft"
+        },
+        "collage_cluster_text_edge": {
+          "intent": "the photo cluster beside its paragraph, wearing the recipe's edge_soft frame",
+          "layout": "collage_cluster_text",
+          "frame": "edge_soft"
+        },
+        "paper_collage_edge": {
+          "intent": "the layered paper collage, wearing the recipe's edge_soft frame",
+          "layout": "paper_collage",
+          "frame": "edge_soft"
+        },
+        "closing_names_edge": {
+          "intent": "the closing card, set in this recipe's own type scale",
+          "layout": "closing_names",
+          "layoutOverrides": {
+            "textSlots": {
+              "names": {
+                "sizePx": 116,
+                "y": 412
+              },
+              "date": {
+                "sizePx": 32,
+                "y": 662
+              }
+            }
+          }
+        }
+      },
+      "storyArc": {
+        "sequence": [
+          "space",
+          "presence",
+          "clarity",
+          "motion",
+          "quiet",
+          "geometry",
+          "resonance",
+          "forever"
+        ]
+      },
+      "transitionGrammar": {
+        "vocabulary": [
+          "crossfade",
+          "smooth_up",
+          "dissolve",
+          "smooth_left",
+          "none",
+          "horz_open",
+          "squeeze_h"
+        ],
+        "specialRoles": [
+          "memory",
+          "peak"
+        ],
+        "limits": {
+          "memory": 1,
+          "peak": 2
+        }
+      },
+      "source": {
+        "origin": "original",
+        "notes": "Modern minimal, contemporary, lots of whitespace with a 2026 Color-of-the-Year 'Transformative Teal' accent. Clean crisp grade, no overlays. Original recipe."
+      },
+      "intro": {
+        "summary": "Phong cách tối giản hiện đại, nhiều khoảng trắng, điểm nhấn màu teal thời thượng.",
+        "photos": "Hợp ảnh prewedding/couple hiện đại, bố cục sạch sẽ, ít chi tiết rườm rà — ảnh chất lượng cao quan trọng vì phong cách rất tối giản.",
+        "story": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tinh gọn — tập trung vào cặp đôi, không đi sâu gia đình hay lễ nghi.",
+        "music": "Hợp nhạc piano/hiện đại, điềm tĩnh, tiết tấu chậm, tối giản."
+      },
+      "fit": {
+        "bestFor": [
+          "modern_minimal",
+          "prewedding",
+          "editorial",
+          "couple_journey"
+        ],
+        "minPhotos": 30,
+        "idealPhotos": 60
+      },
+      "musicProfile": {
+        "moods": [
+          "calm",
+          "modern",
+          "piano"
+        ],
+        "energy": "low"
+      },
+      "pacingVariants": [
+        {
+          "id": "spacious",
+          "maxEnergy": 0.38,
+          "durationMultiplier": 1.12
+        },
+        {
+          "id": "balanced",
+          "maxEnergy": 0.68,
+          "durationMultiplier": 1
+        },
+        {
+          "id": "crisp",
+          "maxEnergy": 1,
+          "durationMultiplier": 0.86
+        }
+      ],
+      "briefFields": {
+        "required": [
+          "bride",
+          "groom"
+        ],
+        "optional": [
+          "date",
+          "location",
+          "meetingPlace",
+          "yearsTogether",
+          "thankYouLine"
+        ]
+      },
+      "defaults": {
+        "project": {
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "quality": "share"
+        },
+        "color": {
+          "temperature": 6000,
+          "saturation": 1.06,
+          "contrast": 1.05,
+          "glow": 0.06
+        },
+        "audio": {
+          "fade_in": 1.5,
+          "fade_out": 3,
+          "crossfade": 0
+        },
+        "overlays": [],
+        "fonts": {
+          "title": "fonts/JosefinSans-Regular.ttf",
+          "heading": "fonts/Montserrat-Regular.ttf",
+          "body": "fonts/BeVietnamPro-Regular.ttf"
+        },
+        "palette": {
+          "cream": "#F3F1EC",
+          "ink": "#1C2B30",
+          "brown": "#1C2B30",
+          "white": "#FFFFFF"
+        }
+      },
+      "timelineRules": {
+        "durationStrategy": {
+          "baseSceneSec": 5,
+          "calmSceneSec": 6,
+          "buildSceneSec": 4,
+          "montageSec": 10,
+          "closingSec": 7.5
+        },
+        "transitionStrategy": {
+          "default": [
+            {
+              "type": "crossfade",
+              "duration": 0.5
+            },
+            {
+              "type": "horz_open",
+              "duration": 0.45
+            },
+            {
+              "type": "squeeze_h",
+              "duration": 0.45
+            }
+          ],
+          "calm": {
+            "type": "smooth_up",
+            "duration": 0.6
+          },
+          "memory": {
+            "type": "dissolve",
+            "duration": 0.5
+          },
+          "peak": {
+            "type": "smooth_left",
+            "duration": 0.4
+          },
+          "final": {
+            "type": "none",
+            "duration": 0
+          }
+        },
+        "photoSelection": {
+          "reusePolicy": "avoid_until_exhausted",
+          "heroPriority": [
+            "qualityNorm",
+            "heroScore",
+            "emotionScore",
+            "skinFrac"
+          ],
+          "fallbackPriority": [
+            "qualityNorm",
+            "sharpness",
+            "meanLuma"
+          ],
+          "darkPhotoMaxMeanLuma": 75
+        }
+      },
+      "scenes": [
+        {
+          "id": "s01_open",
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "calm",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_in"
+            }
+          ],
+          "text": {
+            "quote": "{{bride}} & {{groom}}"
+          },
+          "look": "full_bleed_quote_edge"
+        },
+        {
+          "id": "s70_hero_filmstrip",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "match_cut_windows",
+          "signature": true,
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "assets",
+              "count": 3,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s03_circle",
+          "effect": "still",
+          "renderer": "remotion",
+          "template": "glass_frame",
+          "params": {
+            "tint": "220,242,238"
+          },
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s02_duo",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "body": "Không cần nhiều, chỉ cần đúng người."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "portrait",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "wide",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ],
+          "text": {
+            "body": [
+              "Mình bắt đầu từ những điều giản dị nhất.",
+              "Không ồn ào, chỉ cần đúng nhịp của nhau."
+            ]
+          },
+          "look": "two_photo_story_edge"
+        },
+        {
+          "id": "s02b_minimal_duo",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Đơn giản, nhưng đủ đầy.",
+              "Ít đi, để đủ đầy hơn."
+            ]
+          },
+          "look": "duo_tinted_spread_edge"
+        },
+        {
+          "id": "s04_journey",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "heading": {
+                    "value": "Cùng nhau",
+                    "color": "#2E6F6A"
+                  },
+                  "caption": "Chậm rãi mà chắc chắn, như cách mình yêu."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "durationRole": "build",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "any",
+              "quality": "best",
+              "motion": "zoom_in"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": {
+              "value": [
+                "Hành trình",
+                "Chặng đường"
+              ],
+              "color": "#2E6F6A"
+            },
+            "caption": [
+              "Từng bước, từng nơi, đều có nhau bên cạnh.",
+              "Mỗi chặng đường đều có nhau đồng hành."
+            ]
+          },
+          "look": "three_photo_row_edge"
+        },
+        {
+          "id": "s04b_teal_glass",
+          "effect": "video_background",
+          "background": "assets/backgrounds/editorial/deep-teal-glass-caustics.png",
+          "durationRole": "calm",
+          "transitionRole": "memory",
+          "captionPattern": [
+            "Giữa muôn vàn chuyển động, mình vẫn tìm thấy nhau.",
+            "Giữa bộn bề, vẫn chỉ tìm về phía nhau."
+          ],
+          "photoSlots": []
+        },
+        {
+          "id": "s05_breath",
+          "repeatable": {
+            "variants": [
+              {
+                "text": {
+                  "quote": "Ít thôi, nhưng là tất cả."
+                }
+              },
+              {
+                "text": {
+                  "quote": "Khoảng lặng cũng là một câu trả lời."
+                }
+              },
+              {
+                "text": {}
+              }
+            ]
+          },
+          "effect": "layer_scene",
+          "look": "breath_quote",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "bg",
+              "orient": "landscape",
+              "quality": "best",
+              "fit": "cover",
+              "motion": "zoom_out"
+            }
+          ],
+          "text": {
+            "quote": [
+              "Bình yên nằm trong những điều giản dị.",
+              "Hạnh phúc không cần to tát."
+            ]
+          }
+        },
+        {
+          "id": "s06_hero_zoom",
+          "effect": "slow_zoom_in",
+          "easing": "gentle",
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "landscape",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s07_grid",
+          "effect": "collage_grid",
+          "durationRole": "build",
+          "transitionRole": "peak",
+          "photoSlots": [
+            {
+              "slot": "grid",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s07b_geometric",
+          "effect": "mask_reveal",
+          "mask": "assets/masks/geometric_teal_wipe.mp4",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Rõ ràng và giản đơn — như cách mình chọn nhau.",
+            "Đơn giản thôi, vì đó là mình."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ],
+          "params": {
+            "background": "#1C2B30"
+          }
+        },
+        {
+          "id": "s07c_mirror",
+          "effect": "mirror_split",
+          "signature": true,
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "captionPattern": [
+            "Không cần nhiều lời, chỉ cần có nhau.",
+            "Ít lời, nhiều thấu hiểu."
+          ],
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s07d_minimal_cluster",
+          "effect": "layer_scene",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "portrait",
+              "quality": "best"
+            },
+            {
+              "slot": "tl",
+              "orient": "landscape",
+              "quality": "good"
+            },
+            {
+              "slot": "bl",
+              "orient": "landscape",
+              "quality": "good"
+            }
+          ],
+          "text": {
+            "heading": [
+              "Điều giản dị",
+              "Những điều nhỏ"
+            ],
+            "body": [
+              "Hạnh phúc là những điều nhỏ, cộng lại mỗi ngày.",
+              "Từng điều nhỏ, gộp lại thành một cuộc đời."
+            ]
+          },
+          "muteFallback": {
+            "photoSlots": [
+              {
+                "slot": "back",
+                "orient": "any",
+                "quality": "good"
+              },
+              {
+                "slot": "centre",
+                "orient": "portrait",
+                "quality": "best"
+              },
+              {
+                "slot": "front",
+                "orient": "any",
+                "quality": "good"
+              }
+            ],
+            "look": "paper_collage_edge"
+          },
+          "look": "collage_cluster_text_edge"
+        },
+        {
+          "id": "s80_photo_strip_right",
+          "effect": "photo_strip_right",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s81_prism_split",
+          "effect": "prism_split",
+          "signature": true,
+          "durationRole": "calm",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s82_film_roll_up",
+          "effect": "film_roll_up",
+          "durationRole": "montage",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "film_roll",
+              "count": 6,
+              "orient": "any",
+              "quality": "good",
+              "preferVariety": true
+            }
+          ]
+        },
+        {
+          "id": "s83_gallery_matte",
+          "effect": "layer_scene",
+          "look": "gallery_matte_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "hero",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s84_photo_duo",
+          "effect": "layer_scene",
+          "look": "photo_duo_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "best"
+            }
+          ]
+        },
+        {
+          "id": "s85_arch_trio",
+          "effect": "layer_scene",
+          "look": "arch_trio_plate",
+          "durationRole": "normal",
+          "transitionRole": "default",
+          "photoSlots": [
+            {
+              "slot": "left",
+              "orient": "any",
+              "quality": "good"
+            },
+            {
+              "slot": "centre",
+              "orient": "any",
+              "quality": "best"
+            },
+            {
+              "slot": "right",
+              "orient": "any",
+              "quality": "good"
+            }
+          ]
+        },
+        {
+          "id": "s08_closing",
+          "effect": "layer_scene",
+          "durationRole": "closing",
+          "transitionRole": "final",
+          "photoSlots": [],
+          "text": {
+            "names": "{{bride}} & {{groom}}",
+            "date": "{{location}} · {{date}}"
+          },
+          "look": "closing_names_edge"
+        }
+      ]
+    }
+  }
+}

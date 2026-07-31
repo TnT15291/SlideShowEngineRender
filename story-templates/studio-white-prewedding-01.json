@@ -18,16 +18,6 @@
       "layout": "gallery_matte_hero",
       "frame": "studio_hairline"
     },
-    "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
-      "layout": "photo_duo",
-      "frame": "studio_hairline"
-    },
-    "polaroid_scatter_plate": {
-      "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
-      "layout": "polaroid_scatter",
-      "frame": "studio_hairline"
-    },
     "full_bleed_quote_studio": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
       "layout": "full_bleed_quote",
@@ -72,6 +62,55 @@
           "date": {
             "sizePx": 30,
             "y": 665
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 190,
+            "y": 120,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_golden_pair": {
+      "intent": "Phase 2 adoption of golden_column_pair for s84_photo_duo.",
+      "layout": "golden_column_pair",
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "major": {
+            "x": 100,
+            "width": 1040
+          },
+          "minor": {
+            "x": 1200,
+            "y": 280,
+            "height": 540
+          }
+        }
+      }
+    },
+    "p2_diagonal_trio": {
+      "intent": "Phase 2 adoption of diagonal_staircase_trio for s85_arch_trio.",
+      "layout": "diagonal_staircase_trio",
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "top": {
+            "x": 70,
+            "y": 50
+          },
+          "mid": {
+            "y": 290
           }
         }
       }
@@ -611,7 +650,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -625,17 +664,17 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "look": "photo_duo_plate",
+      "look": "p2_golden_pair",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "major",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "minor",
           "orient": "any",
           "quality": "best"
         }
@@ -644,22 +683,22 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "look": "polaroid_scatter_plate",
+      "look": "p2_diagonal_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "p1",
+          "slot": "top",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "p2",
+          "slot": "mid",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "p3",
+          "slot": "low",
           "orient": "any",
           "quality": "good"
         }

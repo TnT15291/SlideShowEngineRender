@@ -22,33 +22,6 @@
         "contrast": 1.08
       }
     },
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "gold_mount",
-      "photoTreatment": {
-        "saturation": 0.88,
-        "contrast": 1.08
-      }
-    },
-    "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
-      "layout": "photo_duo",
-      "frame": "gold_mount",
-      "photoTreatment": {
-        "saturation": 0.88,
-        "contrast": 1.08
-      }
-    },
-    "feature_plus_duo_plate": {
-      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
-      "layout": "feature_plus_duo",
-      "frame": "gold_mount",
-      "photoTreatment": {
-        "saturation": 0.88,
-        "contrast": 1.08
-      }
-    },
     "hero_title_card_mount": {
       "intent": "the hero title card, wearing the recipe's gold_mount frame",
       "layout": "hero_title_card",
@@ -71,6 +44,61 @@
           "date": {
             "sizePx": 36,
             "y": 680
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "gold_mount",
+      "photoTreatment": {
+        "saturation": 0.88,
+        "contrast": 1.08
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 100,
+            "y": 80,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_overlap_duo": {
+      "intent": "Phase 2 adoption of overlap_stack_duo for s84_photo_duo.",
+      "layout": "overlap_stack_duo",
+      "photoTreatment": {
+        "saturation": 0.88,
+        "contrast": 1.08
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": {
+            "x": 150,
+            "width": 930
+          },
+          "front": {
+            "x": 900,
+            "y": 420
+          }
+        }
+      }
+    },
+    "p2_diagonal_trio": {
+      "intent": "Phase 2 adoption of diagonal_staircase_trio for s85_feature_duo.",
+      "layout": "diagonal_staircase_trio",
+      "frame": "gold_mount",
+      "photoTreatment": {
+        "saturation": 0.88,
+        "contrast": 1.08
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "low": {
+            "x": 1190
           }
         }
       }
@@ -553,7 +581,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -567,17 +595,17 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "look": "photo_duo_plate",
+      "look": "p2_overlap_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "back",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "front",
           "orient": "any",
           "quality": "best"
         }
@@ -586,22 +614,22 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "look": "feature_plus_duo_plate",
+      "look": "p2_diagonal_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "hero",
+          "slot": "top",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "top",
+          "slot": "mid",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "bottom",
+          "slot": "low",
           "orient": "any",
           "quality": "good"
         }

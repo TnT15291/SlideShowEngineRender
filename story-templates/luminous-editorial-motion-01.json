@@ -23,21 +23,6 @@
       "layout": "feature_plus_duo",
       "frame": "halo_card"
     },
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "halo_card"
-    },
-    "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
-      "layout": "photo_duo",
-      "frame": "halo_card"
-    },
-    "three_photo_row_plate": {
-      "intent": "wordless three photo row beat, wearing this recipe's own frame",
-      "layout": "three_photo_row",
-      "frame": "halo_card"
-    },
     "text_left_photo_right_halo": {
       "intent": "the text-left spread, wearing the recipe's halo_card frame",
       "layout": "text_left_photo_right",
@@ -87,6 +72,56 @@
           "date": {
             "sizePx": 36,
             "y": 645
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 100,
+            "y": 120,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_golden_pair": {
+      "intent": "Phase 2 adoption of golden_column_pair for s84_photo_duo.",
+      "layout": "golden_column_pair",
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "major": {
+            "x": 140,
+            "width": 1000
+          },
+          "minor": {
+            "x": 1190,
+            "y": 250,
+            "width": 500
+          }
+        }
+      }
+    },
+    "p2_diagonal_trio": {
+      "intent": "Phase 2 adoption of diagonal_staircase_trio for s85_tinted_duo.",
+      "layout": "diagonal_staircase_trio",
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "mid": {
+            "x": 650,
+            "y": 270
+          },
+          "low": {
+            "x": 1190,
+            "y": 530
           }
         }
       }
@@ -618,7 +653,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -632,17 +667,17 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "look": "photo_duo_plate",
+      "look": "p2_golden_pair",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "major",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "minor",
           "orient": "any",
           "quality": "best"
         }
@@ -651,22 +686,22 @@
     {
       "id": "s85_tinted_duo",
       "effect": "layer_scene",
-      "look": "three_photo_row_plate",
+      "look": "p2_diagonal_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "top",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "mid",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "low",
           "orient": "any",
           "quality": "good"
         }

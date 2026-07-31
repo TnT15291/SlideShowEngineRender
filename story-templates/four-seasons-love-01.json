@@ -13,38 +13,9 @@
     }
   },
   "looks": {
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "season_round",
-      "photoTreatment": {
-        "saturation": 1.09
-      }
-    },
-    "duo_tinted_spread_plate": {
-      "intent": "wordless duo tinted spread beat, wearing this recipe's own frame",
-      "layout": "duo_tinted_spread",
-      "frame": "season_round",
-      "photoTreatment": {
-        "saturation": 1.09
-      }
-    },
-    "three_photo_row_plate": {
-      "intent": "wordless three photo row beat, wearing this recipe's own frame",
-      "layout": "three_photo_row",
-      "frame": "season_round",
-      "photoTreatment": {
-        "saturation": 1.09
-      }
-    },
     "photo_left_text_right_season": {
       "intent": "the photo-left spread, wearing the recipe's season_round frame",
       "layout": "photo_left_text_right",
-      "frame": "season_round"
-    },
-    "paper_collage_season": {
-      "intent": "the layered paper collage, wearing the recipe's season_round frame",
-      "layout": "paper_collage",
       "frame": "season_round"
     },
     "two_photo_story_season": {
@@ -80,6 +51,71 @@
           "date": {
             "sizePx": 36,
             "y": 655
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "season_round",
+      "photoTreatment": {
+        "saturation": 1.09
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 190,
+            "y": 80,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_overlap_duo": {
+      "intent": "Phase 2 adoption of overlap_stack_duo for s84_photo_duo.",
+      "layout": "overlap_stack_duo",
+      "photoTreatment": {
+        "saturation": 1.09
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "front": {
+            "x": 860,
+            "y": 460,
+            "rotation": -2
+          }
+        }
+      }
+    },
+    "p2_circle_trio": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s85_arch_trio.",
+      "layout": "circle_trio_stagger",
+      "photoTreatment": {
+        "saturation": 1.09
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "p2": {
+            "y": 260
+          }
+        }
+      }
+    },
+    "p2_circle_autumn": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s03_autumn.",
+      "layout": "circle_trio_stagger",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": {
+            "y": 170
+          },
+          "p2": {
+            "y": 300
+          },
+          "p3": {
+            "y": 200
           }
         }
       }
@@ -320,17 +356,17 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "back",
+          "slot": "p1",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "portrait",
           "quality": "best"
         },
         {
-          "slot": "front",
+          "slot": "p3",
           "orient": "any",
           "quality": "good"
         }
@@ -356,7 +392,7 @@
           }
         ]
       },
-      "look": "paper_collage_season"
+      "look": "p2_circle_autumn"
     },
     {
       "id": "s04_winter",
@@ -544,7 +580,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -558,17 +594,17 @@
     {
       "id": "s84_photo_duo",
       "effect": "layer_scene",
-      "look": "duo_tinted_spread_plate",
+      "look": "p2_overlap_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "back",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "right",
+          "slot": "front",
           "orient": "any",
           "quality": "best"
         }
@@ -577,22 +613,22 @@
     {
       "id": "s85_arch_trio",
       "effect": "layer_scene",
-      "look": "three_photo_row_plate",
+      "look": "p2_circle_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "p1",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "p3",
           "orient": "any",
           "quality": "good"
         }

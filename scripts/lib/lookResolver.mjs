@@ -1,8 +1,8 @@
 // RECIPE LOOKS — the library owns safe geometry, the recipe owns visual identity.
 //
-// layouts/library.json holds PRIMITIVES: slot rectangles that are always valid on the
-// 1920x1080 canvas. A recipe may now name `looks`, each of which picks one of those
-// primitives and dresses it — nudged slot geometry, a frame treatment, a photo
+// layouts/library.json holds PRIMITIVES: slots whose rendered bounds, including rotation,
+// must stay inside the 1920x1080 canvas. A recipe may now name `looks`, each of which picks
+// one of those primitives and dresses it — nudged slot geometry, a frame treatment, a photo
 // treatment, a motion preset. A scene then names a look instead of a bare layout.
 //
 //   scene.look -> recipe.looks[look] -> shared layout -> recipe.defaults -> designTokens
@@ -44,6 +44,23 @@ const clone = (value) => (value == null ? value : JSON.parse(JSON.stringify(valu
 const finding = (check, id, detail, severity = "error") => ({ check, id, detail, severity });
 
 const layoutOf = (library, id) => (library?.layouts || []).find((l) => l.id === id);
+
+/** Bounding box emitted by FFmpeg's rotate filter and overlaid at the slot's raw x/y. */
+export function rotatedSlotBounds(slot) {
+  const radians = ((slot.rotation ?? 0) * Math.PI) / 180;
+  const cosine = Math.abs(Math.cos(radians));
+  const sine = Math.abs(Math.sin(radians));
+  const width = cosine * slot.width + sine * slot.height;
+  const height = sine * slot.width + cosine * slot.height;
+  return {
+    x: slot.x,
+    y: slot.y,
+    width,
+    height,
+    right: slot.x + width,
+    bottom: slot.y + height,
+  };
+}
 
 function mergeSlots(baseSlots, overrides, allowed) {
   return (baseSlots || []).map((slot) => {
@@ -281,19 +298,18 @@ export function validateLook(lookId, look, { template, library }) {
       `resolves to ${(resolved.photoSlots || []).length} photo slot(s) but layout ${look.layout} has ${(base.photoSlots || []).length} — the photo budget is sized from the layout`)); // V3
   }
 
-  // V4, photos: bleeding a frame off the edge is a real composition — the library does it
-  // itself, and meta.coordinateNote says negative x/y are deliberate. What is never a
-  // composition is a slot that has mostly left the canvas. So the test is how much of the
-  // frame still lands on screen, not whether it fits inside the margins.
+  // V4, photos: match preflightTimeline's hard canvas boundary. Allowing even a small
+  // bleed here only defers the same failure until the resolved scene reaches preflight.
   const bgSlot = resolved.background?.type === "photo_full_bleed" ? resolved.background.slot : null;
   for (const slot of resolved.photoSlots || []) {
-    if (slot.id === bgSlot || !overrides.photoSlots?.[slot.id]) continue;
-    const onScreen = Math.max(0, Math.min(slot.x + slot.width, canvas.width) - Math.max(slot.x, 0))
-      * Math.max(0, Math.min(slot.y + slot.height, canvas.height) - Math.max(slot.y, 0));
-    const visible = onScreen / Math.max(1, slot.width * slot.height);
-    if (visible < 0.5) {
+    if (!overrides.photoSlots?.[slot.id]) continue;
+    const bounds = rotatedSlotBounds(slot);
+    if (bounds.x < 0 || bounds.y < 0
+      || bounds.right > canvas.width || bounds.bottom > canvas.height) {
       out.push(finding("look_overrides", lookId,
-        `photo slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height} — ${(visible * 100).toFixed(0)}% of it is off the ${canvas.width}x${canvas.height} canvas`)); // V4
+        `photo slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height} ` +
+        `and renders as ${bounds.width.toFixed(1)}x${bounds.height.toFixed(1)} after ${slot.rotation ?? 0}° rotation, ` +
+        `outside the ${canvas.width}x${canvas.height} canvas`)); // V4
     }
   }
   // Text has no such licence: a heading cropped by the frame edge is never intended.

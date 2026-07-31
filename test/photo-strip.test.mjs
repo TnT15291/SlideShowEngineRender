@@ -5,7 +5,6 @@ import test from "node:test";
 const runTs = (source) => spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "--eval", source], {
   cwd: process.cwd(), encoding: "utf8",
 });
-
 test("film rolls move slowly with slim unbranded rails", () => {
   const result = runTs(`
     import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";

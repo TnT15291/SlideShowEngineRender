@@ -107,6 +107,37 @@ filled `photoSlot`/`textSlot`/`decorSlot`/`panel` emit one layer using its coord
 Fonts come from the theme's `fonts[fontRole]`; sizes from the slot's `sizePx` (or the
 `typeScale` range). This is why you never do pixel math — the slot already is the math.
 
+### The seven off-grid primitives
+
+Most of the library is grids and rows. These seven exist because the catalogue was measured
+and found monotonous: one arrangement was reachable in 23 of 24 recipes. They deliberately
+break the grid — overlap, stagger, diagonal, off-centre — so reach for one when a beat would
+otherwise land on the same rectangle every other recipe already uses.
+
+| Layout | Photos | Text slots | What it is |
+|---|---:|---|---|
+| `overlap_stack_duo` | 2 | heading | large photo behind, small tilted photo overlapping its lower right — depth, not a grid |
+| `inset_card_hero` | 2 | — | full-bleed photo as ground, a small card pinned into the lower right |
+| `circle_trio_stagger` | 3 | heading | three circular medallions on staggered levels, heading beneath |
+| `diagonal_staircase_trio` | 3 | heading | three photos stepping down from upper left to lower right, text in the upper-right gap |
+| `golden_column_pair` | 2 | heading | one photo across the left two thirds, a tall narrow one at the right, text under the narrow column |
+| `stacked_horizon_trio` | 3 | — | three offset horizontal bands — three horizons out of line |
+| `offset_portrait_hero` | 1 | — | one large photo pushed left, balanced by a vertical accent hugging the right margin |
+
+Three of them own the frame on their photo slots: `circle_trio_stagger`, `overlap_stack_duo`
+and `inset_card_hero`. Do not put a global `frame` on a look that wears one — frame
+precedence is `def.frame → resolvedFrame → slot.frame`, so a look-level frame silently
+erases the medallion or the card edge that makes the layout what it is. If you resize a slot
+that carries a circular frame, override the frame too with a radius equal to half the new
+side, or a 600px slot wearing `circleMedallion` (radius 260) renders as a rounded rectangle.
+
+`stacked_horizon_trio` is the one with a content precondition: every photo request must be
+`orient: "landscape"`. Feed it portraits and the bands crop through faces.
+
+Two further primitives sit in the library unused: `offset_quad_pinwheel` and `filmstrip_band`.
+They would set a scene's photo demand to 4 and 5, which moves the solver's budget, so they
+were deferred rather than adopted.
+
 ## 6. Self-check before returning
 
 - [ ] Validates against `schema/timeline.schema.json` (durations, transitions, per-effect inputs).

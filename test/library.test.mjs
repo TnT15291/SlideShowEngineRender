@@ -11,15 +11,27 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { rotatedSlotBounds } from "../scripts/lib/lookResolver.mjs";
 
 const library = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
 const CANVAS_W = 1920;
 const CANVAS_H = 1080;
 
-test("every layout in the library fits inside the canvas the engine renders", () => {
+const layoutCanvasOffenders = (layouts) => {
   const offenders = [];
-  for (const layout of library.layouts ?? []) {
-    for (const slot of [...(layout.photoSlots ?? []), ...(layout.textSlots ?? [])]) {
+  for (const layout of layouts ?? []) {
+    for (const slot of layout.photoSlots ?? []) {
+      if (slot.x == null || slot.y == null) continue;
+      const bounds = rotatedSlotBounds(slot);
+      if (bounds.x < 0 || bounds.y < 0 || bounds.right > CANVAS_W || bounds.bottom > CANVAS_H) {
+        offenders.push(
+          `${layout.id}.${slot.id} at ${slot.x},${slot.y} ${slot.width}x${slot.height} ` +
+            `rotated ${slot.rotation ?? 0}° renders as ${bounds.width.toFixed(1)}x${bounds.height.toFixed(1)} — ` +
+            `preflight will reject this and the render will fail`
+        );
+      }
+    }
+    for (const slot of layout.textSlots ?? []) {
       if (slot.x == null || slot.y == null) continue; // slots without geometry inherit it
       const right = slot.x + (slot.width ?? 0);
       const bottom = slot.y + (slot.height ?? 0);
@@ -31,7 +43,75 @@ test("every layout in the library fits inside the canvas the engine renders", ()
       }
     }
   }
+  return offenders;
+};
+
+test("every layout in the library fits inside the canvas the engine renders", () => {
+  const offenders = layoutCanvasOffenders(library.layouts);
   assert.deepEqual(offenders, [], `layouts that cannot render:\n  ${offenders.join("\n  ")}`);
+});
+
+test("the library canvas gate checks a primitive's rendered bounds after rotation", () => {
+  const slot = { id: "tilted", x: 1600, y: 200, width: 300, height: 300, rotation: -30 };
+  assert.ok(slot.x + slot.width <= CANVAS_W, "fixture raw rectangle must fit");
+  assert.equal(layoutCanvasOffenders([{ id: "rotated_fixture", photoSlots: [slot] }]).length, 1);
+});
+
+test("coordinate metadata documents the same hard canvas boundary as validation", () => {
+  const note = library.meta?.coordinateNote ?? "";
+  assert.match(note, /x\/y must be non-negative/);
+  assert.match(note, /bounding box after rotation.*stay inside the canvas/);
+  assert.doesNotMatch(note, /negative x\/y intentionally/i);
+});
+
+test("circleMedallion is a true circle frame for a 520x520 slot", () => {
+  assert.deepEqual(library.designTokens?.framePreset?.circleMedallion, {
+    radius: 260,
+    border: 10,
+    borderColor: "#FFFFFF",
+    shadow: true,
+  });
+});
+
+test("seven active primitives are appended without reordering the original layouts", () => {
+  const originalIds = [
+    "hero_title_card",
+    "text_left_photo_right",
+    "photo_left_text_right",
+    "three_photo_row",
+    "two_photo_story",
+    "collage_cluster_text",
+    "full_bleed_quote",
+    "polaroid_scatter",
+    "closing_names",
+    "paper_collage",
+    "magazine_page_turn",
+    "masonry_grid_wall",
+    "duo_tinted_spread",
+    "welcome_title_page",
+    "invitation_row",
+    "journey_duo",
+    "polaroid_feature",
+    "quad_grid_caption",
+    "arch_trio",
+    "feature_plus_duo",
+    "save_date_card",
+    "photo_grid_6",
+    "photo_network_hero",
+    "gallery_matte_hero",
+    "photo_duo",
+  ];
+  const activeIds = [
+    "overlap_stack_duo",
+    "inset_card_hero",
+    "circle_trio_stagger",
+    "diagonal_staircase_trio",
+    "golden_column_pair",
+    "stacked_horizon_trio",
+    "offset_portrait_hero",
+  ];
+  assert.deepEqual(library.layouts.map((layout) => layout.id), [...originalIds, ...activeIds]);
+  assert.equal(library.layouts.length, 32);
 });
 
 test("every layout declares the slot ids a recipe is allowed to fill", () => {

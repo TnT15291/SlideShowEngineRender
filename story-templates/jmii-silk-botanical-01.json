@@ -66,16 +66,6 @@
         "stagger": 0.14
       }
     },
-    "arch_gallery": {
-      "intent": "three arched portraits in a row",
-      "layout": "arch_trio",
-      "frame": "arch"
-    },
-    "duo_arch": {
-      "intent": "two arched portraits side by side",
-      "layout": "photo_duo",
-      "frame": "arch"
-    },
     "quiet_quote": {
       "intent": "wordless recurrence: one photograph full bleed, softened",
       "layout": "full_bleed_quote",
@@ -120,11 +110,6 @@
       "layout": "magazine_page_turn",
       "frame": "arch"
     },
-    "polaroid_scatter_silk": {
-      "intent": "the scattered prints, wearing the recipe's arch frame",
-      "layout": "polaroid_scatter",
-      "frame": "arch"
-    },
     "closing_names_silk": {
       "intent": "the closing card, set in this recipe's own type scale",
       "layout": "closing_names",
@@ -137,6 +122,51 @@
           "date": {
             "sizePx": 34,
             "y": 648
+          }
+        }
+      }
+    },
+    "p2_circle_trio": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s05_arch_gallery.",
+      "layout": "circle_trio_stagger",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p2": {
+            "y": 250
+          },
+          "p3": {
+            "y": 150
+          }
+        }
+      }
+    },
+    "p2_golden_pair": {
+      "intent": "Phase 2 adoption of golden_column_pair for s11_side_by_side.",
+      "layout": "golden_column_pair",
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "major": {
+            "width": 940
+          },
+          "minor": {
+            "x": 1240,
+            "y": 230,
+            "width": 470,
+            "height": 590
+          }
+        }
+      }
+    },
+    "p2_diagonal_trio": {
+      "intent": "Phase 2 adoption of diagonal_staircase_trio for s85_paper_collage.",
+      "layout": "diagonal_staircase_trio",
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "mid": {
+            "x": 650,
+            "y": 330
           }
         }
       }
@@ -456,22 +486,22 @@
     {
       "id": "s05_arch_gallery",
       "effect": "layer_scene",
-      "look": "arch_gallery",
+      "look": "p2_circle_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "p1",
           "orient": "portrait",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "portrait",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "p3",
           "orient": "portrait",
           "quality": "good"
         }
@@ -769,17 +799,17 @@
     {
       "id": "s11_side_by_side",
       "effect": "layer_scene",
-      "look": "duo_arch",
+      "look": "p2_golden_pair",
       "durationRole": "normal",
       "transitionRole": "memory",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "major",
           "orient": "portrait",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "minor",
           "orient": "portrait",
           "quality": "good"
         }
@@ -935,22 +965,22 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "p1",
+          "slot": "top",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "p2",
+          "slot": "mid",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "p3",
+          "slot": "low",
           "orient": "any",
           "quality": "good"
         }
       ],
-      "look": "polaroid_scatter_silk"
+      "look": "p2_diagonal_trio"
     },
     {
       "id": "s12_closing",
