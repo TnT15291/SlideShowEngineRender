@@ -18,21 +18,6 @@
       "layout": "photo_duo",
       "frame": "postmark_rule"
     },
-    "gallery_matte_plate": {
-      "intent": "wordless gallery matte beat, wearing this recipe's own frame",
-      "layout": "gallery_matte_hero",
-      "frame": "postmark_rule"
-    },
-    "magazine_page_turn_plate": {
-      "intent": "wordless magazine page turn beat, wearing this recipe's own frame",
-      "layout": "magazine_page_turn",
-      "frame": "postmark_rule"
-    },
-    "arch_trio_plate": {
-      "intent": "wordless arch trio beat, wearing this recipe's own frame",
-      "layout": "arch_trio",
-      "frame": "postmark_rule"
-    },
     "journey_story_plate": {
       "intent": "readable journey chapter with a consistent modern type scale",
       "layout": "journey_duo",
@@ -92,6 +77,51 @@
           "date": {
             "sizePx": 36,
             "y": 656
+          }
+        }
+      }
+    },
+    "p2_offset_portrait": {
+      "intent": "Phase 2 adoption of offset_portrait_hero for s83_gallery_matte.",
+      "layout": "offset_portrait_hero",
+      "frame": "postmark_rule",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 220,
+            "y": 100,
+            "width": 1240,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_overlap_duo": {
+      "intent": "Phase 2 adoption of overlap_stack_duo for s84_arch_trio.",
+      "layout": "overlap_stack_duo",
+      "layoutOverrides": {
+        "photoSlots": {
+          "front": {
+            "x": 820,
+            "y": 440,
+            "rotation": -2
+          }
+        }
+      }
+    },
+    "p2_circle_trio": {
+      "intent": "Phase 2 adoption of circle_trio_stagger for s85_feature_duo.",
+      "layout": "circle_trio_stagger",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": {
+            "y": 60
+          },
+          "p2": {
+            "y": 300
+          },
+          "p3": {
+            "y": 120
           }
         }
       }
@@ -586,7 +616,7 @@
     {
       "id": "s83_gallery_matte",
       "effect": "layer_scene",
-      "look": "gallery_matte_plate",
+      "look": "p2_offset_portrait",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
@@ -600,17 +630,17 @@
     {
       "id": "s84_arch_trio",
       "effect": "layer_scene",
-      "look": "magazine_page_turn_plate",
+      "look": "p2_overlap_duo",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "page_left",
+          "slot": "back",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "page_right",
+          "slot": "front",
           "orient": "any",
           "quality": "best"
         }
@@ -619,22 +649,22 @@
     {
       "id": "s85_feature_duo",
       "effect": "layer_scene",
-      "look": "arch_trio_plate",
+      "look": "p2_circle_trio",
       "durationRole": "normal",
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "left",
+          "slot": "p1",
           "orient": "any",
           "quality": "good"
         },
         {
-          "slot": "centre",
+          "slot": "p2",
           "orient": "any",
           "quality": "best"
         },
         {
-          "slot": "right",
+          "slot": "p3",
           "orient": "any",
           "quality": "good"
         }

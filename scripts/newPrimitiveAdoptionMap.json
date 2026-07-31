@@ -679,7 +679,7 @@
             "primitive": "diagonal_staircase_trio",
             "preserveLookFields": ["frame", "photoTreatment", "motion"],
             "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70 }, "low": { "x": 1190 } } }
+            "layoutOverrides": { "photoSlots": { "top": { "x": 70, "y": 90 }, "low": { "x": 1190, "y": 490 } } }
           }
         }
       ]

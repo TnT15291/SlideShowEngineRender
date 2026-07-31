@@ -13,8 +13,8 @@
 | Trạng thái tổng | `IN_PROGRESS` |
 | Pha hiện tại | `Pha 2C — rollout theo batch` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2C batch B3` — 4 recipe đã migrate; chỉ còn đúng 1 group trên trần 12 |
-| Bước tiếp theo | `P2C batch B4` — `--write --batch B4` cho `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01`, rồi chạy đủ 7 gate của Pha 2C và siết ratchet tới số đo mới |
+| Bước hoàn thành gần nhất | `P2C batch B4` — 4 recipe đã migrate; **hai mục tiêu cuối `maxShare <=12` và `over12 = 0` đã đạt**; sửa một cặp override trùng mà audit không bắt được |
+| Bước tiếp theo | `P2C batch B5` — `--write --batch B5` cho `studio-white-prewedding-01`, `three-chapters-biography-01`, `warm-film-01`, `white-weddings-editorial-01`, rồi chạy đủ 7 gate của Pha 2C và siết ratchet tới số đo mới |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -25,7 +25,8 @@
 | Commit Pha 2C B1 | `161b281` |
 | Commit Pha 2C B2 | `4cf6f25` |
 | Commit Pha 2C B3 | `0b42562` |
-| Cập nhật lần cuối | `2026-07-31 — P2C B3 DONE` |
+| Commit Pha 2C B4 | `B4_SHA` |
+| Cập nhật lần cuối | `2026-07-31 — P2C B4 DONE` |
 
 ### Quy ước trạng thái
 
@@ -61,11 +62,11 @@
 
 | Metric V2 | Baseline trong plan | Đã xác nhận khi triển khai |
 |---|---:|---|
-| `catalog.distinct` | 49 | Có — P0A.5: 49; Pha 1: 56; pilot: 64; B1: 76; B2: 89; B3: 101 |
-| `authored.distinct` | 48 | Có — P0A.5: 48; pilot: 56; B1: 68; B2: 81; B3: 93 |
-| `authored.shared` | 30 | Có — P0A.5: 30; pilot: 30; B1: 30; B2: 30; B3: 30 |
-| `reachable.maxShare` | 23 | Có — P0A.5: 23; pilot: 22; B1: 18; B2: 15; B3: 13 |
-| `reachable.over12Count` | 7 | Có — P0A.5: 7; pilot: 6; B1: 4; B2: 2; B3: 1 |
+| `catalog.distinct` | 49 | Có — P0A.5: 49; Pha 1: 56; pilot: 64; B1: 76; B2: 89; B3: 101; B4: 113 |
+| `authored.distinct` | 48 | Có — P0A.5: 48; pilot: 56; B1: 68; B2: 81; B3: 93; B4: 105 |
+| `authored.shared` | 30 | Có — P0A.5: 30; pilot–B3: 30; B4: 30 (chạm 31 rồi bị bắt và sửa — xem nhật ký B4) |
+| `reachable.maxShare` | 23 | Có — P0A.5: 23; pilot: 22; B1: 18; B2: 15; B3: 13; **B4: 12 = mục tiêu** |
+| `reachable.over12Count` | 7 | Có — P0A.5: 7; pilot: 6; B1: 4; B2: 2; B3: 1; **B4: 0 = mục tiêu** |
 | Scene meaningful | 5 scene / 3 recipe | Có — P0A.4/P0A.5: 5 / 3 |
 | `closing_names` distinct | 11 | Có — P0A.2: 11 |
 | `closing_names` max group | 9 | Có — P0A.2: 9 |
@@ -330,7 +331,7 @@ riêng chứ không nhét vào một batch.
 | B1 | `afterparty-pulse-01`, `cinematic-vows-01`, `city-to-ceremony-01`, `classic-luxury-01` | DONE | `161b281` |
 | B2 | `classic-multisong-album-01`, `family-roots-01`, `four-seasons-love-01`, `garden-botanical-01` | DONE | `4cf6f25` |
 | B3 | `garden-diary-01`, `heritage-ceremony-01`, `korean-soft-01`, `letters-to-forever-01` | DONE | `0b42562` |
-| B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | TODO | — |
+| B4 | `long-distance-love-01`, `luminous-editorial-motion-01`, `modern-teal-01`, `playful-scrapbook-01` | DONE | `B4_SHA` |
 | B5 | `studio-white-prewedding-01`, `three-chapters-biography-01`, `warm-film-01`, `white-weddings-editorial-01` | TODO | — |
 
 Gate bắt buộc sau mỗi batch:
@@ -421,12 +422,87 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 batch B1 | `161b281` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 64 -> 76`, `authored 56 -> 68`, `shared 30 -> 30`, `maxShare 22 -> 18`, `over12 6 -> 4`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `49 pending, 21 already applied`; content contract `51 path / 1 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{afterparty-pulse-01,cinematic-vows-01,city-to-ceremony-01,classic-luxury-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B2 | `4cf6f25` | 13 adoption / 4 recipe. Đo thật sau ghi: `catalog 76 -> 89`, `authored 68 -> 81`, `shared 30 -> 30`, `maxShare 18 -> 15`, `over12 4 -> 2`; meaningful `3/3/4/3`. `--check-plan` `36 pending, 34 already applied`; content contract `36 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{classic-multisong-album-01,family-roots-01,four-seasons-love-01,garden-botanical-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B3 | `0b42562` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 89 -> 101`, `authored 81 -> 93`, `shared 30 -> 30`, `maxShare 15 -> 13`, `over12 2 -> 1`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `24 pending, 46 already applied`; content contract `24 path / 0 union text key`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{garden-diary-01,heritage-ceremony-01,korean-soft-01,letters-to-forever-01}.json`; `test/layout-geometry.test.mjs` | DONE |
-| Pha 2 batch B4 | — | — | — | TODO |
+| Pha 2 batch B4 | `B4_SHA` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B5 | — | — | — | TODO |
 | Nghiệm thu cuối | — | — | — | TODO |
 | Pha 3 tuỳ chọn | — | — | — | TODO |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-07-31 — P2C batch B4
+
+- Session: Claude, theo yêu cầu "Làm B4".
+- Trạng thái nhận việc: `IN_PROGRESS`; cây sạch tại `8abcebd`.
+- Phạm vi: ghi batch `B4`, chạy đủ 7 gate, siết ratchet tới số đo, commit độc lập. Phải mở rộng
+  sang `scripts/newPrimitiveAdoptionMap.json` vì batch này lộ ra một lỗi map — xem bên dưới.
+- File đã thay đổi:
+  - `story-templates/long-distance-love-01.json`, `luminous-editorial-motion-01.json`,
+    `modern-teal-01.json`, `playful-scrapbook-01.json` — do `--write --batch B4` ghi.
+  - `scripts/newPrimitiveAdoptionMap.json` — sửa override trùng của `modern-teal-01/s85_arch_trio`.
+  - `test/layout-geometry.test.mjs` — siết ratchet + thêm bar mới cho `authored.shared`.
+  - `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- **Hai mục tiêu hình học cuối của plan đã đạt ở batch này**: `reachable.maxShare = 12` và
+  `reachable.over12Count = 0`. B5 không cần hạ thêm; nó chỉ còn nhiệm vụ đưa 4 recipe cuối lên sàn
+  meaningful `>=3`.
+
+#### Lỗi B4 tìm ra: hai recipe vẽ cùng một hình, audit không bắt
+
+`authored.shared` là metric **duy nhất trong cả rollout đi sai hướng**: giữ `30` suốt
+pilot→B1→B2→B3, rồi nhảy `31` ngay khi ghi B4. Truy ra một group mới có `share=2`:
+
+- `heritage-ceremony-01/s85_arch_trio` (ghi ở B3)
+- `modern-teal-01/s85_arch_trio` (ghi ở B4)
+
+Cả hai vào `diagonal_staircase_trio` với `layoutOverrides` **giống hệt từng byte**:
+`{"photoSlots":{"top":{"x":70},"low":{"x":1190}}}`. Chín adoption `diagonal` còn lại đều có
+override riêng; đúng hai entry này trùng nhau.
+
+Đây chính là **bug #4 của P2A.R2 tái diễn** ở dạng mà audit nó dựng ra không thấy:
+`compositionUniquenessAudit()` vẫn báo `0 cặp dùng chung` vì composition signature tính cả `frame`,
+mà hai recipe này khác frame (`lacquer_frame` vs `edge_soft`) và heritage còn có `photoTreatment`.
+Nhưng `frame` là **lớp áo, không phải hình học** — V2 geometry key chỉ tính rect + background, và
+theo thước đó hai scene vẽ ba khung hình y hệt nhau ở cùng vị trí, cùng scene id.
+
+Đã sửa hai việc:
+
+1. `modern-teal-01/s85_arch_trio` nhận override riêng
+   `{"top":{"x":70,"y":90},"low":{"x":1190,"y":490}}` — đường chéo nén lại, hợp chất tối giản của
+   recipe. Sửa modern-teal chứ không sửa heritage vì heritage đã commit ở B3; đổi map của nó sẽ làm
+   `--check-plan` fail verification trên file đã ghi. Giữ nguyên slot `620x500`, coverage `44.8%`,
+   base `x=90/650/1210` theo guard P1.7R §7.2. Sau khi sửa: `shared` về `30`, và vì có thêm một key
+   phân biệt nên `catalog 112 -> 113`, `authored 104 -> 105`.
+2. Thêm bar `authored.shared <= 30` vào `test/layout-geometry.test.mjs`. Nghiệm thu bằng cách khôi
+   phục lại override trùng rồi chạy lại: test **fail** đúng như mong đợi, sau đó khôi phục bản sửa.
+
+Bài học ghi lại cho B5 và Pha 2D: **`compositionUniquenessAudit` xanh không có nghĩa là hình học
+không trùng.** Nó tính cả dressing; muốn kiểm hình học thuần thì đọc `authored.shared`.
+
+- Bảy gate của Pha 2C:
+  1. `--check-plan` xanh — `12 pending, 58 already applied`.
+  2. Cả bốn recipe meaningful `0 -> 3`.
+  3. Content contract `12 execution path`; photo demand và copy giữ nguyên.
+  4. Gallery-tail `24/24` duy nhất; composition `253` với `0` cặp dùng chung.
+  5. Ratchet siết tới số đo: `catalog >= 113`, `authored >= 105`, `maxShare <= 12`,
+     `over12Count === 0` (đổi từ `<=` sang `===` vì đã chạm đáy), `shared <= 30`.
+  6. Validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0;
+     `npm run test:unit` `376/376`.
+  7. Commit `B4_SHA`.
+- Metric trước/sau: `catalog 101 -> 113`, `authored 93 -> 105`, `authored.shared 30 -> 30`,
+  `maxShare 13 -> 12`, `over12 1 -> 0`.
+- Commit: `B4_SHA`.
+- Quyết định hoặc sai lệch so với plan:
+  - Sửa map nằm ngoài mô tả gốc của một batch. Lý do: lỗi do chính batch này tạo ra, là metric duy
+    nhất đi sai hướng, và để lại thì Pha 2D sẽ nghiệm thu trên một catalogue có hai recipe vẽ trùng.
+  - `over12Count` khoá bằng `=== 0` thay vì `<= 0` để nói rõ đây là đáy, không phải trần tạm.
+- Ghi chú vận hành: sau khi `git checkout -- story-templates` rồi ghi lại các batch, `git status`
+  hiện 20 file `M` nhưng `git diff --numstat` chỉ có 4 — 16 file kia là stat-cache cũ do
+  autocrlf, nội dung không đổi. Kiểm bằng `git diff --numstat`, đừng tin `git status` ở bước này.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có.
+- Bước tiếp theo: `P2C batch B5` — `studio-white-prewedding-01`, `three-chapters-biography-01`,
+  `warm-film-01`, `white-weddings-editorial-01`. Đây là batch cuối; sau nó `--check-plan` sẽ báo
+  `0 pending, 70 already applied` và `Orientation contract` về `0` declared — cả hai đều đúng, đã
+  nghiệm thu ở P2B khi quét 7 giai đoạn.
 
 ### 2026-07-31 — P2C batch B3
 

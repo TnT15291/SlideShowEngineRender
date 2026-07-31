@@ -39,6 +39,11 @@ const meaningfulBaseline = {
   "heritage-ceremony-01": 3,
   "korean-soft-01": 3,
   "letters-to-forever-01": 3,
+  // Phase 2C batch B4
+  "long-distance-love-01": 3,
+  "luminous-editorial-motion-01": 3,
+  "modern-teal-01": 3,
+  "playful-scrapbook-01": 3,
   // faithful to its source, exempt from the rollout
   "white-weddings-full-01": 1,
 };
@@ -61,13 +66,17 @@ test("meaningful custom geometry does not regress per recipe", () => {
 });
 
 test("catalog, authored, and reachable geometry ratchets do not regress", () => {
-  assert.ok(stats.catalog.distinct >= 101, `catalog distinct fell to ${stats.catalog.distinct}`);
-  assert.ok(stats.authored.distinct >= 93, `authored distinct fell to ${stats.authored.distinct}`);
-  assert.ok(stats.reachable.maxShare <= 13, `reachable maxShare rose to ${stats.reachable.maxShare}`);
+  assert.ok(stats.catalog.distinct >= 113, `catalog distinct fell to ${stats.catalog.distinct}`);
+  assert.ok(stats.authored.distinct >= 105, `authored distinct fell to ${stats.authored.distinct}`);
+  assert.ok(stats.reachable.maxShare <= 12, `reachable maxShare rose to ${stats.reachable.maxShare}`);
   assert.ok(
-    stats.reachable.over12Count <= 1,
+    stats.reachable.over12Count === 0,
     `reachable over12Count rose to ${stats.reachable.over12Count}`,
   );
+  // B4 pushed this to 31 before it was caught: two recipes had byte-identical layoutOverrides,
+  // so they drew the same rectangles and differed only in frame. compositionUniquenessAudit
+  // counts frame as distinguishing and passed them, which is why the number needs its own bar.
+  assert.ok(stats.authored.shared <= 30, `authored shared rose to ${stats.authored.shared}`);
 });
 
 test("closing_names keeps its V2 geometry diversity", () => {
