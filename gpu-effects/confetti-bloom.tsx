@@ -139,11 +139,20 @@ export const ConfettiBloom = ({ assets, params }: { assets: string[]; params: Re
   const photoTex = useImageTexture(staticFile(assets[0]));
   const background = String(params.background ?? "#faf6ef");
   const zoom = interpolate(frame, [0, durationInFrames], [0.9, 1.03], { extrapolateRight: "clamp" });
+  // `far` is not optional here. This scene works in PIXEL units, so the camera has to stand
+  // back half the frame height over tan(fov/2) — 1158 units at 1080p — while
+  // react-three-fiber's default camera stops at far=1000. Everything therefore fell outside
+  // the far clipping plane and the render was a blank cream rectangle: the photograph, the
+  // petals, all of it. It only ever looked right because the sample renders were made at
+  // 960x540, where the same arithmetic puts the camera at 579 and the scene squeaks inside
+  // the default. Tie `far` to the distance the scene actually needs, with room for the
+  // petals sitting up to 130 units behind the photo plane.
+  const distance = cameraDistance(height);
 
   return (
     <div style={{ width, height, background }}>
       {photoTex ? (
-        <ThreeCanvas width={width} height={height} linear flat camera={{ position: [0, 0, cameraDistance(height)], fov: FOV }}>
+        <ThreeCanvas width={width} height={height} linear flat camera={{ position: [0, 0, distance], fov: FOV, far: distance * 2 }}>
           <PhotoPlane texture={photoTex} width={width} height={height} zoom={zoom} />
           <Petals frame={frame} durationInFrames={durationInFrames} width={width} height={height} />
         </ThreeCanvas>

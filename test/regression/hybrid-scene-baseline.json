@@ -1,0 +1,58 @@
+{
+  "_comment": [
+    "Measured ceilings for test/regression/hybrid-scene-render.test.mjs, captured at",
+    "1920x1080 on frames 6/60/114 of a 120-frame composition. `maxFlatShare` is the",
+    "fraction of 16x16 blocks in the flattest of those frames whose standard deviation is",
+    "under 1.5 — i.e. how much of the frame is dead, featureless colour. The test allows",
+    "0.08 of headroom over these numbers.",
+    "",
+    "This is a REGRESSION guard, not a quality bar: a high number here is a statement that",
+    "the template already renders that empty (corner_fly_four is 99% background six frames",
+    "in, because six frames in its four cards are still off-screen flying toward their",
+    "marks). Lowering one of these entries when a template is improved is welcome; raising",
+    "one should require an explanation."
+  ],
+  "_staticTemplates": [
+    "Templates that render the SAME PICTURE at every sampled frame. This is a defect list,",
+    "not an allowance: each entry is a template whose named effect is not reaching the",
+    "screen. The test asserts both directions — a template not listed here must animate, and",
+    "a template listed here must still be broken — so fixing one fails this file until the",
+    "entry is deleted."
+  ],
+  "staticTemplates": {
+    "light_rays": "The conic-gradient rays are anchored at 8% 0% and span 205deg-247deg, which from a top-left origin points down and OUT of the frame; the sliver that stays inside lands on the white letterbox beside the objectFit:contain photo, where mixBlendMode:screen against white is a no-op. Result: three byte-identical frames of a plain still photograph, at any opacity. Needs an art-direction decision (ray origin, angle, and what they fall on), not a mechanical fix."
+  },
+  "templates": {
+    "title": { "maxFlatShare": 0.695 },
+    "filmstrip": { "maxFlatShare": 0.535 },
+    "page_flip": { "maxFlatShare": 0.735 },
+    "portrait_echo": { "maxFlatShare": 0.658 },
+    "triptych": { "maxFlatShare": 0.517 },
+    "card_gallery": { "maxFlatShare": 0.559 },
+    "paper_peel": { "maxFlatShare": 0.767 },
+    "panel_reveal": { "maxFlatShare": 0.910 },
+    "floating_frame": { "maxFlatShare": 0.609 },
+    "light_rays": { "maxFlatShare": 0.775 },
+    "gl_transition": { "maxFlatShare": 0.530 },
+    "glass_frame": { "maxFlatShare": 0.668 },
+    "confetti_bloom": { "maxFlatShare": 0.906 },
+    "fly_in_duo": { "maxFlatShare": 0.922 },
+    "corner_fly_four": { "maxFlatShare": 0.993 },
+    "hero_filmstrip": { "maxFlatShare": 0.821 },
+    "depth_parallax_stack": { "maxFlatShare": 0.588 },
+    "radial_gallery": { "maxFlatShare": 0.882 },
+    "contact_sheet_zoom": { "maxFlatShare": 0.688 },
+    "ribbon_cascade": { "maxFlatShare": 0.634 },
+    "aperture_reveal": { "maxFlatShare": 0.510 },
+    "match_cut_windows": { "maxFlatShare": 0.413 },
+    "checker_mosaic": { "maxFlatShare": 0.527 },
+    "flash_burst": { "maxFlatShare": 0.763 },
+    "shared_frame_morph": { "maxFlatShare": 0.541 },
+    "kinetic_typography": { "maxFlatShare": 0.653 },
+    "dither_dissolve": { "maxFlatShare": 0.530 },
+    "image_echo_trail": { "maxFlatShare": 0.727 },
+    "glass_refraction": { "maxFlatShare": 0.530 },
+    "audio_reactive": { "maxFlatShare": 0.506 },
+    "particle_dissolve": { "maxFlatShare": 0.530 }
+  }
+}

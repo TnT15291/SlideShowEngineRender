@@ -49,7 +49,7 @@ SlideshowRenderEngine/
 | Module | Vai trò |
 |---|---|
 | `index.ts` | CLI entry, nối các bước pipeline, exit code |
-| `types.ts` | **Source of truth** cho enum/field: `EffectPreset`, `XFADE_BY_TRANSITION` (56 transition), `MOTION_EASINGS`, `LIGHT_LEAK_VARIANTS`, mọi interface timeline |
+| `types.ts` | **Source of truth** cho enum/field: `EffectPreset`, `XFADE_BY_TRANSITION` (58 transition), `MOTION_EASINGS`, `LIGHT_LEAK_VARIANTS`, mọi interface timeline |
 | `normalizeTimeline.ts` | Alias thân thiện → tên chuẩn (`zoom in`→`slow_zoom_in`, `fade`→`crossfade`), default (opacity, blend, easing, variant light-leak → path asset), gộp legacy (`caption` đơn → `captions[]`, `music` object → mảng) |
 | `validateTimeline.ts` | Zod schema + kiểm tra ngữ nghĩa: id duy nhất, file tồn tại, ràng buộc chéo (transition < duration, caption/layer trong slide, easing đúng nhóm effect, overlay path xor variant) |
 | `faceSafeFraming.ts` | Layer ảnh `cover` có `faceBox` (mặt đã phát hiện) và crop-loss > `FACE_SAFE_MAX_CROP_LOSS` (0.18) → `contain`; không có `faceBox` (không phát hiện mặt) thì rule không áp dụng, giữ nguyên `cover`/motion |
@@ -135,8 +135,11 @@ cover-crop-loss > 30% so với khung dự án sẽ tự route sang `portrait_blu
 | `FACE_SAFE_MAX_CROP_LOSS` | `0.18` | ngưỡng đổi cover→contain cho layer ảnh; `0` = tắt |
 | `CAPTION_FONT` | Arial hệ thống | font caption mặc định |
 
-## Tầng API (chưa xây)
+## Tầng API
 
-CLI là hợp đồng ổn định hiện tại. Khi cần, bọc thành API
-(`POST /render` body timeline.json → jobId) mà không đổi engine — n8n/orchestrator
-chỉ gọi CLI/API, không bao giờ tự sinh lệnh FFmpeg (xem PIPELINE-V1-VA-LITE.md).
+**Đã xây**, không còn là kế hoạch — `server/` (TypeScript, HTTP thuần không framework) bọc CLI
+thành API cho `apps/web`: mỗi route project-scoped đi qua một cổng ownership duy nhất
+([app.ts](../server/app.ts)), service theo project vẫn shell ra đúng các script CLI dưới đây qua
+`spawn`/`spawnSync` (không tự sinh lệnh FFmpeg, không string-interpolate input người dùng vào shell).
+Auth, Stripe/MoMo billing, admin incident tracker đều sống ở đây. Chi tiết hiện trạng web/server:
+xem note đầu [current-state.md](current-state.md); hợp đồng node-theo-node vẫn ở PIPELINE-V1-VA-LITE.md.

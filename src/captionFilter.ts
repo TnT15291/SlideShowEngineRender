@@ -1,5 +1,5 @@
 import { toFfmpegPath } from "./fileUtils";
-import { cssColor, quoteFilterPath } from "./ffmpegFilterUtils";
+import { cssColor, quoteFilterPath } from "./ffmpegFilterHelpers";
 import type { CompiledCaption } from "./types";
 
 // Font size per caption role, as a fraction of frame height.

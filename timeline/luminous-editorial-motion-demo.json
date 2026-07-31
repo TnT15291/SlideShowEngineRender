@@ -1,0 +1,5323 @@
+{
+  "language": "vi",
+  "languageEnforced": false,
+  "sequenceMode": "editorial",
+  "project": {
+    "name": "Luminous Editorial Motion Demo",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "projects/tuan-and-tien-b9d1/music/000000-cad3e669-e7c3-4515-bd34-4bd21c713ce2-a-thousand-years.mp3",
+      "volume": 0.82
+    }
+  ],
+  "audio": {
+    "fade_in": 1.8,
+    "fade_out": 3.2,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5900,
+    "saturation": 0.97,
+    "contrast": 1.06,
+    "brightness": 0.015,
+    "grain": 3,
+    "glow": 0.04,
+    "halation": 0.08
+  },
+  "overlays": [
+    {
+      "path": "overlays/light_sweep.mp4",
+      "position": "fullscreen",
+      "opacity": 0.1,
+      "blend": "screen",
+      "start": 0
+    }
+  ],
+  "output": {
+    "path": "output/luminous-editorial-motion-demo.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_kinetic_declaration",
+      "editorialBeat": "declaration",
+      "duration": 6.369,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "kinetic_typography",
+      "assets": [
+        "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg"
+      ],
+      "params": {
+        "title": "Tien & Tuan",
+        "subtitle": "Together · Our Wedding Day",
+        "color": "#FFFDF8"
+      },
+      "captions": [],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s02_encounter",
+      "editorialBeat": "declaration",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000118-eb64d20a-84bf-4d36-8aa7-f23aac48eadb-000295-41d047c6-7687-4b24-a685-871df00030a4-3M4A0859.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.552,
+          "focusY": 0.564,
+          "faceBox": {
+            "x": 0.346,
+            "y": 0.457,
+            "width": 0.413,
+            "height": 0.214
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000118-eb64d20a-84bf-4d36-8aa7-f23aac48eadb-000295-41d047c6-7687-4b24-a685-871df00030a4-3M4A0859.jpg",
+            "brightness": 0.0917,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": 0.0425,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "Điểm bắt đầu",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 100,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "animation": "slide_right",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Mọi câu chuyện lớn đều bắt đầu từ một điều rất nhỏ.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "slide_right",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s03_fragments",
+      "editorialBeat": "declaration",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000087-27bdd90d-8cbe-4cbe-924e-5ae2de378696-000211-c8f2577b-d354-4d27-a49f-8797f8bed72a-3M4A0407.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.566,
+          "focusY": 0.281,
+          "faceBox": {
+            "x": 0.309,
+            "y": 0.178,
+            "width": 0.514,
+            "height": 0.207
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000087-27bdd90d-8cbe-4cbe-924e-5ae2de378696-000211-c8f2577b-d354-4d27-a49f-8797f8bed72a-3M4A0407.jpg",
+            "brightness": -0.0576,
+            "saturation": 0.9806,
+            "redBalance": -0.0346,
+            "blueBalance": 0.0113,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000019-41b170e0-e83b-4ca2-800c-e4ab207eed27-000038-d8c47352-883b-4d5e-865e-9fde8dfe74b5-_DSF1792.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.512,
+          "focusY": 0.222,
+          "faceBox": {
+            "x": 0.446,
+            "y": 0.124,
+            "width": 0.131,
+            "height": 0.195
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000019-41b170e0-e83b-4ca2-800c-e4ab207eed27-000038-d8c47352-883b-4d5e-865e-9fde8dfe74b5-_DSF1792.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9712,
+            "redBalance": 0.0027,
+            "blueBalance": 0.0137,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_up",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000013-ccdad56e-5f68-4967-9d40-f0941fe90652-000022-d4778fe4-d428-4b87-84a1-70f980fd2d0b-_DSF1697-2.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.636,
+          "focusY": 0.54,
+          "faceBox": {
+            "x": 0.281,
+            "y": 0.385,
+            "width": 0.719,
+            "height": 0.281
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000013-ccdad56e-5f68-4967-9d40-f0941fe90652-000022-d4778fe4-d428-4b87-84a1-70f980fd2d0b-_DSF1697-2.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": -0.0154,
+            "blueBalance": -0.0044,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Những mảnh ký ức",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s04_shared_memory",
+      "editorialBeat": "encounter",
+      "signature": true,
+      "duration": 6.27,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "shared_frame_morph",
+      "assets": [
+        "projects/tuan-and-tien-b9d1/input/000106-a4df49d5-ef44-4c83-81b8-6b3eb518ac30-000272-705b4ca2-3273-4852-89fb-9fa936154c40-3M4A0639.jpg",
+        "projects/tuan-and-tien-b9d1/input/000116-fede5b8c-8b5f-417e-9cc2-91a18d3d3c72-000291-45e7c490-d8b9-408f-b951-36b900f1e822-3M4A0843.jpg",
+        "projects/tuan-and-tien-b9d1/input/000025-aac19bf4-857d-4082-a372-4b7bde6d21fa-000049-12e44415-9635-497b-8d60-ba0da3be93ae-_DSF1819.jpg",
+        "projects/tuan-and-tien-b9d1/input/000120-69bd8491-e816-4d89-938d-ac70d549e7ef-000298-56f8db12-115a-44fa-a71a-5004f7be15f4-3M4A0878.jpg"
+      ],
+      "params": {
+        "heroIndex": 2,
+        "background": "#191816"
+      },
+      "captions": [],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s05_luminous_portrait",
+      "editorialBeat": "encounter",
+      "signature": true,
+      "duration": 8.06,
+      "effect": "dream_glow",
+      "image": "projects/tuan-and-tien-b9d1/input/000049-a454ebe9-df96-43af-9738-80273f75767a-000119-d9982954-a134-4b19-9a36-006f6d88ef29-_DSF7315.jpg",
+      "captions": [
+        {
+          "text": "Ánh sáng đẹp nhất là ánh sáng trong mắt người mình thương.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "focusX": 0.27,
+      "focusY": 0.565,
+      "faceBox": {
+        "x": 0.062,
+        "y": 0.437,
+        "width": 0.417,
+        "height": 0.255
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": 0.0953,
+        "saturation": 1,
+        "redBalance": 0.0483,
+        "blueBalance": 0.0014
+      }
+    },
+    {
+      "id": "s06_intimacy",
+      "editorialBeat": "encounter",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000035-1d23f0f3-8d7f-47e7-8c73-db48520fb9ee-000078-ed6839d5-23ac-4edc-a878-82b38443edd9-_DSF7091.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.491,
+          "focusY": 0.459,
+          "faceBox": {
+            "x": 0.379,
+            "y": 0.423,
+            "width": 0.225,
+            "height": 0.072
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000035-1d23f0f3-8d7f-47e7-8c73-db48520fb9ee-000078-ed6839d5-23ac-4edc-a878-82b38443edd9-_DSF7091.jpg",
+            "brightness": 0.1027,
+            "saturation": 0.9,
+            "redBalance": 0.08,
+            "blueBalance": 0.0483,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000108-54b9cbf9-c417-468c-af2e-d22e6fa9d562-000276-bca8a323-5762-4352-9cb0-458c2149c356-3M4A0700.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.546,
+          "focusY": 0.496,
+          "faceBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000108-54b9cbf9-c417-468c-af2e-d22e6fa9d562-000276-bca8a323-5762-4352-9cb0-458c2149c356-3M4A0700.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.0458,
+            "blueBalance": 0.0428,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "Có những điều không cần nói, chỉ cần được ở cạnh nhau.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 826,
+          "width": 1688,
+          "height": 200,
+          "size": 33,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s07_visual_breath",
+      "editorialBeat": "encounter",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000021-d2bf52da-8139-472f-9053-5975f4c4348f-000042-b5003726-3500-43e4-92e2-95baf58ad7a9-_DSF1803.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.449,
+          "focusY": 0.41,
+          "faceBox": {
+            "x": 0.337,
+            "y": 0.382,
+            "width": 0.223,
+            "height": 0.056
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000021-d2bf52da-8139-472f-9053-5975f4c4348f-000042-b5003726-3500-43e4-92e2-95baf58ad7a9-_DSF1803.jpg",
+            "brightness": 0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0132,
+            "blueBalance": 0.0022,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000018-30946a46-2d9a-4db7-b464-fadd1461ea80-000035-37bbfea6-8584-43a8-a17d-af2e92a0d274-_DSF1786.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.61,
+          "focusY": 0.457,
+          "faceBox": {
+            "x": 0.307,
+            "y": 0.218,
+            "width": 0.606,
+            "height": 0.478
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000018-30946a46-2d9a-4db7-b464-fadd1461ea80-000035-37bbfea6-8584-43a8-a17d-af2e92a0d274-_DSF1786.jpg",
+            "brightness": 0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0115,
+            "blueBalance": -0.0069,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000124-cac17448-473c-4d51-be3d-31efeb1a8cf1-000306-f34d04bc-fd0d-4157-bedd-5c6331e599e3-3M4A0903.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.39,
+          "focusY": 0.571,
+          "faceBox": {
+            "x": 0.275,
+            "y": 0.531,
+            "width": 0.229,
+            "height": 0.079
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000124-cac17448-473c-4d51-be3d-31efeb1a8cf1-000306-f34d04bc-fd0d-4157-bedd-5c6331e599e3-3M4A0903.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.0253,
+            "blueBalance": 0.0233,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s08_journey_montage",
+      "editorialBeat": "encounter",
+      "duration": 11.642,
+      "effect": "photo_strip_right",
+      "images": [
+        "projects/tuan-and-tien-b9d1/input/000016-dda88c67-ffd3-42f1-87c2-a9bc080096ca-000029-d62e16fc-a327-4508-9ed1-fea3bee8a6e3-_DSF1760.jpg",
+        "projects/tuan-and-tien-b9d1/input/000034-5c243982-3dce-4b31-9c3a-610fa8095d3e-000075-a38e0eed-7dcc-4785-a883-6ab7f1673a6e-_DSF7077.jpg",
+        "projects/tuan-and-tien-b9d1/input/000098-bf5551b2-9c66-463f-a069-0675aa48861c-000247-02698dd7-a980-4279-b058-8c3d60966de1-3M4A0572.jpg",
+        "projects/tuan-and-tien-b9d1/input/000014-4bf4ee3c-9303-4718-9f54-52c3d8a1848c-000023-f5dc45a4-82fc-4a6b-a397-48acbcd236da-_DSF1709.jpg",
+        "projects/tuan-and-tien-b9d1/input/000104-7042cad4-b80d-4a4a-9559-c20612fa4c48-000262-607fbb7d-84f7-4e3d-9dbd-4d078d34eb58-3M4A0620.jpg",
+        "projects/tuan-and-tien-b9d1/input/000017-8c8b95a4-0ba2-47fb-b5a2-509ee6ea932e-000031-8c32bf5f-8e30-4da3-8573-9d1572de5024-_DSF1767.jpg",
+        "projects/tuan-and-tien-b9d1/input/000005-d9e9d17f-21d1-4fbe-a0aa-d34cddee2afd-000007-706a57b4-8dbb-4fe2-923d-8c4acb471d43-_DSF1557.jpg",
+        "projects/tuan-and-tien-b9d1/input/000011-2cc433c6-5552-4790-a6e4-34c14007dc9f-000018-4fc234d5-a7d6-4c68-803b-a8f373b80c01-_DSF1678.jpg",
+        "projects/tuan-and-tien-b9d1/input/000006-44d453f4-3bc3-4a90-abe5-35e1f91ca6dc-000010-e438778f-3055-424f-a03b-d9ac344c0d9d-_DSF1591-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000107-1386e445-851a-4fb9-bfe7-de6f2e8074b5-000275-9219c223-a35e-459a-b1b3-9092dd4a5e26-3M4A0660.jpg",
+        "projects/tuan-and-tien-b9d1/input/000053-edf8f277-763b-4835-b086-062d957ded2c-000126-2be09a0e-8cb5-44ee-a567-8235be5ebdb7-_DSF7356-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000077-65c87c04-3432-4f23-a69e-5bc2af234775-000185-adcb1207-676a-4c67-a7e0-343f57adbf5f-3M4A0279.jpg"
+      ],
+      "params": {},
+      "captions": [
+        {
+          "text": "Không quan trọng đã đi bao xa, chỉ cần vẫn đi cùng nhau.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "slide_up",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": 0.0224,
+        "saturation": 1.0407,
+        "redBalance": 0.0027,
+        "blueBalance": -0.0005
+      }
+    },
+    {
+      "id": "s09_glass_chapter",
+      "editorialBeat": "fragments",
+      "duration": 6.269,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_refraction",
+      "assets": [
+        "projects/tuan-and-tien-b9d1/input/000112-1f420fef-9d74-4569-9d22-d367bb5599d0-000283-080233c3-d10a-4f5c-844f-fae521a13ba5-3M4A0774.jpg",
+        "projects/tuan-and-tien-b9d1/input/000037-9b9d2c34-2e1a-4f59-a655-d3fda882a3f3-000081-6612b18a-64c2-4852-8ced-c6263e7a72a3-_DSF7100.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s10_fashion_echo",
+      "editorialBeat": "fragments",
+      "duration": 6.046,
+      "effect": "moving_background_echo",
+      "image": "projects/tuan-and-tien-b9d1/input/000027-35e062ea-f84d-40f4-a39f-6351abe3f6fe-000052-c1f53d3f-da51-4828-88d4-a195b3c897d8-_DSF1836.jpg",
+      "captions": [
+        {
+          "text": "Mỗi bước đi đều mang theo một phần câu chuyện.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "focusX": 0.418,
+      "focusY": 0.252,
+      "faceBox": {
+        "x": 0.318,
+        "y": 0.172,
+        "width": 0.201,
+        "height": 0.16
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": 0.1112,
+        "saturation": 0.9,
+        "redBalance": -0.0036,
+        "blueBalance": 0.0162
+      }
+    },
+    {
+      "id": "s11_particle_vow",
+      "editorialBeat": "fragments",
+      "duration": 6.045,
+      "effect": "mask_reveal",
+      "image": "projects/tuan-and-tien-b9d1/input/000115-7525072a-5c91-4fd5-a9ec-c0aad6a74b0a-000289-213554bc-db8a-47ea-947a-b75e34ba9f5f-3M4A0838.jpg",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "params": {
+        "background": "#3B332B"
+      },
+      "captions": [],
+      "focusX": 0.616,
+      "focusY": 0.48,
+      "faceBox": {
+        "x": 0.524,
+        "y": 0.417,
+        "width": 0.183,
+        "height": 0.127
+      },
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": 0.12,
+        "saturation": 0.9,
+        "redBalance": -0.0027,
+        "blueBalance": 0.0296
+      }
+    },
+    {
+      "id": "s12_afterglow",
+      "editorialBeat": "fragments",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000079-e3902cf3-4091-4a37-a4fd-8996086b26c1-000194-ed66410b-11ef-44a0-83af-56d29272d864-3M4A0294.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.552,
+          "focusY": 0.458,
+          "faceBox": {
+            "x": 0,
+            "y": 0,
+            "width": 0.927,
+            "height": 1
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000079-e3902cf3-4091-4a37-a4fd-8996086b26c1-000194-ed66410b-11ef-44a0-83af-56d29272d864-3M4A0294.jpg",
+            "brightness": 0.1158,
+            "saturation": 0.9,
+            "redBalance": -0.0428,
+            "blueBalance": 0.0181,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000086-0cf2b26b-0bb4-4bf7-8270-ecf78579b8bb-000210-ef3681f8-9670-4fe0-8a0f-f1a44bbd4acc-3M4A0406.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.581,
+          "focusY": 0.401,
+          "faceBox": {
+            "x": 0.374,
+            "y": 0.336,
+            "width": 0.413,
+            "height": 0.13
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000086-0cf2b26b-0bb4-4bf7-8270-ecf78579b8bb-000210-ef3681f8-9670-4fe0-8a0f-f1a44bbd4acc-3M4A0406.jpg",
+            "brightness": -0.0607,
+            "saturation": 1.0306,
+            "redBalance": -0.0294,
+            "blueBalance": 0.0113,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000041-704d606d-9152-4ecf-9c51-09af28e80395-000093-e3d361ad-3d14-44ff-ae3e-cb34efa1ddf8-_DSF7158.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.406,
+          "faceBox": {
+            "x": 0.551,
+            "y": 0.353,
+            "width": 0.051,
+            "height": 0.106
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000041-704d606d-9152-4ecf-9c51-09af28e80395-000093-e3d361ad-3d14-44ff-ae3e-cb34efa1ddf8-_DSF7158.jpg",
+            "brightness": -0.1128,
+            "saturation": 1.1,
+            "redBalance": 0.0209,
+            "blueBalance": -0.0148,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s02_encounter_r1",
+      "editorialBeat": "fragments",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000036-d6959d16-2673-4616-ba1d-a168a1cffbc4-000080-1ae04ac5-138a-47b8-972c-d97f2f2e3071-_DSF7095.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.38,
+          "faceBox": {
+            "x": 0.4,
+            "y": 0.336,
+            "width": 0.19,
+            "height": 0.088
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000036-d6959d16-2673-4616-ba1d-a168a1cffbc4-000080-1ae04ac5-138a-47b8-972c-d97f2f2e3071-_DSF7095.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": 0.08,
+            "blueBalance": 0.0456,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "Gặp nhau",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 100,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "animation": "slide_right",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Có những cuộc gặp chỉ mất một khoảnh khắc, nhưng thay đổi cả phần đời còn lại.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "slide_right",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s03_fragments_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000093-d9bc8523-5c3b-486e-ab89-d4d1e8ed2e75-000229-b876ace8-66ff-49c8-8478-c0b5aa2079d2-3M4A0527.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.493,
+          "focusY": 0.421,
+          "faceBox": {
+            "x": 0.374,
+            "y": 0.371,
+            "width": 0.239,
+            "height": 0.101
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000093-d9bc8523-5c3b-486e-ab89-d4d1e8ed2e75-000229-b876ace8-66ff-49c8-8478-c0b5aa2079d2-3M4A0527.jpg",
+            "brightness": -0.0623,
+            "saturation": 1.1,
+            "redBalance": -0.0151,
+            "blueBalance": -0.008,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000097-11cc4ea3-a681-407a-8dc8-99df90d8dc73-000242-cedabb1a-223d-483f-9213-33373a84e3ed-3M4A0565.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.531,
+          "focusY": 0.295,
+          "faceBox": {
+            "x": 0.364,
+            "y": 0.179,
+            "width": 0.335,
+            "height": 0.232
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000097-11cc4ea3-a681-407a-8dc8-99df90d8dc73-000242-cedabb1a-223d-483f-9213-33373a84e3ed-3M4A0565.jpg",
+            "brightness": 0.076,
+            "saturation": 0.9182,
+            "redBalance": -0.0343,
+            "blueBalance": 0.0044,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000085-6a51cae4-1515-4143-a651-3fc88f9e2df1-000208-8484f2a2-be6e-42f1-9012-4d122739c12b-3M4A0403.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.599,
+          "focusY": 0.352,
+          "faceBox": {
+            "x": 0.412,
+            "y": 0.284,
+            "width": 0.374,
+            "height": 0.136
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000085-6a51cae4-1515-4143-a651-3fc88f9e2df1-000208-8484f2a2-be6e-42f1-9012-4d122739c12b-3M4A0403.jpg",
+            "brightness": -0.0708,
+            "saturation": 1.1,
+            "redBalance": -0.022,
+            "blueBalance": 0.0005,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Những ngày bình thường",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r1",
+      "editorialBeat": "recognition",
+      "signature": true,
+      "duration": 7.836,
+      "effect": "dream_glow",
+      "image": "projects/tuan-and-tien-b9d1/input/000119-ccd51ced-0c40-4aa2-b871-2bb0e78007c8-000296-7273da93-e9c7-454c-a9ea-64bf67ea6f6e-3M4A0870.jpg",
+      "captions": [
+        {
+          "text": "Ánh sáng đẹp nhất là ánh sáng trong mắt người mình thương.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "focusX": 0.406,
+      "focusY": 0.345,
+      "faceBox": {
+        "x": 0.321,
+        "y": 0.279,
+        "width": 0.169,
+        "height": 0.131
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": 0.12,
+        "saturation": 0.9,
+        "redBalance": 0.0005,
+        "blueBalance": 0.0316
+      }
+    },
+    {
+      "id": "s06_intimacy_r1",
+      "editorialBeat": "recognition",
+      "duration": 7.837,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000020-a622f893-ee55-4baf-8ba8-37dbd949b416-000041-e221997c-9a41-441a-a704-864344c53e2a-_DSF1795-2.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.489,
+          "focusY": 0.401,
+          "faceBox": {
+            "x": 0.454,
+            "y": 0.33,
+            "width": 0.069,
+            "height": 0.141
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000020-a622f893-ee55-4baf-8ba8-37dbd949b416-000041-e221997c-9a41-441a-a704-864344c53e2a-_DSF1795-2.jpg",
+            "brightness": 0.0637,
+            "saturation": 1.1,
+            "redBalance": -0.0118,
+            "blueBalance": 0.0003,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000048-899b4c6d-187e-4728-9f37-3838b33928b3-000115-fd00f378-3350-46fa-a7d5-0113b3a4085b-_DSF7296.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.478,
+          "focusY": 0.504,
+          "faceBox": {
+            "x": 0,
+            "y": 0.208,
+            "width": 1,
+            "height": 0.771
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000048-899b4c6d-187e-4728-9f37-3838b33928b3-000115-fd00f378-3350-46fa-a7d5-0113b3a4085b-_DSF7296.jpg",
+            "brightness": -0.0288,
+            "saturation": 0.9,
+            "redBalance": -0.0121,
+            "blueBalance": 0.0145,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "Hai khung hình, một nhịp bình yên.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 826,
+          "width": 1688,
+          "height": 200,
+          "size": 33,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000063-9d89c4ac-865c-4fae-a48a-5bbec2f23c3f-000139-48f99ae3-3c19-4ab5-803b-936315de35bf-_DSF7413.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.603,
+          "focusY": 0.577,
+          "faceBox": {
+            "x": 0.358,
+            "y": 0.439,
+            "width": 0.491,
+            "height": 0.275
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000063-9d89c4ac-865c-4fae-a48a-5bbec2f23c3f-000139-48f99ae3-3c19-4ab5-803b-936315de35bf-_DSF7413.jpg",
+            "brightness": 0.0469,
+            "saturation": 0.9,
+            "redBalance": 0.0198,
+            "blueBalance": -0.0178,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000012-840dddad-1f45-4a47-8b79-a73790cf2324-000020-cfe7af2e-f9a4-4d81-a05f-86ca9e744094-_DSF1685-2.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.44,
+          "focusY": 0.437,
+          "faceBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 0.979
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000012-840dddad-1f45-4a47-8b79-a73790cf2324-000020-cfe7af2e-f9a4-4d81-a05f-86ca9e744094-_DSF1685-2.jpg",
+            "brightness": 0.0156,
+            "saturation": 0.9,
+            "redBalance": -0.0467,
+            "blueBalance": 0.0346,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000090-8b527743-17b2-4ee1-ba78-f6194f671444-000226-de507ef4-ebad-4a1a-a503-98f5133fd40e-3M4A0504.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.512,
+          "focusY": 0.452,
+          "faceBox": {
+            "x": 0.337,
+            "y": 0.387,
+            "width": 0.35,
+            "height": 0.13
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000090-8b527743-17b2-4ee1-ba78-f6194f671444-000226-de507ef4-ebad-4a1a-a503-98f5133fd40e-3M4A0504.jpg",
+            "brightness": 0.031,
+            "saturation": 0.9,
+            "redBalance": -0.0362,
+            "blueBalance": 0.0258,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.045,
+      "effect": "moving_background_echo",
+      "image": "projects/tuan-and-tien-b9d1/input/000117-87f43d85-b7d0-47cb-af60-a6c4c11d1bb2-000293-328ebce7-79c5-4e94-85a8-550f14967c46-3M4A0848.jpg",
+      "captions": [
+        {
+          "text": "Một khoảnh khắc chuyển động, một ký ức ở lại.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "focusX": 0.521,
+      "focusY": 0.587,
+      "faceBox": {
+        "x": 0.444,
+        "y": 0.537,
+        "width": 0.155,
+        "height": 0.099
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": 0.0895,
+        "saturation": 0.9,
+        "redBalance": 0.0126,
+        "blueBalance": 0.0102
+      }
+    },
+    {
+      "id": "s08_journey_montage_r1",
+      "editorialBeat": "intimacy",
+      "duration": 13.209,
+      "effect": "photo_strip_right",
+      "images": [
+        "projects/tuan-and-tien-b9d1/input/000008-1a6e1f83-6df2-409c-b377-aad8d23187d2-000013-8a8b0f73-d663-4639-acd9-d3be67e22045-_DSF1635.jpg",
+        "projects/tuan-and-tien-b9d1/input/000113-3ce4feba-0e98-4839-af06-23871ae93af3-000285-2b549194-3403-4731-abb7-0e46ae6537c1-3M4A0816.jpg",
+        "projects/tuan-and-tien-b9d1/input/000070-a41a7538-0795-4a62-a879-936f3515e0fe-000162-8972398d-97f5-4050-8207-8fd4ccfc1267-3M4A0134.jpg",
+        "projects/tuan-and-tien-b9d1/input/000111-f43ce0b5-9aaf-44e6-bc2c-648cea8992eb-000282-e94262a0-4580-4de8-9d8d-e9d564825b36-3M4A0760.jpg",
+        "projects/tuan-and-tien-b9d1/input/000105-50171143-2c3b-4cea-90c8-d785bd405c7e-000270-c764e3ed-4d80-4fcf-b9f4-fd30bb6cfde2-3M4A0636.jpg",
+        "projects/tuan-and-tien-b9d1/input/000092-a9255e21-28f7-40f5-bdc7-3eb2b53856ac-000228-2abf6646-1f6e-435c-b00b-377dfb86e84a-3M4A0523.jpg",
+        "projects/tuan-and-tien-b9d1/input/000095-09420990-1876-4535-bf5f-0962a44e9f47-000231-28f61aaa-105e-4715-880d-59f33b986897-3M4A0540.jpg",
+        "projects/tuan-and-tien-b9d1/input/000096-047a23bf-9331-42dd-bcbd-83982766629f-000237-895158d6-999e-4ea7-800c-7638736698bc-3M4A0551.jpg",
+        "projects/tuan-and-tien-b9d1/input/000071-e1e9da6c-73f4-40e9-a5a1-25db75cc9bb2-000166-16d3293d-9d23-4a3b-a0b5-b1c5e25af566-3M4A0187.jpg",
+        "projects/tuan-and-tien-b9d1/input/000067-085f917e-1938-453b-8d8a-bac9e0f47e94-000155-53c5c72c-c602-4e51-bd00-cd11b811d1be-_DSF7464.jpg",
+        "projects/tuan-and-tien-b9d1/input/000075-0e8f98fa-3ff8-49de-8a0e-2101f24acae4-000178-8ae18059-69c2-48c4-acb5-a3c4329acddf-3M4A0249.jpg",
+        "projects/tuan-and-tien-b9d1/input/000074-765d2c1e-0165-4882-bbf6-d9fe11a77710-000174-d10f86af-91f4-4d0d-8bc5-7beab2c4341b-3M4A0218.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0271,
+        "saturation": 1.0124,
+        "redBalance": -0.0016,
+        "blueBalance": -0.0078
+      }
+    },
+    {
+      "id": "s12_afterglow_r1",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000065-a2a065c2-05cd-4145-b156-457bdc9b0a83-000146-8d010cfd-ac16-40fe-b864-ebd46ac8856d-_DSF7444.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.555,
+          "focusY": 0.431,
+          "faceBox": {
+            "x": 0.459,
+            "y": 0.217,
+            "width": 0.192,
+            "height": 0.428
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000065-a2a065c2-05cd-4145-b156-457bdc9b0a83-000146-8d010cfd-ac16-40fe-b864-ebd46ac8856d-_DSF7444.jpg",
+            "brightness": 0.0892,
+            "saturation": 0.9,
+            "redBalance": 0.0653,
+            "blueBalance": -0.0038,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000084-17c16989-3ad5-477c-9f9f-e494425438a3-000206-c00f193a-2976-46d6-af94-b9d89b3f8857-3M4A0399.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.308,
+          "faceBox": {
+            "x": 0.363,
+            "y": 0.236,
+            "width": 0.311,
+            "height": 0.144
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000084-17c16989-3ad5-477c-9f9f-e494425438a3-000206-c00f193a-2976-46d6-af94-b9d89b3f8857-3M4A0399.jpg",
+            "brightness": -0.0738,
+            "saturation": 1.1,
+            "redBalance": -0.0209,
+            "blueBalance": 0,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000042-b0acc76c-9b4b-45f7-8b5b-53ec32685db8-000095-a6d2b287-f67e-4f14-ac11-daf58c437c20-_DSF7165.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.507,
+          "focusY": 0.401,
+          "faceBox": {
+            "x": 0.275,
+            "y": 0.358,
+            "width": 0.463,
+            "height": 0.086
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000042-b0acc76c-9b4b-45f7-8b5b-53ec32685db8-000095-a6d2b287-f67e-4f14-ac11-daf58c437c20-_DSF7165.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0228,
+            "blueBalance": -0.0118,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "moving_background_echo",
+      "image": "projects/tuan-and-tien-b9d1/input/000114-a1df6cde-5c0f-4df9-9c9d-be443f936baa-000288-0fecfbae-cf0a-4b75-adc7-48201184ae34-3M4A0828.jpg",
+      "captions": [],
+      "focusX": 0.525,
+      "focusY": 0.516,
+      "faceBox": {
+        "x": 0.442,
+        "y": 0.475,
+        "width": 0.166,
+        "height": 0.082
+      },
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": 0.0804,
+        "saturation": 0.9182,
+        "redBalance": 0.0074,
+        "blueBalance": 0.0264
+      }
+    },
+    {
+      "id": "s03_fragments_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.046,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000082-36b58297-c901-4759-9b2f-fb705203520d-000204-3867249b-2439-4bf8-9d56-6141eee458a8-3M4A0370.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.453,
+          "focusY": 0.381,
+          "faceBox": {
+            "x": 0.365,
+            "y": 0.319,
+            "width": 0.176,
+            "height": 0.124
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000082-36b58297-c901-4759-9b2f-fb705203520d-000204-3867249b-2439-4bf8-9d56-6141eee458a8-3M4A0370.jpg",
+            "brightness": -0.092,
+            "saturation": 1.1,
+            "redBalance": -0.0233,
+            "blueBalance": 0.0016,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000023-87f6e4ce-5c84-4af5-a3fb-becdfbde422e-000046-59fbddb2-c98d-42f7-8847-a3e50307f37e-_DSF1816.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.514,
+          "focusY": 0.365,
+          "faceBox": {
+            "x": 0.365,
+            "y": 0.291,
+            "width": 0.298,
+            "height": 0.148
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000023-87f6e4ce-5c84-4af5-a3fb-becdfbde422e-000046-59fbddb2-c98d-42f7-8847-a3e50307f37e-_DSF1816.jpg",
+            "brightness": 0.12,
+            "saturation": 1,
+            "redBalance": -0.0005,
+            "blueBalance": 0.022,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000083-dda1b95e-3811-45c6-9bdd-832748440c09-000205-bd51b8d9-ff30-42f4-af8f-238dc9d363d8-3M4A0395.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.546,
+          "focusY": 0.385,
+          "faceBox": {
+            "x": 0.422,
+            "y": 0.32,
+            "width": 0.248,
+            "height": 0.129
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000083-dda1b95e-3811-45c6-9bdd-832748440c09-000205-bd51b8d9-ff30-42f4-af8f-238dc9d363d8-3M4A0395.jpg",
+            "brightness": -0.0807,
+            "saturation": 1.1,
+            "redBalance": -0.0206,
+            "blueBalance": -0.0027,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Gom từng mảnh nhớ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000123-0a766272-24ff-48f6-9fe1-c1951c0288be-000303-283aa3d4-3ad3-40f7-abe0-429a2d6498f3-3M4A0894.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.488,
+          "focusY": 0.277,
+          "faceBox": {
+            "x": 0.326,
+            "y": 0.218,
+            "width": 0.323,
+            "height": 0.119
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000123-0a766272-24ff-48f6-9fe1-c1951c0288be-000303-283aa3d4-3ad3-40f7-abe0-429a2d6498f3-3M4A0894.jpg",
+            "brightness": 0.0931,
+            "saturation": 0.9,
+            "redBalance": -0.0318,
+            "blueBalance": 0.0541,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000055-436c6a83-d96d-491f-9500-875becf5bd9b-000131-3b4aaac7-3104-4060-930e-ef1ce18ca97e-_DSF7391-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.388,
+          "focusY": 0.549,
+          "faceBox": {
+            "x": 0.273,
+            "y": 0.493,
+            "width": 0.229,
+            "height": 0.113
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000055-436c6a83-d96d-491f-9500-875becf5bd9b-000131-3b4aaac7-3104-4060-930e-ef1ce18ca97e-_DSF7391-2.jpg",
+            "brightness": -0.1076,
+            "saturation": 1.1,
+            "redBalance": 0.0362,
+            "blueBalance": -0.0357,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000073-f83f47a2-59fb-42dc-8ba0-873da34f2f8a-000171-24373de7-df05-4562-85db-0cf30267c7a2-3M4A0196.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.599,
+          "focusY": 0.404,
+          "faceBox": {
+            "x": 0.58,
+            "y": 0.383,
+            "width": 0.038,
+            "height": 0.041
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000073-f83f47a2-59fb-42dc-8ba0-873da34f2f8a-000171-24373de7-df05-4562-85db-0cf30267c7a2-3M4A0196.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0022,
+            "blueBalance": 0.0071,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2",
+      "editorialBeat": "intimacy",
+      "duration": 5.821,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000066-f7ce765c-b79d-4922-9901-d088018cce9e-000151-b4c8eb98-04bb-4b6b-925a-8d6a85c6aeef-_DSF7458.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.575,
+          "focusY": 0.427,
+          "faceBox": {
+            "x": 0.345,
+            "y": 0.239,
+            "width": 0.46,
+            "height": 0.376
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000066-f7ce765c-b79d-4922-9901-d088018cce9e-000151-b4c8eb98-04bb-4b6b-925a-8d6a85c6aeef-_DSF7458.jpg",
+            "brightness": 0.0664,
+            "saturation": 0.9,
+            "redBalance": -0.0181,
+            "blueBalance": -0.0052,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000022-3642de86-54c8-43d2-93fd-9e10fd401fef-000044-bbb6deac-8bae-44cc-93db-5fb6bf58ad54-_DSF1814.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.501,
+          "focusY": 0.473,
+          "faceBox": {
+            "x": 0.4,
+            "y": 0.411,
+            "width": 0.201,
+            "height": 0.125
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000022-3642de86-54c8-43d2-93fd-9e10fd401fef-000044-bbb6deac-8bae-44cc-93db-5fb6bf58ad54-_DSF1814.jpg",
+            "brightness": 0.12,
+            "saturation": 1.0412,
+            "redBalance": 0.0014,
+            "blueBalance": 0.0033,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000121-8c930268-aa48-41f3-aab6-ca4942713d0f-000299-416bf6b8-ced3-46fb-a73d-c0182af26a09-3M4A0883.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.44,
+          "focusY": 0.526,
+          "faceBox": {
+            "x": 0.18,
+            "y": 0.477,
+            "width": 0.519,
+            "height": 0.099
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000121-8c930268-aa48-41f3-aab6-ca4942713d0f-000299-416bf6b8-ced3-46fb-a73d-c0182af26a09-3M4A0883.jpg",
+            "brightness": 0.101,
+            "saturation": 0.9,
+            "redBalance": -0.0593,
+            "blueBalance": 0.062,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.448
+      }
+    },
+    {
+      "id": "s12_afterglow_r2",
+      "editorialBeat": "journey",
+      "duration": 5.821,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000126-6715d27f-c8e1-4cac-8346-d96968bbb682-000310-910814a9-9816-4a9e-ba28-b86a9387e39c-3M4A0926.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.564,
+          "focusY": 0.565,
+          "faceBox": {
+            "x": 0.465,
+            "y": 0.32,
+            "width": 0.197,
+            "height": 0.49
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000126-6715d27f-c8e1-4cac-8346-d96968bbb682-000310-910814a9-9816-4a9e-ba28-b86a9387e39c-3M4A0926.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.0321,
+            "blueBalance": 0.0469,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000059-4acb4510-2fa6-4621-810a-d13ab47ee928-000135-13a11ddb-3e52-40b0-b54a-8160b7e2ca5f-_DSF7394-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.378,
+          "focusY": 0.681,
+          "faceBox": {
+            "x": 0.271,
+            "y": 0.563,
+            "width": 0.213,
+            "height": 0.236
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000059-4acb4510-2fa6-4621-810a-d13ab47ee928-000135-13a11ddb-3e52-40b0-b54a-8160b7e2ca5f-_DSF7394-2.jpg",
+            "brightness": -0.1101,
+            "saturation": 1,
+            "redBalance": 0.0469,
+            "blueBalance": -0.0406,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000076-82224f28-3d04-4e4c-b3cc-d5eab794de0e-000184-41c33af2-2f73-4476-b760-4627769bb84d-3M4A0273.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.309,
+          "faceBox": {
+            "x": 0.388,
+            "y": 0.24,
+            "width": 0.168,
+            "height": 0.139
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000076-82224f28-3d04-4e4c-b3cc-d5eab794de0e-000184-41c33af2-2f73-4476-b760-4627769bb84d-3M4A0273.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": -0.0069,
+            "blueBalance": 0.003,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.448
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_2",
+      "editorialBeat": "journey",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000091-203e6b91-e39e-41fc-bdfd-2d4f40b06750-000227-b4ff8be8-403f-45f5-84c8-e1c2501f6ec3-3M4A0512.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.51,
+          "focusY": 0.44,
+          "faceBox": {
+            "x": 0.338,
+            "y": 0.375,
+            "width": 0.343,
+            "height": 0.13
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000091-203e6b91-e39e-41fc-bdfd-2d4f40b06750-000227-b4ff8be8-403f-45f5-84c8-e1c2501f6ec3-3M4A0512.jpg",
+            "brightness": 0.0181,
+            "saturation": 0.9182,
+            "redBalance": -0.0307,
+            "blueBalance": 0.0217,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000015-e89e2f87-7c14-4671-a4aa-d17fccf82d43-000028-8f46552c-094f-4c63-82e6-36ab92fb52c7-_DSF1758.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.496,
+          "focusY": 0.395,
+          "faceBox": {
+            "x": 0.363,
+            "y": 0.329,
+            "width": 0.267,
+            "height": 0.131
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000015-e89e2f87-7c14-4671-a4aa-d17fccf82d43-000028-8f46552c-094f-4c63-82e6-36ab92fb52c7-_DSF1758.jpg",
+            "brightness": 0.0464,
+            "saturation": 0.9,
+            "redBalance": 0.0302,
+            "blueBalance": -0.0055,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000038-e917fb03-1a7d-4deb-86b8-90a25ea293e1-000084-4145fa47-eaae-4a57-814e-c97cf50a5c6a-_DSF7116.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.58,
+          "focusY": 0.429,
+          "faceBox": {
+            "x": 0.314,
+            "y": 0.351,
+            "width": 0.531,
+            "height": 0.156
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000038-e917fb03-1a7d-4deb-86b8-90a25ea293e1-000084-4145fa47-eaae-4a57-814e-c97cf50a5c6a-_DSF7116.jpg",
+            "brightness": -0.0371,
+            "saturation": 0.9712,
+            "redBalance": 0.0502,
+            "blueBalance": 0.0052,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r2_2",
+      "editorialBeat": "journey",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000078-e0b4e40e-7e9c-4c45-a8bc-5c13d16527d1-000190-240032e7-36f3-4b28-8eb8-9360c8c53c8b-3M4A0287.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.404,
+          "focusY": 0.519,
+          "faceBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000078-e0b4e40e-7e9c-4c45-a8bc-5c13d16527d1-000190-240032e7-36f3-4b28-8eb8-9360c8c53c8b-3M4A0287.jpg",
+            "brightness": 0.0579,
+            "saturation": 0.9,
+            "redBalance": -0.0645,
+            "blueBalance": 0.0178,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000003-a7803a5e-c93c-45f5-a06e-2c3ddf7975ac-000005-325cb89f-5c67-4ed2-acde-70bd89ce672c-_DSF1544.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.541,
+          "focusY": 0.534,
+          "faceBox": {
+            "x": 0.274,
+            "y": 0.505,
+            "width": 0.534,
+            "height": 0.058
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000003-a7803a5e-c93c-45f5-a06e-2c3ddf7975ac-000005-325cb89f-5c67-4ed2-acde-70bd89ce672c-_DSF1544.jpg",
+            "brightness": -0.0955,
+            "saturation": 0.9,
+            "redBalance": 0.0799,
+            "blueBalance": -0.0458,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000001-64e4801d-3f77-4dd8-9dc8-545d617fe141-000001-9bf7981a-b2c6-4192-b431-43a97505429c-_DSF1531.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.478,
+          "focusY": 0.577,
+          "faceBox": {
+            "x": 0.361,
+            "y": 0.52,
+            "width": 0.235,
+            "height": 0.113
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000001-64e4801d-3f77-4dd8-9dc8-545d617fe141-000001-9bf7981a-b2c6-4192-b431-43a97505429c-_DSF1531.jpg",
+            "brightness": -0.1191,
+            "saturation": 0.9,
+            "redBalance": 0.0522,
+            "blueBalance": -0.0294,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_3",
+      "editorialBeat": "journey",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000026-a3d546c9-a0b9-446c-a8fb-f3592634595c-000051-e88a1546-f057-413f-bc76-c48d585f1d52-_DSF1829.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.566,
+          "focusY": 0.429,
+          "faceBox": {
+            "x": 0.278,
+            "y": 0.365,
+            "width": 0.575,
+            "height": 0.129
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000026-a3d546c9-a0b9-446c-a8fb-f3592634595c-000051-e88a1546-f057-413f-bc76-c48d585f1d52-_DSF1829.jpg",
+            "brightness": -0.0376,
+            "saturation": 1.1,
+            "redBalance": -0.0217,
+            "blueBalance": 0.0008,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000046-cfb1df4a-5f3f-4f81-a591-8d1456af1ef2-000103-a51b196f-97d9-4416-80fd-f7a0cd783733-_DSF7246.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.566,
+          "focusY": 0.557,
+          "faceBox": {
+            "x": 0.313,
+            "y": 0,
+            "width": 0.583,
+            "height": 0.844
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000046-cfb1df4a-5f3f-4f81-a591-8d1456af1ef2-000103-a51b196f-97d9-4416-80fd-f7a0cd783733-_DSF7246.jpg",
+            "brightness": -0.0856,
+            "saturation": 1.1,
+            "redBalance": 0.0236,
+            "blueBalance": -0.0137,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000031-dd1ffd42-b263-4893-9f03-15b53fb5a5ac-000070-581e9c90-df7f-4190-b2d2-99e1050d9a85-_DSF7047.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.538,
+          "focusY": 0.56,
+          "faceBox": {
+            "x": 0.433,
+            "y": 0.528,
+            "width": 0.21,
+            "height": 0.065
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000031-dd1ffd42-b263-4893-9f03-15b53fb5a5ac-000070-581e9c90-df7f-4190-b2d2-99e1050d9a85-_DSF7047.jpg",
+            "brightness": 0.0467,
+            "saturation": 0.9,
+            "redBalance": 0.0692,
+            "blueBalance": -0.0332,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r2_3",
+      "editorialBeat": "journey",
+      "duration": 5.821,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000009-9f054a7f-0def-4b20-ba97-b03a5fe5c65d-000015-a5c033aa-6639-476b-9fca-97f8f152034f-_DSF1664.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.556,
+          "focusY": 0.42,
+          "faceBox": {
+            "x": 0.229,
+            "y": 0.223,
+            "width": 0.655,
+            "height": 0.395
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000009-9f054a7f-0def-4b20-ba97-b03a5fe5c65d-000015-a5c033aa-6639-476b-9fca-97f8f152034f-_DSF1664.jpg",
+            "brightness": 0.0749,
+            "saturation": 0.9,
+            "redBalance": -0.0354,
+            "blueBalance": 0.0258,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000051-dfa0019c-a2fd-4719-9fca-d2505d039b02-000121-871fd780-e6de-45a4-9e7e-6a2da9e74ac6-_DSF7336-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.397,
+          "focusY": 0.345,
+          "faceBox": {
+            "x": 0.323,
+            "y": 0.244,
+            "width": 0.147,
+            "height": 0.201
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000051-dfa0019c-a2fd-4719-9fca-d2505d039b02-000121-871fd780-e6de-45a4-9e7e-6a2da9e74ac6-_DSF7336-2.jpg",
+            "brightness": -0.0906,
+            "saturation": 1.1,
+            "redBalance": 0.0058,
+            "blueBalance": -0.0387,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000057-c446664b-c29d-4de6-9553-b9a7b768ba47-000133-69f35229-56d1-4f2f-93f4-001abbdfbb1c-_DSF7393-2.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.436,
+          "focusY": 0.696,
+          "faceBox": {
+            "x": 0.311,
+            "y": 0.641,
+            "width": 0.25,
+            "height": 0.109
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000057-c446664b-c29d-4de6-9553-b9a7b768ba47-000133-69f35229-56d1-4f2f-93f4-001abbdfbb1c-_DSF7393-2.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0258,
+            "blueBalance": -0.0228,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.448
+      }
+    },
+    {
+      "id": "s08_journey_montage_r2",
+      "editorialBeat": "celebration",
+      "duration": 13.21,
+      "effect": "photo_strip_right",
+      "images": [
+        "projects/tuan-and-tien-b9d1/input/000061-e71359de-10ec-402f-b38a-88cba7a303f4-000137-1b113928-685e-4219-b4cb-543fecb31022-_DSF7395-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000110-c5cf2d83-25d6-44f7-8d75-95f0804e2b1f-000279-159839f0-4fa8-4ad0-b78f-070fae269ea0-3M4A0743.jpg",
+        "projects/tuan-and-tien-b9d1/input/000045-cb41c088-52e6-4658-b7ad-002744d9ea17-000101-1e1f16c0-e868-4b23-86c5-371682a02bde-_DSF7244.jpg",
+        "projects/tuan-and-tien-b9d1/input/000043-3db3874e-13f5-4ac9-ab41-44ccb944c997-000098-8892ebaa-eafd-4c15-8f22-24a16e74c139-_DSF7169.jpg",
+        "projects/tuan-and-tien-b9d1/input/000089-0097abcd-538a-499f-8a6e-ba1c2a04b991-000219-1c5d6788-4382-4338-bc5a-111051e3dbeb-3M4A0472.jpg",
+        "projects/tuan-and-tien-b9d1/input/000068-3bb43477-dc50-4d08-b392-b1ede91e82cb-000157-544719b0-9b4d-49ea-a51a-f0c6c12e47fb-_DSF7484.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0561,
+        "saturation": 1.0384,
+        "redBalance": 0.0221,
+        "blueBalance": -0.0154
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_4",
+      "editorialBeat": "celebration",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000054-f8d13eb0-2587-4bb8-8932-607874813bb8-000128-5beed46d-d0de-41e1-8c57-3ad461b9bdcb-_DSF7360.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.423,
+          "focusY": 0.221,
+          "faceBox": {
+            "x": 0.301,
+            "y": 0.172,
+            "width": 0.244,
+            "height": 0.098
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000054-f8d13eb0-2587-4bb8-8932-607874813bb8-000128-5beed46d-d0de-41e1-8c57-3ad461b9bdcb-_DSF7360.jpg",
+            "brightness": 0.0074,
+            "saturation": 1.1,
+            "redBalance": 0.0071,
+            "blueBalance": -0.0107,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000088-afbea2e3-e005-4042-88de-38923a5af8b9-000213-6afe2fcc-f68e-471d-bbb0-e66515e00e21-3M4A0434.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.367,
+          "focusY": 0.608,
+          "faceBox": {
+            "x": 0.086,
+            "y": 0.216,
+            "width": 0.562,
+            "height": 0.784
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000088-afbea2e3-e005-4042-88de-38923a5af8b9-000213-6afe2fcc-f68e-471d-bbb0-e66515e00e21-3M4A0434.jpg",
+            "brightness": -0.0546,
+            "saturation": 0.9,
+            "redBalance": -0.0412,
+            "blueBalance": 0.0091,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000102-1b75618d-2175-45d2-befc-e69657dcf7f0-000257-456b3599-2368-462f-8190-15b6f56ae8d4-3M4A0597.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.539,
+          "focusY": 0.401,
+          "faceBox": {
+            "x": 0.431,
+            "y": 0.348,
+            "width": 0.217,
+            "height": 0.106
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000102-1b75618d-2175-45d2-befc-e69657dcf7f0-000257-456b3599-2368-462f-8190-15b6f56ae8d4-3M4A0597.jpg",
+            "brightness": 0.0379,
+            "saturation": 1.1,
+            "redBalance": 0.0005,
+            "blueBalance": -0.0025,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r2_4",
+      "editorialBeat": "celebration",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000125-04a82c09-845e-460a-87e2-93e75fd2d22a-000308-1e7b6833-fba6-4043-b9d4-5c3866e7e881-3M4A0918.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.546,
+          "focusY": 0.587,
+          "faceBox": {
+            "x": 0.443,
+            "y": 0.5,
+            "width": 0.206,
+            "height": 0.174
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000125-04a82c09-845e-460a-87e2-93e75fd2d22a-000308-1e7b6833-fba6-4043-b9d4-5c3866e7e881-3M4A0918.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.0541,
+            "blueBalance": 0.0382,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000080-a5e43e28-a38d-4317-8acc-e90fec5e924e-000196-61405e13-b230-42f7-ac5b-0dab7de7fab2-3M4A0296.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.514,
+          "focusY": 0.434,
+          "faceBox": {
+            "x": 0.347,
+            "y": 0.369,
+            "width": 0.335,
+            "height": 0.131
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000080-a5e43e28-a38d-4317-8acc-e90fec5e924e-000196-61405e13-b230-42f7-ac5b-0dab7de7fab2-3M4A0296.jpg",
+            "brightness": -0.1169,
+            "saturation": 1.1,
+            "redBalance": -0.0069,
+            "blueBalance": -0.0014,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000056-53230d44-e7ac-42fe-bd62-34bc4527ee02-000132-e6131b85-3534-4849-b207-e4272cd94fb7-_DSF7393.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.426,
+          "focusY": 0.681,
+          "faceBox": {
+            "x": 0.312,
+            "y": 0.613,
+            "width": 0.229,
+            "height": 0.137
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000056-53230d44-e7ac-42fe-bd62-34bc4527ee02-000132-e6131b85-3534-4849-b207-e4272cd94fb7-_DSF7393.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0165,
+            "blueBalance": -0.0192,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_5",
+      "editorialBeat": "celebration",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000040-afa6fc92-0748-4ada-a405-1b3cf6f0f909-000089-a5bd2030-bc3a-45f4-8a0b-5301e4483684-_DSF7147.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.299,
+          "faceBox": {
+            "x": 0.338,
+            "y": 0.166,
+            "width": 0.308,
+            "height": 0.266
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000040-afa6fc92-0748-4ada-a405-1b3cf6f0f909-000089-a5bd2030-bc3a-45f4-8a0b-5301e4483684-_DSF7147.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0302,
+            "blueBalance": -0.0189,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000010-e4341409-aeec-4277-81a5-f5047955967e-000017-881751b5-f198-47b5-86d1-6f1242747de9-_DSF1667.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.574,
+          "focusY": 0.646,
+          "faceBox": {
+            "x": 0,
+            "y": 0.417,
+            "width": 1,
+            "height": 0.396
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000010-e4341409-aeec-4277-81a5-f5047955967e-000017-881751b5-f198-47b5-86d1-6f1242747de9-_DSF1667.jpg",
+            "brightness": 0.12,
+            "saturation": 1.1,
+            "redBalance": -0.0121,
+            "blueBalance": 0.0137,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_down",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000039-81d9b33b-3bdf-4155-aba7-92b35a6fe168-000088-e8874678-18c4-4c9d-ab10-45a555ef316a-_DSF7139.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.549,
+          "focusY": 0.39,
+          "faceBox": {
+            "x": 0.223,
+            "y": 0.333,
+            "width": 0.652,
+            "height": 0.114
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000039-81d9b33b-3bdf-4155-aba7-92b35a6fe168-000088-e8874678-18c4-4c9d-ab10-45a555ef316a-_DSF7139.jpg",
+            "brightness": -0.0406,
+            "saturation": 1.1,
+            "redBalance": 0.0354,
+            "blueBalance": -0.0307,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r2_5",
+      "editorialBeat": "celebration",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000122-26c5831c-9c46-4711-83ff-a39b41720b62-000301-349c8300-a008-4520-9443-b19d05acec8e-3M4A0887.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.464,
+          "focusY": 0.583,
+          "faceBox": {
+            "x": 0.247,
+            "y": 0.46,
+            "width": 0.434,
+            "height": 0.245
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000122-26c5831c-9c46-4711-83ff-a39b41720b62-000301-349c8300-a008-4520-9443-b19d05acec8e-3M4A0887.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.0557,
+            "blueBalance": 0.062,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000081-7357a817-2687-4c92-9bd6-b774634a099e-000198-d6da9d98-5b6e-4247-9e59-b3df247a6a17-3M4A0298-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.521,
+          "focusY": 0.457,
+          "faceBox": {
+            "x": 0.359,
+            "y": 0.382,
+            "width": 0.324,
+            "height": 0.149
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000081-7357a817-2687-4c92-9bd6-b774634a099e-000198-d6da9d98-5b6e-4247-9e59-b3df247a6a17-3M4A0298-2.jpg",
+            "brightness": -0.0837,
+            "saturation": 1.1,
+            "redBalance": -0.0307,
+            "blueBalance": -0.0025,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000072-4fb6a163-4f30-44ee-9e7a-41a65c90c1e9-000168-1a0c093e-15c2-4db2-83a1-ac863a6706ee-3M4A0190.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.524,
+          "focusY": 0.428,
+          "faceBox": {
+            "x": 0.383,
+            "y": 0.342,
+            "width": 0.283,
+            "height": 0.172
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000072-4fb6a163-4f30-44ee-9e7a-41a65c90c1e9-000168-1a0c093e-15c2-4db2-83a1-ac863a6706ee-3M4A0190.jpg",
+            "brightness": -0.1178,
+            "saturation": 1.1,
+            "redBalance": -0.0025,
+            "blueBalance": 0.017,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s07_visual_breath_r3",
+      "editorialBeat": "promise",
+      "duration": 8.061,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000032-6797f084-fbe6-408b-9606-50112ffb0b5c-000072-2e177b72-e3ea-4ce8-8fe3-a32672066cb3-_DSF7049.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.492,
+          "focusY": 0.415,
+          "faceBox": {
+            "x": 0.369,
+            "y": 0.365,
+            "width": 0.247,
+            "height": 0.1
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000032-6797f084-fbe6-408b-9606-50112ffb0b5c-000072-2e177b72-e3ea-4ce8-8fe3-a32672066cb3-_DSF7049.jpg",
+            "brightness": 0.0549,
+            "saturation": 1.1,
+            "redBalance": 0.0307,
+            "blueBalance": -0.0266,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000099-6143b7b7-2f60-4568-8e66-ed2c6fd04dae-000250-c0c17bd9-52ee-442a-97b4-84f858be49ba-3M4A0579.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.552,
+          "focusY": 0.349,
+          "faceBox": {
+            "x": 0.308,
+            "y": 0.226,
+            "width": 0.489,
+            "height": 0.246
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000099-6143b7b7-2f60-4568-8e66-ed2c6fd04dae-000250-c0c17bd9-52ee-442a-97b4-84f858be49ba-3M4A0579.jpg",
+            "brightness": -0.0038,
+            "saturation": 0.9,
+            "redBalance": -0.0675,
+            "blueBalance": 0.0124,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000101-445f6689-05d5-4ea5-9bb6-0e67a3478e54-000255-22c745aa-99a9-4cad-b5d3-46de86a63665-3M4A0593.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.514,
+          "focusY": 0.437,
+          "faceBox": {
+            "x": 0.397,
+            "y": 0.388,
+            "width": 0.235,
+            "height": 0.098
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000101-445f6689-05d5-4ea5-9bb6-0e67a3478e54-000255-22c745aa-99a9-4cad-b5d3-46de86a63665-3M4A0593.jpg",
+            "brightness": -0.0113,
+            "saturation": 1.1,
+            "redBalance": -0.0236,
+            "blueBalance": -0.003,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s12_afterglow_r3",
+      "editorialBeat": "promise",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000109-24f66532-5739-4af0-8070-49e33950fcba-000277-1515b666-3ff6-4acd-8cad-4c64ace2f707-3M4A0735.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.523,
+          "focusY": 0.554,
+          "faceBox": {
+            "x": 0.429,
+            "y": 0.471,
+            "width": 0.189,
+            "height": 0.166
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000109-24f66532-5739-4af0-8070-49e33950fcba-000277-1515b666-3ff6-4acd-8cad-4c64ace2f707-3M4A0735.jpg",
+            "brightness": 0.0472,
+            "saturation": 0.9,
+            "redBalance": -0.0121,
+            "blueBalance": 0.0217,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000052-aebd785f-f882-406b-b13d-6b0910f4e504-000123-f6b32b0d-65f8-4170-8e0b-c2c5a0a34ec8-_DSF7341-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.491,
+          "focusY": 0.43,
+          "faceBox": {
+            "x": 0.263,
+            "y": 0.36,
+            "width": 0.456,
+            "height": 0.14
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000052-aebd785f-f882-406b-b13d-6b0910f4e504-000123-f6b32b0d-65f8-4170-8e0b-c2c5a0a34ec8-_DSF7341-2.jpg",
+            "brightness": -0.0681,
+            "saturation": 1.1,
+            "redBalance": 0.0102,
+            "blueBalance": -0.0469,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000044-404bf1b7-f625-4403-ba36-9190b508541d-000100-4258a433-baf4-4573-89f5-47dacdf63666-_DSF7238.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.523,
+          "focusY": 0.446,
+          "faceBox": {
+            "x": 0.464,
+            "y": 0.399,
+            "width": 0.118,
+            "height": 0.094
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000044-404bf1b7-f625-4403-ba36-9190b508541d-000100-4258a433-baf4-4573-89f5-47dacdf63666-_DSF7238.jpg",
+            "brightness": -0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0228,
+            "blueBalance": -0.017,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s07_visual_breath_r3_2",
+      "editorialBeat": "promise",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000103-ab357663-3d97-4285-a46a-5b32334a83fb-000259-14ca982c-76a9-4ca3-a1a4-d1db94af03bc-3M4A0601.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.514,
+          "focusY": 0.368,
+          "faceBox": {
+            "x": 0.395,
+            "y": 0.332,
+            "width": 0.239,
+            "height": 0.072
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000103-ab357663-3d97-4285-a46a-5b32334a83fb-000259-14ca982c-76a9-4ca3-a1a4-d1db94af03bc-3M4A0601.jpg",
+            "brightness": 0.0113,
+            "saturation": 1.1,
+            "redBalance": -0.0077,
+            "blueBalance": -0.0036,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000062-a5bb863d-8896-4049-b398-b963a9395cc3-000138-714a9de1-7867-4076-a1a4-d624a4925384-_DSF7411.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.513,
+          "focusY": 0.587,
+          "faceBox": {
+            "x": 0.25,
+            "y": 0.442,
+            "width": 0.526,
+            "height": 0.29
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000062-a5bb863d-8896-4049-b398-b963a9395cc3-000138-714a9de1-7867-4076-a1a4-d624a4925384-_DSF7411.jpg",
+            "brightness": 0.0255,
+            "saturation": 0.9,
+            "redBalance": 0.0132,
+            "blueBalance": -0.0124,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000029-f5c1d4c1-96b5-47c7-870d-bca2964a4d9d-000060-61417004-20e8-44de-bfb8-16651e6eb019-_DSF1872.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.521,
+          "focusY": 0.524,
+          "faceBox": {
+            "x": 0.458,
+            "y": 0.48,
+            "width": 0.126,
+            "height": 0.088
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000029-f5c1d4c1-96b5-47c7-870d-bca2964a4d9d-000060-61417004-20e8-44de-bfb8-16651e6eb019-_DSF1872.jpg",
+            "brightness": 0.0244,
+            "saturation": 1.01,
+            "redBalance": -0.0077,
+            "blueBalance": 0.0104,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r3_2",
+      "editorialBeat": "promise",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000033-78c4e8f3-357f-4e09-84ab-00c11ad1fe22-000073-d5aa9ee8-c4c5-4c6b-bbad-3929345ed95b-_DSF7054.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.502,
+          "focusY": 0.441,
+          "faceBox": {
+            "x": 0.374,
+            "y": 0.395,
+            "width": 0.255,
+            "height": 0.091
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000033-78c4e8f3-357f-4e09-84ab-00c11ad1fe22-000073-d5aa9ee8-c4c5-4c6b-bbad-3929345ed95b-_DSF7054.jpg",
+            "brightness": 0.12,
+            "saturation": 1.1,
+            "redBalance": 0.0321,
+            "blueBalance": -0.0041,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000047-21bce652-f8cb-4f0d-b908-4f3e92a4a065-000114-b7002e00-438a-40eb-86a6-55cdd18ba9bf-_DSF7294.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.45,
+          "focusY": 0.125,
+          "faceBox": {
+            "x": 0.393,
+            "y": 0.006,
+            "width": 0.113,
+            "height": 0.238
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000047-21bce652-f8cb-4f0d-b908-4f3e92a4a065-000114-b7002e00-438a-40eb-86a6-55cdd18ba9bf-_DSF7294.jpg",
+            "brightness": -0.12,
+            "saturation": 0.9,
+            "redBalance": 0.0203,
+            "blueBalance": -0.0041,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000064-fcec38bc-a33f-46dd-9536-765ecb9729c8-000140-583de0fc-7301-4bd6-bbb4-af65bbe40cb7-_DSF7417.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.59,
+          "faceBox": {
+            "x": 0.394,
+            "y": 0.522,
+            "width": 0.22,
+            "height": 0.135
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000064-fcec38bc-a33f-46dd-9536-765ecb9729c8-000140-583de0fc-7301-4bd6-bbb4-af65bbe40cb7-_DSF7417.jpg",
+            "brightness": -0.12,
+            "saturation": 0.9,
+            "redBalance": 0.0648,
+            "blueBalance": -0.0552,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r3_3",
+      "editorialBeat": "promise",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000004-8497aea4-123b-46f8-afbd-33b22bcc791c-000006-c8117b84-8dba-4e60-beb5-4ba5f8f67682-_DSF1551.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.471,
+          "focusY": 0.579,
+          "faceBox": {
+            "x": 0.357,
+            "y": 0.543,
+            "width": 0.229,
+            "height": 0.071
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000004-8497aea4-123b-46f8-afbd-33b22bcc791c-000006-c8117b84-8dba-4e60-beb5-4ba5f8f67682-_DSF1551.jpg",
+            "brightness": -0.0176,
+            "saturation": 0.9,
+            "redBalance": 0.07,
+            "blueBalance": -0.0379,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000030-3b76fca9-225b-48af-bda4-bbc6b6ad2ef2-000062-a324cbf3-4141-4c70-99d0-36562ca1b91a-_DSF1881.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.561,
+          "focusY": 0.439,
+          "faceBox": {
+            "x": 0.343,
+            "y": 0.377,
+            "width": 0.437,
+            "height": 0.123
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000030-3b76fca9-225b-48af-bda4-bbc6b6ad2ef2-000062-a324cbf3-4141-4c70-99d0-36562ca1b91a-_DSF1881.jpg",
+            "brightness": 0.0264,
+            "saturation": 0.9,
+            "redBalance": 0.0049,
+            "blueBalance": 0.0135,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000100-c4a1f67a-29c5-43e7-9aed-075d8d075e30-000253-dc6a9292-9d71-488b-8738-4ad44aa573f9-3M4A0587.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.489,
+          "focusY": 0.467,
+          "faceBox": {
+            "x": 0.343,
+            "y": 0.412,
+            "width": 0.291,
+            "height": 0.111
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000100-c4a1f67a-29c5-43e7-9aed-075d8d075e30-000253-dc6a9292-9d71-488b-8738-4ad44aa573f9-3M4A0587.jpg",
+            "brightness": -0.0107,
+            "saturation": 1.1,
+            "redBalance": -0.0195,
+            "blueBalance": -0.0049,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r3_3",
+      "editorialBeat": "forever",
+      "duration": 7.612,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000069-61cc8806-4e16-41ab-b3c3-63ecc58803f5-000161-168346ab-1bb8-43e9-8a73-eb76f1f9d4fd-3M4A0130.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.498,
+          "focusY": 0.349,
+          "faceBox": {
+            "x": 0.481,
+            "y": 0.318,
+            "width": 0.035,
+            "height": 0.061
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000069-61cc8806-4e16-41ab-b3c3-63ecc58803f5-000161-168346ab-1bb8-43e9-8a73-eb76f1f9d4fd-3M4A0130.jpg",
+            "brightness": 0.0332,
+            "saturation": 0.9,
+            "redBalance": -0.0294,
+            "blueBalance": 0.0305,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000050-222a484b-d390-40d5-ace4-c8d5c256d5d2-000120-d48bdf47-9877-4044-8544-82c3faef1983-_DSF7334-2.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.48,
+          "focusY": 0.364,
+          "faceBox": {
+            "x": 0.456,
+            "y": 0.325,
+            "width": 0.048,
+            "height": 0.079
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000050-222a484b-d390-40d5-ace4-c8d5c256d5d2-000120-d48bdf47-9877-4044-8544-82c3faef1983-_DSF7334-2.jpg",
+            "brightness": -0.0733,
+            "saturation": 1.1,
+            "redBalance": 0,
+            "blueBalance": -0.031,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000007-e8a2f501-be42-4622-8b68-151719fc731e-000012-cef2a700-5163-41fc-9093-0ce79e729819-_DSF1633.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.476,
+          "focusY": 0.328,
+          "faceBox": {
+            "x": 0.441,
+            "y": 0.297,
+            "width": 0.069,
+            "height": 0.061
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000007-e8a2f501-be42-4622-8b68-151719fc731e-000012-cef2a700-5163-41fc-9093-0ce79e729819-_DSF1633.jpg",
+            "brightness": -0.0472,
+            "saturation": 1.1,
+            "redBalance": 0.0307,
+            "blueBalance": -0.0338,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.448
+      }
+    },
+    {
+      "id": "s08_journey_montage_r3",
+      "editorialBeat": "forever",
+      "duration": 16.792,
+      "effect": "photo_strip_right",
+      "images": [
+        "projects/tuan-and-tien-b9d1/input/000094-d5e4d0d9-9bae-4951-88d1-a591f096993a-000230-f10fcd76-9f1c-4ffa-b852-a4d1ceb49d18-3M4A0535.jpg",
+        "projects/tuan-and-tien-b9d1/input/000000-25f82d0c-7bc7-4f84-8d0b-5ce0d2b26156-000000-11a82f0d-3c35-4b6c-bb98-c2c40230d34b-_DSF1524.jpg",
+        "projects/tuan-and-tien-b9d1/input/000002-d481ae05-e39e-4992-801a-fef597f1cc2a-000002-23126293-af28-431c-87e6-aa2e292e05bf-_DSF1533.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0472,
+        "saturation": 0.9667,
+        "redBalance": 0.0385,
+        "blueBalance": -0.0318
+      }
+    },
+    {
+      "id": "s13_closing",
+      "editorialBeat": "forever",
+      "duration": 10.99,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.356,
+          "focusY": 0.521,
+          "faceBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "technicalColor": {
+            "file": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+            "brightness": 0.0305,
+            "saturation": 0.9,
+            "redBalance": -0.0066,
+            "blueBalance": 0.0033,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.055,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#000000",
+          "opacity": 0.42
+        },
+        {
+          "type": "text",
+          "text": "Tien & Tuan",
+          "font": "fonts/JosefinSans-Regular.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Together · Our Wedding Day",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ],
+  "recipeDecisions": {
+    "recipeId": "luminous-editorial-motion-01",
+    "pacingVariant": "editorial",
+    "theme": "editorial_bold",
+    "heroPhoto": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+    "endingPhoto": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+    "storyArc": [
+      {
+        "sceneId": "s01_kinetic_declaration",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s02_encounter",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s04_shared_memory",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s05_luminous_portrait",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s08_journey_montage",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s09_glass_chapter",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s10_fashion_echo",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s11_particle_vow",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s02_encounter_r1",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s08_journey_montage_r1",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_3",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s08_journey_montage_r2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_4",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_4",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_5",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_5",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_2",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_3",
+        "beat": "forever"
+      },
+      {
+        "sceneId": "s08_journey_montage_r3",
+        "beat": "forever"
+      },
+      {
+        "sceneId": "s13_closing",
+        "beat": "forever"
+      }
+    ],
+    "phraseSnaps": 40,
+    "musicSync": {
+      "mode": "music-aware-v1",
+      "targetDuration": 285.12,
+      "bpm": 134,
+      "beatSeconds": 0.4478,
+      "snappedBoundaries": 40
+    },
+    "musicEdit": {
+      "mode": "full_song",
+      "sourceDuration": 285.12,
+      "start": 0,
+      "end": 285.12,
+      "duration": 285.12
+    },
+    "transitionGrammar": {
+      "vocabulary": [
+        "crossfade",
+        "fade_slow",
+        "dissolve",
+        "smooth_left",
+        "blur",
+        "none"
+      ],
+      "decisions": [
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "peak",
+          "type": "smooth_left",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "peak",
+          "type": "smooth_left",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "final",
+          "resolvedRole": "final",
+          "type": "none",
+          "reason": "role"
+        }
+      ]
+    },
+    "motionPlan": [
+      {
+        "sceneId": "s02_encounter",
+        "file": "projects/tuan-and-tien-b9d1/input/000118-eb64d20a-84bf-4d36-8aa7-f23aac48eadb-000295-41d047c6-7687-4b24-a685-871df00030a4-3M4A0859.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.552,
+          "y": 0.564
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "projects/tuan-and-tien-b9d1/input/000087-27bdd90d-8cbe-4cbe-924e-5ae2de378696-000211-c8f2577b-d354-4d27-a49f-8797f8bed72a-3M4A0407.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.566,
+          "y": 0.281
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "projects/tuan-and-tien-b9d1/input/000019-41b170e0-e83b-4ca2-800c-e4ab207eed27-000038-d8c47352-883b-4d5e-865e-9fde8dfe74b5-_DSF1792.jpg",
+        "motion": "pan_up",
+        "strength": 0.04,
+        "target": {
+          "x": 0.512,
+          "y": 0.222
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "projects/tuan-and-tien-b9d1/input/000013-ccdad56e-5f68-4967-9d40-f0941fe90652-000022-d4778fe4-d428-4b87-84a1-70f980fd2d0b-_DSF1697-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.636,
+          "y": 0.54
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "file": "projects/tuan-and-tien-b9d1/input/000035-1d23f0f3-8d7f-47e7-8c73-db48520fb9ee-000078-ed6839d5-23ac-4edc-a878-82b38443edd9-_DSF7091.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.491,
+          "y": 0.459
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "file": "projects/tuan-and-tien-b9d1/input/000108-54b9cbf9-c417-468c-af2e-d22e6fa9d562-000276-bca8a323-5762-4352-9cb0-458c2149c356-3M4A0700.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.546,
+          "y": 0.496
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "projects/tuan-and-tien-b9d1/input/000021-d2bf52da-8139-472f-9053-5975f4c4348f-000042-b5003726-3500-43e4-92e2-95baf58ad7a9-_DSF1803.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.449,
+          "y": 0.41
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "projects/tuan-and-tien-b9d1/input/000018-30946a46-2d9a-4db7-b464-fadd1461ea80-000035-37bbfea6-8584-43a8-a17d-af2e92a0d274-_DSF1786.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.61,
+          "y": 0.457
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "projects/tuan-and-tien-b9d1/input/000124-cac17448-473c-4d51-be3d-31efeb1a8cf1-000306-f34d04bc-fd0d-4157-bedd-5c6331e599e3-3M4A0903.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.39,
+          "y": 0.571
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "projects/tuan-and-tien-b9d1/input/000079-e3902cf3-4091-4a37-a4fd-8996086b26c1-000194-ed66410b-11ef-44a0-83af-56d29272d864-3M4A0294.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.552,
+          "y": 0.458
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "projects/tuan-and-tien-b9d1/input/000086-0cf2b26b-0bb4-4bf7-8270-ecf78579b8bb-000210-ef3681f8-9670-4fe0-8a0f-f1a44bbd4acc-3M4A0406.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.581,
+          "y": 0.401
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "projects/tuan-and-tien-b9d1/input/000041-704d606d-9152-4ecf-9c51-09af28e80395-000093-e3d361ad-3d14-44ff-ae3e-cb34efa1ddf8-_DSF7158.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.577,
+          "y": 0.406
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s02_encounter_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000036-d6959d16-2673-4616-ba1d-a168a1cffbc4-000080-1ae04ac5-138a-47b8-972c-d97f2f2e3071-_DSF7095.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.495,
+          "y": 0.38
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000093-d9bc8523-5c3b-486e-ab89-d4d1e8ed2e75-000229-b876ace8-66ff-49c8-8478-c0b5aa2079d2-3M4A0527.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.493,
+          "y": 0.421
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000097-11cc4ea3-a681-407a-8dc8-99df90d8dc73-000242-cedabb1a-223d-483f-9213-33373a84e3ed-3M4A0565.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.531,
+          "y": 0.295
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000085-6a51cae4-1515-4143-a651-3fc88f9e2df1-000208-8484f2a2-be6e-42f1-9012-4d122739c12b-3M4A0403.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.599,
+          "y": 0.352
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000020-a622f893-ee55-4baf-8ba8-37dbd949b416-000041-e221997c-9a41-441a-a704-864344c53e2a-_DSF1795-2.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.489,
+          "y": 0.401
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000048-899b4c6d-187e-4728-9f37-3838b33928b3-000115-fd00f378-3350-46fa-a7d5-0113b3a4085b-_DSF7296.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.478,
+          "y": 0.504
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000063-9d89c4ac-865c-4fae-a48a-5bbec2f23c3f-000139-48f99ae3-3c19-4ab5-803b-936315de35bf-_DSF7413.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.603,
+          "y": 0.577
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000012-840dddad-1f45-4a47-8b79-a73790cf2324-000020-cfe7af2e-f9a4-4d81-a05f-86ca9e744094-_DSF1685-2.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.44,
+          "y": 0.437
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000090-8b527743-17b2-4ee1-ba78-f6194f671444-000226-de507ef4-ebad-4a1a-a503-98f5133fd40e-3M4A0504.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.512,
+          "y": 0.452
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000065-a2a065c2-05cd-4145-b156-457bdc9b0a83-000146-8d010cfd-ac16-40fe-b864-ebd46ac8856d-_DSF7444.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.555,
+          "y": 0.431
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000084-17c16989-3ad5-477c-9f9f-e494425438a3-000206-c00f193a-2976-46d6-af94-b9d89b3f8857-3M4A0399.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.518,
+          "y": 0.308
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "projects/tuan-and-tien-b9d1/input/000042-b0acc76c-9b4b-45f7-8b5b-53ec32685db8-000095-a6d2b287-f67e-4f14-ac11-daf58c437c20-_DSF7165.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.507,
+          "y": 0.401
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000082-36b58297-c901-4759-9b2f-fb705203520d-000204-3867249b-2439-4bf8-9d56-6141eee458a8-3M4A0370.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.453,
+          "y": 0.381
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000023-87f6e4ce-5c84-4af5-a3fb-becdfbde422e-000046-59fbddb2-c98d-42f7-8847-a3e50307f37e-_DSF1816.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.514,
+          "y": 0.365
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000083-dda1b95e-3811-45c6-9bdd-832748440c09-000205-bd51b8d9-ff30-42f4-af8f-238dc9d363d8-3M4A0395.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.546,
+          "y": 0.385
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000123-0a766272-24ff-48f6-9fe1-c1951c0288be-000303-283aa3d4-3ad3-40f7-abe0-429a2d6498f3-3M4A0894.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.488,
+          "y": 0.277
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000055-436c6a83-d96d-491f-9500-875becf5bd9b-000131-3b4aaac7-3104-4060-930e-ef1ce18ca97e-_DSF7391-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.388,
+          "y": 0.549
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000073-f83f47a2-59fb-42dc-8ba0-873da34f2f8a-000171-24373de7-df05-4562-85db-0cf30267c7a2-3M4A0196.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.599,
+          "y": 0.404
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000066-f7ce765c-b79d-4922-9901-d088018cce9e-000151-b4c8eb98-04bb-4b6b-925a-8d6a85c6aeef-_DSF7458.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.575,
+          "y": 0.427
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000022-3642de86-54c8-43d2-93fd-9e10fd401fef-000044-bbb6deac-8bae-44cc-93db-5fb6bf58ad54-_DSF1814.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.501,
+          "y": 0.473
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000121-8c930268-aa48-41f3-aab6-ca4942713d0f-000299-416bf6b8-ced3-46fb-a73d-c0182af26a09-3M4A0883.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.44,
+          "y": 0.526
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000126-6715d27f-c8e1-4cac-8346-d96968bbb682-000310-910814a9-9816-4a9e-ba28-b86a9387e39c-3M4A0926.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.564,
+          "y": 0.565
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000059-4acb4510-2fa6-4621-810a-d13ab47ee928-000135-13a11ddb-3e52-40b0-b54a-8160b7e2ca5f-_DSF7394-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.378,
+          "y": 0.681
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "projects/tuan-and-tien-b9d1/input/000076-82224f28-3d04-4e4c-b3cc-d5eab794de0e-000184-41c33af2-2f73-4476-b760-4627769bb84d-3M4A0273.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.472,
+          "y": 0.309
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000091-203e6b91-e39e-41fc-bdfd-2d4f40b06750-000227-b4ff8be8-403f-45f5-84c8-e1c2501f6ec3-3M4A0512.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.51,
+          "y": 0.44
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000015-e89e2f87-7c14-4671-a4aa-d17fccf82d43-000028-8f46552c-094f-4c63-82e6-36ab92fb52c7-_DSF1758.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.496,
+          "y": 0.395
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000038-e917fb03-1a7d-4deb-86b8-90a25ea293e1-000084-4145fa47-eaae-4a57-814e-c97cf50a5c6a-_DSF7116.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.58,
+          "y": 0.429
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000078-e0b4e40e-7e9c-4c45-a8bc-5c13d16527d1-000190-240032e7-36f3-4b28-8eb8-9360c8c53c8b-3M4A0287.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.404,
+          "y": 0.519
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000003-a7803a5e-c93c-45f5-a06e-2c3ddf7975ac-000005-325cb89f-5c67-4ed2-acde-70bd89ce672c-_DSF1544.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.541,
+          "y": 0.534
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000001-64e4801d-3f77-4dd8-9dc8-545d617fe141-000001-9bf7981a-b2c6-4192-b431-43a97505429c-_DSF1531.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.478,
+          "y": 0.577
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000026-a3d546c9-a0b9-446c-a8fb-f3592634595c-000051-e88a1546-f057-413f-bc76-c48d585f1d52-_DSF1829.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.566,
+          "y": 0.429
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000046-cfb1df4a-5f3f-4f81-a591-8d1456af1ef2-000103-a51b196f-97d9-4416-80fd-f7a0cd783733-_DSF7246.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.566,
+          "y": 0.557
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000031-dd1ffd42-b263-4893-9f03-15b53fb5a5ac-000070-581e9c90-df7f-4190-b2d2-99e1050d9a85-_DSF7047.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.538,
+          "y": 0.56
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000009-9f054a7f-0def-4b20-ba97-b03a5fe5c65d-000015-a5c033aa-6639-476b-9fca-97f8f152034f-_DSF1664.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.556,
+          "y": 0.42
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000051-dfa0019c-a2fd-4719-9fca-d2505d039b02-000121-871fd780-e6de-45a4-9e7e-6a2da9e74ac6-_DSF7336-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.397,
+          "y": 0.345
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000057-c446664b-c29d-4de6-9553-b9a7b768ba47-000133-69f35229-56d1-4f2f-93f4-001abbdfbb1c-_DSF7393-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.436,
+          "y": 0.696
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000054-f8d13eb0-2587-4bb8-8932-607874813bb8-000128-5beed46d-d0de-41e1-8c57-3ad461b9bdcb-_DSF7360.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.423,
+          "y": 0.221
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000088-afbea2e3-e005-4042-88de-38923a5af8b9-000213-6afe2fcc-f68e-471d-bbb0-e66515e00e21-3M4A0434.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.367,
+          "y": 0.608
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000102-1b75618d-2175-45d2-befc-e69657dcf7f0-000257-456b3599-2368-462f-8190-15b6f56ae8d4-3M4A0597.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.539,
+          "y": 0.401
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000125-04a82c09-845e-460a-87e2-93e75fd2d22a-000308-1e7b6833-fba6-4043-b9d4-5c3866e7e881-3M4A0918.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.546,
+          "y": 0.587
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000080-a5e43e28-a38d-4317-8acc-e90fec5e924e-000196-61405e13-b230-42f7-ac5b-0dab7de7fab2-3M4A0296.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.514,
+          "y": 0.434
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_4",
+        "file": "projects/tuan-and-tien-b9d1/input/000056-53230d44-e7ac-42fe-bd62-34bc4527ee02-000132-e6131b85-3534-4849-b207-e4272cd94fb7-_DSF7393.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.426,
+          "y": 0.681
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000040-afa6fc92-0748-4ada-a405-1b3cf6f0f909-000089-a5bd2030-bc3a-45f4-8a0b-5301e4483684-_DSF7147.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.492,
+          "y": 0.299
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000010-e4341409-aeec-4277-81a5-f5047955967e-000017-881751b5-f198-47b5-86d1-6f1242747de9-_DSF1667.jpg",
+        "motion": "pan_down",
+        "strength": 0.055,
+        "target": {
+          "x": 0.574,
+          "y": 0.646
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000039-81d9b33b-3bdf-4155-aba7-92b35a6fe168-000088-e8874678-18c4-4c9d-ab10-45a555ef316a-_DSF7139.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.549,
+          "y": 0.39
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000122-26c5831c-9c46-4711-83ff-a39b41720b62-000301-349c8300-a008-4520-9443-b19d05acec8e-3M4A0887.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.464,
+          "y": 0.583
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000081-7357a817-2687-4c92-9bd6-b774634a099e-000198-d6da9d98-5b6e-4247-9e59-b3df247a6a17-3M4A0298-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.521,
+          "y": 0.457
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_5",
+        "file": "projects/tuan-and-tien-b9d1/input/000072-4fb6a163-4f30-44ee-9e7a-41a65c90c1e9-000168-1a0c093e-15c2-4db2-83a1-ac863a6706ee-3M4A0190.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.524,
+          "y": 0.428
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000032-6797f084-fbe6-408b-9606-50112ffb0b5c-000072-2e177b72-e3ea-4ce8-8fe3-a32672066cb3-_DSF7049.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.492,
+          "y": 0.415
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000099-6143b7b7-2f60-4568-8e66-ed2c6fd04dae-000250-c0c17bd9-52ee-442a-97b4-84f858be49ba-3M4A0579.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.552,
+          "y": 0.349
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000101-445f6689-05d5-4ea5-9bb6-0e67a3478e54-000255-22c745aa-99a9-4cad-b5d3-46de86a63665-3M4A0593.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.514,
+          "y": 0.437
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000109-24f66532-5739-4af0-8070-49e33950fcba-000277-1515b666-3ff6-4acd-8cad-4c64ace2f707-3M4A0735.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.523,
+          "y": 0.554
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000052-aebd785f-f882-406b-b13d-6b0910f4e504-000123-f6b32b0d-65f8-4170-8e0b-c2c5a0a34ec8-_DSF7341-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.491,
+          "y": 0.43
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "projects/tuan-and-tien-b9d1/input/000044-404bf1b7-f625-4403-ba36-9190b508541d-000100-4258a433-baf4-4573-89f5-47dacdf63666-_DSF7238.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.523,
+          "y": 0.446
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000103-ab357663-3d97-4285-a46a-5b32334a83fb-000259-14ca982c-76a9-4ca3-a1a4-d1db94af03bc-3M4A0601.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.514,
+          "y": 0.368
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000062-a5bb863d-8896-4049-b398-b963a9395cc3-000138-714a9de1-7867-4076-a1a4-d624a4925384-_DSF7411.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.513,
+          "y": 0.587
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000029-f5c1d4c1-96b5-47c7-870d-bca2964a4d9d-000060-61417004-20e8-44de-bfb8-16651e6eb019-_DSF1872.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.521,
+          "y": 0.524
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000033-78c4e8f3-357f-4e09-84ab-00c11ad1fe22-000073-d5aa9ee8-c4c5-4c6b-bbad-3929345ed95b-_DSF7054.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.502,
+          "y": 0.441
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000047-21bce652-f8cb-4f0d-b908-4f3e92a4a065-000114-b7002e00-438a-40eb-86a6-55cdd18ba9bf-_DSF7294.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.45,
+          "y": 0.125
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_2",
+        "file": "projects/tuan-and-tien-b9d1/input/000064-fcec38bc-a33f-46dd-9536-765ecb9729c8-000140-583de0fc-7301-4bd6-bbb4-af65bbe40cb7-_DSF7417.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.504,
+          "y": 0.59
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000004-8497aea4-123b-46f8-afbd-33b22bcc791c-000006-c8117b84-8dba-4e60-beb5-4ba5f8f67682-_DSF1551.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.471,
+          "y": 0.579
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000030-3b76fca9-225b-48af-bda4-bbc6b6ad2ef2-000062-a324cbf3-4141-4c70-99d0-36562ca1b91a-_DSF1881.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.561,
+          "y": 0.439
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000100-c4a1f67a-29c5-43e7-9aed-075d8d075e30-000253-dc6a9292-9d71-488b-8738-4ad44aa573f9-3M4A0587.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.489,
+          "y": 0.467
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000069-61cc8806-4e16-41ab-b3c3-63ecc58803f5-000161-168346ab-1bb8-43e9-8a73-eb76f1f9d4fd-3M4A0130.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.498,
+          "y": 0.349
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000050-222a484b-d390-40d5-ace4-c8d5c256d5d2-000120-d48bdf47-9877-4044-8544-82c3faef1983-_DSF7334-2.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.48,
+          "y": 0.364
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r3_3",
+        "file": "projects/tuan-and-tien-b9d1/input/000007-e8a2f501-be42-4622-8b68-151719fc731e-000012-cef2a700-5163-41fc-9093-0ce79e729819-_DSF1633.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.476,
+          "y": 0.328
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s13_closing",
+        "file": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+        "motion": "zoom_in",
+        "strength": 0.055,
+        "target": {
+          "x": 0.356,
+          "y": 0.521
+        },
+        "easing": "gentle",
+        "reason": "1-subject motion toward focal point"
+      }
+    ],
+    "colorNormalization": "projects/tuan-and-tien-b9d1/analysis/tier1_color.json",
+    "fit": {
+      "targetDuration": 285.12,
+      "actualDuration": 285.12,
+      "coverage": 1,
+      "scale": 1.13,
+      "boundBy": "music",
+      "totalPhotos": 126,
+      "reservedPhotos": 1,
+      "unusedPhotos": 2,
+      "phraseSnaps": 40
+    }
+  },
+  "photoAssignment": {
+    "strategy": "global_hard_slots_first",
+    "customerLocks": {
+      "mustUsePhotos": [],
+      "excludePhotos": [],
+      "openingPhoto": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg",
+      "endingPhoto": "projects/tuan-and-tien-b9d1/input/000028-8d3e43ed-02ae-4531-b5a5-414c396fba8e-000058-d7f7813b-2931-401c-877a-d34a6cd92797-_DSF1852.jpg"
+    },
+    "slots": {
+      "s09_glass_chapter:assets": [
+        "projects/tuan-and-tien-b9d1/input/000112-1f420fef-9d74-4569-9d22-d367bb5599d0-000283-080233c3-d10a-4f5c-844f-fae521a13ba5-3M4A0774.jpg",
+        "projects/tuan-and-tien-b9d1/input/000037-9b9d2c34-2e1a-4f59-a655-d3fda882a3f3-000081-6612b18a-64c2-4852-8ced-c6263e7a72a3-_DSF7100.jpg"
+      ],
+      "s05_luminous_portrait:hero": [
+        "projects/tuan-and-tien-b9d1/input/000049-a454ebe9-df96-43af-9738-80273f75767a-000119-d9982954-a134-4b19-9a36-006f6d88ef29-_DSF7315.jpg"
+      ],
+      "s06_intimacy:wide": [
+        "projects/tuan-and-tien-b9d1/input/000108-54b9cbf9-c417-468c-af2e-d22e6fa9d562-000276-bca8a323-5762-4352-9cb0-458c2149c356-3M4A0700.jpg"
+      ],
+      "s11_particle_vow:hero": [
+        "projects/tuan-and-tien-b9d1/input/000115-7525072a-5c91-4fd5-a9ec-c0aad6a74b0a-000289-213554bc-db8a-47ea-947a-b75e34ba9f5f-3M4A0838.jpg"
+      ],
+      "s12_afterglow:hero": [
+        "projects/tuan-and-tien-b9d1/input/000079-e3902cf3-4091-4a37-a4fd-8996086b26c1-000194-ed66410b-11ef-44a0-83af-56d29272d864-3M4A0294.jpg"
+      ],
+      "s05_luminous_portrait_r1:hero": [
+        "projects/tuan-and-tien-b9d1/input/000119-ccd51ced-0c40-4aa2-b871-2bb0e78007c8-000296-7273da93-e9c7-454c-a9ea-64bf67ea6f6e-3M4A0870.jpg"
+      ],
+      "s06_intimacy_r1:wide": [
+        "projects/tuan-and-tien-b9d1/input/000048-899b4c6d-187e-4728-9f37-3838b33928b3-000115-fd00f378-3350-46fa-a7d5-0113b3a4085b-_DSF7296.jpg"
+      ],
+      "s12_afterglow_r1:hero": [
+        "projects/tuan-and-tien-b9d1/input/000065-a2a065c2-05cd-4145-b156-457bdc9b0a83-000146-8d010cfd-ac16-40fe-b864-ebd46ac8856d-_DSF7444.jpg"
+      ],
+      "s12_afterglow_r1_2:hero": [
+        "projects/tuan-and-tien-b9d1/input/000123-0a766272-24ff-48f6-9fe1-c1951c0288be-000303-283aa3d4-3ad3-40f7-abe0-429a2d6498f3-3M4A0894.jpg"
+      ],
+      "s12_afterglow_r2:hero": [
+        "projects/tuan-and-tien-b9d1/input/000126-6715d27f-c8e1-4cac-8346-d96968bbb682-000310-910814a9-9816-4a9e-ba28-b86a9387e39c-3M4A0926.jpg"
+      ],
+      "s12_afterglow_r2_2:hero": [
+        "projects/tuan-and-tien-b9d1/input/000078-e0b4e40e-7e9c-4c45-a8bc-5c13d16527d1-000190-240032e7-36f3-4b28-8eb8-9360c8c53c8b-3M4A0287.jpg"
+      ],
+      "s12_afterglow_r2_3:hero": [
+        "projects/tuan-and-tien-b9d1/input/000009-9f054a7f-0def-4b20-ba97-b03a5fe5c65d-000015-a5c033aa-6639-476b-9fca-97f8f152034f-_DSF1664.jpg"
+      ],
+      "s12_afterglow_r2_4:hero": [
+        "projects/tuan-and-tien-b9d1/input/000125-04a82c09-845e-460a-87e2-93e75fd2d22a-000308-1e7b6833-fba6-4043-b9d4-5c3866e7e881-3M4A0918.jpg"
+      ],
+      "s12_afterglow_r2_5:hero": [
+        "projects/tuan-and-tien-b9d1/input/000122-26c5831c-9c46-4711-83ff-a39b41720b62-000301-349c8300-a008-4520-9443-b19d05acec8e-3M4A0887.jpg"
+      ],
+      "s12_afterglow_r3:hero": [
+        "projects/tuan-and-tien-b9d1/input/000109-24f66532-5739-4af0-8070-49e33950fcba-000277-1515b666-3ff6-4acd-8cad-4c64ace2f707-3M4A0735.jpg"
+      ],
+      "s12_afterglow_r3_2:hero": [
+        "projects/tuan-and-tien-b9d1/input/000033-78c4e8f3-357f-4e09-84ab-00c11ad1fe22-000073-d5aa9ee8-c4c5-4c6b-bbad-3929345ed95b-_DSF7054.jpg"
+      ],
+      "s12_afterglow_r3_3:hero": [
+        "projects/tuan-and-tien-b9d1/input/000069-61cc8806-4e16-41ab-b3c3-63ecc58803f5-000161-168346ab-1bb8-43e9-8a73-eb76f1f9d4fd-3M4A0130.jpg"
+      ],
+      "s02_encounter:hero": [
+        "projects/tuan-and-tien-b9d1/input/000118-eb64d20a-84bf-4d36-8aa7-f23aac48eadb-000295-41d047c6-7687-4b24-a685-871df00030a4-3M4A0859.jpg"
+      ],
+      "s03_fragments:centre": [
+        "projects/tuan-and-tien-b9d1/input/000019-41b170e0-e83b-4ca2-800c-e4ab207eed27-000038-d8c47352-883b-4d5e-865e-9fde8dfe74b5-_DSF1792.jpg"
+      ],
+      "s06_intimacy:portrait": [
+        "projects/tuan-and-tien-b9d1/input/000035-1d23f0f3-8d7f-47e7-8c73-db48520fb9ee-000078-ed6839d5-23ac-4edc-a878-82b38443edd9-_DSF7091.jpg"
+      ],
+      "s07_visual_breath:centre": [
+        "projects/tuan-and-tien-b9d1/input/000018-30946a46-2d9a-4db7-b464-fadd1461ea80-000035-37bbfea6-8584-43a8-a17d-af2e92a0d274-_DSF1786.jpg"
+      ],
+      "s10_fashion_echo:hero": [
+        "projects/tuan-and-tien-b9d1/input/000027-35e062ea-f84d-40f4-a39f-6351abe3f6fe-000052-c1f53d3f-da51-4828-88d4-a195b3c897d8-_DSF1836.jpg"
+      ],
+      "s02_encounter_r1:hero": [
+        "projects/tuan-and-tien-b9d1/input/000036-d6959d16-2673-4616-ba1d-a168a1cffbc4-000080-1ae04ac5-138a-47b8-972c-d97f2f2e3071-_DSF7095.jpg"
+      ],
+      "s03_fragments_r1:centre": [
+        "projects/tuan-and-tien-b9d1/input/000097-11cc4ea3-a681-407a-8dc8-99df90d8dc73-000242-cedabb1a-223d-483f-9213-33373a84e3ed-3M4A0565.jpg"
+      ],
+      "s06_intimacy_r1:portrait": [
+        "projects/tuan-and-tien-b9d1/input/000020-a622f893-ee55-4baf-8ba8-37dbd949b416-000041-e221997c-9a41-441a-a704-864344c53e2a-_DSF1795-2.jpg"
+      ],
+      "s07_visual_breath_r1:centre": [
+        "projects/tuan-and-tien-b9d1/input/000012-840dddad-1f45-4a47-8b79-a73790cf2324-000020-cfe7af2e-f9a4-4d81-a05f-86ca9e744094-_DSF1685-2.jpg"
+      ],
+      "s10_fashion_echo_r1:hero": [
+        "projects/tuan-and-tien-b9d1/input/000117-87f43d85-b7d0-47cb-af60-a6c4c11d1bb2-000293-328ebce7-79c5-4e94-85a8-550f14967c46-3M4A0848.jpg"
+      ],
+      "s10_fashion_echo_r1_2:hero": [
+        "projects/tuan-and-tien-b9d1/input/000114-a1df6cde-5c0f-4df9-9c9d-be443f936baa-000288-0fecfbae-cf0a-4b75-adc7-48201184ae34-3M4A0828.jpg"
+      ],
+      "s03_fragments_r1_2:centre": [
+        "projects/tuan-and-tien-b9d1/input/000023-87f6e4ce-5c84-4af5-a3fb-becdfbde422e-000046-59fbddb2-c98d-42f7-8847-a3e50307f37e-_DSF1816.jpg"
+      ],
+      "s07_visual_breath_r2:centre": [
+        "projects/tuan-and-tien-b9d1/input/000022-3642de86-54c8-43d2-93fd-9e10fd401fef-000044-bbb6deac-8bae-44cc-93db-5fb6bf58ad54-_DSF1814.jpg"
+      ],
+      "s07_visual_breath_r2_2:centre": [
+        "projects/tuan-and-tien-b9d1/input/000015-e89e2f87-7c14-4671-a4aa-d17fccf82d43-000028-8f46552c-094f-4c63-82e6-36ab92fb52c7-_DSF1758.jpg"
+      ],
+      "s07_visual_breath_r2_3:centre": [
+        "projects/tuan-and-tien-b9d1/input/000046-cfb1df4a-5f3f-4f81-a591-8d1456af1ef2-000103-a51b196f-97d9-4416-80fd-f7a0cd783733-_DSF7246.jpg"
+      ],
+      "s07_visual_breath_r2_4:centre": [
+        "projects/tuan-and-tien-b9d1/input/000088-afbea2e3-e005-4042-88de-38923a5af8b9-000213-6afe2fcc-f68e-471d-bbb0-e66515e00e21-3M4A0434.jpg"
+      ],
+      "s07_visual_breath_r2_5:centre": [
+        "projects/tuan-and-tien-b9d1/input/000010-e4341409-aeec-4277-81a5-f5047955967e-000017-881751b5-f198-47b5-86d1-6f1242747de9-_DSF1667.jpg"
+      ],
+      "s07_visual_breath_r3:centre": [
+        "projects/tuan-and-tien-b9d1/input/000099-6143b7b7-2f60-4568-8e66-ed2c6fd04dae-000250-c0c17bd9-52ee-442a-97b4-84f858be49ba-3M4A0579.jpg"
+      ],
+      "s07_visual_breath_r3_2:centre": [
+        "projects/tuan-and-tien-b9d1/input/000062-a5bb863d-8896-4049-b398-b963a9395cc3-000138-714a9de1-7867-4076-a1a4-d624a4925384-_DSF7411.jpg"
+      ],
+      "s07_visual_breath_r3_3:centre": [
+        "projects/tuan-and-tien-b9d1/input/000030-3b76fca9-225b-48af-bda4-bbc6b6ad2ef2-000062-a324cbf3-4141-4c70-99d0-36562ca1b91a-_DSF1881.jpg"
+      ],
+      "s04_shared_memory:assets": [
+        "projects/tuan-and-tien-b9d1/input/000106-a4df49d5-ef44-4c83-81b8-6b3eb518ac30-000272-705b4ca2-3273-4852-89fb-9fa936154c40-3M4A0639.jpg",
+        "projects/tuan-and-tien-b9d1/input/000116-fede5b8c-8b5f-417e-9cc2-91a18d3d3c72-000291-45e7c490-d8b9-408f-b951-36b900f1e822-3M4A0843.jpg",
+        "projects/tuan-and-tien-b9d1/input/000025-aac19bf4-857d-4082-a372-4b7bde6d21fa-000049-12e44415-9635-497b-8d60-ba0da3be93ae-_DSF1819.jpg",
+        "projects/tuan-and-tien-b9d1/input/000120-69bd8491-e816-4d89-938d-ac70d549e7ef-000298-56f8db12-115a-44fa-a71a-5004f7be15f4-3M4A0878.jpg"
+      ],
+      "s07_visual_breath:left": [
+        "projects/tuan-and-tien-b9d1/input/000021-d2bf52da-8139-472f-9053-5975f4c4348f-000042-b5003726-3500-43e4-92e2-95baf58ad7a9-_DSF1803.jpg"
+      ],
+      "s07_visual_breath:right": [
+        "projects/tuan-and-tien-b9d1/input/000124-cac17448-473c-4d51-be3d-31efeb1a8cf1-000306-f34d04bc-fd0d-4157-bedd-5c6331e599e3-3M4A0903.jpg"
+      ],
+      "s07_visual_breath_r1:left": [
+        "projects/tuan-and-tien-b9d1/input/000063-9d89c4ac-865c-4fae-a48a-5bbec2f23c3f-000139-48f99ae3-3c19-4ab5-803b-936315de35bf-_DSF7413.jpg"
+      ],
+      "s07_visual_breath_r1:right": [
+        "projects/tuan-and-tien-b9d1/input/000090-8b527743-17b2-4ee1-ba78-f6194f671444-000226-de507ef4-ebad-4a1a-a503-98f5133fd40e-3M4A0504.jpg"
+      ],
+      "s07_visual_breath_r2:left": [
+        "projects/tuan-and-tien-b9d1/input/000066-f7ce765c-b79d-4922-9901-d088018cce9e-000151-b4c8eb98-04bb-4b6b-925a-8d6a85c6aeef-_DSF7458.jpg"
+      ],
+      "s07_visual_breath_r2:right": [
+        "projects/tuan-and-tien-b9d1/input/000121-8c930268-aa48-41f3-aab6-ca4942713d0f-000299-416bf6b8-ced3-46fb-a73d-c0182af26a09-3M4A0883.jpg"
+      ],
+      "s07_visual_breath_r2_2:left": [
+        "projects/tuan-and-tien-b9d1/input/000091-203e6b91-e39e-41fc-bdfd-2d4f40b06750-000227-b4ff8be8-403f-45f5-84c8-e1c2501f6ec3-3M4A0512.jpg"
+      ],
+      "s07_visual_breath_r2_2:right": [
+        "projects/tuan-and-tien-b9d1/input/000038-e917fb03-1a7d-4deb-86b8-90a25ea293e1-000084-4145fa47-eaae-4a57-814e-c97cf50a5c6a-_DSF7116.jpg"
+      ],
+      "s07_visual_breath_r2_3:left": [
+        "projects/tuan-and-tien-b9d1/input/000026-a3d546c9-a0b9-446c-a8fb-f3592634595c-000051-e88a1546-f057-413f-bc76-c48d585f1d52-_DSF1829.jpg"
+      ],
+      "s07_visual_breath_r2_3:right": [
+        "projects/tuan-and-tien-b9d1/input/000031-dd1ffd42-b263-4893-9f03-15b53fb5a5ac-000070-581e9c90-df7f-4190-b2d2-99e1050d9a85-_DSF7047.jpg"
+      ],
+      "s07_visual_breath_r2_4:left": [
+        "projects/tuan-and-tien-b9d1/input/000054-f8d13eb0-2587-4bb8-8932-607874813bb8-000128-5beed46d-d0de-41e1-8c57-3ad461b9bdcb-_DSF7360.jpg"
+      ],
+      "s07_visual_breath_r2_4:right": [
+        "projects/tuan-and-tien-b9d1/input/000102-1b75618d-2175-45d2-befc-e69657dcf7f0-000257-456b3599-2368-462f-8190-15b6f56ae8d4-3M4A0597.jpg"
+      ],
+      "s07_visual_breath_r2_5:left": [
+        "projects/tuan-and-tien-b9d1/input/000040-afa6fc92-0748-4ada-a405-1b3cf6f0f909-000089-a5bd2030-bc3a-45f4-8a0b-5301e4483684-_DSF7147.jpg"
+      ],
+      "s07_visual_breath_r2_5:right": [
+        "projects/tuan-and-tien-b9d1/input/000039-81d9b33b-3bdf-4155-aba7-92b35a6fe168-000088-e8874678-18c4-4c9d-ab10-45a555ef316a-_DSF7139.jpg"
+      ],
+      "s07_visual_breath_r3:left": [
+        "projects/tuan-and-tien-b9d1/input/000032-6797f084-fbe6-408b-9606-50112ffb0b5c-000072-2e177b72-e3ea-4ce8-8fe3-a32672066cb3-_DSF7049.jpg"
+      ],
+      "s07_visual_breath_r3:right": [
+        "projects/tuan-and-tien-b9d1/input/000101-445f6689-05d5-4ea5-9bb6-0e67a3478e54-000255-22c745aa-99a9-4cad-b5d3-46de86a63665-3M4A0593.jpg"
+      ],
+      "s07_visual_breath_r3_2:left": [
+        "projects/tuan-and-tien-b9d1/input/000103-ab357663-3d97-4285-a46a-5b32334a83fb-000259-14ca982c-76a9-4ca3-a1a4-d1db94af03bc-3M4A0601.jpg"
+      ],
+      "s07_visual_breath_r3_2:right": [
+        "projects/tuan-and-tien-b9d1/input/000029-f5c1d4c1-96b5-47c7-870d-bca2964a4d9d-000060-61417004-20e8-44de-bfb8-16651e6eb019-_DSF1872.jpg"
+      ],
+      "s07_visual_breath_r3_3:left": [
+        "projects/tuan-and-tien-b9d1/input/000004-8497aea4-123b-46f8-afbd-33b22bcc791c-000006-c8117b84-8dba-4e60-beb5-4ba5f8f67682-_DSF1551.jpg"
+      ],
+      "s07_visual_breath_r3_3:right": [
+        "projects/tuan-and-tien-b9d1/input/000100-c4a1f67a-29c5-43e7-9aed-075d8d075e30-000253-dc6a9292-9d71-488b-8738-4ad44aa573f9-3M4A0587.jpg"
+      ],
+      "s08_journey_montage:film_roll": [
+        "projects/tuan-and-tien-b9d1/input/000016-dda88c67-ffd3-42f1-87c2-a9bc080096ca-000029-d62e16fc-a327-4508-9ed1-fea3bee8a6e3-_DSF1760.jpg",
+        "projects/tuan-and-tien-b9d1/input/000034-5c243982-3dce-4b31-9c3a-610fa8095d3e-000075-a38e0eed-7dcc-4785-a883-6ab7f1673a6e-_DSF7077.jpg",
+        "projects/tuan-and-tien-b9d1/input/000098-bf5551b2-9c66-463f-a069-0675aa48861c-000247-02698dd7-a980-4279-b058-8c3d60966de1-3M4A0572.jpg",
+        "projects/tuan-and-tien-b9d1/input/000014-4bf4ee3c-9303-4718-9f54-52c3d8a1848c-000023-f5dc45a4-82fc-4a6b-a397-48acbcd236da-_DSF1709.jpg",
+        "projects/tuan-and-tien-b9d1/input/000104-7042cad4-b80d-4a4a-9559-c20612fa4c48-000262-607fbb7d-84f7-4e3d-9dbd-4d078d34eb58-3M4A0620.jpg",
+        "projects/tuan-and-tien-b9d1/input/000017-8c8b95a4-0ba2-47fb-b5a2-509ee6ea932e-000031-8c32bf5f-8e30-4da3-8573-9d1572de5024-_DSF1767.jpg",
+        "projects/tuan-and-tien-b9d1/input/000005-d9e9d17f-21d1-4fbe-a0aa-d34cddee2afd-000007-706a57b4-8dbb-4fe2-923d-8c4acb471d43-_DSF1557.jpg",
+        "projects/tuan-and-tien-b9d1/input/000011-2cc433c6-5552-4790-a6e4-34c14007dc9f-000018-4fc234d5-a7d6-4c68-803b-a8f373b80c01-_DSF1678.jpg",
+        "projects/tuan-and-tien-b9d1/input/000006-44d453f4-3bc3-4a90-abe5-35e1f91ca6dc-000010-e438778f-3055-424f-a03b-d9ac344c0d9d-_DSF1591-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000107-1386e445-851a-4fb9-bfe7-de6f2e8074b5-000275-9219c223-a35e-459a-b1b3-9092dd4a5e26-3M4A0660.jpg",
+        "projects/tuan-and-tien-b9d1/input/000053-edf8f277-763b-4835-b086-062d957ded2c-000126-2be09a0e-8cb5-44ee-a567-8235be5ebdb7-_DSF7356-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000077-65c87c04-3432-4f23-a69e-5bc2af234775-000185-adcb1207-676a-4c67-a7e0-343f57adbf5f-3M4A0279.jpg"
+      ],
+      "s08_journey_montage_r1:film_roll": [
+        "projects/tuan-and-tien-b9d1/input/000008-1a6e1f83-6df2-409c-b377-aad8d23187d2-000013-8a8b0f73-d663-4639-acd9-d3be67e22045-_DSF1635.jpg",
+        "projects/tuan-and-tien-b9d1/input/000113-3ce4feba-0e98-4839-af06-23871ae93af3-000285-2b549194-3403-4731-abb7-0e46ae6537c1-3M4A0816.jpg",
+        "projects/tuan-and-tien-b9d1/input/000070-a41a7538-0795-4a62-a879-936f3515e0fe-000162-8972398d-97f5-4050-8207-8fd4ccfc1267-3M4A0134.jpg",
+        "projects/tuan-and-tien-b9d1/input/000111-f43ce0b5-9aaf-44e6-bc2c-648cea8992eb-000282-e94262a0-4580-4de8-9d8d-e9d564825b36-3M4A0760.jpg",
+        "projects/tuan-and-tien-b9d1/input/000105-50171143-2c3b-4cea-90c8-d785bd405c7e-000270-c764e3ed-4d80-4fcf-b9f4-fd30bb6cfde2-3M4A0636.jpg",
+        "projects/tuan-and-tien-b9d1/input/000092-a9255e21-28f7-40f5-bdc7-3eb2b53856ac-000228-2abf6646-1f6e-435c-b00b-377dfb86e84a-3M4A0523.jpg",
+        "projects/tuan-and-tien-b9d1/input/000095-09420990-1876-4535-bf5f-0962a44e9f47-000231-28f61aaa-105e-4715-880d-59f33b986897-3M4A0540.jpg",
+        "projects/tuan-and-tien-b9d1/input/000096-047a23bf-9331-42dd-bcbd-83982766629f-000237-895158d6-999e-4ea7-800c-7638736698bc-3M4A0551.jpg",
+        "projects/tuan-and-tien-b9d1/input/000071-e1e9da6c-73f4-40e9-a5a1-25db75cc9bb2-000166-16d3293d-9d23-4a3b-a0b5-b1c5e25af566-3M4A0187.jpg",
+        "projects/tuan-and-tien-b9d1/input/000067-085f917e-1938-453b-8d8a-bac9e0f47e94-000155-53c5c72c-c602-4e51-bd00-cd11b811d1be-_DSF7464.jpg",
+        "projects/tuan-and-tien-b9d1/input/000075-0e8f98fa-3ff8-49de-8a0e-2101f24acae4-000178-8ae18059-69c2-48c4-acb5-a3c4329acddf-3M4A0249.jpg",
+        "projects/tuan-and-tien-b9d1/input/000074-765d2c1e-0165-4882-bbf6-d9fe11a77710-000174-d10f86af-91f4-4d0d-8bc5-7beab2c4341b-3M4A0218.jpg"
+      ],
+      "s08_journey_montage_r2:film_roll": [
+        "projects/tuan-and-tien-b9d1/input/000061-e71359de-10ec-402f-b38a-88cba7a303f4-000137-1b113928-685e-4219-b4cb-543fecb31022-_DSF7395-2.jpg",
+        "projects/tuan-and-tien-b9d1/input/000110-c5cf2d83-25d6-44f7-8d75-95f0804e2b1f-000279-159839f0-4fa8-4ad0-b78f-070fae269ea0-3M4A0743.jpg",
+        "projects/tuan-and-tien-b9d1/input/000045-cb41c088-52e6-4658-b7ad-002744d9ea17-000101-1e1f16c0-e868-4b23-86c5-371682a02bde-_DSF7244.jpg",
+        "projects/tuan-and-tien-b9d1/input/000043-3db3874e-13f5-4ac9-ab41-44ccb944c997-000098-8892ebaa-eafd-4c15-8f22-24a16e74c139-_DSF7169.jpg",
+        "projects/tuan-and-tien-b9d1/input/000089-0097abcd-538a-499f-8a6e-ba1c2a04b991-000219-1c5d6788-4382-4338-bc5a-111051e3dbeb-3M4A0472.jpg",
+        "projects/tuan-and-tien-b9d1/input/000068-3bb43477-dc50-4d08-b392-b1ede91e82cb-000157-544719b0-9b4d-49ea-a51a-f0c6c12e47fb-_DSF7484.jpg"
+      ],
+      "s08_journey_montage_r3:film_roll": [
+        "projects/tuan-and-tien-b9d1/input/000094-d5e4d0d9-9bae-4951-88d1-a591f096993a-000230-f10fcd76-9f1c-4ffa-b852-a4d1ceb49d18-3M4A0535.jpg",
+        "projects/tuan-and-tien-b9d1/input/000000-25f82d0c-7bc7-4f84-8d0b-5ce0d2b26156-000000-11a82f0d-3c35-4b6c-bb98-c2c40230d34b-_DSF1524.jpg",
+        "projects/tuan-and-tien-b9d1/input/000002-d481ae05-e39e-4992-801a-fef597f1cc2a-000002-23126293-af28-431c-87e6-aa2e292e05bf-_DSF1533.jpg"
+      ],
+      "s03_fragments:back": [
+        "projects/tuan-and-tien-b9d1/input/000087-27bdd90d-8cbe-4cbe-924e-5ae2de378696-000211-c8f2577b-d354-4d27-a49f-8797f8bed72a-3M4A0407.jpg"
+      ],
+      "s03_fragments:front": [
+        "projects/tuan-and-tien-b9d1/input/000013-ccdad56e-5f68-4967-9d40-f0941fe90652-000022-d4778fe4-d428-4b87-84a1-70f980fd2d0b-_DSF1697-2.jpg"
+      ],
+      "s12_afterglow:top": [
+        "projects/tuan-and-tien-b9d1/input/000086-0cf2b26b-0bb4-4bf7-8270-ecf78579b8bb-000210-ef3681f8-9670-4fe0-8a0f-f1a44bbd4acc-3M4A0406.jpg"
+      ],
+      "s12_afterglow:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000041-704d606d-9152-4ecf-9c51-09af28e80395-000093-e3d361ad-3d14-44ff-ae3e-cb34efa1ddf8-_DSF7158.jpg"
+      ],
+      "s03_fragments_r1:back": [
+        "projects/tuan-and-tien-b9d1/input/000093-d9bc8523-5c3b-486e-ab89-d4d1e8ed2e75-000229-b876ace8-66ff-49c8-8478-c0b5aa2079d2-3M4A0527.jpg"
+      ],
+      "s03_fragments_r1:front": [
+        "projects/tuan-and-tien-b9d1/input/000085-6a51cae4-1515-4143-a651-3fc88f9e2df1-000208-8484f2a2-be6e-42f1-9012-4d122739c12b-3M4A0403.jpg"
+      ],
+      "s12_afterglow_r1:top": [
+        "projects/tuan-and-tien-b9d1/input/000084-17c16989-3ad5-477c-9f9f-e494425438a3-000206-c00f193a-2976-46d6-af94-b9d89b3f8857-3M4A0399.jpg"
+      ],
+      "s12_afterglow_r1:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000042-b0acc76c-9b4b-45f7-8b5b-53ec32685db8-000095-a6d2b287-f67e-4f14-ac11-daf58c437c20-_DSF7165.jpg"
+      ],
+      "s03_fragments_r1_2:back": [
+        "projects/tuan-and-tien-b9d1/input/000082-36b58297-c901-4759-9b2f-fb705203520d-000204-3867249b-2439-4bf8-9d56-6141eee458a8-3M4A0370.jpg"
+      ],
+      "s03_fragments_r1_2:front": [
+        "projects/tuan-and-tien-b9d1/input/000083-dda1b95e-3811-45c6-9bdd-832748440c09-000205-bd51b8d9-ff30-42f4-af8f-238dc9d363d8-3M4A0395.jpg"
+      ],
+      "s12_afterglow_r1_2:top": [
+        "projects/tuan-and-tien-b9d1/input/000055-436c6a83-d96d-491f-9500-875becf5bd9b-000131-3b4aaac7-3104-4060-930e-ef1ce18ca97e-_DSF7391-2.jpg"
+      ],
+      "s12_afterglow_r1_2:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000073-f83f47a2-59fb-42dc-8ba0-873da34f2f8a-000171-24373de7-df05-4562-85db-0cf30267c7a2-3M4A0196.jpg"
+      ],
+      "s12_afterglow_r2:top": [
+        "projects/tuan-and-tien-b9d1/input/000059-4acb4510-2fa6-4621-810a-d13ab47ee928-000135-13a11ddb-3e52-40b0-b54a-8160b7e2ca5f-_DSF7394-2.jpg"
+      ],
+      "s12_afterglow_r2:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000076-82224f28-3d04-4e4c-b3cc-d5eab794de0e-000184-41c33af2-2f73-4476-b760-4627769bb84d-3M4A0273.jpg"
+      ],
+      "s12_afterglow_r2_2:top": [
+        "projects/tuan-and-tien-b9d1/input/000003-a7803a5e-c93c-45f5-a06e-2c3ddf7975ac-000005-325cb89f-5c67-4ed2-acde-70bd89ce672c-_DSF1544.jpg"
+      ],
+      "s12_afterglow_r2_2:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000001-64e4801d-3f77-4dd8-9dc8-545d617fe141-000001-9bf7981a-b2c6-4192-b431-43a97505429c-_DSF1531.jpg"
+      ],
+      "s12_afterglow_r2_3:top": [
+        "projects/tuan-and-tien-b9d1/input/000051-dfa0019c-a2fd-4719-9fca-d2505d039b02-000121-871fd780-e6de-45a4-9e7e-6a2da9e74ac6-_DSF7336-2.jpg"
+      ],
+      "s12_afterglow_r2_3:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000057-c446664b-c29d-4de6-9553-b9a7b768ba47-000133-69f35229-56d1-4f2f-93f4-001abbdfbb1c-_DSF7393-2.jpg"
+      ],
+      "s12_afterglow_r2_4:top": [
+        "projects/tuan-and-tien-b9d1/input/000080-a5e43e28-a38d-4317-8acc-e90fec5e924e-000196-61405e13-b230-42f7-ac5b-0dab7de7fab2-3M4A0296.jpg"
+      ],
+      "s12_afterglow_r2_4:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000056-53230d44-e7ac-42fe-bd62-34bc4527ee02-000132-e6131b85-3534-4849-b207-e4272cd94fb7-_DSF7393.jpg"
+      ],
+      "s12_afterglow_r2_5:top": [
+        "projects/tuan-and-tien-b9d1/input/000081-7357a817-2687-4c92-9bd6-b774634a099e-000198-d6da9d98-5b6e-4247-9e59-b3df247a6a17-3M4A0298-2.jpg"
+      ],
+      "s12_afterglow_r2_5:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000072-4fb6a163-4f30-44ee-9e7a-41a65c90c1e9-000168-1a0c093e-15c2-4db2-83a1-ac863a6706ee-3M4A0190.jpg"
+      ],
+      "s12_afterglow_r3:top": [
+        "projects/tuan-and-tien-b9d1/input/000052-aebd785f-f882-406b-b13d-6b0910f4e504-000123-f6b32b0d-65f8-4170-8e0b-c2c5a0a34ec8-_DSF7341-2.jpg"
+      ],
+      "s12_afterglow_r3:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000044-404bf1b7-f625-4403-ba36-9190b508541d-000100-4258a433-baf4-4573-89f5-47dacdf63666-_DSF7238.jpg"
+      ],
+      "s12_afterglow_r3_2:top": [
+        "projects/tuan-and-tien-b9d1/input/000047-21bce652-f8cb-4f0d-b908-4f3e92a4a065-000114-b7002e00-438a-40eb-86a6-55cdd18ba9bf-_DSF7294.jpg"
+      ],
+      "s12_afterglow_r3_2:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000064-fcec38bc-a33f-46dd-9536-765ecb9729c8-000140-583de0fc-7301-4bd6-bbb4-af65bbe40cb7-_DSF7417.jpg"
+      ],
+      "s12_afterglow_r3_3:top": [
+        "projects/tuan-and-tien-b9d1/input/000050-222a484b-d390-40d5-ace4-c8d5c256d5d2-000120-d48bdf47-9877-4044-8544-82c3faef1983-_DSF7334-2.jpg"
+      ],
+      "s12_afterglow_r3_3:bottom": [
+        "projects/tuan-and-tien-b9d1/input/000007-e8a2f501-be42-4622-8b68-151719fc731e-000012-cef2a700-5163-41fc-9093-0ce79e729819-_DSF1633.jpg"
+      ]
+    },
+    "diversityReport": "projects/tuan-and-tien-b9d1/analysis/tier1_diversity.json"
+  }
+}

@@ -17,9 +17,10 @@ import {
 
 export { buildColorFilter, buildLetterboxFilter } from "./buildColorFilters";
 export { buildEffectFilter } from "./buildPhotoEffects";
-import { canvasBackground } from "./ffmpegFilterHelpers";
+import { buildTechnicalColorFilter, canvasBackground } from "./ffmpegFilterHelpers";
 import { videoEncodeArgs } from "./quality";
 import type { QualityProfile } from "./quality";
+import { EFFECT_PRESETS } from "./types";
 import type { EffectPreset, RenderSlideStep } from "./types";
 
 export { buildAudioMuxArgs } from "./buildAudioMuxCommand";
@@ -36,44 +37,7 @@ export {
 
 // All per-slide effect presets are implemented. Crossfade transitions (which
 // span two slides) and captions are handled elsewhere / in a later milestone.
-const IMPLEMENTED_EFFECTS: ReadonlySet<EffectPreset> = new Set([
-  "still",
-  "slow_zoom_in",
-  "slow_zoom_out",
-  "pan_left",
-  "pan_right",
-  "pan_up",
-  "pan_down",
-  "kenburns_tl",
-  "kenburns_tr",
-  "kenburns_bl",
-  "kenburns_br",
-  "portrait_blur_background",
-  "portrait_reflection",
-  "floating_card_gallery",
-  "moving_background_echo",
-  "panel_flip",
-  "polaroid",
-  "circle_focus",
-  "memory_wall",
-  "dark_feather",
-  "film_roll_up",
-  "film_roll_left",
-  "film_roll_right",
-  "photo_strip_up",
-  "photo_strip_left",
-  "photo_strip_right",
-  "video_background",
-  "collage_grid",
-  "double_exposure",
-  "mask_reveal",
-  "tilt_shift",
-  "dream_glow",
-  "prism_split",
-  "spotlight_focus",
-  "mirror_split",
-  "layer_scene",
-]);
+const IMPLEMENTED_EFFECTS: ReadonlySet<EffectPreset> = new Set(EFFECT_PRESETS);
 
 export function isImplementedEffect(effect: EffectPreset): boolean {
   return IMPLEMENTED_EFFECTS.has(effect);
@@ -172,12 +136,6 @@ function buildMaskRevealArgs(step: RenderSlideStep): string[] {
 }
 
 /**
- * The canvas colour behind effects that draw their own background (mask_reveal,
- * memory_wall). Timelines opt out of the pure-black default with
- * `params.background: "#RRGGBB"` — a full-black surround reads as "nothing
- * around the photo", so recipes are expected to pass a theme-tinted colour.
- */
-/**
  * mask_reveal: the photo appears through the luma of a grayscale mask video
  * (white = photo, black = hidden) over the canvas background. The mask plays
  * once; tpad clones its final frame so a 4s reveal simply holds fully-open
@@ -263,6 +221,7 @@ function buildDoubleExposureFilter(step: RenderSlideStep): string {
   );
 
   const post = [
+    buildTechnicalColorFilter(step.technicalColor),
     buildColorFilter(step.color),
     buildLetterboxFilter(step.color, w, h),
     ...step.captions.map((c) => buildCaptionFilter(c, h)),

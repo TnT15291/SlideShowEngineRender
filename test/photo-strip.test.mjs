@@ -18,7 +18,7 @@ test("film rolls move slowly with slim unbranded rails", () => {
   assert.doesNotMatch(result.stdout, /FUJIFILM/);
 });
 
-test("borderless photo strips compile vertically and horizontally", () => {
+test("photo strips compile vertically and horizontally, framed but unbranded", () => {
   const result = runTs(`
     import { buildSlideArgs } from "./src/buildFfmpegCommand.ts";
     const base = { type:"render_slide", slideId:"strip", renderer:"ffmpeg", rendererAssets:[], rendererParams:{position:"right"}, input:"input/001.jpg", inputs:["input/001.jpg","input/002.jpg","input/003.jpg","input/004.jpg"], layers:[], output:"temp/x.mp4", duration:10, requestedEffect:"photo_strip_up", easing:"gentle", autoPortrait:false, transition:{type:"none",duration:0}, captions:[], width:1920,height:1080,fps:30,quality:"draft" };
@@ -32,4 +32,9 @@ test("borderless photo strips compile vertically and horizontally", () => {
   assert.match(graphs[1], /hstack=inputs=4/);
   assert.match(graphs[2], /hstack=inputs=4/);
   assert.ok(graphs.every((g) => !/sprocket|FUJIFILM/.test(g)));
+  // The assembled strip gets one outer mat frame; photos still touch edge-to-edge
+  // WITHIN the strip (no per-photo border reappears between them).
+  assert.ok(graphs.every((g) => /\[strip\]pad=iw\+\d+:ih\+\d+:\d+:\d+:color=0xf7f2e8\[stripframed\]/.test(g)));
+  assert.ok(graphs.every((g) => /\[bg\]\[stripframed\]overlay/.test(g)));
 });
+

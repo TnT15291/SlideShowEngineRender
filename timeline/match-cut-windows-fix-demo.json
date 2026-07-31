@@ -1,0 +1,36 @@
+{
+  "project": { "name": "match-cut-windows-fix-demo", "width": 1280, "height": 720, "fps": 30, "quality": "share" },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "output": { "path": "output/match-cut-windows-fix-demo.mp4" },
+  "overlays": [],
+  "slides": [
+    {
+      "id": "before", "image": "input/Pictures/A2/5DIV1138.jpg", "duration": 2.5,
+      "effect": "slow_zoom_out",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "TRUOC", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.2, "size": 22, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "s70_hero_filmstrip",
+      "renderer": "remotion",
+      "template": "match_cut_windows",
+      "assets": [
+        "input/Pictures/A2/5DIV1130.jpg",
+        "input/Pictures/A2/5DIV1131.jpg",
+        "input/Pictures/A2/5DIV1136.jpg"
+      ],
+      "params": {},
+      "duration": 3,
+      "effect": "still",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "MATCH CUT WINDOWS (DA FIX)", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.7, "size": 22, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "after", "image": "input/Pictures/A2/5DIV1140.jpg", "duration": 2.5,
+      "effect": "slow_zoom_in",
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [{ "text": "SAU", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 2.2, "size": 22, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    }
+  ]
+}

@@ -279,8 +279,15 @@ Supported grading fields:
 - `sharpen`: `0..2`.
 - `blur`: Gaussian blur sigma (`0..50`, soft-focus).
 - `temperature`: Kelvin (`1000..40000`; `6500` neutral, lower = warmer).
-- `glow`: `0..1` dreamy bloom (blurred screen-blend over the image).
+- `glow`: `0..1` dreamy bloom (blurred screen-blend over the image, every tone).
+- `halation`: `0..1` warm/red bloom around highlights ONLY (thresholded) —
+  the "digital halation" film-emulation texture, distinct from `glow`.
+- `duotone`: `{ shadow, highlight }` (`#rrggbb` each) — gradient-maps the
+  image's luma onto two flat colors; a stylized, poster-flat editorial look.
 - `grain`: `0..30` animated film grain.
+- `flicker`: `0..1` analog exposure flicker (Super-8 luma pulse); subtle even at 1.
+- `vhs`: `0..1` retro camcorder texture — scanlines, chroma smear, tracking
+  jitter. Reads convincingly VHS even with `grain: 0`.
 - `letterbox`: boolean or target aspect number (`true` = 2.39:1) — cinematic
   black bars, drawn under captions so bottom text sits in the bar.
 
@@ -384,6 +391,25 @@ automatically detect faces, infer perfect crops, understand semantic subjects,
 or generate advanced keyframed motion paths. Those constraints should be handled
 by the timeline writer until the engine gains those features.
 
+## Hybrid GPU and 3D Scenes
+
+Slides may use `renderer: "remotion"` or `renderer: "blender"` with `template`,
+`assets`, and `params`. The current contract exposes 32 Remotion/GPU templates
+and 6 Blender/3D templates in addition to the 36 native FFmpeg photo effects.
+
+The modern-effect set includes:
+
+- `shared_frame_morph` (4 assets): 2x2 gallery to full-frame hero.
+- `kinetic_typography` (1 asset): per-character stagger and blur reveal.
+- `dither_dissolve` (2 assets): GPU ordered (Bayer) halftone transition.
+- `image_echo_trail` (1 asset): delayed motion-history copies.
+- `glass_refraction` (2 assets): refractive lens reveal.
+- `audio_reactive` (1 asset): beat-frame or BPM-driven pulse.
+- `particle_dissolve` (2 assets): GPU cell-particle breakup.
+
+See [HYBRID-RENDERER.md](HYBRID-RENDERER.md) for the complete template list,
+asset requirements, parameters, cache behavior, and render commands.
+
 ## Current Limits
 
 Do not ask the AI timeline writer for arbitrary FFmpeg filtergraphs. Use the
@@ -395,8 +421,9 @@ Current gaps compared with the full FFmpeg universe:
 - No per-photo manual crop rectangle inside collage or film roll.
 - No mask-shape editor beyond existing FFmpeg transition presets and PNG
   overlays.
-- No real 3D camera scene.
-- No beat detection.
+- No interactive 3D camera editor; Blender camera templates are preset-driven.
+- `audio_reactive` consumes `params.beatFrames` or `params.bpm`; soundtrack
+  waveform data is not injected into shaders automatically.
 - No true face detection yet. Current face-safe framing is aspect-ratio based:
   it prevents high-risk `cover` crops by switching photo-card layers to
   `contain`, but it does not locate eyes/faces inside the image.
@@ -409,9 +436,8 @@ Current gaps compared with the full FFmpeg universe:
   but only visual QA can prove exact rendered glyph fit.
 - Film-roll scenes with many very large input photos are faster with the image
   cache enabled, but they can still be among the slowest scenes.
-- No arbitrary particle generator, but the repo ships 3 procedural light-leak
-  loops (`overlays/light_leak_*.mp4`, via `scripts/generateLightLeaks.mjs`) and
-  downloaded bokeh/light overlays; use those or your own overlay videos.
+- Particle behavior is preset-driven (`particle_dissolve`, `confetti_bloom`,
+  particle reveal masks); there is no arbitrary particle-system editor.
 - `video_background` is intended for video files, not still images.
 
 ## Recommended Next Upgrades

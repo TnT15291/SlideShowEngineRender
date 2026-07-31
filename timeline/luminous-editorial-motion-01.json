@@ -1,0 +1,4322 @@
+{
+  "language": "vi",
+  "languageEnforced": false,
+  "sequenceMode": "editorial",
+  "project": {
+    "name": "Luminous Editorial Motion",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "quality": "share"
+  },
+  "music": [
+    {
+      "path": "input/music/a thousand years.mp3",
+      "volume": 0.82
+    }
+  ],
+  "audio": {
+    "fade_in": 1.8,
+    "fade_out": 3.2,
+    "crossfade": 0
+  },
+  "color": {
+    "temperature": 5900,
+    "saturation": 0.97,
+    "contrast": 1.06,
+    "brightness": 0.015,
+    "grain": 3,
+    "glow": 0.04,
+    "halation": 0.08
+  },
+  "overlays": [
+    {
+      "path": "overlays/light_sweep.mp4",
+      "position": "fullscreen",
+      "opacity": 0.1,
+      "blend": "screen",
+      "start": 0
+    }
+  ],
+  "output": {
+    "path": "output/luminous-editorial-motion-01.mp4"
+  },
+  "slides": [
+    {
+      "id": "s01_kinetic_declaration",
+      "editorialBeat": "declaration",
+      "duration": 6.369,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "kinetic_typography",
+      "assets": [
+        "input/011.jpg"
+      ],
+      "params": {
+        "title": "Bride & Groom",
+        "subtitle": "Together · Our Wedding Day",
+        "color": "#FFFDF8"
+      },
+      "captions": [],
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s02_encounter",
+      "editorialBeat": "declaration",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/080.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.507,
+          "focusY": 0.323,
+          "faceBox": {
+            "x": 0.367,
+            "y": 0.187,
+            "width": 0.28,
+            "height": 0.272
+          },
+          "technicalColor": {
+            "file": "input/080.jpg",
+            "brightness": 0.0055,
+            "saturation": 0.9,
+            "redBalance": -0.0662,
+            "blueBalance": 0.0738,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "pan_up",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "Khởi đầu",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 100,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "animation": "slide_right",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Mọi câu chuyện lớn đều bắt đầu từ một điều rất nhỏ.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "slide_right",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s03_fragments",
+      "editorialBeat": "declaration",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/094.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.435,
+          "focusY": 0.384,
+          "faceBox": {
+            "x": 0.306,
+            "y": 0.328,
+            "width": 0.259,
+            "height": 0.112
+          },
+          "technicalColor": {
+            "file": "input/094.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.034,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/068.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.502,
+          "faceBox": {
+            "x": 0.334,
+            "y": 0.367,
+            "width": 0.312,
+            "height": 0.361
+          },
+          "technicalColor": {
+            "file": "input/068.jpg",
+            "brightness": -0.0697,
+            "saturation": 0.9,
+            "redBalance": -0.0653,
+            "blueBalance": -0.0461,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/097.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.457,
+          "focusY": 0.404,
+          "faceBox": {
+            "x": 0.351,
+            "y": 0.357,
+            "width": 0.213,
+            "height": 0.095
+          },
+          "technicalColor": {
+            "file": "input/097.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0321,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Từng mảnh ghép nhỏ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s04_shared_memory",
+      "editorialBeat": "encounter",
+      "signature": true,
+      "duration": 6.27,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "shared_frame_morph",
+      "assets": [
+        "input/078.jpg",
+        "input/069.jpg",
+        "input/035.jpg",
+        "input/018.jpg"
+      ],
+      "params": {
+        "heroIndex": 2,
+        "background": "#191816"
+      },
+      "captions": [],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s05_luminous_portrait",
+      "editorialBeat": "encounter",
+      "signature": true,
+      "duration": 8.06,
+      "effect": "dream_glow",
+      "image": "input/079.jpg",
+      "captions": [
+        {
+          "text": "Chỉ cần đứng cạnh nhau, mọi ánh sáng đều trở nên dịu dàng.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "fade",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "focusX": 0.601,
+      "focusY": 0.351,
+      "faceBox": {
+        "x": 0.427,
+        "y": 0.238,
+        "width": 0.349,
+        "height": 0.226
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": 0.0181,
+        "saturation": 0.9,
+        "redBalance": -0.0642,
+        "blueBalance": 0.0733
+      }
+    },
+    {
+      "id": "s06_intimacy",
+      "editorialBeat": "encounter",
+      "duration": 8.06,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/062.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.472,
+          "focusY": 0.525,
+          "faceBox": {
+            "x": 0.3,
+            "y": 0.307,
+            "width": 0.554,
+            "height": 0.279
+          },
+          "technicalColor": {
+            "file": "input/062.jpg",
+            "brightness": 0.0181,
+            "saturation": 1.1,
+            "redBalance": 0.0373,
+            "blueBalance": 0.0041,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/010.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.495,
+          "focusY": 0.547,
+          "faceBox": {
+            "x": 0.153,
+            "y": 0.339,
+            "width": 0.615,
+            "height": 0.316
+          },
+          "technicalColor": {
+            "file": "input/010.jpg",
+            "brightness": -0.0634,
+            "saturation": 1.1,
+            "redBalance": 0.0135,
+            "blueBalance": 0.0321,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "Có những điều không cần nói, chỉ cần được ở cạnh nhau.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 826,
+          "width": 1688,
+          "height": 200,
+          "size": 33,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s07_visual_breath",
+      "editorialBeat": "encounter",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/036.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.484,
+          "focusY": 0.633,
+          "faceBox": {
+            "x": 0.261,
+            "y": 0.217,
+            "width": 0.429,
+            "height": 0.413
+          },
+          "technicalColor": {
+            "file": "input/036.jpg",
+            "brightness": 0.0047,
+            "saturation": 0.9,
+            "redBalance": -0.07,
+            "blueBalance": -0.08,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/001.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.536,
+          "focusY": 0.519,
+          "faceBox": {
+            "x": 0.261,
+            "y": 0.176,
+            "width": 0.636,
+            "height": 0.587
+          },
+          "technicalColor": {
+            "file": "input/001.jpg",
+            "brightness": 0.006,
+            "saturation": 1.0662,
+            "redBalance": -0.0077,
+            "blueBalance": 0.0327,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/031.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.519,
+          "focusY": 0.594,
+          "faceBox": {
+            "x": 0.452,
+            "y": 0.445,
+            "width": 0.172,
+            "height": 0.129
+          },
+          "technicalColor": {
+            "file": "input/031.jpg",
+            "brightness": -0.0716,
+            "saturation": 0.9416,
+            "redBalance": 0.0708,
+            "blueBalance": -0.0546,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s08_journey_montage",
+      "editorialBeat": "encounter",
+      "duration": 11.642,
+      "effect": "photo_strip_right",
+      "images": [
+        "input/054.jpg",
+        "input/058.jpg",
+        "input/053.jpg",
+        "input/041.jpg",
+        "input/020.jpg",
+        "input/028.jpg",
+        "input/040.jpg",
+        "input/048.jpg",
+        "input/027.jpg",
+        "input/026.jpg",
+        "input/021.jpg",
+        "input/032.jpg"
+      ],
+      "params": {},
+      "captions": [
+        {
+          "text": "Từng chặng đường đi qua, điều đáng nhớ nhất vẫn là có nhau.",
+          "role": "caption",
+          "position": "bottom_center",
+          "start": 0.6,
+          "duration": 3.8,
+          "color": "white",
+          "shadow": true,
+          "animation": "slide_up",
+          "font": "fonts/BeVietnamPro-Regular.ttf"
+        }
+      ],
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": -0.0252,
+        "saturation": 1.0405,
+        "redBalance": 0.0101,
+        "blueBalance": -0.0072
+      }
+    },
+    {
+      "id": "s09_glass_chapter",
+      "editorialBeat": "fragments",
+      "duration": 6.269,
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "glass_refraction",
+      "assets": [
+        "input/045.jpg",
+        "input/008.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "dissolve",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s10_fashion_echo",
+      "editorialBeat": "fragments",
+      "duration": 6.046,
+      "effect": "moving_background_echo",
+      "image": "input/057.jpg",
+      "captions": [],
+      "focusX": 0.492,
+      "focusY": 0.577,
+      "faceBox": {
+        "x": 0.268,
+        "y": 0.201,
+        "width": 0.402,
+        "height": 0.128
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0604,
+        "saturation": 1.1,
+        "redBalance": 0.0549,
+        "blueBalance": -0.0222
+      }
+    },
+    {
+      "id": "s11_particle_vow",
+      "editorialBeat": "fragments",
+      "duration": 6.045,
+      "effect": "mask_reveal",
+      "image": "input/030.jpg",
+      "mask": "assets/masks/gold_dust_reveal.mp4",
+      "params": {
+        "background": "#3B332B"
+      },
+      "captions": [],
+      "focusX": 0.574,
+      "focusY": 0.477,
+      "faceBox": {
+        "x": 0.116,
+        "y": 0.117,
+        "width": 0.505,
+        "height": 0.373
+      },
+      "transition": {
+        "type": "smooth_left",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.056,
+        "saturation": 0.9,
+        "redBalance": -0.031,
+        "blueBalance": 0.0107
+      }
+    },
+    {
+      "id": "s12_afterglow",
+      "editorialBeat": "fragments",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/029.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.616,
+          "focusY": 0.463,
+          "faceBox": {
+            "x": 0.237,
+            "y": 0.101,
+            "width": 0.663,
+            "height": 0.601
+          },
+          "technicalColor": {
+            "file": "input/029.jpg",
+            "brightness": -0.0412,
+            "saturation": 1.0432,
+            "redBalance": 0.0376,
+            "blueBalance": -0.0156,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/105.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.538,
+          "focusY": 0.32,
+          "faceBox": {
+            "x": 0.296,
+            "y": 0.244,
+            "width": 0.485,
+            "height": 0.152
+          },
+          "technicalColor": {
+            "file": "input/105.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.031,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/104.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.511,
+          "focusY": 0.323,
+          "faceBox": {
+            "x": 0.278,
+            "y": 0.265,
+            "width": 0.466,
+            "height": 0.116
+          },
+          "technicalColor": {
+            "file": "input/104.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0307,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s02_encounter_r1",
+      "editorialBeat": "fragments",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/064.jpg",
+          "x": 960,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.577,
+          "focusY": 0.511,
+          "faceBox": {
+            "x": 0.439,
+            "y": 0.198,
+            "width": 0.153,
+            "height": 0.106
+          },
+          "technicalColor": {
+            "file": "input/064.jpg",
+            "brightness": -0.0461,
+            "saturation": 1.1,
+            "redBalance": 0.0417,
+            "blueBalance": 0.0003,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.15
+        },
+        {
+          "type": "text",
+          "text": "Gặp nhau",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 96,
+          "y": 210,
+          "width": 820,
+          "height": 180,
+          "size": 100,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "animation": "slide_right",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Có những cuộc gặp chỉ mất một khoảnh khắc, nhưng thay đổi cả phần đời còn lại.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 96,
+          "y": 470,
+          "width": 800,
+          "height": 400,
+          "size": 32,
+          "color": "#17171B",
+          "align": "left",
+          "wrap": true,
+          "lineSpacing": 18,
+          "animation": "slide_right",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s03_fragments_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/090.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.485,
+          "focusY": 0.39,
+          "faceBox": {
+            "x": 0.18,
+            "y": 0.343,
+            "width": 0.611,
+            "height": 0.094
+          },
+          "technicalColor": {
+            "file": "input/090.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0327,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/063.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.543,
+          "focusY": 0.377,
+          "faceBox": {
+            "x": 0,
+            "y": 0.099,
+            "width": 0.811,
+            "height": 0.522
+          },
+          "technicalColor": {
+            "file": "input/063.jpg",
+            "brightness": -0.0439,
+            "saturation": 1.1,
+            "redBalance": 0.0425,
+            "blueBalance": 0.0016,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/102.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.496,
+          "focusY": 0.382,
+          "faceBox": {
+            "x": 0.241,
+            "y": 0.337,
+            "width": 0.51,
+            "height": 0.089
+          },
+          "technicalColor": {
+            "file": "input/102.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0346,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Những ngày rất đỗi bình thường",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r1",
+      "editorialBeat": "recognition",
+      "signature": true,
+      "duration": 7.836,
+      "effect": "dream_glow",
+      "image": "input/129.jpg",
+      "captions": [],
+      "focusX": 0.555,
+      "focusY": 0.294,
+      "faceBox": {
+        "x": 0.354,
+        "y": 0.233,
+        "width": 0.403,
+        "height": 0.123
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.025,
+        "saturation": 1.1,
+        "redBalance": 0.0439,
+        "blueBalance": 0
+      }
+    },
+    {
+      "id": "s06_intimacy_r1",
+      "editorialBeat": "recognition",
+      "duration": 7.837,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/042.jpg",
+          "x": 71,
+          "y": 130,
+          "width": 620,
+          "height": 660,
+          "fit": "cover",
+          "focusX": 0.519,
+          "focusY": 0.381,
+          "faceBox": {
+            "x": 0.122,
+            "y": 0.247,
+            "width": 0.583,
+            "height": 0.341
+          },
+          "technicalColor": {
+            "file": "input/042.jpg",
+            "brightness": 0.0458,
+            "saturation": 1.1,
+            "redBalance": 0.0725,
+            "blueBalance": -0.0285,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "slide_up",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/004.jpg",
+          "x": 906,
+          "y": 120,
+          "width": 940,
+          "height": 620,
+          "fit": "cover",
+          "focusX": 0.404,
+          "focusY": 0.459,
+          "faceBox": {
+            "x": 0.408,
+            "y": 0.314,
+            "width": 0.538,
+            "height": 0.375
+          },
+          "technicalColor": {
+            "file": "input/004.jpg",
+            "brightness": -0.0494,
+            "saturation": 1.1,
+            "redBalance": 0.0069,
+            "blueBalance": 0.0198,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "slide_left",
+          "start": 0.25
+        },
+        {
+          "type": "text",
+          "text": "Hai khung hình, một nhịp bình yên.",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 116,
+          "y": 826,
+          "width": 1688,
+          "height": 200,
+          "size": 33,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "lineSpacing": 16,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/060.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.605,
+          "focusY": 0.36,
+          "faceBox": {
+            "x": 0.207,
+            "y": 0.477,
+            "width": 0.255,
+            "height": 0.112
+          },
+          "technicalColor": {
+            "file": "input/060.jpg",
+            "brightness": -0.053,
+            "saturation": 1.1,
+            "redBalance": 0.0395,
+            "blueBalance": -0.0121,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/012.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.377,
+          "focusY": 0.599,
+          "faceBox": {
+            "x": 0.32,
+            "y": 0.192,
+            "width": 0.409,
+            "height": 0.34
+          },
+          "technicalColor": {
+            "file": "input/012.jpg",
+            "brightness": -0.0903,
+            "saturation": 0.9,
+            "redBalance": -0.0115,
+            "blueBalance": 0.045,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/007.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.474,
+          "focusY": 0.556,
+          "faceBox": {
+            "x": 0.184,
+            "y": 0.126,
+            "width": 0.495,
+            "height": 0.477
+          },
+          "technicalColor": {
+            "file": "input/007.jpg",
+            "brightness": -0.0242,
+            "saturation": 1.1,
+            "redBalance": -0.0038,
+            "blueBalance": 0.0294,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r1",
+      "editorialBeat": "recognition",
+      "duration": 6.045,
+      "effect": "moving_background_echo",
+      "image": "input/120.jpg",
+      "captions": [],
+      "focusX": 0.556,
+      "focusY": 0.311,
+      "faceBox": {
+        "x": 0.421,
+        "y": 0.247,
+        "width": 0.271,
+        "height": 0.128
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.12,
+        "saturation": 1.1,
+        "redBalance": 0.0376,
+        "blueBalance": 0.006
+      }
+    },
+    {
+      "id": "s08_journey_montage_r1",
+      "editorialBeat": "intimacy",
+      "duration": 13.209,
+      "effect": "photo_strip_right",
+      "images": [
+        "input/016.jpg",
+        "input/025.jpg",
+        "input/049.jpg",
+        "input/047.jpg",
+        "input/055.jpg",
+        "input/024.jpg",
+        "input/006.jpg",
+        "input/066.jpg",
+        "input/014.jpg",
+        "input/077.jpg",
+        "input/076.jpg",
+        "input/071.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0151,
+        "saturation": 1.0417,
+        "redBalance": 0.028,
+        "blueBalance": 0.0092
+      }
+    },
+    {
+      "id": "s12_afterglow_r1",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/034.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.517,
+          "focusY": 0.517,
+          "faceBox": {
+            "x": 0.681,
+            "y": 0.267,
+            "width": 0.319,
+            "height": 0.103
+          },
+          "technicalColor": {
+            "file": "input/034.jpg",
+            "brightness": -0.078,
+            "saturation": 1.1,
+            "redBalance": 0.0456,
+            "blueBalance": 0.0121,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/093.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.442,
+          "focusY": 0.409,
+          "faceBox": {
+            "x": 0.321,
+            "y": 0.355,
+            "width": 0.242,
+            "height": 0.109
+          },
+          "technicalColor": {
+            "file": "input/093.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0332,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/108.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.557,
+          "focusY": 0.271,
+          "faceBox": {
+            "x": 0.397,
+            "y": 0.217,
+            "width": 0.321,
+            "height": 0.107
+          },
+          "technicalColor": {
+            "file": "input/108.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0329,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "moving_background_echo",
+      "image": "input/128.jpg",
+      "captions": [],
+      "focusX": 0.555,
+      "focusY": 0.305,
+      "faceBox": {
+        "x": 0.353,
+        "y": 0.252,
+        "width": 0.404,
+        "height": 0.107
+      },
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0305,
+        "saturation": 1.1,
+        "redBalance": 0.0423,
+        "blueBalance": 0.0014
+      }
+    },
+    {
+      "id": "s03_fragments_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.046,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/107.jpg",
+          "x": 100,
+          "y": 130,
+          "width": 720,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.459,
+          "focusY": 0.332,
+          "faceBox": {
+            "x": 0.325,
+            "y": 0.257,
+            "width": 0.268,
+            "height": 0.15
+          },
+          "technicalColor": {
+            "file": "input/107.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0335,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -5,
+          "animation": "slide_right",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/039.jpg",
+          "x": 610,
+          "y": 180,
+          "width": 700,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.462,
+          "focusY": 0.575,
+          "faceBox": {
+            "x": 0,
+            "y": 0.258,
+            "width": 0.8,
+            "height": 0.264
+          },
+          "technicalColor": {
+            "file": "input/039.jpg",
+            "brightness": -0.0546,
+            "saturation": 0.9,
+            "redBalance": -0.0255,
+            "blueBalance": 0.0247,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "rotation": 3,
+          "animation": "slide_up",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/109.jpg",
+          "x": 1160,
+          "y": 110,
+          "width": 650,
+          "height": 720,
+          "fit": "cover",
+          "focusX": 0.497,
+          "focusY": 0.327,
+          "faceBox": {
+            "x": 0.358,
+            "y": 0.291,
+            "width": 0.278,
+            "height": 0.073
+          },
+          "technicalColor": {
+            "file": "input/109.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0354,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "rotation": -2,
+          "animation": "slide_left",
+          "start": 0.35
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 805,
+          "width": 880,
+          "height": 190,
+          "color": "#FFF9E9",
+          "opacity": 0.94
+        },
+        {
+          "type": "text",
+          "text": "Gom từng mảnh nhớ",
+          "font": "fonts/PlayfairDisplay.ttf",
+          "x": 570,
+          "y": 840,
+          "width": 780,
+          "height": 100,
+          "size": 62,
+          "color": "#17171B",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s12_afterglow_r1_2",
+      "editorialBeat": "intimacy",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/033.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.493,
+          "focusY": 0.689,
+          "faceBox": {
+            "x": 0.489,
+            "y": 0.346,
+            "width": 0.16,
+            "height": 0.162
+          },
+          "technicalColor": {
+            "file": "input/033.jpg",
+            "brightness": -0.0384,
+            "saturation": 0.9177,
+            "redBalance": 0.0686,
+            "blueBalance": -0.0513,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/106.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.526,
+          "focusY": 0.336,
+          "faceBox": {
+            "x": 0.264,
+            "y": 0.284,
+            "width": 0.524,
+            "height": 0.105
+          },
+          "technicalColor": {
+            "file": "input/106.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0338,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/103.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.476,
+          "focusY": 0.385,
+          "faceBox": {
+            "x": 0.206,
+            "y": 0.349,
+            "width": 0.539,
+            "height": 0.073
+          },
+          "technicalColor": {
+            "file": "input/103.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0349,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r2",
+      "editorialBeat": "intimacy",
+      "signature": true,
+      "duration": 7.612,
+      "effect": "dream_glow",
+      "image": "input/117.jpg",
+      "captions": [],
+      "focusX": 0.503,
+      "focusY": 0.311,
+      "faceBox": {
+        "x": 0.362,
+        "y": 0.257,
+        "width": 0.283,
+        "height": 0.108
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.448
+      },
+      "technicalColor": {
+        "brightness": -0.12,
+        "saturation": 1.1,
+        "redBalance": 0.0368,
+        "blueBalance": 0.0063
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2",
+      "editorialBeat": "journey",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/072.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.55,
+          "focusY": 0.584,
+          "faceBox": {
+            "x": 0.417,
+            "y": 0.538,
+            "width": 0.238,
+            "height": 0.114
+          },
+          "technicalColor": {
+            "file": "input/072.jpg",
+            "brightness": -0.0283,
+            "saturation": 1.1,
+            "redBalance": 0.0442,
+            "blueBalance": 0.064,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/059.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.567,
+          "focusY": 0.407,
+          "faceBox": {
+            "x": 0.139,
+            "y": 0.062,
+            "width": 0.709,
+            "height": 0.601
+          },
+          "technicalColor": {
+            "file": "input/059.jpg",
+            "brightness": -0.0406,
+            "saturation": 1.0432,
+            "redBalance": -0.0231,
+            "blueBalance": 0.0058,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/067.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.454,
+          "focusY": 0.409,
+          "faceBox": {
+            "x": 0.126,
+            "y": 0.23,
+            "width": 0.629,
+            "height": 0.332
+          },
+          "technicalColor": {
+            "file": "input/067.jpg",
+            "brightness": 0.0376,
+            "saturation": 1.0432,
+            "redBalance": -0.0088,
+            "blueBalance": 0.0217,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r2_2",
+      "editorialBeat": "journey",
+      "signature": true,
+      "duration": 7.836,
+      "effect": "dream_glow",
+      "image": "input/118.jpg",
+      "captions": [],
+      "focusX": 0.552,
+      "focusY": 0.312,
+      "faceBox": {
+        "x": 0.403,
+        "y": 0.258,
+        "width": 0.298,
+        "height": 0.108
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.12,
+        "saturation": 1.1,
+        "redBalance": 0.0368,
+        "blueBalance": 0.0074
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_2",
+      "editorialBeat": "journey",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/052.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.446,
+          "focusY": 0.491,
+          "faceBox": {
+            "x": 0.402,
+            "y": 0.257,
+            "width": 0.171,
+            "height": 0.089
+          },
+          "technicalColor": {
+            "file": "input/052.jpg",
+            "brightness": 0.0439,
+            "saturation": 1.1,
+            "redBalance": 0.0176,
+            "blueBalance": 0.0203,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/005.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.428,
+          "focusY": 0.704,
+          "faceBox": {
+            "x": 0.088,
+            "y": 0.122,
+            "width": 0.689,
+            "height": 0.612
+          },
+          "technicalColor": {
+            "file": "input/005.jpg",
+            "brightness": -0.042,
+            "saturation": 1.1,
+            "redBalance": 0.0228,
+            "blueBalance": 0.0145,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/023.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.479,
+          "focusY": 0.545,
+          "faceBox": {
+            "x": 0.468,
+            "y": 0.018,
+            "width": 0.392,
+            "height": 0.566
+          },
+          "technicalColor": {
+            "file": "input/023.jpg",
+            "brightness": -0.0667,
+            "saturation": 1.0985,
+            "redBalance": -0.0063,
+            "blueBalance": 0.0211,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r2",
+      "editorialBeat": "journey",
+      "duration": 5.821,
+      "effect": "moving_background_echo",
+      "image": "input/121.jpg",
+      "captions": [],
+      "focusX": 0.558,
+      "focusY": 0.302,
+      "faceBox": {
+        "x": 0.414,
+        "y": 0.253,
+        "width": 0.289,
+        "height": 0.099
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.448
+      },
+      "technicalColor": {
+        "brightness": -0.12,
+        "saturation": 1.1,
+        "redBalance": 0.0365,
+        "blueBalance": 0.0058
+      }
+    },
+    {
+      "id": "s07_visual_breath_r2_3",
+      "editorialBeat": "journey",
+      "duration": 6.046,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/050.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.524,
+          "focusY": 0.551,
+          "faceBox": {
+            "x": 0.221,
+            "y": 0.26,
+            "width": 0.535,
+            "height": 0.283
+          },
+          "technicalColor": {
+            "file": "input/050.jpg",
+            "brightness": -0.0502,
+            "saturation": 1.1,
+            "redBalance": 0.0755,
+            "blueBalance": -0.0324,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/003.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.516,
+          "focusY": 0.612,
+          "faceBox": {
+            "x": 0.033,
+            "y": 0.157,
+            "width": 0.603,
+            "height": 0.745
+          },
+          "technicalColor": {
+            "file": "input/003.jpg",
+            "brightness": -0.0206,
+            "saturation": 0.9477,
+            "redBalance": -0.0003,
+            "blueBalance": 0.042,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/044.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.411,
+          "focusY": 0.573,
+          "faceBox": {
+            "x": 0.222,
+            "y": 0.286,
+            "width": 0.661,
+            "height": 0.27
+          },
+          "technicalColor": {
+            "file": "input/044.jpg",
+            "brightness": -0.0533,
+            "saturation": 0.9062,
+            "redBalance": -0.0404,
+            "blueBalance": 0.0176,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s08_journey_montage_r2",
+      "editorialBeat": "celebration",
+      "duration": 13.209,
+      "effect": "photo_strip_right",
+      "images": [
+        "input/070.jpg",
+        "input/019.jpg",
+        "input/017.jpg",
+        "input/126.jpg",
+        "input/038.jpg",
+        "input/115.jpg",
+        "input/124.jpg",
+        "input/088.jpg",
+        "input/123.jpg",
+        "input/089.jpg",
+        "input/127.jpg",
+        "input/086.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0281,
+        "saturation": 1.0167,
+        "redBalance": 0.007,
+        "blueBalance": -0.0028
+      }
+    },
+    {
+      "id": "s12_afterglow_r2",
+      "editorialBeat": "celebration",
+      "duration": 6.269,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/002.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.61,
+          "focusY": 0.606,
+          "faceBox": {
+            "x": 0.44,
+            "y": 0.051,
+            "width": 0.333,
+            "height": 0.326
+          },
+          "technicalColor": {
+            "file": "input/002.jpg",
+            "brightness": 0.0135,
+            "saturation": 1.1,
+            "redBalance": 0.0228,
+            "blueBalance": 0.0118,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/091.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.316,
+          "faceBox": {
+            "x": 0.405,
+            "y": 0.253,
+            "width": 0.197,
+            "height": 0.125
+          },
+          "technicalColor": {
+            "file": "input/091.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0327,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/099.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.508,
+          "focusY": 0.426,
+          "faceBox": {
+            "x": 0.263,
+            "y": 0.232,
+            "width": 0.49,
+            "height": 0.388
+          },
+          "technicalColor": {
+            "file": "input/099.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0365,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r2_2",
+      "editorialBeat": "celebration",
+      "duration": 6.269,
+      "effect": "moving_background_echo",
+      "image": "input/125.jpg",
+      "captions": [],
+      "focusX": 0.564,
+      "focusY": 0.363,
+      "faceBox": {
+        "x": 0.435,
+        "y": 0.288,
+        "width": 0.258,
+        "height": 0.15
+      },
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": -0.0011,
+        "saturation": 1.1,
+        "redBalance": 0.0393,
+        "blueBalance": 0.0008
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r2_3",
+      "editorialBeat": "celebration",
+      "signature": true,
+      "duration": 9.627,
+      "effect": "dream_glow",
+      "image": "input/130.jpg",
+      "captions": [],
+      "focusX": 0.608,
+      "focusY": 0.283,
+      "faceBox": {
+        "x": 0.473,
+        "y": 0.226,
+        "width": 0.27,
+        "height": 0.114
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0324,
+        "saturation": 1.1,
+        "redBalance": 0.0453,
+        "blueBalance": -0.0011
+      }
+    },
+    {
+      "id": "s12_afterglow_r2_2",
+      "editorialBeat": "celebration",
+      "duration": 8.061,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/037.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.504,
+          "focusY": 0.499,
+          "faceBox": {
+            "x": 0.163,
+            "y": 0.408,
+            "width": 0.528,
+            "height": 0.275
+          },
+          "technicalColor": {
+            "file": "input/037.jpg",
+            "brightness": -0.0401,
+            "saturation": 1.1,
+            "redBalance": 0.008,
+            "blueBalance": 0.0088,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/112.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.554,
+          "focusY": 0.356,
+          "faceBox": {
+            "x": 0.46,
+            "y": 0.313,
+            "width": 0.188,
+            "height": 0.087
+          },
+          "technicalColor": {
+            "file": "input/112.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0436,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/111.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.51,
+          "focusY": 0.401,
+          "faceBox": {
+            "x": 0.256,
+            "y": 0.351,
+            "width": 0.508,
+            "height": 0.101
+          },
+          "technicalColor": {
+            "file": "input/111.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.039,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.896
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r3",
+      "editorialBeat": "promise",
+      "signature": true,
+      "duration": 8.06,
+      "effect": "dream_glow",
+      "image": "input/056.jpg",
+      "captions": [],
+      "focusX": 0.63,
+      "focusY": 0.47,
+      "faceBox": {
+        "x": 0.237,
+        "y": 0.221,
+        "width": 0.425,
+        "height": 0.111
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": -0.0596,
+        "saturation": 1.1,
+        "redBalance": 0.0557,
+        "blueBalance": -0.0187
+      }
+    },
+    {
+      "id": "s07_visual_breath_r3",
+      "editorialBeat": "promise",
+      "duration": 6.045,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/009.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.518,
+          "focusY": 0.256,
+          "faceBox": {
+            "x": 0.146,
+            "y": 0.083,
+            "width": 0.795,
+            "height": 0.78
+          },
+          "technicalColor": {
+            "file": "input/009.jpg",
+            "brightness": -0.0362,
+            "saturation": 0.9,
+            "redBalance": -0.0486,
+            "blueBalance": 0.0206,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/013.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.456,
+          "focusY": 0.416,
+          "faceBox": {
+            "x": 0.126,
+            "y": 0.213,
+            "width": 0.622,
+            "height": 0.448
+          },
+          "technicalColor": {
+            "file": "input/013.jpg",
+            "brightness": -0.0272,
+            "saturation": 0.9,
+            "redBalance": -0.0236,
+            "blueBalance": 0.053,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.025,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/046.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.463,
+          "focusY": 0.551,
+          "faceBox": {
+            "x": 0.007,
+            "y": 0.253,
+            "width": 0.639,
+            "height": 0.484
+          },
+          "technicalColor": {
+            "file": "input/046.jpg",
+            "brightness": -0.053,
+            "saturation": 0.9732,
+            "redBalance": 0.08,
+            "blueBalance": 0.0387,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s10_fashion_echo_r3",
+      "editorialBeat": "promise",
+      "duration": 6.045,
+      "effect": "moving_background_echo",
+      "image": "input/061.jpg",
+      "captions": [],
+      "focusX": 0.674,
+      "focusY": 0.472,
+      "faceBox": {
+        "x": 0.326,
+        "y": 0.461,
+        "width": 0.256,
+        "height": 0.143
+      },
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.0568,
+        "saturation": 1.1,
+        "redBalance": 0.0544,
+        "blueBalance": -0.0242
+      }
+    },
+    {
+      "id": "s05_luminous_portrait_r3_2",
+      "editorialBeat": "promise",
+      "signature": true,
+      "duration": 7.836,
+      "effect": "dream_glow",
+      "image": "input/116.jpg",
+      "captions": [],
+      "focusX": 0.58,
+      "focusY": 0.292,
+      "faceBox": {
+        "x": 0.37,
+        "y": 0.255,
+        "width": 0.42,
+        "height": 0.075
+      },
+      "transition": {
+        "type": "fade_slow",
+        "duration": 0.672
+      },
+      "technicalColor": {
+        "brightness": -0.12,
+        "saturation": 1.1,
+        "redBalance": 0.0376,
+        "blueBalance": 0.0055
+      }
+    },
+    {
+      "id": "s12_afterglow_r3",
+      "editorialBeat": "promise",
+      "duration": 7.836,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/015.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 1060,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.431,
+          "focusY": 0.488,
+          "faceBox": {
+            "x": 0.114,
+            "y": 0.312,
+            "width": 0.548,
+            "height": 0.399
+          },
+          "technicalColor": {
+            "file": "input/015.jpg",
+            "brightness": -0.028,
+            "saturation": 1,
+            "redBalance": 0.0291,
+            "blueBalance": -0.0217,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/100.jpg",
+          "x": 1210,
+          "y": 95,
+          "width": 600,
+          "height": 430,
+          "fit": "cover",
+          "focusX": 0.493,
+          "focusY": 0.469,
+          "faceBox": {
+            "x": 0.277,
+            "y": 0.271,
+            "width": 0.432,
+            "height": 0.395
+          },
+          "technicalColor": {
+            "file": "input/100.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0365,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/101.jpg",
+          "x": 1210,
+          "y": 565,
+          "width": 600,
+          "height": 420,
+          "fit": "cover",
+          "focusX": 0.456,
+          "focusY": 0.473,
+          "faceBox": {
+            "x": 0.215,
+            "y": 0.276,
+            "width": 0.481,
+            "height": 0.393
+          },
+          "technicalColor": {
+            "file": "input/101.jpg",
+            "brightness": 0.12,
+            "saturation": 0.9,
+            "redBalance": -0.08,
+            "blueBalance": -0.0357,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s07_visual_breath_r3_2",
+      "editorialBeat": "forever",
+      "duration": 7.837,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#F5F2EC",
+          "opacity": 1
+        },
+        {
+          "type": "image",
+          "path": "input/051.jpg",
+          "x": 110,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.417,
+          "focusY": 0.468,
+          "faceBox": {
+            "x": 0.428,
+            "y": 0.325,
+            "width": 0.317,
+            "height": 0.35
+          },
+          "technicalColor": {
+            "file": "input/051.jpg",
+            "brightness": 0.0055,
+            "saturation": 1.1,
+            "redBalance": 0.067,
+            "blueBalance": 0.0307,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.15
+        },
+        {
+          "type": "image",
+          "path": "input/043.jpg",
+          "x": 680,
+          "y": 95,
+          "width": 540,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.239,
+          "focusY": 0.464,
+          "faceBox": {
+            "x": 0.26,
+            "y": 0.364,
+            "width": 0.498,
+            "height": 0.184
+          },
+          "technicalColor": {
+            "file": "input/043.jpg",
+            "brightness": -0.0623,
+            "saturation": 1.1,
+            "redBalance": 0.0678,
+            "blueBalance": -0.0285,
+            "confidence": 0.65,
+            "reason": "bounded album correction; clipped tonal range"
+          },
+          "motion": "pan_left",
+          "motionStrength": 0.04,
+          "easing": "gentle",
+          "animation": "fade",
+          "start": 0.25
+        },
+        {
+          "type": "image",
+          "path": "input/065.jpg",
+          "x": 1250,
+          "y": 95,
+          "width": 560,
+          "height": 890,
+          "fit": "cover",
+          "focusX": 0.446,
+          "focusY": 0.397,
+          "faceBox": {
+            "x": 0.274,
+            "y": 0.372,
+            "width": 0.367,
+            "height": 0.297
+          },
+          "technicalColor": {
+            "file": "input/065.jpg",
+            "brightness": 0.0088,
+            "saturation": 0.9,
+            "redBalance": 0.0047,
+            "blueBalance": -0.0102,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "animation": "fade",
+          "start": 0.35
+        }
+      ],
+      "transition": {
+        "type": "blur",
+        "duration": 0.672
+      }
+    },
+    {
+      "id": "s08_journey_montage_r3",
+      "editorialBeat": "forever",
+      "duration": 13.433,
+      "effect": "photo_strip_right",
+      "images": [
+        "input/122.jpg",
+        "input/087.jpg",
+        "input/073.jpg",
+        "input/074.jpg",
+        "input/075.jpg",
+        "input/096.jpg",
+        "input/092.jpg",
+        "input/084.jpg",
+        "input/082.jpg",
+        "input/095.jpg",
+        "input/083.jpg",
+        "input/085.jpg"
+      ],
+      "params": {},
+      "captions": [],
+      "transition": {
+        "type": "crossfade",
+        "duration": 0.896
+      },
+      "technicalColor": {
+        "brightness": 0.1099,
+        "saturation": 0.925,
+        "redBalance": -0.0528,
+        "blueBalance": -0.009
+      }
+    },
+    {
+      "id": "s13_closing",
+      "editorialBeat": "forever",
+      "duration": 10.99,
+      "effect": "layer_scene",
+      "captions": [],
+      "layers": [
+        {
+          "type": "image",
+          "path": "input/011.jpg",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "fit": "cover",
+          "focusX": 0.617,
+          "focusY": 0.427,
+          "faceBox": {
+            "x": 0.281,
+            "y": 0.291,
+            "width": 0.671,
+            "height": 0.273
+          },
+          "technicalColor": {
+            "file": "input/011.jpg",
+            "brightness": -0.0272,
+            "saturation": 1.0584,
+            "redBalance": -0.0077,
+            "blueBalance": 0.0329,
+            "confidence": 0.9,
+            "reason": "album-relative exposure and color-cast correction"
+          },
+          "motion": "zoom_in",
+          "motionStrength": 0.04,
+          "easing": "gentle"
+        },
+        {
+          "type": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "color": "#000000",
+          "opacity": 0.42
+        },
+        {
+          "type": "text",
+          "text": "Bride & Groom",
+          "font": "fonts/JosefinSans-Regular.ttf",
+          "x": 260,
+          "y": 380,
+          "width": 1400,
+          "height": 220,
+          "size": 140,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.2
+        },
+        {
+          "type": "text",
+          "text": "Together · Our Wedding Day",
+          "font": "fonts/BeVietnamPro-Regular.ttf",
+          "x": 260,
+          "y": 640,
+          "width": 1400,
+          "height": 90,
+          "size": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "wrap": true,
+          "animation": "fade",
+          "start": 0.6
+        }
+      ],
+      "transition": {
+        "type": "none",
+        "duration": 0
+      }
+    }
+  ],
+  "recipeDecisions": {
+    "recipeId": "luminous-editorial-motion-01",
+    "pacingVariant": "editorial",
+    "theme": "editorial_bold",
+    "heroPhoto": "input/011.jpg",
+    "endingPhoto": "input/011.jpg",
+    "storyArc": [
+      {
+        "sceneId": "s01_kinetic_declaration",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s02_encounter",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "beat": "declaration"
+      },
+      {
+        "sceneId": "s04_shared_memory",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s05_luminous_portrait",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s08_journey_montage",
+        "beat": "encounter"
+      },
+      {
+        "sceneId": "s09_glass_chapter",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s10_fashion_echo",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s11_particle_vow",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s02_encounter_r1",
+        "beat": "fragments"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r1",
+        "beat": "recognition"
+      },
+      {
+        "sceneId": "s08_journey_montage_r1",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r2",
+        "beat": "intimacy"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r2_2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r2",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "beat": "journey"
+      },
+      {
+        "sceneId": "s08_journey_montage_r2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r2_2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r2_3",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "beat": "celebration"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s10_fashion_echo_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s05_luminous_portrait_r3_2",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "beat": "promise"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "beat": "forever"
+      },
+      {
+        "sceneId": "s08_journey_montage_r3",
+        "beat": "forever"
+      },
+      {
+        "sceneId": "s13_closing",
+        "beat": "forever"
+      }
+    ],
+    "phraseSnaps": 41,
+    "musicSync": {
+      "mode": "music-aware-v1",
+      "targetDuration": 285.12,
+      "bpm": 134,
+      "beatSeconds": 0.4478,
+      "snappedBoundaries": 41
+    },
+    "musicEdit": {
+      "mode": "full_song",
+      "sourceDuration": 285.12,
+      "start": 0,
+      "end": 285.12,
+      "duration": 285.12
+    },
+    "transitionGrammar": {
+      "vocabulary": [
+        "crossfade",
+        "fade_slow",
+        "dissolve",
+        "smooth_left",
+        "blur",
+        "none"
+      ],
+      "decisions": [
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "peak",
+          "type": "smooth_left",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "memory",
+          "type": "dissolve",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "peak",
+          "type": "smooth_left",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "memory",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "calm",
+          "resolvedRole": "calm",
+          "type": "fade_slow",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "default",
+          "resolvedRole": "default",
+          "type": "blur",
+          "reason": "role"
+        },
+        {
+          "requestedRole": "peak",
+          "resolvedRole": "default",
+          "type": "crossfade",
+          "reason": "role_limit"
+        },
+        {
+          "requestedRole": "final",
+          "resolvedRole": "final",
+          "type": "none",
+          "reason": "role"
+        }
+      ]
+    },
+    "motionPlan": [
+      {
+        "sceneId": "s02_encounter",
+        "file": "input/080.jpg",
+        "motion": "pan_up",
+        "strength": 0.04,
+        "target": {
+          "x": 0.507,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "input/094.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.435,
+          "y": 0.384
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "input/068.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.536,
+          "y": 0.502
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments",
+        "file": "input/097.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.457,
+          "y": 0.404
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "file": "input/062.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.472,
+          "y": 0.525
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy",
+        "file": "input/010.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.495,
+          "y": 0.547
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "input/036.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.484,
+          "y": 0.633
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "input/001.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.536,
+          "y": 0.519
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath",
+        "file": "input/031.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.519,
+          "y": 0.594
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "input/029.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.616,
+          "y": 0.463
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "input/105.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.538,
+          "y": 0.32
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow",
+        "file": "input/104.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.511,
+          "y": 0.323
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s02_encounter_r1",
+        "file": "input/064.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.577,
+          "y": 0.511
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "input/090.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.485,
+          "y": 0.39
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "input/063.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.543,
+          "y": 0.377
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s03_fragments_r1",
+        "file": "input/102.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.496,
+          "y": 0.382
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "file": "input/042.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.519,
+          "y": 0.381
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s06_intimacy_r1",
+        "file": "input/004.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.404,
+          "y": 0.459
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "input/060.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.605,
+          "y": 0.36
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "input/012.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.377,
+          "y": 0.599
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r1",
+        "file": "input/007.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.474,
+          "y": 0.556
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "input/034.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.517,
+          "y": 0.517
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "input/093.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.442,
+          "y": 0.409
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r1",
+        "file": "input/108.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.557,
+          "y": 0.271
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "input/107.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.459,
+          "y": 0.332
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "input/039.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.462,
+          "y": 0.575
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s03_fragments_r1_2",
+        "file": "input/109.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.497,
+          "y": 0.327
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "input/033.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.493,
+          "y": 0.689
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "input/106.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.526,
+          "y": 0.336
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r1_2",
+        "file": "input/103.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.476,
+          "y": 0.385
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "input/072.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.55,
+          "y": 0.584
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "input/059.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.567,
+          "y": 0.407
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2",
+        "file": "input/067.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.454,
+          "y": 0.409
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "input/052.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.446,
+          "y": 0.491
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "input/005.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.428,
+          "y": 0.704
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_2",
+        "file": "input/023.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.479,
+          "y": 0.545
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "input/050.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.524,
+          "y": 0.551
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "input/003.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.516,
+          "y": 0.612
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r2_3",
+        "file": "input/044.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.411,
+          "y": 0.573
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "input/002.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.61,
+          "y": 0.606
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "input/091.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.504,
+          "y": 0.316
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r2",
+        "file": "input/099.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.508,
+          "y": 0.426
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "input/037.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.504,
+          "y": 0.499
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "input/112.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.554,
+          "y": 0.356
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r2_2",
+        "file": "input/111.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.51,
+          "y": 0.401
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "input/009.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.518,
+          "y": 0.256
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "input/013.jpg",
+        "motion": "zoom_in",
+        "strength": 0.025,
+        "target": {
+          "x": 0.456,
+          "y": 0.416
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3",
+        "file": "input/046.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.463,
+          "y": 0.551
+        },
+        "easing": "gentle",
+        "reason": "group photo uses near-still motion"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "input/015.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.431,
+          "y": 0.488
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "input/100.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.493,
+          "y": 0.469
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s12_afterglow_r3",
+        "file": "input/101.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.456,
+          "y": 0.473
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "input/051.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.417,
+          "y": 0.468
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "input/043.jpg",
+        "motion": "pan_left",
+        "strength": 0.04,
+        "target": {
+          "x": 0.239,
+          "y": 0.464
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      },
+      {
+        "sceneId": "s07_visual_breath_r3_2",
+        "file": "input/065.jpg",
+        "motion": "none",
+        "strength": 0,
+        "target": {
+          "x": 0.446,
+          "y": 0.397
+        },
+        "easing": "gentle",
+        "reason": "supporting image stays still"
+      },
+      {
+        "sceneId": "s13_closing",
+        "file": "input/011.jpg",
+        "motion": "zoom_in",
+        "strength": 0.04,
+        "target": {
+          "x": 0.617,
+          "y": 0.427
+        },
+        "easing": "gentle",
+        "reason": "2-subject motion toward focal point"
+      }
+    ],
+    "colorNormalization": "analysis/tier1_color.json",
+    "fit": {
+      "targetDuration": 285.12,
+      "actualDuration": 285.12,
+      "coverage": 1,
+      "scale": 1.107,
+      "boundBy": "music",
+      "totalPhotos": 130,
+      "reservedPhotos": 1,
+      "unusedPhotos": 7,
+      "phraseSnaps": 41
+    }
+  },
+  "photoAssignment": {
+    "strategy": "global_hard_slots_first",
+    "customerLocks": {
+      "mustUsePhotos": [],
+      "excludePhotos": [],
+      "openingPhoto": "input/011.jpg",
+      "endingPhoto": "input/011.jpg"
+    },
+    "slots": {
+      "s09_glass_chapter:assets": [
+        "input/045.jpg",
+        "input/008.jpg"
+      ],
+      "s06_intimacy:wide": [
+        "input/010.jpg"
+      ],
+      "s11_particle_vow:hero": [
+        "input/030.jpg"
+      ],
+      "s12_afterglow:hero": [
+        "input/029.jpg"
+      ],
+      "s06_intimacy_r1:wide": [
+        "input/004.jpg"
+      ],
+      "s12_afterglow_r1:hero": [
+        "input/034.jpg"
+      ],
+      "s12_afterglow_r1_2:hero": [
+        "input/033.jpg"
+      ],
+      "s12_afterglow_r2:hero": [
+        "input/002.jpg"
+      ],
+      "s12_afterglow_r2_2:hero": [
+        "input/037.jpg"
+      ],
+      "s12_afterglow_r3:hero": [
+        "input/015.jpg"
+      ],
+      "s02_encounter:hero": [
+        "input/080.jpg"
+      ],
+      "s03_fragments:centre": [
+        "input/068.jpg"
+      ],
+      "s05_luminous_portrait:hero": [
+        "input/079.jpg"
+      ],
+      "s06_intimacy:portrait": [
+        "input/062.jpg"
+      ],
+      "s07_visual_breath:centre": [
+        "input/001.jpg"
+      ],
+      "s10_fashion_echo:hero": [
+        "input/057.jpg"
+      ],
+      "s02_encounter_r1:hero": [
+        "input/064.jpg"
+      ],
+      "s03_fragments_r1:centre": [
+        "input/063.jpg"
+      ],
+      "s05_luminous_portrait_r1:hero": [
+        "input/129.jpg"
+      ],
+      "s06_intimacy_r1:portrait": [
+        "input/042.jpg"
+      ],
+      "s07_visual_breath_r1:centre": [
+        "input/012.jpg"
+      ],
+      "s10_fashion_echo_r1:hero": [
+        "input/120.jpg"
+      ],
+      "s10_fashion_echo_r1_2:hero": [
+        "input/128.jpg"
+      ],
+      "s03_fragments_r1_2:centre": [
+        "input/039.jpg"
+      ],
+      "s05_luminous_portrait_r2:hero": [
+        "input/117.jpg"
+      ],
+      "s07_visual_breath_r2:centre": [
+        "input/059.jpg"
+      ],
+      "s05_luminous_portrait_r2_2:hero": [
+        "input/118.jpg"
+      ],
+      "s07_visual_breath_r2_2:centre": [
+        "input/005.jpg"
+      ],
+      "s10_fashion_echo_r2:hero": [
+        "input/121.jpg"
+      ],
+      "s07_visual_breath_r2_3:centre": [
+        "input/003.jpg"
+      ],
+      "s10_fashion_echo_r2_2:hero": [
+        "input/125.jpg"
+      ],
+      "s05_luminous_portrait_r2_3:hero": [
+        "input/130.jpg"
+      ],
+      "s05_luminous_portrait_r3:hero": [
+        "input/056.jpg"
+      ],
+      "s07_visual_breath_r3:centre": [
+        "input/013.jpg"
+      ],
+      "s10_fashion_echo_r3:hero": [
+        "input/061.jpg"
+      ],
+      "s05_luminous_portrait_r3_2:hero": [
+        "input/116.jpg"
+      ],
+      "s07_visual_breath_r3_2:centre": [
+        "input/043.jpg"
+      ],
+      "s04_shared_memory:assets": [
+        "input/078.jpg",
+        "input/069.jpg",
+        "input/035.jpg",
+        "input/018.jpg"
+      ],
+      "s07_visual_breath:left": [
+        "input/036.jpg"
+      ],
+      "s07_visual_breath:right": [
+        "input/031.jpg"
+      ],
+      "s07_visual_breath_r1:left": [
+        "input/060.jpg"
+      ],
+      "s07_visual_breath_r1:right": [
+        "input/007.jpg"
+      ],
+      "s07_visual_breath_r2:left": [
+        "input/072.jpg"
+      ],
+      "s07_visual_breath_r2:right": [
+        "input/067.jpg"
+      ],
+      "s07_visual_breath_r2_2:left": [
+        "input/052.jpg"
+      ],
+      "s07_visual_breath_r2_2:right": [
+        "input/023.jpg"
+      ],
+      "s07_visual_breath_r2_3:left": [
+        "input/050.jpg"
+      ],
+      "s07_visual_breath_r2_3:right": [
+        "input/044.jpg"
+      ],
+      "s07_visual_breath_r3:left": [
+        "input/009.jpg"
+      ],
+      "s07_visual_breath_r3:right": [
+        "input/046.jpg"
+      ],
+      "s07_visual_breath_r3_2:left": [
+        "input/051.jpg"
+      ],
+      "s07_visual_breath_r3_2:right": [
+        "input/065.jpg"
+      ],
+      "s08_journey_montage:film_roll": [
+        "input/054.jpg",
+        "input/058.jpg",
+        "input/053.jpg",
+        "input/041.jpg",
+        "input/020.jpg",
+        "input/028.jpg",
+        "input/040.jpg",
+        "input/048.jpg",
+        "input/027.jpg",
+        "input/026.jpg",
+        "input/021.jpg",
+        "input/032.jpg"
+      ],
+      "s08_journey_montage_r1:film_roll": [
+        "input/016.jpg",
+        "input/025.jpg",
+        "input/049.jpg",
+        "input/047.jpg",
+        "input/055.jpg",
+        "input/024.jpg",
+        "input/006.jpg",
+        "input/066.jpg",
+        "input/014.jpg",
+        "input/077.jpg",
+        "input/076.jpg",
+        "input/071.jpg"
+      ],
+      "s08_journey_montage_r2:film_roll": [
+        "input/070.jpg",
+        "input/019.jpg",
+        "input/017.jpg",
+        "input/126.jpg",
+        "input/038.jpg",
+        "input/115.jpg",
+        "input/124.jpg",
+        "input/088.jpg",
+        "input/123.jpg",
+        "input/089.jpg",
+        "input/127.jpg",
+        "input/086.jpg"
+      ],
+      "s08_journey_montage_r3:film_roll": [
+        "input/122.jpg",
+        "input/087.jpg",
+        "input/073.jpg",
+        "input/074.jpg",
+        "input/075.jpg",
+        "input/096.jpg",
+        "input/092.jpg",
+        "input/084.jpg",
+        "input/082.jpg",
+        "input/095.jpg",
+        "input/083.jpg",
+        "input/085.jpg"
+      ],
+      "s03_fragments:back": [
+        "input/094.jpg"
+      ],
+      "s03_fragments:front": [
+        "input/097.jpg"
+      ],
+      "s12_afterglow:top": [
+        "input/105.jpg"
+      ],
+      "s12_afterglow:bottom": [
+        "input/104.jpg"
+      ],
+      "s03_fragments_r1:back": [
+        "input/090.jpg"
+      ],
+      "s03_fragments_r1:front": [
+        "input/102.jpg"
+      ],
+      "s12_afterglow_r1:top": [
+        "input/093.jpg"
+      ],
+      "s12_afterglow_r1:bottom": [
+        "input/108.jpg"
+      ],
+      "s03_fragments_r1_2:back": [
+        "input/107.jpg"
+      ],
+      "s03_fragments_r1_2:front": [
+        "input/109.jpg"
+      ],
+      "s12_afterglow_r1_2:top": [
+        "input/106.jpg"
+      ],
+      "s12_afterglow_r1_2:bottom": [
+        "input/103.jpg"
+      ],
+      "s12_afterglow_r2:top": [
+        "input/091.jpg"
+      ],
+      "s12_afterglow_r2:bottom": [
+        "input/099.jpg"
+      ],
+      "s12_afterglow_r2_2:top": [
+        "input/112.jpg"
+      ],
+      "s12_afterglow_r2_2:bottom": [
+        "input/111.jpg"
+      ],
+      "s12_afterglow_r3:top": [
+        "input/100.jpg"
+      ],
+      "s12_afterglow_r3:bottom": [
+        "input/101.jpg"
+      ]
+    },
+    "diversityReport": "analysis/tier1_diversity.json"
+  }
+}

@@ -18,8 +18,10 @@ hiện tại của mã nguồn (`src/`). Mọi con số, enum, giới hạn bên
 | Độ phân giải | Tùy chỉnh `project.width/height/fps` — mặc định khuyến nghị 1920×1080 @ 30fps |
 | Nền tảng | Node + TypeScript (tsx), gọi FFmpeg CLI; chạy local trên Windows |
 | Phụ thuộc runtime | `zod` (validate) + FFmpeg (ffmpeg + ffprobe) |
-| Số effect ảnh | **29 preset** |
-| Số transition | **56 kiểu** (+ `none`) |
+| Số effect ảnh FFmpeg | **36 preset** |
+| Số transition | **59 kiểu** (đã gồm `none`) |
+| Template Remotion/GPU | **32 template** |
+| Template Blender/3D | **6 template** |
 
 ---
 
@@ -135,7 +137,7 @@ phần vượt biên). `layer_scene` `motion` vẫn dùng smoothstep, chưa nh�
 
 ---
 
-## 6. Transition (56 kiểu + `none`)
+## 6. Transition (59 kiểu, gồm `none`)
 
 `transition = { type, duration }`. `duration` từ 0–2s và **phải nhỏ hơn** thời lượng slide.
 Chuỗi transition khác kiểu vẫn được nối trong **một** xfade chain; biên `none` thành fade 1 khung.
@@ -151,6 +153,33 @@ Chuỗi transition khác kiểu vẫn được nối trong **một** xfade chain
 - `none` — không chuyển cảnh (cho phép ghép stream-copy nhanh).
 
 Thời lượng khuyến nghị: cảm xúc mềm 0.8–1.5s · montage nhanh 0.35–0.75s.
+
+---
+
+## 6A. Hybrid renderer — Remotion/GPU và Blender/3D
+
+Ngoài 36 effect FFmpeg, mỗi slide có thể chọn `renderer: "remotion"` hoặc
+`renderer: "blender"` cùng `template`, `assets[]` và `params`. Các backend đều
+trả về clip H.264 cùng kích thước/FPS để FFmpeg tiếp tục ghép transition, overlay
+và audio như slide thường.
+
+Nhóm hiệu ứng hiện đại vừa bổ sung:
+
+| Template | Asset tối thiểu | Năng lực |
+|---|---:|---|
+| `shared_frame_morph` | 4 | Gallery 2×2 morph một thumbnail thành hero |
+| `kinetic_typography` | 1 | Stagger ký tự, rise/rotate và blur-to-sharp |
+| `dither_dissolve` | 2 | GPU ordered dither (Bayer 8×8) giữa hai ảnh |
+| `image_echo_trail` | 1 | Motion trail bằng các bản sao ảnh trễ |
+| `glass_refraction` | 2 | Lens khúc xạ quét và reveal ảnh kế |
+| `audio_reactive` | 1 | Pulse theo `params.beatFrames` hoặc `params.bpm` |
+| `particle_dissolve` | 2 | GPU cell-particle phân rã ảnh cũ |
+
+`shared_frame_morph.params.heroIndex` nhận `0..3`;
+`kinetic_typography.params` nhận `title`, `subtitle`, `color`, `fontFamily`,
+`fontSize`; `image_echo_trail.params.copies` nhận `5..14`. Chi tiết toàn bộ 32
+template Remotion và 6 template Blender nằm trong
+[HYBRID-RENDERER.md](HYBRID-RENDERER.md).
 
 ---
 
@@ -214,8 +243,12 @@ Emoji **không** render (font không có glyph emoji → hiện ô vuông).
 | `sharpen` | 0…2 | làm nét (unsharp) |
 | `blur` | 0…50 | mờ Gaussian (soft-focus) |
 | `temperature` | 1000…40000 K | nhiệt màu (6500=trung tính, thấp hơn=ấm hơn) |
-| `glow` | 0…1 | bloom mơ màng |
+| `glow` | 0…1 | bloom mơ màng, phủ đều mọi tông |
+| `halation` | 0…1 | bloom ấm/đỏ **chỉ ở vùng sáng** (ngưỡng highlight), tách biệt với `glow` — đúng chất "digital halation" của trend film-emulation 2026 |
+| `duotone` | `{shadow,highlight}` (hex `#rrggbb`) | ánh xạ luma ảnh thành gradient 2 màu phẳng — look editorial/poster, khác `temperature` (chỉ dịch màu vốn có) |
 | `grain` | 0…30 | hạt phim động |
+| `flicker` | 0…1 | rung sáng analog kiểu Super-8 |
+| `vhs` | 0…1 | texture camcorder cổ điển: scan line + lệch màu (chroma smear) + rung dọc kiểu tracking băng từ; tự đủ chất VHS kể cả khi `grain=0` |
 | `letterbox` | bool \| 1…4 | thanh đen điện ảnh (true=2.39:1, số=tỉ lệ đích) |
 
 **`curves` preset:** `color_negative`, `cross_process`, `darker`, `increase_contrast`, `lighter`,
@@ -365,9 +398,12 @@ gần như không tốn AI. Tier v1 Premium (AI đóng vai đạo diễn, khách
 - Không cho phép filtergraph FFmpeg tùy ý — chỉ dùng các preset ở trên.
 - Không có keyframe tùy ý theo từng object; không có crop-rectangle thủ công trong collage/film-roll.
 - Không có mask-shape editor ngoài các transition preset + overlay PNG.
-- Không có cảnh 3D thật / parallax theo depth-map. (Light-leak procedural **đã có** — xem §10.)
+- Chưa có editor tương tác cho camera 3D hoặc depth map, và **không có node nào
+  sinh depth map** — vì vậy `depth_photo_parallax` đã bị gỡ khỏi catalog; engine vẫn
+  render được cảnh Blender 3D.
 - **Không có face detection thật** — face-safe hiện dựa trên tỉ lệ (đổi cover→contain), không định vị mắt/mặt.
-- Không auto beat-sync (phát hiện beat là non-goal); phát hiện tràn chữ là heuristic (chỉ QA hình mới chắc chắn tuyệt đối).
+- `audio_reactive` nhận beat/BPM qua `params`; chưa tự động nối waveform của
+  soundtrack vào shader. Phát hiện tràn chữ vẫn là heuristic.
 - `video_background` dành cho file video, không phải ảnh tĩnh.
 
 ---

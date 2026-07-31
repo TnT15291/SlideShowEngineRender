@@ -200,3 +200,53 @@ turned out to look convincing enough when screen-blended over photo texture:
 
 Still NOT implemented (unchanged): true 3D parallax (needs depth maps), beat sync,
 typewriter text.
+
+## Research Pass — July 2026 (halation / retro camcorder / duotone)
+
+Survey of 2026 wedding-videography trend reporting to find what the engine's
+color-grade vocabulary (`color.*`, §9 of NANG-LUC-ENGINE.md) still doesn't cover —
+checked first against `scripts/lib/engineCapabilities.mjs` (every effect/hybrid
+template classified there) and `gpu-effects/` (kaleidoscope, glassmorphism,
+confetti and liquid/morph transitions already exist as Remotion `gl_transition`
+shaders and hybrid templates), so this pass targeted grade-level texture, not
+new whole-slide effects or GPU templates:
+
+- Retro camcorder / VHS aesthetics are called out explicitly as one of THE
+  biggest 2026 wedding-videography trends — nostalgic, lo-fi, used for
+  behind-the-scenes/getting-ready/dance-floor clips.
+- "Digital halation" (a red/warm glow specifically around bright highlights,
+  distinct from a neutral bloom) is named directly as a defining texture of
+  the current film-emulation look, alongside rolled-off highlights and muted,
+  warm-earthy color (the "duotone"-adjacent grading direction).
+
+Sources:
+
+- https://www.arrakisfilmswedding.com/arrakis-films-inspiration/top-wedding-videography-trends-2026-must-have-ideas-for-your-big-day
+- https://www.cameraboss.co.uk/blog/drones-super-8-cinematic-reels-the-wedding-videography-shifts-every-uk-couple-should-know-about-in-2026/
+- https://fotober.com/best-wedding-video-trends-2026
+- https://thewed.com/magazine/major-wedding-photography-videography-trends-for-2026
+- https://edityourwedding.com/blogs/news/guest-filmed-wedding-video-trend-2026
+- https://bridengroom.video/blog/wedding-video-trends/
+
+Implemented from this pass — all three are `ColorGrade` fields (not new
+`effect` presets), so they compose with ANY existing effect/motion instead of
+forcing their own composition (e.g. `slow_zoom_in` + `vhs` reads as a shaky
+camcorder push-in; `mirror_split` + `duotone` reads as a graphic editorial beat):
+
+- `color.halation` (`0..1`) — isolates highlights via `lutrgb` threshold,
+  blurs and warm-tints them (`colorbalance`), screen-blends back on
+  (`buildColorFilters.ts`'s `halationFilter`). Same gbrp screen-blend shape as
+  the existing `glow`, just thresholded + tinted instead of neutral + global.
+- `color.duotone` (`{ shadow, highlight }`, `#rrggbb`) — `geq` gradient-maps
+  the frame's own `lum(X,Y)` between two YCbCr colors (`duotoneFilter`); same
+  geq-self-reference technique `dark_feather`/`circle_focus` already use.
+- `color.vhs` (`0..1`) — `rgbashift` chroma smear (the same primitive
+  `prism_split` uses, at a much subtler offset) + `geq` scanline darkening +
+  a `pad`/`crop` sine jitter (the same slack technique `dark_feather` uses for
+  its drift) + a touch of built-in noise, so it reads VHS even at `grain: 0`
+  (`vhsFilter`).
+
+Deliberately NOT implemented: a literal VHS on-screen timestamp/REC glyph —
+cosmetic text baked into a grade field breaks the "grades don't draw text"
+convention every other `color.*` field holds to; revisit as its own effect
+only if requested.

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Logger } from "./fileUtils";
-import { coverCropLoss, readImageSize } from "./imageSize";
+import { faceCropLoss, readImageSize } from "./imageSize";
 import type { SceneLayer, Timeline } from "./types";
 
 const DEFAULT_MAX_CROP_LOSS = 0.18;
@@ -35,14 +35,18 @@ export function applyFaceSafeFraming(
       if (!layer.faceBox) return layer;
 
       const size = readImageSize(path.resolve(baseDir, layer.path));
-      const loss = coverCropLoss(size, layer.width, layer.height);
+      // What actually endangers this face is where the cover-crop window
+      // lands relative to faceBox, not the generic image-vs-frame aspect
+      // mismatch — a face dead-center in a heavily-cropped image is fine,
+      // and a face near the edge of a barely-cropped one is not.
+      const loss = faceCropLoss(layer.faceBox, size, layer.width, layer.height, layer.focusX, layer.focusY);
       if (loss <= maxCropLoss) return layer;
 
       changed++;
       logger.info(
         `Face-safe framing: slide ${slide.id} layers[${li}] ` +
           `${hasMotion ? `${layer.fit} + ${layer.motion}` : "cover"} -> contain + no motion ` +
-          `(${Math.round(loss * 100)}% crop risk, ${layer.path})`
+          `(${Math.round(loss * 100)}% of the detected face would be cropped, ${layer.path})`
       );
       return { ...layer, fit: "contain", motion: "none", motionStrength: undefined };
     });

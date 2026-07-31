@@ -1,0 +1,43 @@
+{
+  "project": { "name": "color-grade-2026-demo", "width": 960, "height": 540, "fps": 30, "quality": "share" },
+  "music": [],
+  "audio": { "fade_in": 0, "fade_out": 0, "crossfade": 0 },
+  "output": { "path": "output/color-grade-2026-demo.mp4" },
+  "overlays": [],
+  "slides": [
+    {
+      "id": "demo_baseline", "image": "input/Pictures/A2/5DIV1130.jpg", "duration": 3.5,
+      "effect": "slow_zoom_in",
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "GOC - KHONG GRADE", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 3.2, "size": 26, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_halation", "image": "input/Pictures/A2/5DIV1131.jpg", "duration": 3.5,
+      "effect": "slow_zoom_in",
+      "color": { "halation": 0.7 },
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "HALATION", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 3.2, "size": 26, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_duotone", "image": "input/Pictures/A2/5DIV1136.jpg", "duration": 3.5,
+      "effect": "slow_zoom_in",
+      "color": { "duotone": { "shadow": "#241a1f", "highlight": "#f7e6d3" } },
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "DUOTONE", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 3.2, "size": 26, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_vhs", "image": "input/Pictures/A2/5DIV1137.jpg", "duration": 3.5,
+      "effect": "slow_zoom_in",
+      "color": { "vhs": 0.6 },
+      "transition": { "type": "crossfade", "duration": 0.5 },
+      "captions": [{ "text": "VHS / CAMCORDER", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 3.2, "size": 26, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    },
+    {
+      "id": "demo_combo", "image": "input/Pictures/A2/5DIV1138.jpg", "duration": 3.5,
+      "effect": "slow_zoom_in",
+      "color": { "halation": 0.4, "vhs": 0.5 },
+      "transition": { "type": "none", "duration": 0 },
+      "captions": [{ "text": "HALATION + VHS", "role": "title", "position": "bottom_center", "start": 0.15, "duration": 3.2, "size": 26, "color": "white", "outline": { "color": "black", "width": 2 }, "shadow": true, "animation": "fade" }]
+    }
+  ]
+}

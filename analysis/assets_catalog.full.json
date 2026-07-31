@@ -1,13 +1,53 @@
 {
-  "generatedAt": "2026-07-24T15:55:39.480Z",
+  "generatedAt": "2026-07-26T04:18:28.507Z",
   "version": 1,
   "counts": {
-    "fonts": 10,
+    "fonts": 18,
     "overlays": 41,
     "backgrounds": 11,
     "frames": 20
   },
   "fonts": [
+    {
+      "id": "font_alexbrush",
+      "type": "font",
+      "path": "fonts/AlexBrush-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Expressive brush script",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "expressive",
+        "romantic",
+        "flowing"
+      ],
+      "summary": "VN-safe flowing brush script; renders Vietnamese diacritics correctly, unlike the older Latin-only scripts.",
+      "supportsVietnamese": true,
+      "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_allura",
+      "type": "font",
+      "path": "fonts/Allura-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Elegant flowing script",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "elegant",
+        "soft",
+        "refined"
+      ],
+      "summary": "VN-safe refined script; renders Vietnamese diacritics correctly, unlike the older Latin-only scripts.",
+      "supportsVietnamese": true,
+      "readability": "low_for_long_text"
+    },
     {
       "id": "font_bevietnampro",
       "type": "font",
@@ -50,6 +90,28 @@
       "readability": "medium_for_short_text"
     },
     {
+      "id": "font_cormorantgaramond",
+      "type": "font",
+      "path": "fonts/CormorantGaramond-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Refined romantic serif",
+      "roles": [
+        "title",
+        "heading",
+        "subtitle"
+      ],
+      "mood": [
+        "romantic",
+        "refined",
+        "soft",
+        "classic"
+      ],
+      "summary": "VN-safe delicate serif for soft ivory/editorial headings.",
+      "supportsVietnamese": true,
+      "readability": "medium"
+    },
+    {
       "id": "font_dancingscript",
       "type": "font",
       "path": "fonts/DancingScript.ttf",
@@ -68,6 +130,27 @@
       "summary": "Casual script for short decorative text.",
       "supportsVietnamese": false,
       "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_fraunces",
+      "type": "font",
+      "path": "fonts/Fraunces-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Warm soft-contrast editorial serif",
+      "roles": [
+        "title",
+        "heading"
+      ],
+      "mood": [
+        "warm",
+        "organic",
+        "nostalgic",
+        "editorial"
+      ],
+      "summary": "VN-safe 2026-trend display serif for warm/nostalgic-film headings.",
+      "supportsVietnamese": true,
+      "readability": "medium"
     },
     {
       "id": "font_greatvibes",
@@ -109,6 +192,27 @@
       "readability": "low_for_long_text"
     },
     {
+      "id": "font_josefinsans",
+      "type": "font",
+      "path": "fonts/JosefinSans-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Minimalist elegant sans",
+      "roles": [
+        "accent",
+        "subtitle",
+        "heading"
+      ],
+      "mood": [
+        "minimal",
+        "elegant",
+        "modern"
+      ],
+      "summary": "VN-safe thin geometric sans; the 'clean sans companion' to a bold serif headline (2026 editorial trend).",
+      "supportsVietnamese": true,
+      "readability": "high"
+    },
+    {
       "id": "font_lobster",
       "type": "font",
       "path": "fonts/Lobster-Regular.ttf",
@@ -146,6 +250,48 @@
       "summary": "Fine calligraphy for short decorative accents.",
       "supportsVietnamese": false,
       "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_merienda",
+      "type": "font",
+      "path": "fonts/Merienda-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Casual handwritten script",
+      "roles": [
+        "title",
+        "accent"
+      ],
+      "mood": [
+        "casual",
+        "handwritten",
+        "nostalgic",
+        "playful"
+      ],
+      "summary": "VN-safe rounded handwriting script for home-movie/scrapbook nostalgia.",
+      "supportsVietnamese": true,
+      "readability": "medium_for_short_text"
+    },
+    {
+      "id": "font_montserrat",
+      "type": "font",
+      "path": "fonts/Montserrat-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Modern geometric sans",
+      "roles": [
+        "heading",
+        "subtitle",
+        "body"
+      ],
+      "mood": [
+        "modern",
+        "geometric",
+        "minimal"
+      ],
+      "summary": "VN-safe modern sans; the classic Playfair Display pairing partner, for minimal/modern headings.",
+      "supportsVietnamese": true,
+      "readability": "high"
     },
     {
       "id": "font_pacifico",
@@ -205,6 +351,26 @@
       "summary": "Ornate script accent for short Latin words.",
       "supportsVietnamese": false,
       "readability": "low_for_long_text"
+    },
+    {
+      "id": "font_yesevaone",
+      "type": "font",
+      "path": "fonts/YesevaOne-Regular.ttf",
+      "source": "Google Fonts/local",
+      "license": "see font upstream",
+      "label": "Bold cinematic display serif",
+      "roles": [
+        "title",
+        "heading"
+      ],
+      "mood": [
+        "bold",
+        "dramatic",
+        "cinematic"
+      ],
+      "summary": "VN-safe high-impact display serif for moody/cinematic headings.",
+      "supportsVietnamese": true,
+      "readability": "medium"
     }
   ],
   "overlays": [

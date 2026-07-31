@@ -32,28 +32,74 @@ Tên asset nên ngắn nhưng có nghĩa, ví dụ `bg_soft_gold_bokeh_01`,
 
 ## Font cưới (`fonts/`)
 
-10 font Google, **đã kiểm tra render dấu tiếng Việt** (sampler: [fonts-sampler.png](fonts-sampler.png)).
+18 font Google (10 gốc + 8 thêm 2026-07-26 theo khảo sát trend cưới 2026), **đã kiểm
+tra render dấu tiếng Việt bằng ffmpeg drawtext** (câu mẫu nhiều dấu: "Nguyễn Thị Yến
+Nhi & Đặng Quốc Việt — Thương yêu, trọn vẹn."; sampler gốc: [fonts-sampler.png](fonts-sampler.png)).
+
+**Text-safe (10 font — hợp cho caption/quote tiếng Việt dài, dễ đọc ở size nhỏ):**
 
 | File | Kiểu | Dùng cho |
 |---|---|---|
-| `GreatVibes-Regular.ttf` | thư pháp cổ điển | title (nên size ~120–140) |
-| `DancingScript.ttf` | script mềm | title/subtitle phụ |
-| `Italianno-Regular.ttf` | script mảnh | tên romanized, "the wedding of" |
-| `WindSong-Medium.ttf` | script trang trí | accent Latin |
-| `MeaCulpa-Regular.ttf` | script mảnh | accent Latin |
-| `Pacifico-Regular.ttf` | script tròn | accent vui tươi |
-| `Lobster-Regular.ttf` | script đậm | tiêu đề nổi |
-| `Charm-Regular.ttf` | script nhẹ | phụ đề |
-| `PlayfairDisplay.ttf` | serif sang trọng | subtitle, năm, tên |
-| `BeVietnamPro-Regular.ttf` | sans hiện đại | **caption tiếng Việt dài** |
+| `BeVietnamPro-Regular.ttf` | sans hiện đại | **caption tiếng Việt dài** (body, mọi theme) |
+| `PlayfairDisplay.ttf` | serif sang trọng cổ điển | heading — `editorial_bold`, `teal_orange_editorial` |
+| `CormorantGaramond-Regular.ttf` | serif mảnh, lãng mạn | heading — `white_weddings` |
+| `YesevaOne-Regular.ttf` | serif display đậm, kịch tính | heading — `dark_film` |
+| `Fraunces-Regular.ttf` | serif ấm, soft-contrast, hoài niệm | heading — `warm_film`, `super8_nostalgia` |
+| `Montserrat-Regular.ttf` | sans hình học hiện đại | heading — `modern_teal`; cặp kinh điển với Playfair Display |
+| `JosefinSans-Regular.ttf` | sans tối giản, thanh mảnh | script_accent (vai "clean sans companion") — `editorial_bold`, `modern_teal` |
+| `AlexBrush-Regular.ttf` | brush script biểu cảm | script_accent — `dark_film`, `teal_orange_editorial` |
+| `Allura-Regular.ttf` | script mềm, tinh tế | script_accent — `white_weddings`, `warm_film` |
+| `Merienda-Regular.ttf` | handwriting tròn, casual | script_accent — `super8_nostalgia` |
 
-> Chữ tiếng Việt có dấu → chỉ dùng **BeVietnamPro** (body) hoặc **PlayfairDisplay**
-> (heading). Các font script còn lại là Latin-only: dùng cho `the`, `save the date`,
-> tên romanized — **không** dùng cho câu tiếng Việt có dấu (thiếu glyph → hỏng dấu).
+**Script/display (8 font — CŨNG đủ dấu tiếng Việt, nhưng chỉ hợp chữ ngắn và size lớn):**
 
-Font mặc định caption khi không khai `font`: env `CAPTION_FONT`, fallback
-`C:/Windows/Fonts/arial.ttf`. Generator tự gán theo role khi file tồn tại
-(title→GreatVibes 135, subtitle→Playfair, caption→BeVietnamPro).
+| File | Kiểu | Dùng cho |
+|---|---|---|
+| `GreatVibes-Regular.ttf` | thư pháp cổ điển | tên ngắn (nên size ~120–140) |
+| `DancingScript.ttf` | script mềm | tên ngắn |
+| `Italianno-Regular.ttf` | script mảnh | "the wedding of", tên ngắn |
+| `WindSong-Medium.ttf` | script trang trí | accent ngắn |
+| `MeaCulpa-Regular.ttf` | script mảnh | accent ngắn |
+| `Pacifico-Regular.ttf` | script tròn | accent vui tươi, chữ ngắn |
+| `Lobster-Regular.ttf` | script đậm | tiêu đề nổi, ngắn |
+| `Charm-Regular.ttf` | script nhẹ | phụ đề ngắn |
+
+> **ĐÍNH CHÍNH (2026-07-30).** Bảng này trước đây ghi 8 font trên là "Latin-only, thiếu
+> glyph tiếng Việt". Sai. Kiểm tra lại bằng cách quét trực tiếp bảng `cmap` của cả 18 file
+> trong `fonts/` với trọn bộ 134 ký tự tiếng Việt dựng sẵn: **cả 18 font đều phủ đủ**, và
+> render `ffmpeg drawtext` thật ("Nguyễn Đệ ượt ữỡ ẵặỹ Ơn") xác nhận GreatVibes/Italianno/
+> DancingScript/MeaCulpa hiện đúng từng dấu. Nhầm lẫn cũ đến từ việc tra trường `subsets`
+> của Google Fonts metadata API — đó là *cách Google đóng gói subset file*, không phải
+> vùng phủ glyph của bản TTF đầy đủ trong repo này.
+>
+> Hệ quả thật của luật sai đó: `cap()` trong `scripts/applyStoryTemplate.mjs` bị ép dùng
+> face `body` cho **mọi** caption của **mọi** recipe, nên toàn bộ caption hiện ra bằng một
+> font sans UI trông y như Arial. Nay caption lấy face `heading` của theme.
+>
+> Luật còn lại là **luật đọc được, không phải luật glyph**: 8 font script ở trên rất mảnh
+> và nhiều nét bay — chỉ dùng cho vài chữ cỡ lớn, đừng dùng cho cả câu.
+>
+> Điều kiện duy nhất còn hiệu lực: chữ phải ở dạng **NFC (dựng sẵn)**. Chuỗi NFD (dấu tách
+> rời) không nằm trong vùng phủ và sẽ mất dấu. Copy trong `story-templates/*.json` hiện là NFC.
+>
+> Bộ font theo từng theme (`heading`/`script_accent`/`body`) khai ở
+> `layouts/library.json` → `designTokens.themes.<themeId>.fonts` — đây là nguồn thật
+> `resolveFont()` đọc khi render (`scripts/lib/templateTheme.mjs`); field
+> `defaults.fonts` trong mỗi `story-templates/*.json` chỉ là bản phản chiếu cho người
+> đọc, theme mới thắng khi khác nhau.
+
+**Bug đã sửa (2026-07-26):** caption sinh từ `captionPattern` (đa số cảnh không phải
+`layer_scene` — memory_wall, mask_reveal, film_roll_up, spotlight_focus, double_exposure…)
+trước đây **không có `font`** trong object trả về của `cap()`
+(`scripts/applyStoryTemplate.mjs`), nên luôn rơi về `DEFAULT_FONT` của
+`compileTimeline.ts` = `C:/Windows/Fonts/arial.ttf` — Arial mặc định Windows, bất kể
+theme. Đã sửa: `cap()` giờ set `font: resolveFont("body")` (BeVietnamPro của theme).
+
+Font mặc định caption khi vẫn không khai `font` ở đâu đó: env `CAPTION_FONT`, fallback
+`C:/Windows/Fonts/arial.ttf`. (Đây là fallback cấp thấp của `compileTimeline.ts`; pipeline
+recipe-tier ở trên không còn chạm tới nó nữa.) Generator độc lập `src/generateTimeline.ts`
+(`npm run gen`, KHÔNG dùng recipe) tự gán theo role riêng (title→GreatVibes 135,
+subtitle→Playfair, caption→BeVietnamPro) — không liên quan tới hệ theme trên.
 
 ## Overlay đóng gói (`overlays/`)
 
