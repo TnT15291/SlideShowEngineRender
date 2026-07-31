@@ -21,7 +21,7 @@
 | Commit Pha 0 | `d5e8d0f` baseline snapshot → `b83d601` Pha 0 → `e43dad3` refactor |
 | Commit Pha 1 | `5871122` |
 | Commit Pha 2A | `4ac137c` |
-| Commit Pha 2B pilot | `PILOT_SHA` |
+| Commit Pha 2B pilot | `8161779` |
 | Cập nhật lần cuối | `2026-07-31 — P2B pilot DONE` |
 
 ### Quy ước trạng thái
@@ -279,7 +279,7 @@ Sau pilot:
 - Chạy lại `--check-plan` trên toàn bộ adoption map — `61 pending, 9 already applied`.
 - Nâng ratchet đúng ba recipe đã migrate — `3 / 6 / 3`, `white-weddings-full-01` giữ `1`.
 - Chỉ hạ `maxShare/over12Count` tới số đo thực tế — `23 -> 22` và `7 -> 6`, không phải mục tiêu `12/0`.
-- Commit pilot độc lập — `PILOT_SHA`.
+- Commit pilot độc lập — `8161779`.
 
 #### Bộ test planner phải sống được qua cả sáu batch
 
@@ -414,7 +414,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 1 visual probe | `5871122` | Render mới 7/7 scene; H.264 1920x1080, 30 fps, 36,466667 giây; review đủ 7 layout và 28 frame mở đầu/ổn định/xfade đạt | `temp/probe-primitives.json` SHA-256 `90D07EE0...F8DA2E8`; `temp/probe-primitives.mp4` SHA-256 `44D7325E...1721ED9` | DONE |
 | Pha 1 Premium comparison | `5871122` | Log chuẩn hoá 176/176 dòng, 38/38 `scene|duration|renderer` và 3/3 warning giống nhau; before/after cùng 38 scene, 82/82 ảnh, 188.83s; phân bố ảnh/scene 1×0, 28×1, 9×6; 0 card 4/5 | `temp/premium-before.txt` SHA-256 `3549F96C...DBD883`; `temp/premium-after.txt` SHA-256 `0A2DCB81...61E1AA8`; canonical render SHA-256 `542E6923...5F099E0` | DONE |
 | Pha 2 adoption planner | `4ac137c` | P2A.1–P2A.8 + P2A.R2 hoàn tất. Trên cây mô phỏng: `reachable.maxShare=12`, `over12=0`, lint `24/24`, 253 composition với 0 cặp recipe dùng chung, orientation 0 lỗi cứng / 11 shape change đã ký nhận, meaningful ≥3 (ww-full=1). Adoption test `21/21`; targeted geometry/library/template `28/28`; validator `32/32`; `typecheck:scripts` xanh. Ghi thử batch `pilot` rồi chạy lại `--check-plan` → `61 pending, 9 already applied`, committed test `28/28` xanh, sau đó khôi phục `story-templates/` | `scripts/newPrimitiveAdoptionMap.json`; `scripts/adoptNewPrimitives.mjs`; `test/adopt-new-primitives.test.mjs` | DONE |
-| Pha 2 pilot | `PILOT_SHA` | 9 adoption / 3 recipe. Đo thật sau ghi: `catalog 56 -> 64`, `authored 48 -> 56`, `maxShare 23 -> 22`, `over12 7 -> 6`, meaningful `cinematic 1 -> 3`, `editorial 0 -> 3`, `jmii 3 -> 6`, `ww-full` giữ `1`. `--check-plan` `61 pending, 9 already applied`; validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `npm run test:unit` `376/376`. Bộ adoption test chạy `22/22` ở cả 7 giai đoạn rollout | `story-templates/{cinematic-film-01,editorial-bold-01,jmii-silk-botanical-01}.json`; `test/fixtures/pre-adoption-recipes.json`; `test/adopt-new-primitives.test.mjs`; `test/layout-geometry.test.mjs` | DONE |
+| Pha 2 pilot | `8161779` | 9 adoption / 3 recipe. Đo thật sau ghi: `catalog 56 -> 64`, `authored 48 -> 56`, `maxShare 23 -> 22`, `over12 7 -> 6`, meaningful `cinematic 1 -> 3`, `editorial 0 -> 3`, `jmii 3 -> 6`, `ww-full` giữ `1`. `--check-plan` `61 pending, 9 already applied`; validator `32/32` (0 error, 20 warning baseline); lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `npm run test:unit` `376/376`. Bộ adoption test chạy `22/22` ở cả 7 giai đoạn rollout | `story-templates/{cinematic-film-01,editorial-bold-01,jmii-silk-botanical-01}.json`; `test/fixtures/pre-adoption-recipes.json`; `test/adopt-new-primitives.test.mjs`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B1 | — | — | — | TODO |
 | Pha 2 batch B2 | — | — | — | TODO |
 | Pha 2 batch B3 | — | — | — | TODO |
@@ -463,7 +463,7 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
     có adoption nào ở `s03_chapter`.
 - Metric trước/sau: `catalog 56 -> 64`, `authored 48 -> 56`, `authored.shared 30 -> 30`,
   `maxShare 23 -> 22`, `over12 7 -> 6`.
-- Commit: `PILOT_SHA`.
+- Commit: `8161779`.
 - Quyết định hoặc sai lệch so với plan:
   - Siết `jmii-silk-botanical-01` lên `6` chứ không phải `3`: quy ước §2.8 nói chỉ siết tới số đã
     đo, và `6` là số đo thật.
