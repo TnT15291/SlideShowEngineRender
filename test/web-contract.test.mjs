@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { validate } from "../scripts/lib/checkSchema.mjs";
 import { inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
+import { shouldWriteRecipeCopy } from "../scripts/lib/recipeCopyPolicy.mjs";
 import { normalizeWebJobRequest } from "../scripts/lib/webJobRequest.mjs";
 
 const schema = JSON.parse(fs.readFileSync("schema/web-job-request.schema.json", "utf8"));
@@ -27,6 +28,13 @@ test("video language selection overrides the web language and otherwise falls ba
   assert.equal(normalizeWebJobRequest({ ...valid, webLanguage: "en" }).language, "en");
   assert.equal(normalizeWebJobRequest({ ...valid, webLanguage: "vi" }).language, "vi");
   assert.throws(() => normalizeWebJobRequest({ ...valid, webLanguage: "fr" }), /webLanguage/);
+});
+
+test("English template projects always rewrite canned recipe captions", () => {
+  assert.equal(shouldWriteRecipeCopy({ tier: "template", language: "en" }), true);
+  assert.equal(shouldWriteRecipeCopy({ tier: "template", language: "vi" }), false);
+  assert.equal(shouldWriteRecipeCopy({ tier: "template", language: "vi", requested: true }), true);
+  assert.equal(shouldWriteRecipeCopy({ tier: "lite", language: "en" }), false);
 });
 
 test("caption language QA detects clear mismatches without flagging names", () => {

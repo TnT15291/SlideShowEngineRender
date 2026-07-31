@@ -1,6 +1,6 @@
 import { spawn, type ChildProcessByStdio } from "node:child_process"
 import { createWriteStream } from "node:fs"
-import { mkdir, readFile, stat } from "node:fs/promises"
+import { mkdir, readFile, stat, utimes } from "node:fs/promises"
 import path from "node:path"
 import type { Readable } from "node:stream"
 
@@ -11,6 +11,12 @@ import { writeJsonAtomic } from "./atomicFile.js"
 
 const phases = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 const phaseStatusSchema = z.enum(["pending", "running", "completed", "failed", "skipped"])
+const jobPhaseSchema = z.object({ status: phaseStatusSchema, reason: z.string().optional() }).passthrough()
+export const manualCompletionReason = "Completed manually by an operator"
+export const manualCompletionWarning = {
+  code: "PROJECT_MANUALLY_COMPLETED",
+  message: "Completed manually; review the QA findings before using the delivered video.",
+}
 const jobManifestSchema = z.object({
   status: z.enum(["running", "completed", "completed_with_warning", "failed", "paused"]),
   startedAt: z.string(),
@@ -19,13 +25,13 @@ const jobManifestSchema = z.object({
   error: z.object({ message: z.string() }).optional(),
   warnings: z.array(z.object({ code: z.string(), message: z.string() }).passthrough()).optional(),
   phases: z.object({
-    validate: z.object({ status: phaseStatusSchema }).passthrough(),
-    analyze: z.object({ status: phaseStatusSchema }).passthrough(),
-    plan: z.object({ status: phaseStatusSchema }).passthrough(),
-    build: z.object({ status: phaseStatusSchema }).passthrough(),
-    render: z.object({ status: phaseStatusSchema }).passthrough(),
-    qa: z.object({ status: phaseStatusSchema }).passthrough(),
-    deliver: z.object({ status: phaseStatusSchema }).passthrough(),
+    validate: jobPhaseSchema,
+    analyze: jobPhaseSchema,
+    plan: jobPhaseSchema,
+    build: jobPhaseSchema,
+    render: jobPhaseSchema,
+    qa: jobPhaseSchema,
+    deliver: jobPhaseSchema,
   }),
 }).passthrough()
 const projectManifestSchema = z.object({
@@ -41,13 +47,10 @@ const projectManifestSchema = z.object({
 }).passthrough()
 
 export const startJobInputSchema = z.object({
-  mode: z.enum(["dry_run", "render"]),
-  resume: z.boolean().default(false),
+  mode: z.literal("render").default("render"),
+  resume: z.boolean().default(true),
   deliver: z.boolean().default(false),
-}).superRefine((input, context) => {
-  if (input.mode === "dry_run" && input.deliver) {
-    context.addIssue({ code: z.ZodIssueCode.custom, path: ["deliver"], message: "Delivery requires render mode" })
-  }
+  acceptMusicMismatch: z.boolean().default(false),
 })
 
 export type StartJobInput = z.input<typeof startJobInputSchema>
@@ -58,7 +61,9 @@ export type JobSnapshot = {
   currentPhase: (typeof phases)[number] | null
   progress: number
   error: string | null
+  pauseReason?: string | null
   warnings: Array<{ code: string; message: string }>
+  manuallyCompleted: boolean
   startedAt: string | null
   updatedAt: string
   mode: StartJobInput["mode"] | null
@@ -140,7 +145,11 @@ export function createJobRunner(engineRoot = process.cwd()) {
         currentPhase: manifest.currentPhase || null,
         progress: progressOf(manifest),
         error: manifest.error?.message || null,
-        warnings: manifest.warnings || [],
+        pauseReason: manifest.currentPhase ? String(manifest.phases[manifest.currentPhase].reason || "") || null : null,
+        warnings: manifest.warnings?.length
+          ? manifest.warnings
+          : manifest.phases.deliver.reason === manualCompletionReason ? [manualCompletionWarning] : [],
+        manuallyCompleted: manifest.phases.deliver.reason === manualCompletionReason,
         startedAt: manifest.startedAt,
         updatedAt: manifest.updatedAt,
         mode: running?.mode || null,
@@ -156,7 +165,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
         currentPhase: null,
         progress: 0,
         error: null,
+        pauseReason: null,
         warnings: [],
+        manuallyCompleted: false,
         startedAt: running?.startedAt || null,
         updatedAt: running?.startedAt || now,
         mode: running?.mode || null,
@@ -250,15 +261,30 @@ export function createJobRunner(engineRoot = process.cwd()) {
 
   async function terminate(child: ChildProcessByStdio<null, Readable, Readable>) {
     if (!child.pid) return
+    // taskkill's own process closing is not proof the TARGET process is gone —
+    // it only confirms the kill request was issued. Callers (cancel/shutdown)
+    // immediately follow this with an rm(recursive) on the project workspace,
+    // and on Windows that raced ahead of the OS actually releasing the killed
+    // process's file handles often enough to flake test cleanup with ENOTEMPTY.
+    // child's own "close" (already wired in start(), a second listener here is
+    // fine) is the real signal — it only fires once the process has exited.
+    // Bounded, not indefinite: a process taskkill/SIGTERM genuinely can't
+    // reach (permissions, a wedged driver call) must not hang cancel/shutdown
+    // forever — 5s is generous for a teardown that normally takes ms.
+    const exited = new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, 5000)
+      child.once("close", () => { clearTimeout(timer); resolve() })
+    })
     if (process.platform === "win32") {
       await new Promise<void>((resolve) => {
         const killer = spawn("taskkill", ["/pid", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" })
         killer.once("close", () => resolve())
         killer.once("error", () => { child.kill("SIGTERM"); resolve() })
       })
-      return
+    } else {
+      try { process.kill(-child.pid, "SIGTERM") } catch { child.kill("SIGTERM") }
     }
-    try { process.kill(-child.pid, "SIGTERM") } catch { child.kill("SIGTERM") }
+    await exited
   }
 
   async function start(projectId: string, rawInput: StartJobInput) {
@@ -279,9 +305,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
     }
 
     const args = ["scripts/runProject.mjs", "--project", `projects/${projectId}`]
-    if (input.mode === "dry_run") args.push("--dry-run")
     if (input.deliver) args.push("--deliver")
     if (input.resume) args.push("--resume")
+    if (input.acceptMusicMismatch) args.push("--accept-music-mismatch")
     if (project.manifest.tier === "template" && project.manifest.recipe && !project.manifest.recipe.includes("/") && !project.manifest.recipe.includes("\\")) {
       args.push("--recipe", `story-templates/${project.manifest.recipe}.json`)
     }
@@ -365,6 +391,56 @@ export function createJobRunner(engineRoot = process.cwd()) {
     return snapshotFromDisk(projectId)
   }
 
+  async function completeManually(projectId: string) {
+    const project = await loadProject(projectId)
+    if (active.has(projectId)) throw new JobRequestError(409, "JOB_ALREADY_RUNNING", `A job is still running for ${projectId}`)
+    let document: z.infer<typeof jobManifestSchema>
+    try {
+      document = jobManifestSchema.parse(JSON.parse(await readFile(project.jobManifest, "utf8")))
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") throw new JobRequestError(409, "MANUAL_COMPLETION_NOT_AVAILABLE", "No project run is available to complete")
+      throw new JobRequestError(500, "INVALID_JOB_MANIFEST", "Job manifest is invalid")
+    }
+    if (document.phases.render.status !== "completed") {
+      throw new JobRequestError(409, "RENDER_NOT_COMPLETED", "The video render has not completed")
+    }
+    const failedAtQa = document.status === "failed" && document.currentPhase === "qa" && document.phases.qa.status === "failed"
+    const alreadyCompletedManually = document.warnings?.some((warning) => warning.code === "PROJECT_MANUALLY_COMPLETED" || warning.code === "QA_MANUALLY_ACCEPTED")
+    const awaitingManualCompletion = ["completed", "completed_with_warning", "paused"].includes(document.status)
+      && document.phases.deliver.status !== "completed"
+    if (alreadyCompletedManually || (!failedAtQa && !awaitingManualCompletion)) {
+      throw new JobRequestError(409, "MANUAL_COMPLETION_NOT_AVAILABLE", "This project is not eligible for manual completion")
+    }
+    const output = path.resolve(project.projectDir, project.manifest.output)
+    if (path.relative(project.projectDir, output).startsWith("..") || path.isAbsolute(path.relative(project.projectDir, output))) {
+      throw new JobRequestError(500, "INVALID_PROJECT_MANIFEST", "The render output escapes the project directory")
+    }
+    try {
+      const outputStat = await stat(output)
+      if (!outputStat.isFile() || outputStat.size === 0) throw new Error("empty output")
+    } catch {
+      throw new JobRequestError(409, "RENDER_OUTPUT_NOT_READY", "The rendered video is missing or empty")
+    }
+
+    const now = new Date().toISOString()
+    await utimes(output, new Date(now), new Date(now))
+    document.status = "completed_with_warning"
+    document.updatedAt = now
+    if (failedAtQa) {
+      document.phases.qa = { ...document.phases.qa, status: "completed", completedAt: now, reason: "Accepted manually after QA failure" }
+    }
+    document.phases.deliver = { ...document.phases.deliver, status: "completed", completedAt: now, reason: "Completed manually by an operator" }
+    document.warnings = [
+      ...(document.warnings || []).filter((warning) => warning.code !== "QA_MANUALLY_ACCEPTED" && warning.code !== "PROJECT_MANUALLY_COMPLETED"),
+      manualCompletionWarning,
+    ]
+    delete document.currentPhase
+    delete document.error
+    await writeJsonAtomic(project.jobManifest, document)
+    await publishSnapshot(projectId)
+    return snapshotFromDisk(projectId)
+  }
+
   function subscribe(projectId: string, listener: (event: JobEvent) => void) {
     const projectListeners = listeners.get(projectId) || new Set()
     projectListeners.add(listener)
@@ -383,7 +459,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
     }))
   }
 
-  return { start, cancel, get: snapshotFromDisk, subscribe, shutdown }
+  return { start, cancel, completeManually, get: snapshotFromDisk, subscribe, shutdown }
 }
 
 export const jobRunner = createJobRunner()

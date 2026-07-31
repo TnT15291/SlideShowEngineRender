@@ -36,6 +36,12 @@ export function bearerToken(request: IncomingMessage): string | null {
   return match ? match[1].trim() : null
 }
 
+// Not proxy-aware on purpose: trusting X-Forwarded-For without a configured,
+// trusted proxy hop count lets a client spoof it to dodge rate limiting.
+export function clientIp(request: IncomingMessage): string {
+  return request.socket.remoteAddress || "unknown"
+}
+
 export function methodNotAllowed(response: ServerResponse) {
   response.setHeader("Allow", "GET, OPTIONS")
   sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports GET")

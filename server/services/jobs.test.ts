@@ -29,6 +29,7 @@ const document = { schemaVersion: 1, projectId: project.id, status: "running", s
 fs.writeFileSync(file, JSON.stringify(document));
 console.log("stub pipeline started");
 console.log("deliver=" + process.argv.includes("--deliver"));
+console.log("acceptMusicMismatch=" + process.argv.includes("--accept-music-mismatch"));
 if (process.argv.includes("--dry-run")) setTimeout(() => { document.status = "completed"; document.updatedAt = new Date().toISOString(); delete document.currentPhase; for (const value of Object.values(document.phases)) value.status = "completed"; fs.writeFileSync(file, JSON.stringify(document)); }, 120);
 else setInterval(() => {}, 1000);
 `, "utf8")
@@ -57,19 +58,24 @@ test("job runner locks each project, streams logs, and records cancellation as p
   await assert.rejects(runner.start("linh-nam", { mode: "render", resume: false }), (error: unknown) => error instanceof JobRequestError && error.code === "JOB_ALREADY_RUNNING")
   await waitFor(async () => events.includes("stub pipeline started"))
   await waitFor(async () => events.includes("deliver=true"))
+  await waitFor(async () => events.includes("acceptMusicMismatch=false"))
   const cancelled = await runner.cancel("linh-nam")
   assert.equal(cancelled.status, "paused")
+  await runner.start("linh-nam", { mode: "render", resume: true, acceptMusicMismatch: true })
+  await waitFor(async () => events.includes("acceptMusicMismatch=true"))
+  await runner.cancel("linh-nam")
   unsubscribe()
 })
 
-test("job runner reports completed dry runs and missing projects", async (context) => {
+test("job runner rejects public dry runs and reports missing projects", async (context) => {
   const { root } = await workspace()
   const runner = createJobRunner(root)
   context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
   await assert.rejects(runner.get("missing"), (error: unknown) => error instanceof JobRequestError && error.code === "PROJECT_NOT_FOUND")
-  await runner.start("linh-nam", { mode: "dry_run", resume: false })
-  await waitFor(async () => (await runner.get("linh-nam")).status === "completed")
-  assert.equal((await runner.get("linh-nam")).progress, 100)
+  await assert.rejects(
+    runner.start("linh-nam", { mode: "dry_run", resume: false } as never),
+    /dry_run/,
+  )
 })
 
 test("job runner reports nothing to cancel once a stale running manifest has self-healed to failed", async (context) => {
@@ -138,4 +144,83 @@ test("job runner self-heals a stale running manifest to failed, and a retry is n
   // this is that a retry should work, not trade one stuck state for another.
   const restarted = await runner.start("linh-nam", { mode: "render", resume: false })
   assert.equal(restarted.status, "running")
+})
+
+test("manual completion accepts only a rendered video stopped by QA and keeps a warning", async (context) => {
+  const { root } = await workspace()
+  const runner = createJobRunner(root)
+  context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
+  const projectDir = path.join(root, "projects", "linh-nam")
+  const manifestFile = path.join(projectDir, "analysis", "job-manifest.json")
+  const phase = (status: string) => ({ status })
+  await writeFile(manifestFile, JSON.stringify({
+    schemaVersion: 1,
+    projectId: "linh-nam",
+    status: "failed",
+    startedAt: "2026-07-24T10:00:00.000Z",
+    updatedAt: "2026-07-24T10:01:00.000Z",
+    currentPhase: "qa",
+    error: { phase: "qa", message: "Frame check failed" },
+    phases: {
+      validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"),
+      build: phase("completed"), render: phase("completed"), qa: phase("failed"), deliver: phase("pending"),
+    },
+    artifacts: {},
+  }))
+
+  await assert.rejects(
+    runner.completeManually("linh-nam"),
+    (error: unknown) => error instanceof JobRequestError && error.code === "RENDER_OUTPUT_NOT_READY",
+  )
+
+  await mkdir(path.join(projectDir, "output"), { recursive: true })
+  await writeFile(path.join(projectDir, "output", "final.mp4"), "rendered video")
+  const completed = await runner.completeManually("linh-nam")
+  assert.equal(completed.status, "completed_with_warning")
+  assert.equal(completed.phases.render, "completed")
+  assert.equal(completed.phases.qa, "completed")
+  assert.equal(completed.phases.deliver, "completed")
+  assert.equal(completed.error, null)
+  assert.deepEqual(completed.warnings, [{
+    code: "PROJECT_MANUALLY_COMPLETED",
+    message: "Completed manually; review the QA findings before using the delivered video.",
+  }])
+  assert.equal(completed.manuallyCompleted, true)
+
+  await assert.rejects(
+    runner.completeManually("linh-nam"),
+    (error: unknown) => error instanceof JobRequestError && error.code === "MANUAL_COMPLETION_NOT_AVAILABLE",
+  )
+})
+
+test("manual completion also accepts a rendered project whose QA passed but delivery is pending", async (context) => {
+  const { root } = await workspace()
+  const runner = createJobRunner(root)
+  context.after(async () => { await runner.shutdown(); await rm(root, { recursive: true, force: true }) })
+  const projectDir = path.join(root, "projects", "linh-nam")
+  const phase = (status: string) => ({ status })
+  await writeFile(path.join(projectDir, "analysis", "job-manifest.json"), JSON.stringify({
+    schemaVersion: 1,
+    projectId: "linh-nam",
+    status: "completed",
+    startedAt: "2026-07-24T10:00:00.000Z",
+    updatedAt: "2026-07-24T10:01:00.000Z",
+    phases: {
+      validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"),
+      build: phase("completed"), render: phase("completed"), qa: phase("completed"), deliver: phase("pending"),
+    },
+    artifacts: {},
+  }))
+  await mkdir(path.join(projectDir, "output"), { recursive: true })
+  await writeFile(path.join(projectDir, "output", "final.mp4"), "rendered video")
+
+  const completed = await runner.completeManually("linh-nam")
+  assert.equal(completed.status, "completed_with_warning")
+  assert.equal(completed.phases.qa, "completed")
+  assert.equal(completed.phases.deliver, "completed")
+  assert.deepEqual(completed.warnings, [{
+    code: "PROJECT_MANUALLY_COMPLETED",
+    message: "Completed manually; review the QA findings before using the delivered video.",
+  }])
+  assert.equal(completed.manuallyCompleted, true)
 })

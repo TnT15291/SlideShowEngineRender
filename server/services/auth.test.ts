@@ -14,9 +14,19 @@ import {
   deleteSession,
   getSession,
   getUserById,
+  isAdminUsername,
   setUserPlan,
   verifyLogin,
 } from "./auth.js"
+
+function withAdminUsernames(context: { after: (fn: () => unknown) => void }, value: string) {
+  const previous = process.env.STOREEL_ADMIN_USERNAMES
+  process.env.STOREEL_ADMIN_USERNAMES = value
+  context.after(() => {
+    if (previous === undefined) delete process.env.STOREEL_ADMIN_USERNAMES
+    else process.env.STOREEL_ADMIN_USERNAMES = previous
+  })
+}
 
 async function tempRoot(context: { after: (fn: () => unknown) => void }) {
   const root = await mkdtemp(path.join(os.tmpdir(), "storeel-auth-"))
@@ -100,6 +110,35 @@ test("getUserById returns a redacted user or null", async (context) => {
 
   assert.deepEqual(await getUserById(user.id, root), user)
   assert.equal(await getUserById("11111111-1111-4111-8111-111111111111", root), null)
+})
+
+test("isAdminUsername reads STOREEL_ADMIN_USERNAMES as a case-insensitive, comma-separated list, defaulting to storeel", (context) => {
+  const previous = process.env.STOREEL_ADMIN_USERNAMES
+  delete process.env.STOREEL_ADMIN_USERNAMES
+  context.after(() => { if (previous !== undefined) process.env.STOREEL_ADMIN_USERNAMES = previous })
+  assert.equal(isAdminUsername("storeel"), true)
+  assert.equal(isAdminUsername("STOREEL"), true)
+  assert.equal(isAdminUsername("alice"), false)
+
+  withAdminUsernames(context, "Alice, bob")
+  assert.equal(isAdminUsername("alice"), true)
+  assert.equal(isAdminUsername("BOB"), true)
+  assert.equal(isAdminUsername("storeel"), false)
+})
+
+test("account isAdmin follows STOREEL_ADMIN_USERNAMES, not a hardcoded name", async (context) => {
+  const root = await tempRoot(context)
+  withAdminUsernames(context, "root-admin")
+
+  const admin = await createUser("root-admin", "correct-secret", root)
+  assert.equal(admin.isAdmin, true)
+
+  const member = await createUser("alice", "correct-secret", root)
+  assert.equal(member.isAdmin, false)
+
+  assert.equal((await verifyLogin("root-admin", "correct-secret", root)).isAdmin, true)
+  assert.equal((await getUserById(admin.id, root))?.isAdmin, true)
+  assert.equal((await getUserById(member.id, root))?.isAdmin, false)
 })
 
 test("new accounts default to zero per-video credits and are blocked from rendering", async (context) => {

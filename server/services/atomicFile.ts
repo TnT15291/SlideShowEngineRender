@@ -23,11 +23,11 @@ function isTransientWindowsLock(error: unknown): error is NodeJS.ErrnoException 
   return code === "EPERM" || code === "EBUSY"
 }
 
-export async function writeJsonAtomic(file: string, value: unknown): Promise<void> {
+export async function writeTextAtomic(file: string, value: string): Promise<void> {
   await mkdir(path.dirname(file), { recursive: true })
   const temporary = `${file}.${randomUUID()}.tmp`
   try {
-    await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
+    await writeFile(temporary, value, { encoding: "utf8", flag: "wx" })
     for (let attempt = 1; ; attempt++) {
       try {
         await rename(temporary, file)
@@ -40,4 +40,8 @@ export async function writeJsonAtomic(file: string, value: unknown): Promise<voi
   } finally {
     await rm(temporary, { force: true })
   }
+}
+
+export function writeJsonAtomic(file: string, value: unknown): Promise<void> {
+  return writeTextAtomic(file, `${JSON.stringify(value, null, 2)}\n`)
 }

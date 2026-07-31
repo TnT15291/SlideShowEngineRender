@@ -3,7 +3,9 @@ import path from "node:path"
 
 import { z } from "zod"
 
-const projectSchema = z.object({ id: z.string(), analysisDir: z.string().min(1), timeline: z.string().min(1) }).passthrough()
+import { manualCompletionReason } from "./jobs.js"
+
+const projectSchema = z.object({ id: z.string(), analysisDir: z.string().min(1), timeline: z.string().min(1), output: z.string().min(1).default("output/final.mp4") }).passthrough()
 const stateSchema = z.object({
   status: z.enum(["running", "completed"]), stage: z.enum(["preflight", "render", "revising", "manual_review", "complete"]),
   preflightPasses: z.number().int().nonnegative(), preflightFixes: z.number().int().nonnegative(), preflightCapped: z.boolean(),
@@ -16,7 +18,13 @@ const summarySchema = z.object({
 })
 const proxySchema = z.object({ verdict: z.enum(["ok", "review"]), problems: z.array(z.object({ id: z.string(), check: z.string(), flags: z.array(z.string()), detail: z.string().optional() })).default([]), checks: z.record(z.unknown()).default({}) }).passthrough()
 const clipSchema = z.object({ scenes: z.number().int().optional(), passed: z.number().int().optional(), flagged: z.number().int().optional(), problems: z.array(z.object({ id: z.string(), check: z.string(), flags: z.array(z.string()) })).default([]) }).passthrough()
-const jobSchema = z.object({ status: z.enum(["running", "completed", "failed", "paused"]), currentPhase: z.string().optional(), error: z.object({ message: z.string() }).optional() }).passthrough()
+const jobSchema = z.object({
+  status: z.enum(["running", "completed", "completed_with_warning", "failed", "paused"]),
+  currentPhase: z.string().optional(),
+  error: z.object({ message: z.string() }).optional(),
+  phases: z.object({ render: z.object({ status: z.string() }), deliver: z.object({ status: z.string(), reason: z.string().optional() }) }).passthrough().optional(),
+  warnings: z.array(z.object({ code: z.string(), message: z.string() }).passthrough()).optional(),
+}).passthrough()
 
 export type QaProblem = { id: string; check: string; flags: string[]; detail?: string }
 export type QaSnapshot = {
@@ -24,6 +32,7 @@ export type QaSnapshot = {
   stage: "preflight" | "render" | "revising" | "manual_review" | "complete" | null; verdict: "ok" | "review" | "unknown" | null
   preflightPasses: number; preflightFixes: number; preflightCapped: boolean; revisions: number; maxRevisions: number
   manualReview: string[]; journal: string[]; proxyProblems: QaProblem[]; clipProblems: QaProblem[]; visionReason: string | null; updatedAt: string | null; error: string | null
+  canCompleteManually: boolean; manualAccepted: boolean
 }
 
 export class QaRequestError extends Error {
@@ -55,12 +64,18 @@ export function createQaService(engineRoot = process.cwd()) {
     ])
     let ready = true
     try { await stat(timeline) } catch { ready = false }
+    let renderOutputReady = false
+    const output = path.resolve(projectDir, manifest.output)
+    if (isInside(projectDir, output)) {
+      try { const outputStat = await stat(output); renderOutputReady = outputStat.isFile() && outputStat.size > 0 } catch { /* output is not ready */ }
+    }
     const jobQaRunning = job?.status === "running" && job.currentPhase === "qa"
     const failed = job?.status === "failed" && job.currentPhase === "qa"
-    const status = failed ? "failed" : jobQaRunning ? "running" : summary ? "completed" : job?.status === "running" ? "waiting" : "not_started"
+    const manualAccepted = job?.phases?.deliver.reason === manualCompletionReason
+    const status = failed ? "failed" : manualAccepted || summary ? "completed" : jobQaRunning ? "running" : job?.status === "running" ? "waiting" : "not_started"
     const bookend = (proxy?.checks || {}).bookend as { status?: string; reason?: string } | undefined
     const visionReason = bookend?.status === "skipped" ? bookend.reason || "Bookend vision scoring was skipped" : null
-    const verdict = !summary ? null : (summary.manualReview || []).length || summary.status !== "clean" ? "review" : visionReason ? "unknown" : "ok"
+    const verdict = manualAccepted ? "review" : !summary ? null : (summary.manualReview || []).length || summary.status !== "clean" ? "review" : visionReason ? "unknown" : "ok"
     return {
       projectId, ready, status, stage: state?.stage || null, verdict,
       preflightPasses: state?.preflightPasses ?? summary?.preflightPasses ?? 0, preflightFixes: state?.preflightFixes ?? summary?.preflightFixes ?? 0,
@@ -68,6 +83,11 @@ export function createQaService(engineRoot = process.cwd()) {
       maxRevisions: state?.maxRevisions ?? summary?.maxRevisions ?? 2, manualReview: summary?.manualReview || state?.manualReview || [], journal: summary?.journal || [],
       proxyProblems: (proxy?.problems || []) as QaProblem[], clipProblems: (clip?.problems || []) as QaProblem[], visionReason,
       updatedAt: state?.updatedAt || null, error: failed ? job?.error?.message || "QA failed" : null,
+      canCompleteManually: !manualAccepted
+        && renderOutputReady
+        && job?.phases?.render.status === "completed"
+        && (failed || (["completed", "completed_with_warning", "paused"].includes(job?.status || "") && job?.phases?.deliver.status !== "completed")),
+      manualAccepted,
     }
   }
   return { get }

@@ -219,13 +219,13 @@ export function createAnalysisService(engineRoot = process.cwd()) {
     active.set(projectId, { child, run, release })
     capture(child, run, "stdout")
     capture(child, run, "stderr")
-    child.once("close", async (code) => {
+    child.once("close", (code) => {
       run.status = code === 0 ? "completed" : "failed"
       run.updatedAt = new Date().toISOString()
       run.error = code === 0 ? null : run.probeErrors.at(-1) || run.logs.filter((line) => line.startsWith("!")).at(-1)?.slice(2) || `Analysis process exited with code ${code ?? 1}`
-      await writeJsonAtomic(project.runManifest, run).catch(() => undefined)
       active.delete(projectId)
       release()
+      void writeJsonAtomic(project.runManifest, run).catch(() => undefined)
     })
     child.once("error", (error) => { run.error = error.message })
     return get(projectId)
@@ -291,7 +291,16 @@ export function createAnalysisService(engineRoot = process.cwd()) {
   }
 
   async function shutdown() {
-    for (const running of active.values()) running.child.kill("SIGTERM")
+    // Signaling and returning without waiting for the child to actually exit
+    // let a caller's immediate rm(recursive) on the project workspace race
+    // the OS still releasing that process's file handles (Windows), flaking
+    // with ENOTEMPTY — same failure jobs.ts's terminate() had. Bounded at 5s
+    // so a process the signal can't reach doesn't hang shutdown() forever.
+    await Promise.all([...active.values()].map(({ child }) => new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, 5000)
+      child.once("close", () => { clearTimeout(timer); resolve() })
+      child.kill("SIGTERM")
+    })))
   }
 
   return { get, start, suggestCull, applyCull, shutdown }

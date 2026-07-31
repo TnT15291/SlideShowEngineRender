@@ -1,10 +1,12 @@
-import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import { randomBytes } from "node:crypto"
 import path from "node:path"
 
 import { z } from "zod"
 
 import { getRecipe } from "./recipes.js"
+import { writeJsonAtomic } from "./atomicFile.js"
+import { manualCompletionReason, manualCompletionWarning } from "./jobs.js"
 
 const phaseNames = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 const phaseStatusSchema = z.enum(["pending", "running", "completed", "failed", "skipped"])
@@ -59,6 +61,7 @@ export const projectSummarySchema = z.object({
   createdAt: z.string().nullable(),
   error: z.string().nullable(),
   warnings: z.array(z.object({ code: z.string(), message: z.string() }).passthrough()).optional(),
+  manuallyCompleted: z.boolean(),
   phases: z.record(phaseStatusSchema),
   // null = pre-existing project directory with no recorded owner (created
   // before multi-tenant support); such projects are invisible through the
@@ -68,8 +71,29 @@ export const projectSummarySchema = z.object({
 })
 
 export type ProjectSummary = z.infer<typeof projectSummarySchema>
-export type ProjectIssue = { projectId: string; message: string }
+export type ProjectIssue = { projectId: string; message: string; detail: string }
 export type ProjectListResult = { projects: ProjectSummary[]; issues: ProjectIssue[] }
+
+/**
+ * Turn a raw parse failure into something safe to show a customer.
+ *
+ * The unfiltered `error.message` used to be rendered straight into the
+ * Projects page, which meant an ENOENT surfaced the API host's absolute path
+ * ("D:\...\projects\inputs ảnh\project.json") to anyone who could see the
+ * page. Nothing here is derived from the error's text — only its type — and
+ * the file is named by its repo-relative path.
+ */
+function describeIssue(error: unknown, relativePath: string, subject: "settings" | "job history"): { message: string; detail: string } {
+  const code = (error as NodeJS.ErrnoException | null)?.code
+  const reason = code === "ENOENT" ? "the file is missing"
+    : error instanceof SyntaxError ? "the file is not valid JSON"
+    : error instanceof z.ZodError ? "required fields are missing or have the wrong type"
+    : "the file could not be read"
+  const message = subject === "settings"
+    ? `This folder isn’t a usable project — its ${subject} file can’t be read, so it can’t be opened or run.`
+    : `This project’s ${subject} can’t be read, so its progress is unknown until the file is repaired or removed.`
+  return { message, detail: `${relativePath} — ${reason}` }
+}
 
 export const createProjectInputSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -101,9 +125,15 @@ async function parseJson(file: string): Promise<unknown> {
 }
 
 function progressFromJob(job: z.infer<typeof jobSchema>) {
-  if (job.status === "completed" || job.status === "completed_with_warning") return 100
-  const finished = phaseNames.filter((name) => ["completed", "skipped"].includes(job.phases[name].status)).length
+  const finished = phaseNames.filter((name) => job.phases[name].status === "completed").length
   return Math.round((finished / phaseNames.length) * 100)
+}
+
+function projectStatusFromJob(job: z.infer<typeof jobSchema>) {
+  if (job.status !== "completed" && job.status !== "completed_with_warning") return job.status
+  if (job.phases.deliver.reason === manualCompletionReason) return "completed_with_warning"
+  if (job.phases.deliver.status !== "completed") return "paused"
+  return job.status
 }
 
 export async function listProjects(engineRoot = process.cwd()): Promise<ProjectListResult> {
@@ -132,7 +162,7 @@ export async function listProjects(engineRoot = process.cwd()): Promise<ProjectL
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
           jobError = error instanceof Error ? error.message : String(error)
-          issues.push({ projectId: project.id, message: `Invalid job manifest: ${jobError}` })
+          issues.push({ projectId: project.id, ...describeIssue(error, `projects/${entry.name}/job.json`, "job history") })
         }
       }
 
@@ -147,19 +177,22 @@ export async function listProjects(engineRoot = process.cwd()): Promise<ProjectL
         quality: project.quality,
         language: project.language || null,
         sequenceMode: project.sequenceMode || null,
-        status: jobError ? "invalid" : job?.status || "not_started",
+        status: jobError ? "invalid" : job ? projectStatusFromJob(job) : "not_started",
         currentPhase: job?.currentPhase || null,
         progress: job ? progressFromJob(job) : 0,
         updatedAt: job?.updatedAt || project.createdAt || manifestStat.mtime.toISOString(),
         createdAt: project.createdAt || null,
         error: jobError || job?.error?.message || null,
-        warnings: job?.warnings || [],
+        warnings: job?.warnings?.length
+          ? job.warnings
+          : job?.phases.deliver.reason === manualCompletionReason ? [manualCompletionWarning] : [],
+        manuallyCompleted: job?.phases.deliver.reason === manualCompletionReason,
         phases: phaseStatuses,
         ownerId: project.ownerId || null,
         shared: Boolean(project.shared),
       }))
     } catch (error) {
-      issues.push({ projectId: entry.name, message: `Invalid project manifest: ${error instanceof Error ? error.message : String(error)}` })
+      issues.push({ projectId: entry.name, ...describeIssue(error, `projects/${entry.name}/project.json`, "settings") })
     }
   }
 
@@ -262,9 +295,7 @@ export async function setProjectShared(projectId: string, shared: boolean, engin
   if (path.dirname(projectDir) !== projectsDir) throw new Error("Resolved project path escapes the projects directory")
   const manifestPath = path.join(projectDir, "project.json")
   const manifest = projectSchema.parse(await parseJson(manifestPath))
-  const temporary = `${manifestPath}.${randomBytes(4).toString("hex")}.tmp`
-  await writeFile(temporary, `${JSON.stringify({ ...manifest, shared }, null, 2)}\n`, { encoding: "utf8", flag: "wx" })
-  await rename(temporary, manifestPath)
+  await writeJsonAtomic(manifestPath, { ...manifest, shared })
 
   const updated = await getProject(projectId, engineRoot)
   if (!updated) throw new Error(`Project could not be read after updating share state: ${projectId}`)

@@ -1,11 +1,11 @@
 import { spawn } from "node:child_process"
-import { readFile, rename, rm, writeFile } from "node:fs/promises"
+import { readFile, rm } from "node:fs/promises"
 import path from "node:path"
-import { randomUUID } from "node:crypto"
 
 import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
+import { writeJsonAtomic, writeTextAtomic } from "./atomicFile.js"
 
 export const directorGenerateSchema = z.object({ brief: z.string().trim().min(1).max(10_000) })
 export const directorStoryChoiceSchema = z.object({ choice: z.enum(["A", "B", "C", "D"]) })
@@ -31,12 +31,6 @@ export class DirectorRequestError extends Error {
 function isInside(parent: string, child: string) {
   const relative = path.relative(parent, child)
   return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
-}
-
-async function atomicText(file: string, value: string) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try { await writeFile(temporary, value, { encoding: "utf8", flag: "wx" }); await rename(temporary, file) }
-  finally { await rm(temporary, { force: true }) }
 }
 
 export function createDirectorService(engineRoot = process.cwd(), commandRunner?: (args: string[]) => Promise<string>) {
@@ -104,14 +98,14 @@ export function createDirectorService(engineRoot = process.cwd(), commandRunner?
       const value = JSON.parse(await readFile(file, "utf8")); const phases = ["plan", "build", "render", "qa", "deliver"]
       for (const phase of phases) if (value.phases?.[phase]) value.phases[phase] = { status: "pending", reason: "AI Director changed" }
       value.status = "paused"; value.currentPhase = "plan"; value.updatedAt = new Date().toISOString()
-      await atomicText(file, `${JSON.stringify(value, null, 2)}\n`)
+      await writeJsonAtomic(file, value)
     } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error }
   }
 
   async function generate(projectId: string, input: DirectorGenerateInput) {
     return locked(projectId, async () => {
       const project = await load(projectId)
-      await atomicText(project.prompt, `${input.brief.trim()}\n`)
+      await writeTextAtomic(project.prompt, `${input.brief.trim()}\n`)
       await run(["scripts/parseBrief.mjs", "--prompt", path.relative(engineRoot, project.prompt), "--out", path.relative(engineRoot, path.join(project.projectDir, "directives.json"))])
       if (project.manifest.tier === "lite") {
         await run(["scripts/generateProjectStory.mjs", "--project", project.projectRel], project.analysisDir)

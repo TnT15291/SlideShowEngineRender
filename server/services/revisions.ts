@@ -1,11 +1,11 @@
 import { spawn } from "node:child_process"
-import { readFile, rename, rm, writeFile } from "node:fs/promises"
+import { readFile } from "node:fs/promises"
 import path from "node:path"
-import { randomUUID } from "node:crypto"
 
 import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
+import { writeJsonAtomic } from "./atomicFile.js"
 
 export const revisionInputSchema = z.object({ request: z.string().trim().min(1).max(10_000), maxRounds: z.number().int().min(1).max(20).default(2), confirmRestory: z.boolean().optional() })
 export const revisionUndoSchema = z.object({ round: z.number().int().positive(), maxRounds: z.number().int().min(1).max(20).default(2) })
@@ -27,12 +27,6 @@ export class RevisionRequestError extends Error {
 function inside(parent: string, child: string) {
   const relative = path.relative(parent, child)
   return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
-}
-
-async function atomicJson(file: string, value: unknown) {
-  const temporary = `${file}.${randomUUID()}.tmp`
-  try { await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" }); await rename(temporary, file) }
-  finally { await rm(temporary, { force: true }) }
 }
 
 export function createRevisionService(engineRoot = process.cwd(), revisionScript = path.resolve(engineRoot, "scripts", "reviseProject.mjs")) {
@@ -84,7 +78,7 @@ export function createRevisionService(engineRoot = process.cwd(), revisionScript
   async function normalizePaused(jobFile: string) {
     try {
       const value = JSON.parse(await readFile(jobFile, "utf8"))
-      if (value.status === "running") { value.status = "paused"; value.updatedAt = new Date().toISOString(); await atomicJson(jobFile, value) }
+      if (value.status === "running") { value.status = "paused"; value.updatedAt = new Date().toISOString(); await writeJsonAtomic(jobFile, value) }
     } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error }
   }
 

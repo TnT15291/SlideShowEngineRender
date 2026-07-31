@@ -6,11 +6,12 @@ import { z } from "zod"
 
 import { config } from "./config.js"
 import { HttpError, readJsonBody, readRawBody, sendError, sendJson } from "./http.js"
-import { bearerToken, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
-import { AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createSession, createUser, deleteSession, getSession, getUserById, loginInputSchema, registerInputSchema, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type LoginInput, type RegisterInput } from "./services/auth.js"
+import { bearerToken, clientIp, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
+import { createRateLimiter } from "./services/rateLimit.js"
+import { AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createSession, createUser, deleteSession, getSession, getUserById, isAdminUsername, loginInputSchema, registerInputSchema, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type LoginInput, type RegisterInput } from "./services/auth.js"
 import { BillingRequestError, createCheckoutSession, getPlanCatalog, handleWebhookEvent, type PlanId } from "./services/billing.js"
 import { createMomoCheckout, handleMomoIpn, MomoBillingError } from "./services/momoBilling.js"
-import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, listProjectAssets, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type UploadAssetInput } from "./services/assets.js"
+import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type UploadAssetInput } from "./services/assets.js"
 import { analysisService, AnalysisRequestError, cullInputSchema, startAnalysisInputSchema, type AnalysisSnapshot, type StartAnalysisInput } from "./services/analysis.js"
 import { directorGenerateSchema, directorMusicChoiceSchema, directorService, directorStoryChoiceSchema, DirectorRequestError, type DirectorGenerateInput, type DirectorMusicChoiceInput, type DirectorState, type DirectorStoryChoiceInput } from "./services/director.js"
 import { deliveryService, DeliveryRequestError, type DeliverySnapshot } from "./services/delivery.js"
@@ -43,10 +44,12 @@ type Services = {
   listProjectAssets: (projectId: string) => Promise<ProjectAssets>
   uploadProjectAsset: (input: UploadAssetInput) => Promise<ProjectAsset>
   getProjectAssetFile: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
+  getProjectAssetThumbnail: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
   deleteProjectAsset: (projectId: string, assetId: string) => Promise<ProjectAssets>
   getJob: (projectId: string) => Promise<JobSnapshot>
   startJob: (projectId: string, input: StartJobInput) => Promise<JobSnapshot>
   cancelJob: (projectId: string) => Promise<JobSnapshot>
+  completeJobManually: (projectId: string) => Promise<JobSnapshot>
   subscribeToJob: (projectId: string, listener: (event: JobEvent) => void) => () => void
   getAnalysis: (projectId: string) => Promise<AnalysisSnapshot>
   startAnalysis: (projectId: string, input: StartAnalysisInput) => Promise<AnalysisSnapshot>
@@ -77,15 +80,20 @@ type Services = {
   listIncidents: () => { incidents: Incident[]; openCount: number }
   updateIncident: (id: string, status: IncidentStatus) => Incident | null
   retryIncident: (id: string) => Incident
+  checkAuthRateLimit: (ip: string) => boolean
 }
+
+// 10 attempts per IP per 5 minutes, shared across login and register so a
+// credential-stuffing run can't dodge the login limit by hitting register.
+const authRateLimiter = createRateLimiter(10, 5 * 60 * 1000)
 
 const defaultServices: Services = {
   verifyLogin: (input) => verifyLogin(input.username, input.password),
   createUser: (input) => createUser(input.username, input.password),
   changePassword: (userId, input) => changePassword(userId, input.currentPassword, input.newPassword),
   createSession, deleteSession, getSession, getUserById, consumeRenderEntitlement,
-  listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, deleteProjectAsset,
-  getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, subscribeToJob: jobRunner.subscribe,
+  listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, deleteProjectAsset,
+  getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, completeJobManually: jobRunner.completeManually, subscribeToJob: jobRunner.subscribe,
   getAnalysis: analysisService.get, startAnalysis: analysisService.start, suggestCull: analysisService.suggestCull, applyCull: analysisService.applyCull,
   listProjectArtifacts: artifactService.list, getProjectArtifact: artifactService.get,
   getTimeline: timelineService.get, getTimelineImage: timelineService.image, replaceTimelineImage: timelineService.replaceImage,
@@ -97,6 +105,7 @@ const defaultServices: Services = {
   listIncidents: () => incidentService.list(),
   updateIncident: (id, status) => incidentService.update(id, status),
   retryIncident: (id) => incidentService.retry(id),
+  checkAuthRateLimit: authRateLimiter,
 }
 const checkoutInputSchema = z.object({
   plan: z.enum(["subscription", "per_video"]),
@@ -113,8 +122,7 @@ async function requireSession(request: IncomingMessage, services: Services) {
 
 async function requireAdmin(session: { userId: string }, services: Services) {
   const user = await services.getUserById(session.userId)
-  const admins = new Set((process.env.STOREEL_ADMIN_USERNAMES || "storeel").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean))
-  if (!user || !admins.has(user.username.toLowerCase())) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required")
+  if (!user || !isAdminUsername(user.username)) throw new HttpError(403, "ADMIN_REQUIRED", "Administrator access is required")
 }
 
 async function routeRequest(request: IncomingMessage, response: ServerResponse, services: Services) {
@@ -148,6 +156,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
       sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
       return
     }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many login attempts, try again later")
     const input = await readJsonBody(request, loginInputSchema)
     const user = await services.verifyLogin(input)
     const token = await services.createSession(user.id)
@@ -161,6 +170,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
       sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
       return
     }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many attempts, try again later")
     const input = await readJsonBody(request, registerInputSchema)
     const user = await services.createUser(input)
     const token = await services.createSession(user.id)
@@ -455,6 +465,23 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     return
   }
 
+  const projectAssetThumbnailMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/assets\/([^/]+)\/thumbnail$/)
+  if (projectAssetThumbnailMatch) {
+    if (request.method !== "GET") return methodNotAllowed(response)
+    const projectId = parseResourceId(projectAssetThumbnailMatch[1])
+    const assetId = parseResourceId(projectAssetThumbnailMatch[2])
+    const preview = await services.getProjectAssetThumbnail(projectId, assetId)
+    response.writeHead(200, {
+      "Content-Type": preview.mimeType,
+      "Content-Length": preview.size,
+      // Asset ids are per-upload UUIDs and never reused, so a preview that
+      // exists for a given id can never change meaning.
+      "Cache-Control": "private, max-age=86400, immutable",
+    })
+    createReadStream(preview.absolutePath).pipe(response)
+    return
+  }
+
   const projectJobEventsMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/job\/events$/)
   if (projectJobEventsMatch) {
     if (request.method !== "GET") return methodNotAllowed(response)
@@ -684,6 +711,17 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     return
   }
 
+  const projectJobManualCompleteMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/job\/complete-manually$/)
+  if (projectJobManualCompleteMatch) {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    sendJson(response, 200, { ok: true, data: await services.completeJobManually(parseResourceId(projectJobManualCompleteMatch[1])) })
+    return
+  }
+
   const projectJobMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/job$/)
   if (projectJobMatch) {
     const projectId = parseResourceId(projectJobMatch[1])
@@ -693,8 +731,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     }
     if (request.method === "POST") {
       const input = await readJsonBody(request, startJobInputSchema) as StartJobInput
-      // dry_run is the free QA-proxy pass; only a real render consumes billing entitlement.
-      if (input.mode === "render") await services.consumeRenderEntitlement(session!.userId)
+      await services.consumeRenderEntitlement(session!.userId)
       sendJson(response, 202, { ok: true, data: await services.startJob(projectId, input) })
       return
     }

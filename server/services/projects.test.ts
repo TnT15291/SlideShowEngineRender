@@ -5,6 +5,7 @@ import path from "node:path"
 import test from "node:test"
 
 import { createProject, createProjectInputSchema, deleteProject, getProject, listProjects, listSharedProjects, setProjectShared, UnknownRecipeError } from "./projects.js"
+import { manualCompletionReason } from "./jobs.js"
 
 test("project service reports real status, progress, paused state, and invalid manifests", async (context) => {
   const root = await mkdtemp(path.join(os.tmpdir(), "storeel-projects-"))
@@ -52,6 +53,72 @@ test("project service reports real status, progress, paused state, and invalid m
   assert.equal(result.projects[0].progress, 29)
   assert.equal(result.issues.length, 1)
   assert.equal(result.issues[0].projectId, "broken")
+  // The reported issue must never carry the API host's filesystem layout: it
+  // is rendered verbatim in the browser.
+  assert.equal(result.issues[0].detail, "projects/broken/project.json — the file is not valid JSON")
+  assert.ok(!/[A-Za-z]:\\|\/(?:home|Users|var)\//.test(`${result.issues[0].message} ${result.issues[0].detail}`), "issue text must not contain an absolute path")
+  assert.ok(!result.issues[0].message.includes(root), "issue text must not leak the engine root")
+})
+
+test("project service does not present a completed dry run as a delivered project", async (context) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "storeel-project-progress-"))
+  context.after(() => rm(root, { recursive: true, force: true }))
+  const projectDir = path.join(root, "projects", "dry-run")
+  await mkdir(path.join(projectDir, "analysis"), { recursive: true })
+  await writeFile(path.join(projectDir, "project.json"), JSON.stringify({
+    id: "dry-run", name: "Dry run", tier: "template", quality: "share",
+    analysisDir: "analysis",
+  }))
+  const phase = (status: string) => ({ status })
+  await writeFile(path.join(projectDir, "analysis", "job-manifest.json"), JSON.stringify({
+    status: "completed",
+    updatedAt: "2026-07-26T10:00:00.000Z",
+    currentPhase: "deliver",
+    phases: {
+      validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"),
+      build: phase("completed"), render: phase("skipped"), qa: phase("skipped"), deliver: phase("skipped"),
+    },
+  }))
+
+  const project = (await listProjects(root)).projects[0]
+  assert.equal(project.status, "paused")
+  assert.equal(project.progress, 57)
+})
+
+test("project service flags a manually-completed project instead of presenting it as a normal delivery", async (context) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "storeel-project-manual-"))
+  context.after(() => rm(root, { recursive: true, force: true }))
+  const phase = (status: string, extra: Record<string, unknown> = {}) => ({ status, ...extra })
+  const writeProject = async (id: string, deliverReason?: string) => {
+    const projectDir = path.join(root, "projects", id)
+    await mkdir(path.join(projectDir, "analysis"), { recursive: true })
+    await writeFile(path.join(projectDir, "project.json"), JSON.stringify({ id, name: id, tier: "template", quality: "share", analysisDir: "analysis" }))
+    await writeFile(path.join(projectDir, "analysis", "job-manifest.json"), JSON.stringify({
+      status: "completed", updatedAt: "2026-07-27T10:00:00.000Z",
+      phases: {
+        validate: phase("completed"), analyze: phase("completed"), plan: phase("completed"), build: phase("completed"),
+        render: phase("completed"), qa: phase("completed"), deliver: phase("completed", deliverReason ? { reason: deliverReason } : {}),
+      },
+    }))
+  }
+  await writeProject("manual-complete", manualCompletionReason)
+  await writeProject("real-delivery")
+
+  const projects = (await listProjects(root)).projects
+  const manual = projects.find((project) => project.id === "manual-complete")!
+  const delivered = projects.find((project) => project.id === "real-delivery")!
+
+  // Manual completion skips the automated delivery pipeline (no preview,
+  // thumbnail, or master are produced), so the list must not present it as
+  // an indistinguishable, normal "completed" delivery.
+  assert.equal(manual.status, "completed_with_warning")
+  assert.equal(manual.manuallyCompleted, true)
+  assert.deepEqual(manual.warnings, [{
+    code: "PROJECT_MANUALLY_COMPLETED",
+    message: "Completed manually; review the QA findings before using the delivered video.",
+  }])
+  assert.equal(delivered.status, "completed")
+  assert.equal(delivered.manuallyCompleted, false)
 })
 
 test("project creation writes a complete template workspace and rejects duplicates", async (context) => {

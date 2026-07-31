@@ -1,4 +1,5 @@
-import { open, readFile, rename, rm, stat, unlink } from "node:fs/promises"
+import { spawn } from "node:child_process"
+import { mkdir, open, readFile, rename, rm, stat, unlink } from "node:fs/promises"
 import path from "node:path"
 import { randomUUID } from "node:crypto"
 
@@ -8,6 +9,10 @@ import { writeJsonAtomic } from "./atomicFile.js"
 
 export const PHOTO_MAX_BYTES = 50 * 1024 * 1024
 export const MUSIC_MAX_BYTES = 200 * 1024 * 1024
+
+// Wide enough to stay sharp in the Media grid on a 2x display, small enough
+// that a 100-photo project costs a few MB instead of a few hundred.
+const THUMBNAIL_MAX_EDGE = 480
 
 const assetKindSchema = z.enum(["photo", "music"])
 const assetSchema = z.object({
@@ -86,6 +91,7 @@ function projectPaths(projectId: string, engineRoot: string) {
     projectDir,
     projectManifest: path.join(projectDir, "project.json"),
     uploadManifest: path.join(projectDir, "analysis", "uploads.json"),
+    thumbnailDir: path.join(projectDir, "analysis", "thumbnails"),
   }
 }
 
@@ -156,6 +162,81 @@ export async function getProjectAssetFile(projectId: string, assetId: string, en
     if ((error as NodeJS.ErrnoException).code === "ENOENT") throw new AssetRequestError(404, "ASSET_FILE_NOT_FOUND", "Uploaded asset file is missing")
     throw error
   }
+}
+
+// One downscale per asset at a time. Opening the Media step fires ~N requests
+// at once and React StrictMode doubles them; without this every tile would
+// spawn its own ffmpeg and they would race writing the same cache file.
+const thumbnailJobs = new Map<string, Promise<void>>()
+
+function ffmpegBinary() {
+  return process.env.FFMPEG_PATH || "ffmpeg"
+}
+
+function runFfmpeg(args: string[]) {
+  return new Promise<void>((resolve, reject) => {
+    let child: ReturnType<typeof spawn>
+    try {
+      child = spawn(ffmpegBinary(), args, { windowsHide: true, stdio: ["ignore", "ignore", "pipe"] })
+    } catch {
+      reject(new AssetRequestError(503, "THUMBNAIL_UNAVAILABLE", "FFmpeg is not available to build photo previews"))
+      return
+    }
+    let stderr = ""
+    child.stderr?.on("data", (chunk: Buffer) => { stderr = (stderr + chunk.toString()).slice(-2000) })
+    child.on("error", () => reject(new AssetRequestError(503, "THUMBNAIL_UNAVAILABLE", "FFmpeg is not available to build photo previews")))
+    child.on("close", (code) => {
+      if (code === 0) resolve()
+      else reject(new AssetRequestError(422, "THUMBNAIL_FAILED", `Could not build a preview for this photo${stderr ? `: ${stderr.trim().split("\n").pop()}` : ""}`))
+    })
+  })
+}
+
+async function buildThumbnail(source: string, target: string) {
+  const temporary = `${target}.${randomUUID()}.tmp.jpg`
+  try {
+    // -2 keeps the height even; force_original_aspect_ratio=decrease never
+    // upscales a photo that is already smaller than the target box.
+    await runFfmpeg([
+      "-y", "-loglevel", "error", "-i", source,
+      "-vf", `scale=${THUMBNAIL_MAX_EDGE}:${THUMBNAIL_MAX_EDGE}:force_original_aspect_ratio=decrease:force_divisible_by=2`,
+      "-frames:v", "1", "-q:v", "6", temporary,
+    ])
+    await rename(temporary, target)
+  } catch (error) {
+    await rm(temporary, { force: true })
+    throw error
+  }
+}
+
+/**
+ * A cached, downscaled JPEG preview of an uploaded photo. Regenerated whenever
+ * the cache entry is older than the source so a re-upload can't serve a stale
+ * preview. Callers get the same {@link ProjectAssetFile} shape as the full-size
+ * endpoint, with mimeType/size describing the preview rather than the original.
+ */
+export async function getProjectAssetThumbnail(projectId: string, assetId: string, engineRoot = process.cwd()): Promise<ProjectAssetFile> {
+  const asset = await getProjectAssetFile(projectId, assetId, engineRoot)
+  if (asset.kind !== "photo") throw new AssetRequestError(400, "THUMBNAIL_UNSUPPORTED", "Only photos have previews")
+
+  const paths = projectPaths(projectId, engineRoot)
+  const target = path.join(paths.thumbnailDir, `${asset.id}.jpg`)
+  const [sourceStat, cachedStat] = await Promise.all([
+    stat(asset.absolutePath),
+    stat(target).catch(() => null),
+  ])
+
+  if (!cachedStat || cachedStat.mtimeMs < sourceStat.mtimeMs) {
+    const pending = thumbnailJobs.get(target) || (async () => {
+      await mkdir(paths.thumbnailDir, { recursive: true })
+      await buildThumbnail(asset.absolutePath, target)
+    })().finally(() => { thumbnailJobs.delete(target) })
+    thumbnailJobs.set(target, pending)
+    await pending
+  }
+
+  const metadata = await stat(target)
+  return { ...asset, absolutePath: target, mimeType: "image/jpeg", size: metadata.size }
 }
 
 export async function uploadProjectAsset(input: UploadAssetInput, engineRoot = process.cwd()): Promise<ProjectAsset> {
@@ -245,6 +326,9 @@ export async function deleteProjectAsset(projectId: string, assetId: string, eng
       await unlink(target).catch((error: NodeJS.ErrnoException) => {
         if (error.code !== "ENOENT") throw error
       })
+      // Best-effort: a leftover preview is harmless, and failing the delete
+      // over it would strand the manifest edit that already succeeded.
+      await rm(path.join(paths.thumbnailDir, `${asset.id}.jpg`), { force: true }).catch(() => undefined)
     } catch (error) {
       await writeJsonAtomic(paths.uploadManifest, manifest).catch(() => undefined)
       if (asset.kind === "music") await syncProjectMusic(paths.projectManifest, manifest.assets).catch(() => undefined)

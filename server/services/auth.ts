@@ -74,7 +74,19 @@ export const changePasswordInputSchema = z.object({
 export type ChangePasswordInput = z.infer<typeof changePasswordInputSchema>
 
 export type StudioUser = z.infer<typeof userSchema>
-export type AuthenticatedUser = { id: string; username: string; plan: Plan }
+export type AuthenticatedUser = { id: string; username: string; plan: Plan; isAdmin: boolean }
+
+// Single source for "is this account an admin" — app.ts's requireAdmin gate
+// and the isAdmin flag handed to the frontend both call this, so a change to
+// STOREEL_ADMIN_USERNAMES can't leave one of them checking a stale copy.
+export function isAdminUsername(username: string): boolean {
+  const admins = new Set((process.env.STOREEL_ADMIN_USERNAMES || "storeel").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean))
+  return admins.has(username.toLowerCase())
+}
+
+function redactUser(user: StudioUser): AuthenticatedUser {
+  return { id: user.id, username: user.username, plan: user.plan ?? defaultPlan(), isAdmin: isAdminUsername(user.username) }
+}
 
 export class AuthRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) {
@@ -149,7 +161,7 @@ export async function createUser(username: string, password: string, engineRoot 
       plan: defaultPlan(),
     }
     await writeJsonAtomic(usersFile(engineRoot), { version: 1, users: [...store.users, user] })
-    return { id: user.id, username: user.username, plan: user.plan ?? defaultPlan() }
+    return redactUser(user)
   })
 }
 
@@ -159,7 +171,7 @@ export async function verifyLogin(username: string, password: string, engineRoot
   const user = store.users.find((candidate) => candidate.username === normalized)
   const valid = user ? await verifyPassword(password, user.passwordHash) : await verifyPassword(password, `scrypt$${"0".repeat(32)}$${"0".repeat(128)}`)
   if (!user || !valid) throw new AuthRequestError(401, "INVALID_CREDENTIALS", "Invalid username or password")
-  return { id: user.id, username: user.username, plan: user.plan ?? defaultPlan() }
+  return redactUser(user)
 }
 
 export async function changePassword(userId: string, currentPassword: string, newPassword: string, engineRoot = process.cwd()): Promise<void> {
@@ -225,7 +237,7 @@ export async function setUserPlan(username: string, plan: Plan, engineRoot = pro
     const users = [...store.users]
     users[userIndex] = { ...user, plan }
     await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
-    return { id: user.id, username: user.username, plan }
+    return redactUser(users[userIndex])
   })
 }
 
@@ -388,5 +400,5 @@ export async function deleteSession(token: string, engineRoot = process.cwd()): 
 export async function getUserById(userId: string, engineRoot = process.cwd()): Promise<AuthenticatedUser | null> {
   const store = await readUsers(engineRoot)
   const user = store.users.find((candidate) => candidate.id === userId)
-  return user ? { id: user.id, username: user.username, plan: user.plan ?? defaultPlan() } : null
+  return user ? redactUser(user) : null
 }

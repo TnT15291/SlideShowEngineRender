@@ -11,9 +11,9 @@ const projectManifestSchema = z.object({
 }).passthrough()
 
 const definitions = [
-  { id: "timeline", label: "Timeline", kind: "json", mimeType: "application/json; charset=utf-8" },
+  { id: "timeline", label: "Edit plan", kind: "json", mimeType: "application/json; charset=utf-8" },
   { id: "render", label: "Rendered film", kind: "video", mimeType: "video/mp4" },
-  { id: "qa-report", label: "Rule-based QA", kind: "json", mimeType: "application/json; charset=utf-8" },
+  { id: "qa-report", label: "Quality report", kind: "json", mimeType: "application/json; charset=utf-8" },
   { id: "preview", label: "Preview", kind: "video", mimeType: "video/mp4" },
   { id: "delivery", label: "Delivery master", kind: "video", mimeType: "video/mp4" },
   { id: "thumbnail", label: "Thumbnail", kind: "image", mimeType: "image/jpeg" },
