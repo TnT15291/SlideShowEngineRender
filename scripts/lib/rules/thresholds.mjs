@@ -48,6 +48,28 @@ export function textSafeInsets(canvas, fraction = TEXT_SAFE_MARGIN) {
   return { x: width * fraction, y: height * fraction };
 }
 
+// A 26px date or caption is intentionally quieter than a 26px paragraph. `fontRole`
+// chooses the typeface; the semantic `role` decides how large the words must be to do
+// their job. Keep this shared by the primitive validator and the all-recipe contract.
+export const TEXT_SIZE_MIN_BY_ROLE = Object.freeze({
+  body: 32,
+  caption: 26,
+  display: 64,
+  eyebrow: 28,
+  heading: 58,
+  hero_numeral: 120,
+  names: 96,
+  subheading: 26,
+  tile_label: 40,
+});
+
+export function minimumTextSize(slot = {}) {
+  if (TEXT_SIZE_MIN_BY_ROLE[slot.role]) return TEXT_SIZE_MIN_BY_ROLE[slot.role];
+  if (slot.fontRole === "body") return TEXT_SIZE_MIN_BY_ROLE.body;
+  if (slot.fontRole === "script_accent") return TEXT_SIZE_MIN_BY_ROLE.display;
+  return TEXT_SIZE_MIN_BY_ROLE.heading;
+}
+
 // --- crop / focus ----------------------------------------------------------------
 export const FOCUS_SAFE_MIN = 0.08;      // focusX/focusY outside [MIN, MAX] crops into the bleed
 export const FOCUS_SAFE_MAX = 0.92;

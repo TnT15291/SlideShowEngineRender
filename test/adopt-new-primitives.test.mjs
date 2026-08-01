@@ -173,8 +173,12 @@ test("--check-plan applies the complete map in memory without changing recipe so
   assert.match(result.stdout, new RegExp(
     `Content contract: ${totals.pathCount} execution path\\(s\\), ${totals.textKeyCount} `
     + "union text key\\(s\\); photo demand and copy preserved\\."));
-  assert.match(result.stdout,
-    /Gallery-tail contract: 24\/24 unique s83 > s84 > s85 signature\(s\)\./);
+  // Derived, not hardcoded: these counts are "every recipe in the tree", so a 25th recipe
+  // landing is not a regression in the thing this test measures. They were pinned at 24 and
+  // went red the moment one was added.
+  const recipeCount = recipes().length;
+  assert.match(result.stdout, new RegExp(
+    `Gallery-tail contract: ${recipeCount}\\/${recipeCount} unique s83 > s84 > s85 signature\\(s\\)\\.`));
   assert.match(result.stdout,
     /Primitive host contract: 7 active; .*stacked_horizon_trio=2.*; 0 Phase 1b adoption\(s\)\./);
   assert.match(result.stdout,
@@ -184,8 +188,9 @@ test("--check-plan applies the complete map in memory without changing recipe so
     + `${declaredDrift} declared shape change\\(s\\)\\.`));
   assert.match(result.stdout,
     /Composition contract: \d+ composition\(s\), 0 shared between recipes\./);
-  assert.match(result.stdout,
-    /Phase 2 targets on the simulated tree: reachable\.maxShare=12, over12=0, lint 24\/24 clean\./);
+  assert.match(result.stdout, new RegExp(
+    "Phase 2 targets on the simulated tree: reachable\\.maxShare=9, over12=0, "
+    + `lint ${recipeCount}\\/${recipeCount} clean\\.`));
   assert.match(result.stdout, new RegExp(
     `Checked ${planned} adoption\\(s\\) across 23 recipe\\(s\\) `
     + `\\(${pending} pending, ${planned - pending} already applied\\); no files written\\.`));
@@ -263,8 +268,9 @@ test("gallery-tail audit checks all simulated recipes, sequence order, and uniqu
   ));
   const audit = galleryTailAudit(appliedRecipes, library);
   assert.deepEqual(audit.errors, []);
-  assert.equal(audit.recipeCount, 24);
-  assert.equal(audit.distinctCount, 24);
+  // Every recipe must be audited and every tail must be unique — both counts track the tree.
+  assert.equal(audit.recipeCount, appliedRecipes.length);
+  assert.equal(audit.distinctCount, appliedRecipes.length);
 
   const duplicate = JSON.parse(JSON.stringify(appliedRecipes[0]));
   duplicate.id = "duplicate-gallery-tail";
@@ -622,14 +628,15 @@ test("simulated target audit measures the tree the rollout will produce", () => 
   const simulated = recipes().map((source) => simulate(source));
   const audit = simulatedTargetAudit(map, simulated, library);
   assert.deepEqual(audit.errors, []);
-  assert.equal(audit.maxShare, 12);
+  // Was 12 until per-recipe photo geometry was authored across the crowded layouts.
+  assert.equal(audit.maxShare, 9);
   assert.equal(audit.over12Count, 0);
-  assert.equal(audit.lintClean, 24);
+  assert.equal(audit.lintClean, simulated.length);
 
   const strict = JSON.parse(JSON.stringify(map));
-  strict.targets.reachableMaxShare = 11;
+  strict.targets.reachableMaxShare = 8;
   assert.ok(simulatedTargetAudit(strict, simulated, library).errors
-    .some((error) => /reachable\.maxShare is 12, target is 11/.test(error)));
+    .some((error) => /reachable\.maxShare is 9, target is 8/.test(error)));
 
   // The gate has to be able to fail. The source tree stops being a counter-example once the
   // last batch lands, so reject something that stays wrong at every stage: one recipe left

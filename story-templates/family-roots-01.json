@@ -23,9 +23,14 @@
       }
     },
     "photo_left_text_right_heirloom": {
-      "intent": "the photo-left spread, wearing the recipe's heirloom_mat frame",
+      "intent": "the portrait set wide inside its mat, weight low and square, facing the family text",
       "layout": "photo_left_text_right",
-      "frame": "heirloom_mat"
+      "frame": "heirloom_mat",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 100, "y": 90, "width": 800, "height": 900 }
+        }
+      }
     },
     "full_bleed_quote_heirloom": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -45,19 +50,38 @@
       }
     },
     "text_left_photo_right_heirloom": {
-      "intent": "the text-left spread, wearing the recipe's heirloom_mat frame",
+      "intent": "the portrait held inside a wide heirloom mat, square to the page with even margin all round",
       "layout": "text_left_photo_right",
-      "frame": "heirloom_mat"
+      "frame": "heirloom_mat",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1000, "y": 90, "width": 780, "height": 900 }
+        }
+      }
     },
     "three_photo_row_heirloom": {
       "intent": "the three-photo row, wearing the recipe's heirloom_mat frame",
       "layout": "three_photo_row",
-      "frame": "heirloom_mat"
+      "frame": "heirloom_mat",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 120, "y": 300, "width": 480, "height": 520 },
+          "centre": { "x": 700, "y": 160, "width": 570, "height": 700 },
+          "right": { "x": 1320, "y": 300, "width": 480, "height": 520 }
+        }
+      }
     },
     "photo_network_hero_heirloom": {
-      "intent": "the photo network, wearing the recipe's heirloom_mat frame",
+      "intent": "the network evened out, the centre no larger than it needs to be so every relative reads equally",
       "layout": "photo_network_hero",
-      "frame": "heirloom_mat"
+      "frame": "heirloom_mat",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 590, "y": 280, "width": 740, "height": 520 },
+          "left": { "x": 90, "y": 300, "width": 380, "height": 480 },
+          "right": { "x": 1450, "y": 300, "width": 380, "height": 480 }
+        }
+      }
     },
     "closing_names_heirloom": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -319,8 +343,8 @@
         }
       ],
       "captionPattern": [
-        "ROOTS & BRANCHES",
-        "WHERE IT ALL BEGAN"
+        "CỘI RỄ & CÀNH XANH",
+        "NƠI MỌI ĐIỀU BẮT ĐẦU"
       ],
       "params": {
         "background": "#3B332B"
@@ -364,8 +388,8 @@
         "variants": [
           {
             "text": {
-              "heading": "Nếp nhà",
-              "body": "Từ những yêu thương bình dị, chú rể lớn lên giữa vòng tay gia đình."
+              "heading": "Ngày thơ bé",
+              "body": "Từ những yêu thương bình dị, {{bride}} lớn lên giữa vòng tay gia đình."
             }
           },
           {
@@ -445,8 +469,8 @@
         }
       ],
       "captionPattern": [
-        "ROOTS · LOVE PASSED DOWN",
-        "A LOVE HANDED DOWN THROUGH GENERATIONS"
+        "CỘI NGUỒN · YÊU THƯƠNG TIẾP NỐI",
+        "YÊU THƯƠNG TRAO QUA BAO THẾ HỆ"
       ],
       "params": {
         "background": "#3B332B"

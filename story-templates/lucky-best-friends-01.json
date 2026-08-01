@@ -1,0 +1,965 @@
+{
+  "id": "lucky-best-friends-01",
+  "version": 1,
+  "name": "Lucky · Best Friends in Love",
+  "tier": "smart_lite",
+  "libraryTheme": "modern_teal",
+  "thumbnailScene": "s02_best_friends",
+  "songBinding": {
+    "title": "Lucky",
+    "artists": [
+      "Jason Mraz",
+      "Colbie Caillat"
+    ],
+    "referenceDurationSec": 189,
+    "timing": "phrase_analysis",
+    "lyrics": {
+      "mode": "licensed_external_track",
+      "embedded": false,
+      "display": "line_spotlight",
+      "storyPriority": "alternate"
+    },
+    "sections": [
+      {
+        "id": "opening",
+        "startSec": 0,
+        "endSec": 12,
+        "storyBeat": "always_there",
+        "lyricMode": "off"
+      },
+      {
+        "id": "first_exchange",
+        "startSec": 12,
+        "endSec": 55,
+        "storyBeat": "best_friends",
+        "lyricMode": "line_spotlight"
+      },
+      {
+        "id": "first_chorus",
+        "startSec": 55,
+        "endSec": 79,
+        "storyBeat": "love_has_a_name",
+        "lyricMode": "chorus_lift"
+      },
+      {
+        "id": "waiting",
+        "startSec": 79,
+        "endSec": 107,
+        "storyBeat": "distance_reveals",
+        "lyricMode": "line_spotlight"
+      },
+      {
+        "id": "shared_chorus",
+        "startSec": 107,
+        "endSec": 132,
+        "storyBeat": "choosing_each_other",
+        "lyricMode": "chorus_lift"
+      },
+      {
+        "id": "homeward",
+        "startSec": 132,
+        "endSec": 166,
+        "storyBeat": "coming_home",
+        "lyricMode": "line_spotlight"
+      },
+      {
+        "id": "final_chorus",
+        "startSec": 166,
+        "endSec": 189,
+        "storyBeat": "best_friends_forever",
+        "lyricMode": "chorus_lift"
+      }
+    ]
+  },
+  "layoutPresets": {
+    "sunlit_postcard": {
+      "radius": 22,
+      "border": 16,
+      "borderColor": "#FFF4E3",
+      "shadow": true
+    }
+  },
+  "looks": {
+    "sunlit_welcome": {
+      "intent": "the opening portrait pushed out toward the left edge and dropped, sunlit and informal",
+      "layout": "welcome_title_page",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 90, "y": 170, "width": 720, "height": 780 }
+        },
+        "textSlots": {
+          "names": {
+            "sizePx": 122,
+            "y": 400
+          },
+          "date": {
+            "sizePx": 34,
+            "y": 654
+          }
+        }
+      }
+    },
+    "best_friend_cluster": {
+      "intent": "candid friendship memories gathered around a warm spoken-story card",
+      "layout": "collage_cluster_text",
+      "frame": "sunlit_postcard",
+      "photoTreatment": {
+        "saturation": 1.04
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 90, "y": 200, "width": 560, "height": 780 },
+          "tl": { "x": 700, "y": 140, "width": 480, "height": 390 },
+          "bl": { "x": 700, "y": 590, "width": 480, "height": 390 }
+        }
+      }
+    },
+    "friendship_paper": {
+      "intent": "wordless keepsakes scattered like pages from a shared friendship album",
+      "layout": "paper_collage",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": { "x": 120, "y": 120, "width": 680, "height": 700, "rotation": -4 },
+          "centre": { "x": 620, "y": 160, "width": 680, "height": 700, "rotation": 2 },
+          "front": { "x": 1170, "y": 140, "width": 620, "height": 680, "rotation": -3 }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.02
+      }
+    },
+    "everyday_story": {
+      "intent": "two ordinary moments beside a quiet reflection on how friendship feels like home",
+      "layout": "two_photo_story",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 120, "y": 110, "width": 1080, "height": 480 },
+          "portrait": { "x": 1270, "y": 110, "width": 520, "height": 680 }
+        },
+        "textSlots": {
+          "body": {
+            "sizePx": 38
+          }
+        }
+      }
+    },
+    "wordless_duo": {
+      "intent": "a balanced pair of candid photographs for story pauses",
+      "layout": "photo_duo",
+      "frame": "sunlit_postcard"
+    },
+    "distance_journey": {
+      "intent": "the journey set shallow and wide with a tall companion frame riding well above its baseline",
+      "layout": "journey_duo",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 640, "y": 130, "width": 1000, "height": 520 },
+          "accent": { "x": 1350, "y": 420, "width": 400, "height": 580 }
+        },
+        "textSlots": {
+          "heading": {
+            "sizePx": 70
+          },
+          "caption": {
+            "sizePx": 32
+          }
+        }
+      }
+    },
+    "truth_quote": {
+      "intent": "the emotional recognition that the safest friendship has become love",
+      "layout": "full_bleed_quote",
+      "layoutOverrides": {
+        "textSlots": {
+          "quote": {
+            "sizePx": 62,
+            "y": 780,
+            "height": 220
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 0.98
+      }
+    },
+    "favorite_person": {
+      "intent": "the one favourite print blown up wide and set square, filling the page beside the words",
+      "layout": "polaroid_feature",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "feature": { "x": 700, "y": 150, "width": 960, "height": 800 }
+        },
+        "textSlots": {
+          "heading": {
+            "sizePx": 66
+          },
+          "body": {
+            "sizePx": 36
+          }
+        }
+      }
+    },
+    "shared_future_row": {
+      "intent": "three sunlit moments opening the story toward a future built together",
+      "layout": "three_photo_row",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 90, "y": 310, "width": 530, "height": 520, "rotation": -3 },
+          "centre": { "x": 700, "y": 190, "width": 500, "height": 650, "rotation": 2 },
+          "right": { "x": 1260, "y": 280, "width": 540, "height": 540, "rotation": 3 }
+        },
+        "textSlots": {
+          "heading": {
+            "sizePx": 68
+          },
+          "caption": {
+            "sizePx": 32
+          }
+        }
+      }
+    },
+    "wordless_arch": {
+      "intent": "a wordless three-photo breath before the final promise",
+      "layout": "arch_trio",
+      "frame": "sunlit_postcard"
+    },
+    "closing_home": {
+      "intent": "a simple closing card that names friendship as the home inside the love",
+      "layout": "closing_names",
+      "layoutOverrides": {
+        "textSlots": {
+          "names": {
+            "sizePx": 128,
+            "y": 412
+          },
+          "date": {
+            "sizePx": 36,
+            "y": 662
+          }
+        }
+      }
+    },
+    "p2_lucky_offset": {
+      "intent": "an off-centre portrait with generous sky for a light acoustic pause",
+      "layout": "offset_portrait_hero",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 300,
+            "y": 90,
+            "width": 1260,
+            "height": 900
+          }
+        }
+      }
+    },
+    "p2_lucky_columns": {
+      "intent": "a close friendship pairing arranged as two unequal sunlit columns, both standing rather than lying",
+      "layout": "golden_column_pair",
+      "frame": "sunlit_postcard",
+      "layoutOverrides": {
+        "photoSlots": {
+          "major": {
+            "x": 100,
+            "y": 80,
+            "width": 760,
+            "height": 900
+          },
+          "minor": {
+            "x": 1230,
+            "y": 220
+          }
+        }
+      }
+    },
+    "p2_lucky_horizon": {
+      "intent": "three landscape memories flowing like an easy acoustic refrain",
+      "layout": "stacked_horizon_trio",
+      "layoutOverrides": {
+        "photoSlots": {
+          "band1": {
+            "x": 100,
+            "width": 1510
+          },
+          "band2": {
+            "x": 310,
+            "width": 1510
+          },
+          "band3": {
+            "x": 160,
+            "width": 1510
+          }
+        }
+      },
+      "photoTreatment": {
+        "saturation": 1.05
+      }
+    }
+  },
+  "storyArc": {
+    "sequence": [
+      "always_there",
+      "best_friends",
+      "ordinary_days",
+      "distance_reveals",
+      "love_has_a_name",
+      "choosing_each_other",
+      "coming_home",
+      "closing"
+    ]
+  },
+  "transitionGrammar": {
+    "vocabulary": [
+      "dissolve",
+      "crossfade",
+      "smooth_left",
+      "reveal_up",
+      "none"
+    ],
+    "specialRoles": [
+      "memory",
+      "peak"
+    ],
+    "limits": {
+      "memory": 1,
+      "peak": 1
+    }
+  },
+  "source": {
+    "origin": "song-inspired",
+    "notes": "A sunlit acoustic story inspired by Lucky: two best friends discover that the person who has always felt like home is also the person they love. Timed lyrics must come from a licensed external track."
+  },
+  "intro": {
+    "summary": "Một câu chuyện trong trẻo về hai người bạn thân nhận ra tình yêu đã ở giữa họ từ rất lâu.",
+    "photos": "Hợp ảnh đời thường, ảnh đi chơi cùng nhau, ảnh cười tự nhiên, những lần xa cách hoặc chờ đợi, và các khoảnh khắc bình yên bên nhau.",
+    "story": "Phù hợp cặp đôi bắt đầu từ tình bạn thân — không cần một khoảnh khắc yêu sét đánh, chỉ cần hành trình nhận ra người luôn ở bên cũng chính là người mình muốn trở về.",
+    "music": "Thiết kế riêng cho Lucky của Jason Mraz và Colbie Caillat; chất acoustic nhẹ, ấm, tươi và thân mật."
+  },
+  "fit": {
+    "bestFor": [
+      "best_friends_to_lovers",
+      "candid",
+      "everyday_love",
+      "travel",
+      "long_distance"
+    ],
+    "minPhotos": 28,
+    "idealPhotos": 64
+  },
+  "musicProfile": {
+    "moods": [
+      "acoustic",
+      "breezy",
+      "romantic",
+      "hopeful"
+    ],
+    "energy": "low_to_medium"
+  },
+  "pacingVariants": [
+    {
+      "id": "close_friend",
+      "maxEnergy": 0.36,
+      "durationMultiplier": 1.12
+    },
+    {
+      "id": "easy_duet",
+      "maxEnergy": 0.7,
+      "durationMultiplier": 1
+    },
+    {
+      "id": "lucky_chorus",
+      "maxEnergy": 1,
+      "durationMultiplier": 0.88
+    }
+  ],
+  "briefFields": {
+    "required": [
+      "bride",
+      "groom"
+    ],
+    "optional": [
+      "date",
+      "location",
+      "meetingPlace",
+      "yearsTogether"
+    ]
+  },
+  "defaults": {
+    "project": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "quality": "share"
+    },
+    "color": {
+      "temperature": 6100,
+      "saturation": 1.04,
+      "contrast": 1.02,
+      "glow": 0.1,
+      "grain": 0.4
+    },
+    "audio": {
+      "fade_in": 1,
+      "fade_out": 3,
+      "crossfade": 0
+    },
+    "overlays": [
+      {
+        "variant": "soft",
+        "position": "fullscreen",
+        "opacity": 0.08,
+        "blend": "screen",
+        "start": 0
+      }
+    ],
+    "fonts": {
+      "title": "fonts/DancingScript.ttf",
+      "heading": "fonts/CormorantGaramond-Regular.ttf",
+      "body": "fonts/BeVietnamPro-Regular.ttf"
+    },
+    "palette": {
+      "cream": "#FFF7E8",
+      "ink": "#29454A",
+      "brown": "#E58D73",
+      "white": "#FFFFFF"
+    }
+  },
+  "timelineRules": {
+    "durationStrategy": {
+      "baseSceneSec": 5.4,
+      "calmSceneSec": 6.8,
+      "buildSceneSec": 4.4,
+      "montageSec": 9.2,
+      "closingSec": 8
+    },
+    "transitionStrategy": {
+      "default": [
+        {
+          "type": "dissolve",
+          "duration": 0.7
+        },
+        {
+          "type": "crossfade",
+          "duration": 0.55
+        },
+        {
+          "type": "reveal_up",
+          "duration": 0.55
+        }
+      ],
+      "calm": {
+        "type": "dissolve",
+        "duration": 0.9
+      },
+      "memory": {
+        "type": "crossfade",
+        "duration": 0.75
+      },
+      "peak": {
+        "type": "smooth_left",
+        "duration": 0.4
+      },
+      "final": {
+        "type": "none",
+        "duration": 0
+      }
+    },
+    "photoSelection": {
+      "reusePolicy": "avoid_until_exhausted",
+      "heroPriority": [
+        "emotionScore",
+        "qualityNorm",
+        "heroScore"
+      ],
+      "fallbackPriority": [
+        "qualityNorm",
+        "sharpness",
+        "meanLuma"
+      ],
+      "darkPhotoMaxMeanLuma": 76
+    }
+  },
+  "scenes": [
+    {
+      "id": "s01_always_there",
+      "effect": "layer_scene",
+      "look": "sunlit_welcome",
+      "durationRole": "calm",
+      "transitionRole": "calm",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "eyebrow": "Từ những ngày còn là bạn thân",
+        "names": "{{bride}} & {{groom}}",
+        "date": "Một tình yêu đã ở đây từ lâu · {{date}}"
+      }
+    },
+    {
+      "id": "s02_best_friends",
+      "effect": "layer_scene",
+      "look": "best_friend_cluster",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "tl",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bl",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Người luôn ở đó",
+          "Tụi mình đã là một đôi rất lâu"
+        ],
+        "body": [
+          "Trước khi gọi đó là tình yêu, mình đã quen kể nhau nghe mọi chuyện, cười cùng nhau và tìm đến nhau đầu tiên.",
+          "Không ai hiểu mình nhanh bằng người kia; niềm vui nào cũng muốn kể, ngày mệt nào cũng muốn tìm về."
+        ]
+      },
+      "muteFallback": {
+        "look": "friendship_paper",
+        "photoSlots": [
+          {
+            "slot": "back",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "centre",
+            "orient": "portrait",
+            "quality": "best"
+          },
+          {
+            "slot": "front",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "heading": "Chuyện gì cũng kể nhau nghe",
+              "body": "Tình bạn lớn lên bằng hàng nghìn điều nhỏ bé: một lời hỏi han, một cuộc gọi khuya và những lần cùng cười không dứt."
+            }
+          },
+          {
+            "text": {
+              "heading": "Luôn là người đầu tiên",
+              "body": "Giữa rất nhiều người, mình vẫn luôn tìm thấy ánh mắt quen thuộc và biết rằng ở đó có một người hiểu mình."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s03_memories_in_motion",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "match_cut_windows",
+      "signature": true,
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "assets",
+          "count": 3,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s04_ordinary_days",
+      "effect": "layer_scene",
+      "look": "everyday_story",
+      "durationRole": "calm",
+      "transitionRole": "memory",
+      "photoSlots": [
+        {
+          "slot": "portrait",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "body": [
+          "Có những ngày chẳng có gì đặc biệt, nhưng chỉ cần ở cạnh nhau thì mọi điều bình thường cũng thành kỷ niệm.",
+          "Điều đáng nhớ nhất không phải mình đã đi đâu, mà là trong mỗi khoảnh khắc đều có người kia bên cạnh."
+        ]
+      },
+      "muteFallback": {
+        "look": "wordless_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
+      },
+      "repeatable": {
+        "maxRepeats": 3,
+        "variants": [
+          {
+            "text": {
+              "body": "Một bữa ăn quen, một con đường cũ, một câu đùa chỉ hai đứa hiểu — hạnh phúc đã từng giản dị như thế."
+            }
+          },
+          {
+            "text": {
+              "body": "Mình không cố tạo nên kỷ niệm. Chúng tự nhiên xuất hiện mỗi khi hai đứa ở cạnh nhau."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s05_distance_reveals",
+      "effect": "layer_scene",
+      "look": "distance_journey",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "wide",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "accent",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Khi không ở gần nhau",
+          "Khoảng cách nói hộ trái tim"
+        ],
+        "caption": [
+          "Xa một chút mới biết mình nhớ không chỉ một người bạn.",
+          "Những lần tạm biệt khiến mình hiểu ai là người mình luôn muốn quay về."
+        ]
+      },
+      "muteFallback": {
+        "look": "wordless_duo",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "any",
+            "quality": "good"
+          },
+          {
+            "slot": "right",
+            "orient": "any",
+            "quality": "good"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s06_love_has_a_name",
+      "effect": "still",
+      "renderer": "remotion",
+      "template": "kinetic_typography",
+      "params": {
+        "title": "Bạn thân. Người thương.",
+        "subtitle": "Thật may vì là chúng mình."
+      },
+      "signature": true,
+      "durationRole": "build",
+      "transitionRole": "peak",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s07_truth",
+      "effect": "layer_scene",
+      "look": "truth_quote",
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "bg",
+          "orient": "landscape",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "quote": [
+          "Rồi mình nhận ra: cảm giác bình yên nhất cũng chính là tình yêu.",
+          "Tình yêu không đến từ một người xa lạ. Nó lớn lên bên người đã hiểu mình từ rất lâu."
+        ]
+      }
+    },
+    {
+      "id": "s08_favorite_person",
+      "effect": "layer_scene",
+      "look": "favorite_person",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "feature",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Vẫn là người bạn thân ấy",
+          "Người hiểu mình nhất"
+        ],
+        "body": [
+          "Chỉ khác là từ hôm nay, mình được gọi người ấy bằng một cái tên dịu dàng hơn.",
+          "Tình yêu này không làm mất đi tình bạn; nó cho tình bạn một mái nhà để ở lại."
+        ]
+      },
+      "muteFallback": {
+        "look": "p2_lucky_offset",
+        "photoSlots": [
+          {
+            "slot": "hero",
+            "orient": "any",
+            "quality": "best"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s09_shared_future",
+      "effect": "layer_scene",
+      "look": "shared_future_row",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "left",
+          "orient": "any",
+          "quality": "good"
+        },
+        {
+          "slot": "centre",
+          "orient": "any",
+          "quality": "best"
+        },
+        {
+          "slot": "right",
+          "orient": "any",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": [
+          "Cùng nhau đi tiếp",
+          "Một tương lai có cả hai"
+        ],
+        "caption": [
+          "Vẫn kể nhau nghe mọi chuyện, vẫn cười như cũ — chỉ là từ nay mình cùng mơ về một ngày mai.",
+          "Mình không chỉ yêu nhau; mình còn muốn tiếp tục làm người bạn thân nhất của nhau."
+        ]
+      },
+      "muteFallback": {
+        "look": "wordless_arch",
+        "photoSlots": [
+          {
+            "slot": "left",
+            "orient": "portrait",
+            "quality": "good"
+          },
+          {
+            "slot": "centre",
+            "orient": "portrait",
+            "quality": "best"
+          },
+          {
+            "slot": "right",
+            "orient": "portrait",
+            "quality": "good"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s10_homecoming",
+      "effect": "mask_reveal",
+      "mask": "assets/masks/watercolor_reveal.mp4",
+      "signature": true,
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "captionPattern": [
+        "Nhà không phải một nơi. Nhà là người mình luôn muốn trở về.",
+        "Sau mọi chuyến đi, điều dịu dàng nhất vẫn là được trở về bên nhau."
+      ],
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ],
+      "params": {
+        "background": "#385A5E"
+      }
+    },
+    {
+      "id": "s80_film_roll_up",
+      "effect": "film_roll_up",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s81_double_exposure",
+      "effect": "double_exposure",
+      "signature": true,
+      "durationRole": "calm",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "pair",
+          "count": 2,
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s82_photo_strip_left",
+      "effect": "photo_strip_left",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "film_roll",
+          "count": 6,
+          "orient": "any",
+          "quality": "good",
+          "preferVariety": true
+        }
+      ]
+    },
+    {
+      "id": "s83_lucky_portrait",
+      "effect": "layer_scene",
+      "look": "p2_lucky_offset",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "any",
+          "quality": "best"
+        }
+      ]
+    },
+    {
+      "id": "s84_lucky_pair",
+      "effect": "layer_scene",
+      "look": "p2_lucky_columns",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "major",
+          "orient": "portrait",
+          "quality": "best"
+        },
+        {
+          "slot": "minor",
+          "orient": "portrait",
+          "quality": "good"
+        }
+      ],
+      "text": {
+        "heading": "Đi đâu cũng có nhau"
+      }
+    },
+    {
+      "id": "s85_lucky_horizon",
+      "effect": "layer_scene",
+      "look": "p2_lucky_horizon",
+      "durationRole": "normal",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "band1",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "band2",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "band3",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "s11_close",
+      "effect": "layer_scene",
+      "look": "closing_home",
+      "durationRole": "closing",
+      "transitionRole": "final",
+      "photoSlots": [],
+      "text": {
+        "names": "{{bride}} & {{groom}}",
+        "date": "Người yêu · Người bạn thân · {{date}}"
+      }
+    }
+  ]
+}

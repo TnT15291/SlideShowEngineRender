@@ -38,9 +38,16 @@
       }
     },
     "collage_cluster_text_gutter": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's gutter_bleed frame",
+      "intent": "the cluster with its tall frame bled hard off the left edge, top to bottom, the two stills keyed in beside it",
       "layout": "collage_cluster_text",
-      "frame": "gutter_bleed"
+      "frame": "gutter_bleed",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 0, "y": 0, "width": 620, "height": 1080 },
+          "tl": { "x": 680, "y": 120, "width": 500, "height": 400 },
+          "bl": { "x": 680, "y": 580, "width": 500, "height": 400 }
+        }
+      }
     },
     "paper_collage_gutter": {
       "intent": "the layered paper collage, wearing the recipe's gutter_bleed frame",
@@ -50,12 +57,83 @@
     "three_photo_row_gutter": {
       "intent": "the three-photo row, wearing the recipe's gutter_bleed frame",
       "layout": "three_photo_row",
-      "frame": "gutter_bleed"
+      "frame": "gutter_bleed",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 80, "y": 360, "width": 520, "height": 480 },
+          "centre": { "x": 630, "y": 260, "width": 420, "height": 590 },
+          "right": { "x": 1100, "y": 210, "width": 720, "height": 650 }
+        }
+      }
+    },
+    "photo_network_hero_gutter": {
+      "intent": "the photo network, wearing the recipe's gutter_bleed frame",
+      "layout": "photo_network_hero",
+      "frame": "gutter_bleed",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 520,
+            "y": 240,
+            "width": 880,
+            "height": 600
+          },
+          "top_left": {
+            "x": 60,
+            "width": 480,
+            "height": 220
+          },
+          "top": {
+            "x": 540,
+            "width": 840,
+            "height": 150
+          },
+          "top_right": {
+            "x": 1380,
+            "width": 480,
+            "height": 220
+          },
+          "left": {
+            "x": 60,
+            "y": 260,
+            "height": 560
+          },
+          "right": {
+            "x": 1460,
+            "y": 260,
+            "height": 560
+          },
+          "bottom_left": {
+            "x": 60,
+            "y": 840,
+            "width": 480,
+            "height": 220
+          },
+          "bottom": {
+            "x": 540,
+            "y": 890,
+            "width": 840,
+            "height": 150
+          },
+          "bottom_right": {
+            "x": 1380,
+            "y": 840,
+            "width": 480,
+            "height": 220
+          }
+        }
+      }
     },
     "two_photo_story_gutter": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's gutter_bleed frame",
+      "intent": "the story pair at editorial weight — a small keyed portrait against a landscape run almost to the right margin",
       "layout": "two_photo_story",
-      "frame": "gutter_bleed"
+      "frame": "gutter_bleed",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 70, "y": 250, "width": 440, "height": 520 },
+          "wide": { "x": 570, "y": 110, "width": 1290, "height": 660 }
+        }
+      }
     },
     "closing_names_gutter": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -533,6 +611,60 @@
         "body": "Có những điều không cần nói, chỉ cần được ở cạnh nhau."
       },
       "look": "two_photo_story_gutter"
+    },
+    {
+      "id": "s05b_photo_network",
+      "effect": "layer_scene",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top_right",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "look": "photo_network_hero_gutter"
     },
     {
       "id": "s06_grid",

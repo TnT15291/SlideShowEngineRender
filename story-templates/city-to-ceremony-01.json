@@ -14,14 +14,32 @@
   },
   "looks": {
     "magazine_page_turn_kerb": {
-      "intent": "the magazine page turn, wearing the recipe's kerb_block frame",
+      "intent": "both pages squared flat to the spine, no lift, no tilt",
       "layout": "magazine_page_turn",
-      "frame": "kerb_block"
+      "frame": "kerb_block",
+      "layoutOverrides": {
+        "photoSlots": {
+          "page_left": { "x": 60, "y": 280, "width": 640, "height": 730, "rotation": 0 },
+          "page_right": { "x": 940, "y": 70, "width": 700, "height": 800, "rotation": 0 }
+        }
+      }
     },
     "masonry_grid_wall_kerb": {
-      "intent": "the masonry wall, wearing the recipe's kerb_block frame",
+      "intent": "the wall packed tight to every margin, a blunt grid with almost no page showing",
       "layout": "masonry_grid_wall",
-      "frame": "kerb_block"
+      "frame": "kerb_block",
+      "layoutOverrides": {
+        "photoSlots": {
+          "g1": { "x": 60, "y": 70, "width": 620, "height": 320 },
+          "g2": { "x": 700, "y": 70, "width": 620, "height": 320 },
+          "g3": { "x": 1340, "y": 70, "width": 500, "height": 320 },
+          "g4": { "x": 60, "y": 410, "width": 620, "height": 320 },
+          "g5": { "x": 1340, "y": 410, "width": 500, "height": 320 },
+          "g6": { "x": 60, "y": 750, "width": 620, "height": 310 },
+          "g7": { "x": 700, "y": 750, "width": 620, "height": 310 },
+          "g8": { "x": 1340, "y": 750, "width": 500, "height": 310 }
+        }
+      }
     },
     "full_bleed_quote_kerb": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -43,9 +61,15 @@
       }
     },
     "duo_tinted_spread_kerb": {
-      "intent": "the tinted two-photo spread, wearing the recipe's kerb_block frame",
+      "intent": "the pair squared hard to the page edges, equal weight, blunt gutter between them",
       "layout": "duo_tinted_spread",
-      "frame": "kerb_block"
+      "frame": "kerb_block",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 60, "y": 260, "width": 880, "height": 560 },
+          "right": { "x": 980, "y": 260, "width": 880, "height": 560 }
+        }
+      }
     },
     "closing_names_kerb": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -308,8 +332,8 @@
         }
       ],
       "captionPattern": [
-        "{{bride}} × {{groom}} · CITY LOVERS",
-        "A CITY LOVE STORY: {{bride}} × {{groom}}"
+        "{{bride}} × {{groom}} · TÌNH YÊU NƠI THÀNH PHỐ",
+        "CHUYỆN TÌNH GIỮA PHỐ: {{bride}} × {{groom}}"
       ]
     },
     {
@@ -319,14 +343,19 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "hero",
+          "slot": "page_left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "page_right",
           "orient": "portrait",
           "quality": "best"
         }
       ],
       "text": {
         "heading": "{{meetingPlace}}",
-        "body": [
+        "caption": [
           "Thành phố nơi câu chuyện bắt đầu.",
           "Nơi những con đường quen thuộc trở thành một phần câu chuyện."
         ]
@@ -399,8 +428,8 @@
       ],
       "text": {
         "tile_text": [
-          "US / EVERYDAY",
-          "JUST US, EVERY DAY"
+          "CHÚNG MÌNH / MỖI NGÀY",
+          "CHỈ CHÚNG MÌNH, MỖI NGÀY"
         ]
       },
       "repeatable": {
@@ -460,8 +489,8 @@
       ],
       "text": {
         "heading": [
-          "GETTING READY",
-          "THE FINAL TOUCHES"
+          "SẴN SÀNG",
+          "NHỮNG BƯỚC CHUẨN BỊ CUỐI"
         ]
       },
       "look": "duo_tinted_spread_kerb"

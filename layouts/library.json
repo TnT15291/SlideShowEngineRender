@@ -1137,7 +1137,7 @@
       "textSlots": [
         {
           "id": "tile_text",
-          "role": "heading",
+          "role": "tile_label",
           "x": 760,
           "y": 495,
           "width": 500,
@@ -1378,7 +1378,7 @@
         },
         {
           "id": "caption",
-          "role": "body",
+          "role": "caption",
           "x": 115,
           "y": 800,
           "width": 500,
@@ -1435,7 +1435,7 @@
           "height": 90,
           "align": "left",
           "fontRole": "body",
-          "sizePx": 26
+          "sizePx": 32
         }
       ],
       "durationRange": [
@@ -1504,7 +1504,7 @@
         },
         {
           "id": "caption",
-          "role": "body",
+          "role": "caption",
           "x": 1280,
           "y": 760,
           "width": 420,
@@ -2291,6 +2291,171 @@
       "durationRange": [
         4.5,
         6
+      ]
+    },
+    {
+      "id": "stepped_gallery_six",
+      "kind": "layer_scene",
+      "intent": "Six photographs in two runs of three, the upper run tall and the lower run short and shifted right — a gallery wall with a clear hierarchy instead of an even grid.",
+      "bestFor": "photo-rich jobs wanting a six-up breather that still reads as composed rather than tabulated",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "t1",
+          "x": 100,
+          "y": 90,
+          "width": 560,
+          "height": 560,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "t2",
+          "x": 690,
+          "y": 90,
+          "width": 560,
+          "height": 560,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "t3",
+          "x": 1280,
+          "y": 90,
+          "width": 560,
+          "height": 560,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "b1",
+          "x": 250,
+          "y": 690,
+          "width": 520,
+          "height": 310,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "b2",
+          "x": 800,
+          "y": 690,
+          "width": 520,
+          "height": 310,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        },
+        {
+          "id": "b3",
+          "x": 1350,
+          "y": 690,
+          "width": 520,
+          "height": 310,
+          "fit": "cover",
+          "suggestedAnimation": "slide_up"
+        }
+      ],
+      "durationRange": [
+        6,
+        9
+      ]
+    },
+    {
+      "id": "mosaic_nine_quilt",
+      "kind": "layer_scene",
+      "intent": "Nine photographs quilted into an uneven three-by-three: columns and rows each carry their own measure, so no tile is the obvious centre.",
+      "bestFor": "a wordless nine-up montage where every memory is equal — the counterpoint to photo_network_hero's single hero",
+      "background": {
+        "type": "cream"
+      },
+      "photoSlots": [
+        {
+          "id": "r1c1",
+          "x": 60,
+          "y": 50,
+          "width": 620,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r1c2",
+          "x": 700,
+          "y": 50,
+          "width": 520,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r1c3",
+          "x": 1240,
+          "y": 50,
+          "width": 620,
+          "height": 300,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r2c1",
+          "x": 60,
+          "y": 370,
+          "width": 620,
+          "height": 380,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r2c2",
+          "x": 700,
+          "y": 370,
+          "width": 520,
+          "height": 380,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r2c3",
+          "x": 1240,
+          "y": 370,
+          "width": 620,
+          "height": 380,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r3c1",
+          "x": 60,
+          "y": 770,
+          "width": 620,
+          "height": 260,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r3c2",
+          "x": 700,
+          "y": 770,
+          "width": 520,
+          "height": 260,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        },
+        {
+          "id": "r3c3",
+          "x": 1240,
+          "y": 770,
+          "width": 620,
+          "height": 260,
+          "fit": "cover",
+          "suggestedAnimation": "fade"
+        }
+      ],
+      "durationRange": [
+        6,
+        9
       ]
     }
   ],

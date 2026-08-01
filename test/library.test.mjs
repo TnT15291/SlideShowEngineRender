@@ -110,8 +110,21 @@ test("seven active primitives are appended without reordering the original layou
     "stacked_horizon_trio",
     "offset_portrait_hero",
   ];
-  assert.deepEqual(library.layouts.map((layout) => layout.id), [...originalIds, ...activeIds]);
-  assert.equal(library.layouts.length, 32);
+  // 2026-08-01. Added where a recipe previously had no choice at all: photo counts 6 and 9
+  // each had exactly ONE primitive, and a look cannot vary the count (lookResolver I1 pins
+  // photoSlots.length because the photo budget is sized from it), so every recipe wanting a
+  // six-up or nine-up beat landed on the same arrangement. Both keep an existing photo count
+  // on purpose — a NEW count shifts the solver's budget, which is why offset_quad_pinwheel
+  // and filmstrip_band sit in forbiddenPrimitives.
+  const highCountAlternativeIds = [
+    "stepped_gallery_six",
+    "mosaic_nine_quilt",
+  ];
+  assert.deepEqual(
+    library.layouts.map((layout) => layout.id),
+    [...originalIds, ...activeIds, ...highCountAlternativeIds],
+  );
+  assert.equal(library.layouts.length, 34);
 });
 
 test("every layout declares the slot ids a recipe is allowed to fill", () => {

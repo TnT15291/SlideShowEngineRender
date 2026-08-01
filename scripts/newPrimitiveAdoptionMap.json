@@ -23,7 +23,7 @@
   "targets": {
     "reachableMaxShare": 12,
     "reachableOver12Count": 0,
-    "meaningfulPerRecipe": 3,
+    "meaningfulPerRecipe": 5,
     "excludedMeaningful": 1
   },
   "constrainedCohort": [
@@ -40,34 +40,77 @@
       "adoptions": [
         {
           "sceneId": "s08c_breather",
-          "source": { "look": "arch_trio_reel", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_reel",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 250 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 250
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_reel", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_reel",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "front": { "x": 840, "y": 410, "rotation": -4 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "front": {
+                  "x": 840,
+                  "y": 410,
+                  "rotation": -4
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "film_gallery", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "film_gallery",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
             "layoutOverrides": {
-              "background": { "type": "tint", "color": "#D8CFC0" },
-              "photoSlots": { "hero": { "x": 100, "y": 60, "width": 1240, "height": 900 } }
+              "background": {
+                "type": "tint",
+                "color": "#D8CFC0"
+              },
+              "photoSlots": {
+                "hero": {
+                  "x": 100,
+                  "y": 60,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
             }
           }
         }
@@ -78,32 +121,80 @@
       "adoptions": [
         {
           "sceneId": "s05_arch_gallery",
-          "source": { "look": "arch_gallery", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_gallery",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 250 }, "p3": { "y": 150 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 250
+                },
+                "p3": {
+                  "y": 150
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s11_side_by_side",
-          "source": { "look": "duo_arch", "layout": "photo_duo" },
+          "source": {
+            "look": "duo_arch",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "major": { "width": 940 }, "minor": { "x": 1240, "y": 230, "width": 470, "height": 590 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "width": 940
+                },
+                "minor": {
+                  "x": 1240,
+                  "y": 230,
+                  "width": 470,
+                  "height": 590
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_paper_collage",
-          "source": { "look": "polaroid_scatter_silk", "layout": "polaroid_scatter" },
+          "source": {
+            "look": "polaroid_scatter_silk",
+            "layout": "polaroid_scatter"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "mid": { "x": 650, "y": 330 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "mid": {
+                  "x": 650,
+                  "y": 330
+                }
+              }
+            }
           }
         }
       ]
@@ -113,32 +204,77 @@
       "adoptions": [
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "polaroid_scatter_plate", "layout": "polaroid_scatter" },
+          "source": {
+            "look": "polaroid_scatter_plate",
+            "layout": "polaroid_scatter"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "low": { "x": 1190, "y": 520 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "low": {
+                  "x": 1190,
+                  "y": 520
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1140, "y": 600, "width": 600, "height": 400 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1140,
+                  "y": 600,
+                  "width": 600,
+                  "height": 400
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 130, "y": 60, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 130,
+                  "y": 60,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         }
       ]
@@ -148,32 +284,75 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 160, "y": 60, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 160,
+                  "y": 60,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "front": { "x": 900, "y": 450, "rotation": -5 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "front": {
+                  "x": 900,
+                  "y": 450,
+                  "rotation": -5
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s03_dinner",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_stacked_horizon",
             "primitive": "stacked_horizon_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "band2": { "x": 540 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "band2": {
+                  "x": 540
+                }
+              }
+            }
           }
         }
       ]
@@ -183,32 +362,79 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 190, "y": 60, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 190,
+                  "y": 60,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 90, "width": 1080 }, "minor": { "x": 1230, "y": 240 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 90,
+                  "width": 1080
+                },
+                "minor": {
+                  "x": 1230,
+                  "y": 240
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s02_anticipation",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_stacked_horizon",
             "primitive": "stacked_horizon_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "band1": { "x": 160 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "band1": {
+                  "x": 160
+                }
+              }
+            }
           }
         }
       ]
@@ -218,32 +444,77 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 220, "y": 60, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 220,
+                  "y": 60,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1200, "y": 640, "width": 520, "height": 360 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1200,
+                  "y": 640,
+                  "width": 520,
+                  "height": 360
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70, "y": 70 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "top": {
+                  "x": 70,
+                  "y": 70
+                }
+              }
+            }
           }
         }
       ]
@@ -253,32 +524,78 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 100, "y": 80, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 100,
+                  "y": 80,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "back": { "x": 150, "width": 930 }, "front": { "x": 900, "y": 420 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "back": {
+                  "x": 150,
+                  "width": 930
+                },
+                "front": {
+                  "x": 900,
+                  "y": 420
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_feature_duo",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "low": { "x": 1190 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "low": {
+                  "x": 1190
+                }
+              }
+            }
           }
         }
       ]
@@ -288,32 +605,79 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 130, "y": 80, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 130,
+                  "y": 80,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_arch_trio",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "minor": { "x": 1190, "y": 260, "width": 520, "height": 560 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "minor": {
+                  "x": 1190,
+                  "y": 260,
+                  "width": 520,
+                  "height": 560
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_feature_duo",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 150 }, "p2": { "y": 250 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 150
+                },
+                "p2": {
+                  "y": 250
+                }
+              }
+            }
           }
         }
       ]
@@ -323,32 +687,77 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 170, "y": 80, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 170,
+                  "y": 80,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1160, "y": 620, "width": 560, "height": 400 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1160,
+                  "y": 620,
+                  "width": 560,
+                  "height": 400
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "mid": { "x": 630, "y": 290 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "mid": {
+                  "x": 630,
+                  "y": 290
+                }
+              }
+            }
           }
         }
       ]
@@ -358,42 +767,102 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 190, "y": 80, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 190,
+                  "y": 80,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "front": { "x": 860, "y": 460, "rotation": -2 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "front": {
+                  "x": 860,
+                  "y": 460,
+                  "rotation": -2
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "three_photo_row_plate", "layout": "three_photo_row" },
+          "source": {
+            "look": "three_photo_row_plate",
+            "layout": "three_photo_row"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 260 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 260
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s03_autumn",
-          "source": { "look": "paper_collage_season", "layout": "paper_collage" },
+          "source": {
+            "look": "paper_collage_season",
+            "layout": "paper_collage"
+          },
           "target": {
             "look": "p2_circle_autumn",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 170 }, "p2": { "y": 300 }, "p3": { "y": 200 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 170
+                },
+                "p2": {
+                  "y": 300
+                },
+                "p3": {
+                  "y": 200
+                }
+              }
+            }
           }
         }
       ]
@@ -403,33 +872,84 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 220, "y": 80, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 220,
+                  "y": 80,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 130, "width": 1020 }, "minor": { "x": 1200, "y": 220 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 130,
+                  "width": 1020
+                },
+                "minor": {
+                  "x": 1200,
+                  "y": 220
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 70 }, "p3": { "y": 120 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 70
+                },
+                "p3": {
+                  "y": 120
+                }
+              }
+            }
           }
         }
       ]
@@ -439,33 +959,80 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 100, "y": 100, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 100,
+                  "y": 100,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "magazine_page_turn_plate", "layout": "magazine_page_turn" },
+          "source": {
+            "look": "magazine_page_turn_plate",
+            "layout": "magazine_page_turn"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1220, "y": 610, "width": 500, "height": 380 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1220,
+                  "y": 610,
+                  "width": 500,
+                  "height": 380
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_feature_duo",
-          "source": { "look": "three_photo_row_plate", "layout": "three_photo_row" },
+          "source": {
+            "look": "three_photo_row_plate",
+            "layout": "three_photo_row"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "low": { "x": 1190, "y": 530 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "low": {
+                  "x": 1190,
+                  "y": 530
+                }
+              }
+            }
           }
         }
       ]
@@ -475,33 +1042,84 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 130, "y": 100, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 130,
+                  "y": 100,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "magazine_page_turn_plate", "layout": "magazine_page_turn" },
+          "source": {
+            "look": "magazine_page_turn_plate",
+            "layout": "magazine_page_turn"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "back": { "x": 210 }, "front": { "x": 920, "y": 400, "rotation": -4 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "back": {
+                  "x": 210
+                },
+                "front": {
+                  "x": 920,
+                  "y": 400,
+                  "rotation": -4
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70 }, "low": { "x": 1190 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "top": {
+                  "x": 70
+                },
+                "low": {
+                  "x": 1190
+                }
+              }
+            }
           }
         }
       ]
@@ -511,33 +1129,82 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 170, "y": 100, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 170,
+                  "y": 100,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "magazine_page_turn_plate", "layout": "magazine_page_turn" },
+          "source": {
+            "look": "magazine_page_turn_plate",
+            "layout": "magazine_page_turn"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 80, "width": 1070 }, "minor": { "x": 1220, "y": 270, "height": 550 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 80,
+                  "width": 1070
+                },
+                "minor": {
+                  "x": 1220,
+                  "y": 270,
+                  "height": 550
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 310 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 310
+                }
+              }
+            }
           }
         }
       ]
@@ -547,32 +1214,75 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 190, "y": 100, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 190,
+                  "y": 100,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "magazine_page_turn_plate", "layout": "magazine_page_turn" },
+          "source": {
+            "look": "magazine_page_turn_plate",
+            "layout": "magazine_page_turn"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1120, "y": 650, "width": 600, "height": 350 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1120,
+                  "y": 650,
+                  "width": 600,
+                  "height": 350
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 300 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 300
+                }
+              }
+            }
           }
         }
       ]
@@ -582,32 +1292,80 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 220, "y": 100, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 220,
+                  "y": 100,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_arch_trio",
-          "source": { "look": "magazine_page_turn_plate", "layout": "magazine_page_turn" },
+          "source": {
+            "look": "magazine_page_turn_plate",
+            "layout": "magazine_page_turn"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "front": { "x": 820, "y": 440, "rotation": -2 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "front": {
+                  "x": 820,
+                  "y": 440,
+                  "rotation": -2
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_feature_duo",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 60 }, "p2": { "y": 300 }, "p3": { "y": 120 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 60
+                },
+                "p2": {
+                  "y": 300
+                },
+                "p3": {
+                  "y": 120
+                }
+              }
+            }
           }
         }
       ]
@@ -617,33 +1375,88 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 100, "y": 120, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 100,
+                  "y": 120,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 140, "width": 1000 }, "minor": { "x": 1190, "y": 250, "width": 500 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 140,
+                  "width": 1000
+                },
+                "minor": {
+                  "x": 1190,
+                  "y": 250,
+                  "width": 500
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_tinted_duo",
-          "source": { "look": "three_photo_row_plate", "layout": "three_photo_row" },
+          "source": {
+            "look": "three_photo_row_plate",
+            "layout": "three_photo_row"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "mid": { "x": 650, "y": 270 }, "low": { "x": 1190, "y": 530 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "mid": {
+                  "x": 650,
+                  "y": 270
+                },
+                "low": {
+                  "x": 1190,
+                  "y": 530
+                }
+              }
+            }
           }
         }
       ]
@@ -653,33 +1466,84 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 130, "y": 120, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 130,
+                  "y": 120,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1240, "y": 630, "width": 480, "height": 370 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1240,
+                  "y": 630,
+                  "width": 480,
+                  "height": 370
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70, "y": 90 }, "low": { "x": 1190, "y": 490 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "top": {
+                  "x": 70,
+                  "y": 90
+                },
+                "low": {
+                  "x": 1190,
+                  "y": 490
+                }
+              }
+            }
           }
         }
       ]
@@ -689,32 +1553,84 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 160, "y": 120, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 160,
+                  "y": 120,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "back": { "x": 160, "y": 130 }, "front": { "x": 930, "y": 450, "rotation": -5 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "back": {
+                  "x": 160,
+                  "y": 130
+                },
+                "front": {
+                  "x": 930,
+                  "y": 450,
+                  "rotation": -5
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 130 }, "p2": { "y": 260 }, "p3": { "y": 60 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 130
+                },
+                "p2": {
+                  "y": 260
+                },
+                "p3": {
+                  "y": 60
+                }
+              }
+            }
           }
         }
       ]
@@ -724,32 +1640,84 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 190, "y": 120, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 190,
+                  "y": 120,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 100, "width": 1040 }, "minor": { "x": 1200, "y": 280, "height": 540 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 100,
+                  "width": 1040
+                },
+                "minor": {
+                  "x": 1200,
+                  "y": 280,
+                  "height": 540
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "polaroid_scatter_plate", "layout": "polaroid_scatter" },
+          "source": {
+            "look": "polaroid_scatter_plate",
+            "layout": "polaroid_scatter"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70, "y": 50 }, "mid": { "y": 290 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "top": {
+                  "x": 70,
+                  "y": 50
+                },
+                "mid": {
+                  "y": 290
+                }
+              }
+            }
           }
         }
       ]
@@ -759,32 +1727,75 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 220, "y": 120, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 220,
+                  "y": 120,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "photo_duo_plate", "layout": "photo_duo" },
+          "source": {
+            "look": "photo_duo_plate",
+            "layout": "photo_duo"
+          },
           "target": {
             "look": "p2_inset_card",
             "primitive": "inset_card_hero",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "inset": { "x": 1180, "y": 590, "width": 540, "height": 410 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "inset": {
+                  "x": 1180,
+                  "y": 590,
+                  "width": 540,
+                  "height": 410
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p2": { "y": 320 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p2": {
+                  "y": 320
+                }
+              }
+            }
           }
         }
       ]
@@ -794,32 +1805,80 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 100, "y": 140, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 100,
+                  "y": 140,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_overlap_duo",
             "primitive": "overlap_stack_duo",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "front": { "x": 870, "y": 390, "rotation": -4 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "front": {
+                  "x": 870,
+                  "y": 390,
+                  "rotation": -4
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "arch_trio_plate", "layout": "arch_trio" },
+          "source": {
+            "look": "arch_trio_plate",
+            "layout": "arch_trio"
+          },
           "target": {
             "look": "p2_circle_trio",
             "primitive": "circle_trio_stagger",
-            "preserveLookFields": ["photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "p1": { "y": 80 }, "p2": { "y": 320 }, "p3": { "y": 80 } } }
+            "preserveLookFields": [
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "p1": {
+                  "y": 80
+                },
+                "p2": {
+                  "y": 320
+                },
+                "p3": {
+                  "y": 80
+                }
+              }
+            }
           }
         }
       ]
@@ -829,33 +1888,88 @@
       "adoptions": [
         {
           "sceneId": "s83_gallery_matte",
-          "source": { "look": "gallery_matte_plate", "layout": "gallery_matte_hero" },
+          "source": {
+            "look": "gallery_matte_plate",
+            "layout": "gallery_matte_hero"
+          },
           "target": {
             "look": "p2_offset_portrait",
             "primitive": "offset_portrait_hero",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "hero": { "x": 130, "y": 140, "width": 1240, "height": 900 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "hero": {
+                  "x": 130,
+                  "y": 140,
+                  "width": 1240,
+                  "height": 900
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s84_photo_duo",
-          "source": { "look": "duo_tinted_spread_plate", "layout": "duo_tinted_spread" },
+          "source": {
+            "look": "duo_tinted_spread_plate",
+            "layout": "duo_tinted_spread"
+          },
           "target": {
             "look": "p2_golden_pair",
             "primitive": "golden_column_pair",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "accepts": ["orientation"],
-            "layoutOverrides": { "photoSlots": { "major": { "x": 120, "width": 1030 }, "minor": { "x": 1210, "y": 230, "width": 480 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "accepts": [
+              "orientation"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "major": {
+                  "x": 120,
+                  "width": 1030
+                },
+                "minor": {
+                  "x": 1210,
+                  "y": 230,
+                  "width": 480
+                }
+              }
+            }
           }
         },
         {
           "sceneId": "s85_arch_trio",
-          "source": { "look": "feature_plus_duo_plate", "layout": "feature_plus_duo" },
+          "source": {
+            "look": "feature_plus_duo_plate",
+            "layout": "feature_plus_duo"
+          },
           "target": {
             "look": "p2_diagonal_trio",
             "primitive": "diagonal_staircase_trio",
-            "preserveLookFields": ["frame", "photoTreatment", "motion"],
-            "layoutOverrides": { "photoSlots": { "top": { "x": 70, "y": 50 }, "mid": { "x": 630, "y": 290 } } }
+            "preserveLookFields": [
+              "frame",
+              "photoTreatment",
+              "motion"
+            ],
+            "layoutOverrides": {
+              "photoSlots": {
+                "top": {
+                  "x": 70,
+                  "y": 50
+                },
+                "mid": {
+                  "x": 630,
+                  "y": 290
+                }
+              }
+            }
           }
         }
       ]

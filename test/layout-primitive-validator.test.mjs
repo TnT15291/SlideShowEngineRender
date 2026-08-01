@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { minimumTextSize } from "../scripts/lib/rules/thresholds.mjs";
 import { validateLayouts } from "../scripts/validateLayoutPrimitive.mjs";
 
 const root = process.cwd();
@@ -46,7 +47,7 @@ test("G1-G8 findings use the intended error and warning severities", () => {
   assert.equal(hasGate(reportFor({ photo: { width: 55, height: 55 } }), "errors", "G3"), true);
   assert.equal(hasGate(reportFor({ text: { x: 5 } }), "warnings", "G4"), true);
 
-  const typeScale = reportFor({ text: { sizePx: 67 } });
+  const typeScale = reportFor({ text: { sizePx: 57 } });
   assert.equal(hasGate(typeScale, "warnings", "G5"), true);
   assert.equal(typeScale.verdict, "pass", "G5 warning made the layout fail");
 
@@ -58,6 +59,14 @@ test("G1-G8 findings use the intended error and warning severities", () => {
     text: { x: 10, y: 70 },
   }), "errors", "G7"), true);
   assert.equal(hasGate(reportFor({ photo: { frame: "missing" } }), "errors", "G8"), true);
+});
+
+test("G5 uses semantic text roles instead of treating every non-body slot as a headline", () => {
+  assert.equal(minimumTextSize({ role: "heading", fontRole: "heading" }), 58);
+  assert.equal(minimumTextSize({ role: "body", fontRole: "body" }), 32);
+  assert.equal(minimumTextSize({ role: "caption", fontRole: "body" }), 26);
+  assert.equal(minimumTextSize({ role: "subheading", fontRole: "heading" }), 26);
+  assert.equal(minimumTextSize({ role: "names", fontRole: "script_accent" }), 96);
 });
 
 test("layout primitive CLI loads the library and a single-layout candidate", () => {

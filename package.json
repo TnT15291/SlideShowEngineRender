@@ -22,6 +22,7 @@
     "lite": "node scripts/runProject.mjs --tier lite",
     "premium": "node scripts/runProject.mjs --tier premium",
     "preview:tier1": "node scripts/generateTier1Previews.mjs",
+    "thumbnails:recipes": "node scripts/generateRecipeThumbnails.mjs",
     "qa:contact": "node scripts/generateContactSheet.mjs",
     "social": "node scripts/generateSocialOutputs.mjs",
     "test:visual": "node scripts/generateRegressionGallery.mjs",

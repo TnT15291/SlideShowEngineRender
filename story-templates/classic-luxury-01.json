@@ -14,23 +14,44 @@
   },
   "looks": {
     "arch_trio_plate": {
-      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "intent": "three equal arches on a strict centre line, evenly spaced and formally squared",
       "layout": "arch_trio",
       "frame": "gold_mount",
       "photoTreatment": {
         "saturation": 0.88,
         "contrast": 1.08
+      },
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 150, "y": 110, "width": 480, "height": 860 },
+          "centre": { "x": 720, "y": 110, "width": 480, "height": 860 },
+          "right": { "x": 1290, "y": 110, "width": 480, "height": 860 }
+        }
       }
     },
     "hero_title_card_mount": {
-      "intent": "the hero title card, wearing the recipe's gold_mount frame",
+      "intent": "three tall gold-mounted strips dropped low and set on a wide even rhythm",
       "layout": "hero_title_card",
-      "frame": "gold_mount"
+      "frame": "gold_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "strip_1": { "x": 200, "y": 330, "width": 460, "height": 620 },
+          "strip_2": { "x": 730, "y": 330, "width": 460, "height": 620 },
+          "strip_3": { "x": 1260, "y": 330, "width": 460, "height": 620 }
+        }
+      }
     },
     "three_photo_row_mount": {
       "intent": "the three-photo row, wearing the recipe's gold_mount frame",
       "layout": "three_photo_row",
-      "frame": "gold_mount"
+      "frame": "gold_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 150, "y": 260, "width": 480, "height": 590 },
+          "centre": { "x": 720, "y": 190, "width": 480, "height": 680 },
+          "right": { "x": 1290, "y": 250, "width": 480, "height": 600 }
+        }
+      }
     },
     "closing_names_mount": {
       "intent": "the closing card, set in this recipe's own type scale",

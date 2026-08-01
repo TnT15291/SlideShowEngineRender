@@ -1,6 +1,6 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-07-28**
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-08-01**
 > (khảo sát trend 2026 tiếp tục — 3 field color grade mới: `halation`/`duotone`/`vhs`, xem
 > [SLIDESHOW_RESEARCH.md](SLIDESHOW_RESEARCH.md) research pass cùng ngày).
 > (`runProject.mjs` là orchestrator duy nhất cho cả ba tier; Premium có hai cổng quyết định
@@ -47,7 +47,7 @@ và **hiện trạng code**. Số node dưới đây trỏ tới node trong tài
 | **Render engine** | ✅ Core ổn định | 36 effect FFmpeg, 59 transition gồm `none`, 32 template Remotion/GPU, 6 template Blender/3D, color grade (+`flicker`/`halation`/`duotone`/`vhs`, LUT bundle), overlay + light leak + film damage, audio graph, easing. Xem [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |
 | **Project isolation** | ✅ Xong + có test | Mỗi video sống trong `projects/<id>/` (ảnh/nhạc/analysis/timeline/logs/output riêng). `analysis/job-manifest.json` ghi phase state; `--resume` chỉ tái dùng phase còn tươi. Xem [PROJECTS.md](PROJECTS.md) |
 | **Orchestrator** | ✅ **Đã hợp nhất — chỉ còn 1** | `scripts/runProject.mjs --tier template\|lite\|premium`. Ba tier dùng CHUNG isolation/manifest/resume, chỉ khác chuỗi node dựng story + timeline |
-| **Tier template (Rẻ)** | ✅ Recipe-driven, 22 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. 2026-07-24: cả 22 recipe được nâng cấp thêm cảnh + hiệu ứng hiện đại trước đó chưa dùng (`tilt_shift`/`dream_glow`/`prism_split`/`spotlight_focus`/`mirror_split`, 6 mask reveal petal/ink/watercolor/torn_paper/stained_glass/geometric_teal_wipe, overlay film_burn/vintage_projector/light_sweep/floral_frame, LUT `moody_earth_01`) — lint 22/22 sạch, test 262/262 xanh |
+| **Tier template (Rẻ)** | ✅ Recipe-driven, 24 recipe verified | `applyStoryTemplate.mjs` đọc geometry từ `layouts/library.json` — **thêm template = 1 file JSON, 0 code**. Cả 24 recipe dùng chung quality gate; các recipe đã được nâng cấp thêm cảnh + hiệu ứng hiện đại (`tilt_shift`/`dream_glow`/`prism_split`/`spotlight_focus`/`mirror_split`, 6 mask reveal petal/ink/watercolor/torn_paper/stained_glass/geometric_teal_wipe, overlay film_burn/vintage_projector/light_sweep/floral_frame, LUT `moody_earth_01`) và đều qua lint/test hiện tại |
 | **Tier Template (Rẻ)** | ✅ Chạy end-to-end, **0 call AI** | Recipe + engine đầy đủ (layer_scene/LUT/mask/frame). `npm run template` |
 | **Tier Lite** | ✅ Chạy end-to-end | Rule-based + AI viết lời. `npm run lite -- --project <p>`. Pacing **bám nhạc** (`retimeSlidesToMusic`, chung lib với template) khi phân tích đủ phrase/downbeat, không thì chia đều; bookend chọn theo `openingScore`/`closingScore`, thân phim tránh kề nhau cùng orient+nhóm-người (lookahead có giới hạn) |
 | **Tier Premium** | 🟡 Chạy đủ node, chờ key thật | Node 2 vision · 3/5+6/7 AI Director · 4 chọn story · **4b chọn highlight/full song** · 8+9 validate→retry→fallback Lite · 10+11 QA loop · 12 deliver. Chạy end-to-end bằng STUB; còn smoke test với key thật + điều phối production |
@@ -766,9 +766,13 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
   minh cơ chế**: FNV-1a thường bit thấp nhất chỉ là parity XOR của chuỗi input (nhân hằng số lẻ giữ
   nguyên bit đó), và `% 2` (trường hợp phổ biến nhất: mảng 2 lựa chọn) đọc đúng cái bit yếu đó — hai
   cặp đôi khác nhau có thể trùng lựa chọn ở TẤT CẢ field cùng lúc (đã quan sát thật). Sửa bằng
-  finalizer kiểu murmur3; test khoá đúng cặp seed đã gây trùng. Đã rollout cả 22 recipe (không chỉ
-  proof-of-concept modern-teal-01), mỗi recipe viết theo đúng giọng riêng. Verify: lint 22/22,
-  test:unit 268/268, quét cả 22 recipe qua `applyStoryTemplate` + engine dry-run thật — sạch hết.
+  finalizer kiểu murmur3; test khoá đúng cặp seed đã gây trùng. Đã rollout cả 24 recipe (không chỉ
+  proof-of-concept modern-teal-01), mỗi recipe viết theo đúng giọng riêng. Verify: lint 24/24 và
+  quét cả 24 recipe qua `applyStoryTemplate` + engine dry-run thật — sạch hết.
+- ✅ **Recipe Picker có thumbnail đại diện thật (2026-08-01).** 24 ảnh trong
+  `apps/web/public/recipe-previews/` được dựng từ chính recipe + layout + render engine; picker tự
+  fallback về swatch màu nếu ảnh thiếu/lỗi. Chạy lại bằng `npm run thumbnails:recipes`; có thể giới
+  hạn bằng `node scripts/generateRecipeThumbnails.mjs --recipes <id-1,id-2>`.
 
 ## 4c. Backlog UI/UX web (mở sau đợt rà soát 2026-07-28)
 

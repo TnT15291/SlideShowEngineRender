@@ -651,5 +651,7 @@ try {
     customerImpact: currentPhase === "render" ? "Video was not completed." : `Pipeline stopped during ${currentPhase}.`,
   });
   console.error(`\n[runProject] FAILED in ${currentPhase}: ${error.message}`);
-  process.exit(error.exitCode || 1);
+  // Let incident notification/network handles finish closing. Forcing process.exit()
+  // here can make Node 24/libuv send on an already-closing async handle on Windows.
+  process.exitCode = error.exitCode || 1;
 }

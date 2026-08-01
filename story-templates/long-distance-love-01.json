@@ -14,14 +14,24 @@
   },
   "looks": {
     "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "intent": "the pair set wide and level, two places given exactly the same weight",
       "layout": "photo_duo",
-      "frame": "postmark_rule"
+      "frame": "postmark_rule",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 120, "y": 140, "width": 740, "height": 820 },
+          "right": { "x": 1060, "y": 140, "width": 740, "height": 820 }
+        }
+      }
     },
     "journey_story_plate": {
-      "intent": "readable journey chapter with a consistent modern type scale",
+      "intent": "the journey opened out to its widest, the second frame hung low and far off to one side",
       "layout": "journey_duo",
       "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 600, "y": 70, "width": 1040, "height": 600 },
+          "accent": { "x": 1380, "y": 500, "width": 420, "height": 540 }
+        },
         "textSlots": {
           "heading": {
             "sizePx": 76
@@ -36,6 +46,11 @@
       "intent": "restrained chapter title using the recipe heading scale",
       "layout": "polaroid_scatter",
       "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 70, "y": 200, "width": 530, "height": 530, "rotation": -2 },
+          "p2": { "x": 680, "y": 130, "width": 530, "height": 530, "rotation": 3 },
+          "p3": { "x": 1290, "y": 200, "width": 530, "height": 530, "rotation": -3 }
+        },
         "textSlots": {
           "heading": {
             "sizePx": 76
@@ -55,9 +70,13 @@
       }
     },
     "two_cities_plate": {
-      "intent": "balanced two-city statement using the recipe heading scale",
+      "intent": "two cities held apart at equal size, a deliberate gap of page between them",
       "layout": "duo_tinted_spread",
       "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 70, "y": 290, "width": 780, "height": 540 },
+          "right": { "x": 1070, "y": 290, "width": 780, "height": 540 }
+        },
         "textSlots": {
           "heading": {
             "sizePx": 72
@@ -448,8 +467,8 @@
       ],
       "text": {
         "heading": [
-          "Across the Miles",
-          "Closer Than the Distance"
+          "Vượt muôn dặm xa",
+          "Gần nhau hơn mọi khoảng cách"
         ]
       }
     },

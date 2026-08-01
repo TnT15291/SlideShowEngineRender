@@ -5,7 +5,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { validate } from "../scripts/lib/checkSchema.mjs";
-import { inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
+import { hasEnglishCopy, hasMojibake, inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
 import { shouldWriteRecipeCopy } from "../scripts/lib/recipeCopyPolicy.mjs";
 import { normalizeWebJobRequest } from "../scripts/lib/webJobRequest.mjs";
 
@@ -45,6 +45,20 @@ test("caption language QA detects clear mismatches without flagging names", () =
   assert.equal(inspectCaptionLanguage(["Những lời chúc từ người thân yêu", "Our wedding day and our love forever"], "vi").flagged, 1);
   assert.equal(inspectCaptionLanguage(["Những lời chúc từ những người thân yêu nhất", "WELCOME TO THE PARTY", "FIRST DANCE"], "vi").flagged, 0);
   assert.equal(inspectCaptionLanguage(["An & Bình"], "en").flagged, 0);
+});
+
+test("recipe copy audit catches short English cards and mixed-language lines", () => {
+  assert.equal(hasEnglishCopy("WELCOME TO THE PARTY"), true);
+  assert.equal(hasEnglishCopy("FOREVER"), true);
+  assert.equal(hasEnglishCopy("ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."), true);
+  assert.equal(hasEnglishCopy("Hạnh phúc không cần to tát."), false);
+  assert.equal(hasEnglishCopy("Anh & Em"), false);
+});
+
+test("caption integrity distinguishes Vietnamese Ã from UTF-8 mojibake", () => {
+  assert.equal(hasMojibake("BÊN NHAU · MÃI MÃI"), false);
+  assert.equal(hasMojibake("BÃŠN NHAU Â· MÃƒI MÃƒI"), true);
+  assert.equal(hasMojibake("NgÃ y cÆ°á»›i cá»§a chÃºng mÃ¬nh"), true);
 });
 
 test("qaProxy emits caption_language for mismatched viewer text", (t) => {

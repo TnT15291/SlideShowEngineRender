@@ -21,14 +21,28 @@
       }
     },
     "feature_trio": {
-      "intent": "one hero with two stacked beside it — what this beat's id always claimed",
+      "intent": "one wide feature with two stills stacked tight against its right edge",
       "layout": "feature_plus_duo",
-      "frame": "reel_hairline"
+      "frame": "reel_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 80, "y": 150, "width": 1120, "height": 800 },
+          "top": { "x": 1240, "y": 150, "width": 560, "height": 390 },
+          "bottom": { "x": 1240, "y": 580, "width": 560, "height": 370 }
+        }
+      }
     },
     "collage_cluster_text_reel": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's reel_hairline frame",
+      "intent": "the cluster reversed — the tall frame runs the full left edge like a strip of film, the two stills stacked beside it",
       "layout": "collage_cluster_text",
-      "frame": "reel_hairline"
+      "frame": "reel_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 60, "y": 90, "width": 520, "height": 900 },
+          "tl": { "x": 640, "y": 90, "width": 540, "height": 430 },
+          "bl": { "x": 640, "y": 560, "width": 540, "height": 430 }
+        }
+      }
     },
     "paper_collage_reel": {
       "intent": "the layered paper collage, wearing the recipe's reel_hairline frame",
@@ -55,14 +69,89 @@
       }
     },
     "two_photo_story_reel": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's reel_hairline frame",
+      "intent": "the story pair cut wide and low, the way a 35mm frame sits — a tall figure at the left edge against a long landscape",
       "layout": "two_photo_story",
-      "frame": "reel_hairline"
+      "frame": "reel_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 80, "y": 90, "width": 520, "height": 700 },
+          "wide": { "x": 660, "y": 210, "width": 1180, "height": 580 }
+        }
+      }
     },
     "journey_duo_reel": {
-      "intent": "the journey pair, wearing the recipe's reel_hairline frame",
+      "intent": "the journey cut wide and early, the upright frame dropped in late at the far right like a cutaway",
       "layout": "journey_duo",
-      "frame": "reel_hairline"
+      "frame": "reel_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 560, "y": 80, "width": 1080, "height": 580 },
+          "accent": { "x": 1400, "y": 470, "width": 400, "height": 560 }
+        }
+      }
+    },
+    "photo_network_hero_reel": {
+      "intent": "the photo network, wearing the recipe's reel_hairline frame",
+      "layout": "photo_network_hero",
+      "frame": "reel_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": {
+            "x": 600,
+            "y": 250,
+            "width": 720,
+            "height": 580
+          },
+          "top_left": {
+            "x": 80,
+            "y": 40,
+            "width": 480,
+            "height": 220
+          },
+          "top": {
+            "x": 600,
+            "y": 60,
+            "width": 720,
+            "height": 160
+          },
+          "top_right": {
+            "x": 1360,
+            "y": 40,
+            "width": 480,
+            "height": 220
+          },
+          "left": {
+            "x": 120,
+            "y": 290,
+            "width": 380,
+            "height": 500
+          },
+          "right": {
+            "x": 1420,
+            "y": 290,
+            "width": 380,
+            "height": 500
+          },
+          "bottom_left": {
+            "x": 80,
+            "y": 820,
+            "width": 480,
+            "height": 220
+          },
+          "bottom": {
+            "x": 600,
+            "y": 880,
+            "width": 720,
+            "height": 150
+          },
+          "bottom_right": {
+            "x": 1360,
+            "y": 820,
+            "width": 480,
+            "height": 220
+          }
+        }
+      }
     },
     "photo_duo_reel": {
       "intent": "the bare photo pair, wearing the recipe's reel_hairline frame",
@@ -600,6 +689,60 @@
         "look": "photo_duo_reel"
       },
       "look": "journey_duo_reel"
+    },
+    {
+      "id": "s06c_photo_network",
+      "effect": "layer_scene",
+      "durationRole": "montage",
+      "transitionRole": "default",
+      "photoSlots": [
+        {
+          "slot": "hero",
+          "orient": "landscape",
+          "quality": "best"
+        },
+        {
+          "slot": "top_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "top_right",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "left",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "right",
+          "orient": "portrait",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_left",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom",
+          "orient": "landscape",
+          "quality": "good"
+        },
+        {
+          "slot": "bottom_right",
+          "orient": "landscape",
+          "quality": "good"
+        }
+      ],
+      "look": "photo_network_hero_reel"
     },
     {
       "id": "s07_montage",

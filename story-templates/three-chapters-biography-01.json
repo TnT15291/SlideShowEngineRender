@@ -24,14 +24,24 @@
       "frame": "chapter_plate"
     },
     "welcome_title_page_chapter": {
-      "intent": "the welcome title page, wearing the recipe's chapter_plate frame",
+      "intent": "the opening portrait run nearly the full height of the page, a frontispiece to the chapter",
       "layout": "welcome_title_page",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 60, "y": 60, "width": 780, "height": 960 }
+        }
+      }
     },
     "photo_left_text_right_chapter": {
-      "intent": "the photo-left spread, wearing the recipe's chapter_plate frame",
+      "intent": "the portrait run full-bleed down the left half, the chapter text held entirely off it",
       "layout": "photo_left_text_right",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 0, "y": 0, "width": 940, "height": 1080 }
+        }
+      }
     },
     "full_bleed_quote_chapter": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -50,24 +60,49 @@
       }
     },
     "text_left_photo_right_chapter": {
-      "intent": "the text-left spread, wearing the recipe's chapter_plate frame",
+      "intent": "the portrait dropped low and squared off, sitting like a plate bound into the chapter",
       "layout": "text_left_photo_right",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1020, "y": 170, "width": 780, "height": 900 }
+        }
+      }
     },
     "journey_duo_chapter": {
-      "intent": "the journey pair, wearing the recipe's chapter_plate frame",
+      "intent": "the journey squared and centred, the upright frame overlapping it cleanly at the corner",
       "layout": "journey_duo",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 670, "y": 120, "width": 960, "height": 560 },
+          "accent": { "x": 1320, "y": 440, "width": 410, "height": 570 }
+        }
+      }
     },
     "three_photo_row_chapter": {
       "intent": "the three-photo row, wearing the recipe's chapter_plate frame",
       "layout": "three_photo_row",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 100, "y": 320, "width": 500, "height": 520 },
+          "centre": { "x": 700, "y": 240, "width": 490, "height": 610 },
+          "right": { "x": 1260, "y": 160, "width": 560, "height": 700 }
+        }
+      }
     },
     "photo_network_hero_chapter": {
-      "intent": "the photo network, wearing the recipe's chapter_plate frame",
+      "intent": "the network with a long low centre and tall outer columns, weighted like a spread",
       "layout": "photo_network_hero",
-      "frame": "chapter_plate"
+      "frame": "chapter_plate",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 540, "y": 290, "width": 880, "height": 500 },
+          "left": { "x": 80, "y": 260, "width": 410, "height": 560 },
+          "right": { "x": 1430, "y": 260, "width": 410, "height": 560 }
+        }
+      }
     },
     "closing_names_chapter": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -392,7 +427,7 @@
         "variants": [
           {
             "text": {
-              "heading": "Những năm trước đó",
+              "heading": "Năm tháng của cô",
               "body": "Trước khi gặp {{groom}}, {{bride}} đã có một hành trình rất riêng của mình."
             }
           },
@@ -444,7 +479,7 @@
         "variants": [
           {
             "text": {
-              "heading": "Những năm trước đó",
+              "heading": "Năm tháng của anh",
               "body": "Trước khi gặp {{bride}}, {{groom}} cũng đã đi qua một chặng đường của riêng mình."
             }
           },
@@ -531,8 +566,8 @@
         }
       ],
       "captionPattern": [
-        "OUR STORY",
-        "OUR JOURNEY"
+        "CHUYỆN CỦA MÌNH",
+        "HÀNH TRÌNH CỦA MÌNH"
       ],
       "params": {
         "background": "#4A4139"

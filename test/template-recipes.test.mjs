@@ -6,8 +6,10 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { buildPhotoAssignmentRequests } from "../scripts/lib/templatePhotoRequests.mjs";
 import { resolveTemplate, visualSignature } from "../scripts/lib/lookResolver.mjs";
-import { inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
+import { perceptualSignature } from "../scripts/lib/geometrySignature.mjs";
+import { hasEnglishCopy, inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
 import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
+import { minimumTextSize } from "../scripts/lib/rules/thresholds.mjs";
 
 const root = process.cwd();
 const library = JSON.parse(fs.readFileSync(path.join(root, "layouts", "library.json"), "utf8"));
@@ -113,8 +115,9 @@ const compositionsOf = (recipe) => {
     if (alternative?.look) delete merged.layout;
     else if (alternative?.layout) delete merged.look;
     const [only] = resolveTemplate({ ...recipe, scenes: [merged] }, { library }).scenes;
-    const signature = only && visualSignature(only);
-    if (signature) seen.add(signature);
+    if (only?.resolvedLayout) {
+      seen.add(perceptualSignature(only, recipe, library, library.meta.canvas));
+    }
   };
   for (const scene of recipe.scenes || []) {
     if (scene.effect !== "layer_scene") continue;
@@ -131,27 +134,152 @@ const compositionsOf = (recipe) => {
 // shared layout library is FOR — but a couple choosing between them must not be shown the
 // same film twice, so each recipe dresses those primitives in its own frame language, type
 // scale and grade (its `layoutPresets` entry plus its `looks`). The bar: any two recipes
-// differ in at least two thirds of their compositions.
+// differ in at least two thirds of what a viewer can actually see.
 //
 // This is the regression that let the per-theme `*_plate` generator ship: it wrote one
 // frame per libraryTheme, so all nine white_weddings recipes wore byte-identical looks and
 // the nearest pair overlapped 75%. Nothing measured it, because every existing check reads
 // ONE recipe at a time.
-test("no two recipes share more than a third of their compositions", () => {
+//
+// Scored on perceptualSignature, NOT visualSignature. The fix for that regression gave every
+// recipe its own layoutPresets frame, which perturbs the visualSignature hash — so all 300
+// pairs scored 0% and this guard quietly became incapable of failing, while thirteen recipes
+// still drew the same three-photo row behind thirteen different borders. Byte differences are
+// not picture differences; perceptualSignature buckets the dressing by what the eye resolves.
+const LOOKALIKE_BAR = 1 / 3;
+const LOOKALIKE_CEILING = 1 / 2;
+// Debt, not licence. A pair may leave this ledger; none may join it. The recorded value is
+// the overlap when it was logged — exceeding it is a regression even while listed.
+const KNOWN_LOOKALIKES = new Map();
+
+test("no two recipes share more than a third of what a viewer sees", () => {
   const sets = new Map(recipes.map((recipe) => [recipe.id, compositionsOf(recipe)]));
-  const offenders = [];
+  const overBar = new Map();
+  const overCeiling = [];
+
   for (let i = 0; i < recipes.length; i++) {
     for (let j = i + 1; j < recipes.length; j++) {
       const a = sets.get(recipes[i].id);
       const b = sets.get(recipes[j].id);
+      if (!a.size || !b.size) continue;
       const shared = [...a].filter((signature) => b.has(signature));
       const overlap = shared.length / Math.min(a.size, b.size);
-      if (overlap > 1 / 3) {
-        offenders.push(`${recipes[i].id} ~ ${recipes[j].id}: ${shared.length}/${Math.min(a.size, b.size)} (${(overlap * 100).toFixed(0)}%)`);
+      const key = [recipes[i].id, recipes[j].id].sort().join(" ~ ");
+      const detail = `${key}: ${shared.length}/${Math.min(a.size, b.size)} (${(overlap * 100).toFixed(1)}%)`;
+      if (overlap > LOOKALIKE_CEILING) overCeiling.push(detail);
+      if (overlap > LOOKALIKE_BAR) overBar.set(key, { overlap, detail });
+    }
+  }
+
+  // Nothing may cross the hard ceiling, ledger or not.
+  assert.deepEqual(overCeiling, [], `recipe pairs past the ${LOOKALIKE_CEILING * 100}% ceiling:\n  ${overCeiling.join("\n  ")}`);
+
+  const unlisted = [...overBar.entries()]
+    .filter(([key]) => !KNOWN_LOOKALIKES.has(key))
+    .map(([, value]) => value.detail);
+  assert.deepEqual(unlisted, [], `new recipe pairs that look like each other:\n  ${unlisted.join("\n  ")}`);
+
+  const worsened = [...overBar.entries()]
+    .filter(([key, value]) => KNOWN_LOOKALIKES.has(key) && value.overlap > KNOWN_LOOKALIKES.get(key) + 1e-9)
+    .map(([key, value]) => `${value.detail}, logged at ${(KNOWN_LOOKALIKES.get(key) * 100).toFixed(1)}%`);
+  assert.deepEqual(worsened, [], `known lookalike pairs got worse:\n  ${worsened.join("\n  ")}`);
+
+  // Keep the ledger honest: a pair that no longer breaches the bar must be struck off, so
+  // the list can only ever shrink.
+  const stale = [...KNOWN_LOOKALIKES.keys()].filter((key) => !overBar.has(key));
+  assert.deepEqual(stale, [], `these pairs no longer breach the bar; remove them from KNOWN_LOOKALIKES:\n  ${stale.join("\n  ")}`);
+});
+
+// A scene declares the SHAPE of photograph it wants (`photoSlots[].orient`) and a look
+// declares WHERE the photograph sits. Nothing joined the two: templatePhotoRequests reads
+// `orient` straight off the scene and never looks at the resolved slot, so moving a slot from
+// portrait to landscape leaves the request still asking for a portrait photograph, which then
+// gets cover-fitted into a landscape box and loses roughly half its height — the half with the
+// faces in it. validateLook checks the canvas (V4) and text occlusion (V5) but not this.
+//
+// The adoption map has an orientation contract, but it only covers adoptions declared there;
+// the hand-written three_photo_row batch bypassed it and introduced two of these.
+const SQUARE_TOLERANCE = 1.1;   // shared with adoptNewPrimitives' slotClass
+const shapeOf = (slot) => {
+  if (slot.height > slot.width * SQUARE_TOLERANCE) return "portrait";
+  if (slot.width > slot.height * SQUARE_TOLERANCE) return "landscape";
+  return "square";
+};
+// Debt, not licence: this list may shrink, never grow. It held four pre-existing misfits when
+// the guard was written; the per-recipe photo-geometry pass retired all four, because giving a
+// slot its own arrangement is also the moment to make it the shape its scene asked for.
+const KNOWN_ORIENTATION_MISFITS = new Set();
+
+// A scene addresses its layout by slot id. Name one the layout does not have and nothing
+// raises a word: templatePhotoRequests looks the id up and finds nothing, so the author's
+// `orient` and `quality: "best"` are dropped and the slot is filled as though unspecified;
+// layerSceneBuilder likewise renders only text keys that match a real text slot, so authored
+// copy for a key that does not exist never reaches the screen.
+//
+// Found 2026-08-01: six such declarations across four recipes, including a "title reprise"
+// beat whose only two text keys were both dead — it had been rendering with no words at all.
+test("every scene addresses slots its layout actually has", () => {
+  const offenders = [];
+  for (const recipe of recipes) {
+    for (const scene of resolved.get(recipe.id)) {
+      const layout = scene.resolvedLayout;
+      if (scene.effect !== "layer_scene" || !layout) continue;
+      const photoIds = new Set((layout.photoSlots || []).map((slot) => slot.id));
+      const textIds = new Set((layout.textSlots || []).map((slot) => slot.id));
+
+      for (const definition of scene.photoSlots || []) {
+        if (definition.slot && !photoIds.has(definition.slot)) {
+          offenders.push(
+            `${recipe.id}/${scene.id}: photo slot '${definition.slot}' does not exist on `
+            + `${scene.layout} (has ${[...photoIds].join(", ")}) — its orient/quality are ignored`,
+          );
+        }
+      }
+      for (const key of Object.keys(scene.text || {})) {
+        if (!textIds.has(key)) {
+          offenders.push(
+            `${recipe.id}/${scene.id}: text key '${key}' is not a slot on ${scene.layout} `
+            + `(has ${[...textIds].join(", ")}) — this copy never renders`,
+          );
+        }
       }
     }
   }
-  assert.deepEqual(offenders, [], `recipe pairs that look like each other:\n  ${offenders.join("\n  ")}`);
+  assert.deepEqual(offenders, [], `declarations addressing slots that do not exist:\n  ${offenders.join("\n  ")}`);
+});
+
+test("a slot's resolved shape matches the photograph its scene asks for", () => {
+  const offenders = [];
+  const seen = new Set();
+  for (const recipe of recipes) {
+    for (const scene of resolved.get(recipe.id)) {
+      const layout = scene.resolvedLayout;
+      if (scene.effect !== "layer_scene" || !layout) continue;
+      const backgroundSlotId = layout.background?.type === "photo_full_bleed"
+        ? layout.background.slot
+        : null;
+      for (const slot of layout.photoSlots || []) {
+        if (slot.id === backgroundSlotId) continue;
+        const asked = (scene.photoSlots || [])
+          .find((candidate) => candidate.slot === slot.id)?.orient;
+        if (!asked || asked === "any") continue;
+        const actual = shapeOf(slot);
+        const opposite = (asked === "portrait" && actual === "landscape")
+          || (asked === "landscape" && actual === "portrait");
+        if (!opposite) continue;
+        const key = `${recipe.id}/${scene.id}.${slot.id}`;
+        seen.add(key);
+        if (KNOWN_ORIENTATION_MISFITS.has(key)) continue;
+        offenders.push(`${key}: asks ${asked}, slot resolves to ${actual} (${slot.width}x${slot.height})`);
+      }
+    }
+  }
+  assert.deepEqual(offenders, [],
+    `photo requests that land on the wrong shape:\n  ${offenders.join("\n  ")}`);
+
+  const stale = [...KNOWN_ORIENTATION_MISFITS].filter((key) => !seen.has(key));
+  assert.deepEqual(stale, [],
+    `these no longer misfit; strike them from KNOWN_ORIENTATION_MISFITS:\n  ${stale.join("\n  ")}`);
 });
 
 test("scalable gallery tails do not collapse back to one shared look sequence", () => {
@@ -214,20 +342,42 @@ test("photo-rich recipe tails have distinct treatment sequences", () => {
   }
 });
 
-test("Across the Miles keeps one heading family and a readable type scale", () => {
-  const recipe = recipes.find((item) => item.id === "long-distance-love-01");
-  assert.equal(recipe.defaults.fonts.title, recipe.defaults.fonts.heading);
-
-  const scenes = resolved.get(recipe.id);
-  for (const scene of scenes.filter((item) => item.effect === "layer_scene" && item.text)) {
-    for (const slot of scene.resolvedLayout?.textSlots || []) {
-      if (!scene.text[slot.id]) continue;
-      const minimum = slot.fontRole === "body" ? 32 : 68;
-      assert.ok(
-        slot.sizePx >= minimum,
-        `${recipe.id}/${scene.id}/${slot.id} is ${slot.sizePx}px; expected at least ${minimum}px`,
-      );
+test("every recipe keeps authored copy at a readable, role-aware type scale", () => {
+  for (const recipe of recipes) {
+    for (const scene of resolved.get(recipe.id).filter((item) => item.effect === "layer_scene" && item.text)) {
+      for (const slot of scene.resolvedLayout?.textSlots || []) {
+        if (!scene.text[slot.id]) continue;
+        const minimum = minimumTextSize(slot);
+        assert.ok(
+          slot.sizePx >= minimum,
+          `${recipe.id}/${scene.id}/${slot.id} (${slot.role || slot.fontRole}) is ${slot.sizePx}px; expected at least ${minimum}px`,
+        );
+      }
     }
+  }
+});
+
+test("the multisong album offers copy variants for its long-form narrative cards", () => {
+  const recipe = recipes.find((item) => item.id === "classic-multisong-album-01");
+  for (const [sceneId, slots] of Object.entries({
+    s01_opening: ["quote"],
+    s05_three_photo_row: ["heading", "caption"],
+    s14_story_pair: ["body"],
+    s16_polaroid_memories: ["heading"],
+  })) {
+    const scene = recipe.scenes.find((item) => item.id === sceneId);
+    for (const slot of slots) {
+      assert.equal(scene.text[slot].length, 3, `${recipe.id}/${sceneId}/${slot} needs three variants`);
+      assert.equal(new Set(scene.text[slot]).size, 3, `${recipe.id}/${sceneId}/${slot} repeats a variant`);
+    }
+  }
+});
+
+test("an art-directed recipe thumbnail names a real renderable scene", () => {
+  for (const recipe of recipes.filter((item) => item.thumbnailScene)) {
+    const scene = recipe.scenes.find((item) => item.id === recipe.thumbnailScene);
+    assert.ok(scene, `${recipe.id}: thumbnail scene ${recipe.thumbnailScene} is missing`);
+    assert.equal(scene.effect, "layer_scene", `${recipe.id}: thumbnail scene must be engine-native`);
   }
 });
 
@@ -299,6 +449,8 @@ test("every recipe's authored copy is Vietnamese", () => {
         collect(source.captionPattern);
       }
     }
+    const englishCopy = copy.filter(hasEnglishCopy);
+    assert.deepEqual(englishCopy, [], `${recipe.id}: authored display copy contains English`);
     // The same detector QA runs on the finished film, so passing here means the film cannot
     // be flagged for the recipe's own words.
     const verdict = inspectCaptionLanguage(copy, "vi");

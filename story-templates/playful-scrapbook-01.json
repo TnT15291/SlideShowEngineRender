@@ -19,14 +19,28 @@
       "frame": "print_border"
     },
     "polaroid_scatter_print": {
-      "intent": "the scattered prints, wearing the recipe's print_border frame",
+      "intent": "the prints at their most thrown — three different sizes, the widest tilts on the page, nothing lined up with anything",
       "layout": "polaroid_scatter",
-      "frame": "print_border"
+      "frame": "print_border",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 130, "y": 140, "width": 540, "height": 540, "rotation": -7 },
+          "p2": { "x": 700, "y": 210, "width": 500, "height": 500, "rotation": 5 },
+          "p3": { "x": 1250, "y": 130, "width": 560, "height": 560, "rotation": -4 }
+        }
+      }
     },
     "collage_cluster_text_print": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's print_border frame",
+      "intent": "the cluster as three loose prints, each tipped a different way and none quite squared to the page",
       "layout": "collage_cluster_text",
-      "frame": "print_border"
+      "frame": "print_border",
+      "layoutOverrides": {
+        "photoSlots": {
+          "tl": { "x": 60, "y": 120, "width": 490, "height": 390, "rotation": -4 },
+          "bl": { "x": 70, "y": 600, "width": 490, "height": 390, "rotation": 3 },
+          "hero": { "x": 640, "y": 110, "width": 520, "height": 850, "rotation": -2 }
+        }
+      }
     },
     "paper_collage_print": {
       "intent": "the layered paper collage, wearing the recipe's print_border frame",
@@ -34,19 +48,36 @@
       "frame": "print_border"
     },
     "two_photo_story_print": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's print_border frame",
+      "intent": "the story pair tipped off-square in opposite directions, as if two prints were laid down by hand and left where they fell",
       "layout": "two_photo_story",
-      "frame": "print_border"
+      "frame": "print_border",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 120, "y": 140, "width": 500, "height": 600, "rotation": -3 },
+          "wide": { "x": 730, "y": 190, "width": 1020, "height": 560, "rotation": 2 }
+        }
+      }
     },
     "journey_duo_print": {
-      "intent": "the journey pair, wearing the recipe's print_border frame",
+      "intent": "the journey as two prints tipped against each other, neither one square to the page",
       "layout": "journey_duo",
-      "frame": "print_border"
+      "frame": "print_border",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 610, "y": 100, "width": 1000, "height": 560, "rotation": 2 },
+          "accent": { "x": 1360, "y": 460, "width": 390, "height": 550, "rotation": -3 }
+        }
+      }
     },
     "polaroid_feature_print": {
-      "intent": "the single featured print, wearing the recipe's print_border frame",
+      "intent": "the featured print tipped off-square and pushed high, as if pinned rather than mounted",
       "layout": "polaroid_feature",
-      "frame": "print_border"
+      "frame": "print_border",
+      "layoutOverrides": {
+        "photoSlots": {
+          "feature": { "x": 720, "y": 120, "width": 920, "height": 850, "rotation": -2 }
+        }
+      }
     },
     "full_bleed_quote_print": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",

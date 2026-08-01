@@ -14,14 +14,27 @@
   },
   "looks": {
     "polaroid_scatter_plate": {
-      "intent": "wordless polaroid scatter beat, wearing this recipe's own frame",
+      "intent": "the wordless scatter given more room than the others — larger prints, gentler tilt, no caption to sit clear of",
       "layout": "polaroid_scatter",
-      "frame": "vow_card"
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 110, "y": 180, "width": 560, "height": 560, "rotation": -4 },
+          "p2": { "x": 700, "y": 90, "width": 560, "height": 560, "rotation": 3 },
+          "p3": { "x": 1290, "y": 200, "width": 540, "height": 540, "rotation": -2 }
+        }
+      }
     },
     "duo_tinted_spread_vow": {
-      "intent": "the tinted two-photo spread, wearing the recipe's vow_card frame",
+      "intent": "the pair staggered, the first frame leading and the second answering a beat lower",
       "layout": "duo_tinted_spread",
-      "frame": "vow_card"
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 110, "y": 240, "width": 850, "height": 560 },
+          "right": { "x": 1000, "y": 340, "width": 790, "height": 520 }
+        }
+      }
     },
     "full_bleed_quote_vow": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -41,9 +54,17 @@
       }
     },
     "quad_grid_caption_vow": {
-      "intent": "the captioned quad grid, wearing the recipe's vow_card frame",
+      "intent": "the celebration grid opened out, the standing frame larger and the wide plate shortened",
       "layout": "quad_grid_caption",
-      "frame": "vow_card"
+      "frame": "vow_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 90, "y": 390, "width": 600, "height": 600 },
+          "top1": { "x": 730, "y": 110, "width": 380, "height": 540 },
+          "top2": { "x": 1150, "y": 90, "width": 500, "height": 580 },
+          "wide": { "x": 730, "y": 690, "width": 540, "height": 310 }
+        }
+      }
     },
     "closing_names_vow": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -286,8 +307,8 @@
       "durationRole": "calm",
       "transitionRole": "calm",
       "captionPattern": [
-        "A FILM ABOUT {{bride}} & {{groom}}",
-        "THE STORY OF {{bride}} & {{groom}}"
+        "THƯỚC PHIM VỀ {{bride}} & {{groom}}",
+        "CHUYỆN CỦA {{bride}} & {{groom}}"
       ],
       "photoSlots": [
         {
@@ -680,7 +701,7 @@
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Thank you for celebrating with us · {{date}}"
+        "date": "Cảm ơn đã cùng chung vui · {{date}}"
       },
       "look": "closing_names_vow"
     }

@@ -32,7 +32,7 @@ import { createTextMeasurer } from "./lib/textMeasure.mjs";
 import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { readPlaylistAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusic.mjs";
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
-import { inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
+import { hasMojibake, inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
 import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
   HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC, DEGENERATE_FACE_AXIS } from "./lib/rules/thresholds.mjs";
 
@@ -165,7 +165,7 @@ for (const [slideIndex, slide] of tl.slides.entries()) {
     const flags = [];
     const value = String(item.text || "").trim();
     if (/\{\{[^}]+\}\}/.test(value)) flags.push("unresolved_token");
-    if (/[ÃÄ]|áº|á»|Æ°|Ä‘/.test(value)) flags.push("mojibake");
+    if (hasMojibake(value)) flags.push("mojibake");
     if (vietnamese.test(value) && decorativeFont.test(item.font || "") && value.split(/\s+/).length > 3) flags.push("vietnamese_in_decorative_font");
     const normalized = value.toLowerCase().replace(/\s+/g, " ");
     const firstSeen = normalized ? seenCopy.get(normalized) : null;

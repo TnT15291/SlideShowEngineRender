@@ -14,24 +14,49 @@
   },
   "looks": {
     "welcome_title_page_envelope": {
-      "intent": "the welcome title page, wearing the recipe's envelope_edge frame",
+      "intent": "the opening portrait set narrow and high, leaving a wide margin for the address",
       "layout": "welcome_title_page",
-      "frame": "envelope_edge"
+      "frame": "envelope_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 150, "y": 130, "width": 640, "height": 820 }
+        }
+      }
     },
     "paper_collage_envelope": {
-      "intent": "the layered paper collage, wearing the recipe's envelope_edge frame",
+      "intent": "the collage at its loosest tilt, as if three letters had been spread across a table",
       "layout": "paper_collage",
-      "frame": "envelope_edge"
+      "frame": "envelope_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": { "x": 80, "y": 120, "width": 720, "height": 700, "rotation": -6 },
+          "centre": { "x": 630, "y": 100, "width": 610, "height": 730, "rotation": 3 },
+          "front": { "x": 1170, "y": 130, "width": 660, "height": 690, "rotation": -2 }
+        }
+      }
     },
     "two_photo_story_envelope": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's envelope_edge frame",
+      "intent": "the story pair laid like an enclosure — the landscape lifted to the top right, the figure sitting lower as if slipped in beneath it",
       "layout": "two_photo_story",
-      "frame": "envelope_edge"
+      "frame": "envelope_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 110, "y": 180, "width": 500, "height": 620 },
+          "wide": { "x": 690, "y": 90, "width": 1120, "height": 600 }
+        }
+      }
     },
     "polaroid_scatter_envelope": {
-      "intent": "the scattered prints, wearing the recipe's envelope_edge frame",
+      "intent": "the prints stepped down and back up across the page, as if pulled from an envelope one after another",
       "layout": "polaroid_scatter",
-      "frame": "envelope_edge"
+      "frame": "envelope_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 120, "y": 120, "width": 520, "height": 520, "rotation": -3 },
+          "p2": { "x": 690, "y": 190, "width": 520, "height": 520, "rotation": 2 },
+          "p3": { "x": 1260, "y": 100, "width": 520, "height": 520, "rotation": -4 }
+        }
+      }
     },
     "closing_names_envelope": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -276,7 +301,7 @@
         }
       ],
       "text": {
-        "eyebrow": "DEAR YOU,",
+        "eyebrow": "GỬI NGƯỜI THƯƠNG,",
         "names": "{{bride}} & {{groom}}",
         "date": "Một lá thư gửi đến ngày mai"
       },
@@ -341,8 +366,8 @@
         }
       ],
       "captionPattern": [
-        "CHAPTERS OF US",
-        "PAGES OF OUR STORY"
+        "NHỮNG CHƯƠNG CỦA MÌNH",
+        "NHỮNG TRANG CHUYỆN MÌNH"
       ],
       "repeatable": {
         "maxRepeats": 3,
@@ -435,8 +460,8 @@
       ],
       "text": {
         "heading": [
-          "P.S. · Và câu chuyện vẫn tiếp tục",
-          "P.S. · Chuyện của mình chưa bao giờ dừng lại"
+          "TÁI BÚT · Và câu chuyện vẫn tiếp tục",
+          "TÁI BÚT · Chuyện của mình chưa bao giờ dừng lại"
         ]
       },
       "look": "polaroid_scatter_envelope"
@@ -619,7 +644,7 @@
       "transitionRole": "final",
       "photoSlots": [],
       "text": {
-        "names": "Yours, always",
+        "names": "Mãi mãi bên nhau",
         "date": "{{bride}} & {{groom}} · {{date}}"
       },
       "look": "closing_names_envelope"

@@ -2,6 +2,7 @@
   "id": "white-weddings-editorial-01",
   "version": 1,
   "name": "White Weddings Editorial",
+  "thumbnailScene": "s04_special_day",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
   "layoutPresets": {
@@ -36,34 +37,73 @@
       }
     },
     "text_left_photo_right_card": {
-      "intent": "the text-left spread, wearing the recipe's editorial_card frame",
+      "intent": "the portrait pushed high and narrow toward the outer margin, leaving an editorial column of air",
       "layout": "text_left_photo_right",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1120, "y": 40, "width": 660, "height": 900 }
+        }
+      }
     },
     "three_photo_row_card": {
       "intent": "the three-photo row, wearing the recipe's editorial_card frame",
       "layout": "three_photo_row",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 100, "y": 270, "width": 500, "height": 590 },
+          "centre": { "x": 710, "y": 210, "width": 500, "height": 650 },
+          "right": { "x": 1320, "y": 270, "width": 500, "height": 590 }
+        }
+      }
     },
     "two_photo_story_card": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's editorial_card frame",
+      "intent": "the story pair at magazine proportions — a narrow full-height column beside a wide short plate, asymmetric on purpose",
       "layout": "two_photo_story",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 150, "y": 90, "width": 440, "height": 700 },
+          "wide": { "x": 680, "y": 250, "width": 1120, "height": 470 }
+        }
+      }
     },
     "collage_cluster_text_card": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's editorial_card frame",
+      "intent": "the cluster at book proportions — two small plates ranged down the left margin against one tall centre frame",
       "layout": "collage_cluster_text",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "tl": { "x": 90, "y": 160, "width": 460, "height": 370 },
+          "bl": { "x": 90, "y": 590, "width": 460, "height": 370 },
+          "hero": { "x": 610, "y": 110, "width": 550, "height": 850 }
+        }
+      }
     },
     "paper_collage_card": {
-      "intent": "the layered paper collage, wearing the recipe's editorial_card frame",
+      "intent": "the collage kept to a narrow tilt with the centre sheet clearly dominant",
       "layout": "paper_collage",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": { "x": 100, "y": 160, "width": 700, "height": 680, "rotation": -3 },
+          "centre": { "x": 630, "y": 110, "width": 600, "height": 720, "rotation": 2 },
+          "front": { "x": 1180, "y": 170, "width": 630, "height": 670, "rotation": -2 }
+        }
+      }
     },
     "polaroid_scatter_card": {
-      "intent": "the scattered prints, wearing the recipe's editorial_card frame",
+      "intent": "the prints barely tilted and set on a tight even rhythm — a scatter kept under editorial control",
       "layout": "polaroid_scatter",
-      "frame": "editorial_card"
+      "frame": "editorial_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 190, "y": 150, "width": 510, "height": 510, "rotation": -1 },
+          "p2": { "x": 705, "y": 210, "width": 510, "height": 510, "rotation": 2 },
+          "p3": { "x": 1220, "y": 150, "width": 510, "height": 510, "rotation": -2 }
+        }
+      }
     },
     "closing_names_card": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -338,7 +378,7 @@
         }
       ],
       "text": {
-        "eyebrow": "SAVE THE DATE",
+        "eyebrow": "HẸN NGÀY CHUNG ĐÔI",
         "date": {
           "value": "{{date}}",
           "sizePx": 110
@@ -360,7 +400,7 @@
         }
       ],
       "text": {
-        "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED"
+        "quote": "{{bride}} & {{groom}} · MÌNH SẮP VỀ CHUNG MỘT NHÀ"
       },
       "look": "full_bleed_quote_card"
     },
@@ -379,8 +419,8 @@
       "text": {
         "heading": {
           "value": [
-            "The Beginning",
-            "Where It Started"
+            "Khởi đầu",
+            "Nơi mình bắt đầu"
           ],
           "sizePx": 78
         },
@@ -395,7 +435,7 @@
           {
             "text": {
               "heading": {
-                "value": "The Big Day",
+                "value": "Ngày trọng đại",
                 "sizePx": 78
               },
               "body": "Niềm vui giản dị nhất là được ở cạnh nhau trong ngày đặc biệt này."
@@ -404,7 +444,7 @@
           {
             "text": {
               "heading": {
-                "value": "One Love",
+                "value": "Một tình yêu",
                 "sizePx": 78
               },
               "body": "Từ những khoảnh khắc nhỏ, mình đã có một câu chuyện thật dài."
@@ -461,8 +501,8 @@
       ],
       "text": {
         "heading": [
-          "Special Day",
-          "Our Special Day"
+          "Ngày đặc biệt",
+          "Ngày đặc biệt của mình"
         ],
         "caption": [
           "Những khoảnh khắc dịu dàng làm nên ngày đáng nhớ nhất.",
@@ -474,13 +514,13 @@
         "variants": [
           {
             "text": {
-              "heading": "Beautiful Moments",
+              "heading": "Khoảnh khắc đẹp",
               "caption": "Mỗi ánh nhìn, mỗi nụ cười đều trở thành một phần ký ức."
             }
           },
           {
             "text": {
-              "heading": "Getting Ready",
+              "heading": "Sẵn sàng",
               "caption": "Tất cả đã sẵn sàng cho ngày chúng mình về chung một nhà."
             }
           },
@@ -509,7 +549,7 @@
         }
       ],
       "text": {
-        "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."
+        "body": "MỘT TÌNH YÊU · MỘT ĐỜI BÊN NHAU — từ hôm nay và trong mọi ngày sau."
       },
       "look": "two_photo_story_card"
     },
@@ -538,8 +578,8 @@
       ],
       "text": {
         "heading": [
-          "Fall in Love",
-          "In Love"
+          "Phải lòng nhau",
+          "Yêu nhau"
         ],
         "body": [
           "Không cần lời hứa trăm năm, chỉ cần hôm nay ta cùng nắm tay nhau.",
@@ -594,7 +634,7 @@
         }
       ],
       "text": {
-        "heading": "Love Is in the Air"
+        "heading": "Yêu thương khắp nơi"
       },
       "look": "polaroid_scatter_card"
     },
@@ -644,8 +684,8 @@
         }
       ],
       "captionPattern": [
-        "OUR LOVE STORY",
-        "THE STORY OF US"
+        "CHUYỆN TÌNH CỦA MÌNH",
+        "CHUYỆN CỦA HAI TA"
       ]
     },
     {
@@ -661,8 +701,8 @@
         }
       ],
       "captionPattern": [
-        "TOGETHER · ALWAYS",
-        "SIDE BY SIDE · ALWAYS"
+        "BÊN NHAU · MÃI MÃI",
+        "SÁNH BƯỚC · MÃI MÃI"
       ]
     },
     {
@@ -678,7 +718,7 @@
           "quality": "best"
         }
       ],
-      "captionPattern": "THE STORY CONTINUES"
+      "captionPattern": "CHUYỆN MÌNH CÒN DÀI"
     },
     {
       "id": "s09_memories",
@@ -694,7 +734,7 @@
           "preferVariety": true
         }
       ],
-      "captionPattern": "MEMORIES · MOMENTS",
+      "captionPattern": "KỶ NIỆM · KHOẢNH KHẮC",
       "params": {
         "background": "#4A4139"
       }
@@ -722,7 +762,7 @@
         }
       ],
       "text": {
-        "heading": "Our Journey"
+        "heading": "Hành trình của mình"
       },
       "look": "paper_collage_card"
     },
@@ -733,8 +773,8 @@
       "durationRole": "normal",
       "transitionRole": "default",
       "captionPattern": [
-        "EVERY STEP LED HERE.",
-        "EVERY PATH LED US HERE."
+        "MỖI BƯỚC CHÂN ĐỀU DẪN ĐẾN ĐÂY.",
+        "MỌI CON ĐƯỜNG ĐỀU DẪN MÌNH ĐẾN ĐÂY."
       ],
       "photoSlots": [
         {
@@ -891,7 +931,7 @@
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Thank you for celebrating with us · {{date}}"
+        "date": "Cảm ơn đã cùng chung vui · {{date}}"
       },
       "look": "closing_names_card"
     }

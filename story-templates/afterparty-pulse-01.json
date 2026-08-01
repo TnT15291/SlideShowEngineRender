@@ -14,24 +14,56 @@
   },
   "looks": {
     "arch_trio_plate": {
-      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "intent": "the three arches knocked out of level, the middle one driven highest",
       "layout": "arch_trio",
-      "frame": "pulse_edge"
+      "frame": "pulse_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 80, "y": 150, "width": 540, "height": 820 },
+          "centre": { "x": 670, "y": 60, "width": 560, "height": 900 },
+          "right": { "x": 1280, "y": 190, "width": 540, "height": 780 }
+        }
+      }
     },
     "three_photo_row_pulse": {
       "intent": "the three-photo row, wearing the recipe's pulse_edge frame",
       "layout": "three_photo_row",
-      "frame": "pulse_edge"
+      "frame": "pulse_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 80, "y": 320, "width": 560, "height": 520 },
+          "centre": { "x": 700, "y": 190, "width": 500, "height": 660 },
+          "right": { "x": 1220, "y": 260, "width": 620, "height": 580 }
+        }
+      }
     },
     "duo_tinted_spread_pulse": {
-      "intent": "the tinted two-photo spread, wearing the recipe's pulse_edge frame",
+      "intent": "the pair knocked out of step — one frame higher and tighter, the other wider and dropped",
       "layout": "duo_tinted_spread",
-      "frame": "pulse_edge"
+      "frame": "pulse_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 90, "y": 250, "width": 760, "height": 580 },
+          "right": { "x": 910, "y": 330, "width": 920, "height": 560 }
+        }
+      }
     },
     "masonry_grid_wall_pulse": {
-      "intent": "the masonry wall, wearing the recipe's pulse_edge frame",
+      "intent": "the wall on a wider gutter, tiles slightly taller and pushed out to the page edges",
       "layout": "masonry_grid_wall",
-      "frame": "pulse_edge"
+      "frame": "pulse_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "g1": { "x": 90, "y": 80, "width": 600, "height": 310 },
+          "g2": { "x": 720, "y": 80, "width": 600, "height": 310 },
+          "g3": { "x": 1350, "y": 80, "width": 470, "height": 310 },
+          "g4": { "x": 90, "y": 420, "width": 600, "height": 310 },
+          "g5": { "x": 1350, "y": 420, "width": 470, "height": 310 },
+          "g6": { "x": 90, "y": 760, "width": 600, "height": 300 },
+          "g7": { "x": 720, "y": 760, "width": 600, "height": 300 },
+          "g8": { "x": 1350, "y": 760, "width": 470, "height": 300 }
+        }
+      }
     },
     "full_bleed_quote_pulse": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -305,8 +337,8 @@
         }
       ],
       "captionPattern": [
-        "WELCOME TO THE PARTY",
-        "LET THE NIGHT BEGIN"
+        "CHÀO MỪNG ĐẾN ĐÊM VUI",
+        "ĐÊM VUI BẮT ĐẦU"
       ]
     },
     {
@@ -333,8 +365,8 @@
       ],
       "text": {
         "heading": [
-          "CHEERS!",
-          "TO US"
+          "NÂNG LY!",
+          "CHÚC MỪNG CHÚNG MÌNH"
         ],
         "caption": [
           "Nâng ly, chúc mừng cô dâu chú rể giữa những người thân yêu nhất.",
@@ -379,8 +411,8 @@
       ],
       "text": {
         "heading": [
-          "TO LOVE & LAUGHTER",
-          "HERE'S TO US"
+          "CHO TÌNH YÊU & TIẾNG CƯỜI",
+          "NÂNG LY CHO CHÚNG MÌNH"
         ]
       },
       "look": "duo_tinted_spread_pulse"
@@ -422,8 +454,8 @@
         }
       ],
       "captionPattern": [
-        "FIRST DANCE",
-        "JUST THE TWO OF US"
+        "ĐIỆU NHẢY ĐẦU TIÊN",
+        "CHỈ HAI CHÚNG MÌNH"
       ],
       "repeatable": {
         "maxRepeats": 3,
@@ -473,8 +505,8 @@
       "durationRole": "build",
       "transitionRole": "default",
       "captionPattern": [
-        "DANCEFLOOR ON FIRE",
-        "TURN IT UP"
+        "SÀN NHẢY BÙNG CHÁY",
+        "NHẠC LÊN NÀO"
       ],
       "repeatable": {
         "maxRepeats": 2,
@@ -499,8 +531,8 @@
       "durationRole": "build",
       "transitionRole": "default",
       "captionPattern": [
-        "ONE NIGHT, ALL IN",
-        "GO ALL OUT TONIGHT"
+        "MỘT ĐÊM CHƠI HẾT MÌNH",
+        "ĐÊM NAY CỨ HẾT MÌNH"
       ],
       "repeatable": {
         "maxRepeats": 2,
@@ -567,8 +599,8 @@
       ],
       "text": {
         "tile_text": [
-          "DANCEFLOOR MEMORIES",
-          "THE NIGHT IN PICTURES"
+          "KỶ NIỆM TRÊN SÀN NHẢY",
+          "ĐÊM VUI QUA TỪNG KHUNG HÌNH"
         ]
       },
       "look": "masonry_grid_wall_pulse"
@@ -588,8 +620,8 @@
       ],
       "text": {
         "quote": [
-          "One last song · One endless story",
-          "The music fades, the story doesn't"
+          "Bài hát cuối · Câu chuyện còn mãi",
+          "Nhạc dần khép lại · Chuyện mình vẫn tiếp"
         ]
       },
       "look": "full_bleed_quote_pulse"
@@ -737,7 +769,7 @@
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Best night ever · {{date}}"
+        "date": "Đêm vui nhất đời · {{date}}"
       },
       "look": "closing_names_pulse"
     }

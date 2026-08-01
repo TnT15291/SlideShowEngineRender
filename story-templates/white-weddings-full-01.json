@@ -94,7 +94,14 @@
     "three_photo_row_page": {
       "intent": "the three-photo row, wearing the recipe's page_round frame",
       "layout": "three_photo_row",
-      "frame": "page_round"
+      "frame": "page_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 100, "y": 290, "width": 500, "height": 580 },
+          "centre": { "x": 720, "y": 140, "width": 560, "height": 720 },
+          "right": { "x": 1320, "y": 300, "width": 500, "height": 520 }
+        }
+      }
     },
     "duo_tinted_spread_page": {
       "intent": "the tinted two-photo spread, wearing the recipe's page_round frame",
@@ -389,8 +396,8 @@
       ],
       "text": {
         "heading": [
-          "SAVE the DATE",
-          "WE'RE GETTING MARRIED"
+          "HẸN NGÀY CHUNG ĐÔI",
+          "MÌNH SẮP VỀ CHUNG MỘT NHÀ"
         ],
         "date": "{{date}}"
       },
@@ -409,9 +416,9 @@
         }
       ],
       "text": {
-        "eyebrow": "welcome to the wedding of",
+        "eyebrow": "trân trọng báo tin vui",
         "names": "{{bride}} & {{groom}}",
-        "date": "Date · {{date}}"
+        "date": "Ngày · {{date}}"
       },
       "muteFallback": {
         "photoSlots": [
@@ -440,7 +447,7 @@
         }
       ],
       "text": {
-        "quote": "{{bride}} & {{groom}} · WE ARE GETTING MARRIED"
+        "quote": "{{bride}} & {{groom}} · MÌNH SẮP VỀ CHUNG MỘT NHÀ"
       },
       "look": "full_bleed_quote_page"
     },
@@ -459,8 +466,8 @@
       "text": {
         "heading": {
           "value": [
-            "ABOUT THE\nBRIDE",
-            "MEET THE\nBRIDE"
+            "VỀ CÔ\nDÂU",
+            "GẶP GỠ\nCÔ DÂU"
           ],
           "sizePx": 62
         },
@@ -497,8 +504,8 @@
       "text": {
         "heading": {
           "value": [
-            "ABOUT THE\nGROOM",
-            "MEET THE\nGROOM"
+            "VỀ CHÚ\nRỂ",
+            "GẶP GỠ\nCHÚ RỂ"
           ],
           "sizePx": 62
         },
@@ -539,12 +546,12 @@
       ],
       "text": {
         "heading": [
-          "OUR JOURNEY",
-          "OUR PATH"
+          "HÀNH TRÌNH CỦA MÌNH",
+          "CHẶNG ĐƯỜNG CỦA MÌNH"
         ],
         "caption": [
-          "From friendship to forever",
-          "From two strangers to forever"
+          "Từ tình bạn đến trọn đời",
+          "Từ hai người xa lạ đến trọn đời"
         ]
       },
       "muteFallback": {
@@ -588,7 +595,7 @@
         }
       ],
       "text": {
-        "heading": "FALL IN LOVE",
+        "heading": "PHẢI LÒNG NHAU",
         "caption": "Không cần lời hứa trăm năm, chỉ cần hôm nay, ta cùng nắm tay nhau đi qua mọi ngày mai."
       },
       "repeatable": {
@@ -596,13 +603,13 @@
         "variants": [
           {
             "text": {
-              "heading": "THE BIG DAY",
-              "caption": "Cheers to love, laughter, and happily ever after!"
+              "heading": "NGÀY TRỌNG ĐẠI",
+              "caption": "Nâng ly cho tình yêu, tiếng cười và một đời hạnh phúc!"
             }
           },
           {
             "text": {
-              "heading": "SPECIAL DAY",
+              "heading": "NGÀY ĐẶC BIỆT",
               "caption": "Ngày hôm nay là một ngày vô cùng ý nghĩa đối với chúng con."
             }
           },
@@ -632,8 +639,8 @@
       ],
       "text": {
         "heading": [
-          "LOVE IS IN THE AIR",
-          "LOVE ALL AROUND"
+          "YÊU THƯƠNG KHẮP NƠI",
+          "XUNG QUANH ĐỀU LÀ YÊU THƯƠNG"
         ]
       },
       "look": "duo_tinted_spread_page"
@@ -666,8 +673,8 @@
         }
       ],
       "text": {
-        "names": "Together, {{bride}} & {{groom}}",
-        "invite": "WE WOULD LIKE TO INVITE YOU TO OUR SPECIAL WEDDING DAY."
+        "names": "Bên nhau, {{bride}} & {{groom}}",
+        "invite": "TRÂN TRỌNG KÍNH MỜI ĐẾN CHUNG VUI TRONG NGÀY CƯỚI CỦA CHÚNG MÌNH."
       },
       "look": "invitation_row_page"
     },
@@ -684,15 +691,15 @@
         }
       ],
       "text": {
-        "heading": "OUR FUTURE\nTOGETHER",
-        "body": "Here's to a lifetime of love and laughter."
+        "heading": "TƯƠNG LAI\nBÊN NHAU",
+        "body": "Nâng ly cho một đời yêu thương và rộn rã tiếng cười."
       },
       "repeatable": {
         "maxRepeats": 2,
         "variants": [
           {
             "text": {
-              "heading": "THANK YOU FOR\nCELEBRATING\nWITH US!",
+              "heading": "CẢM ƠN ĐÃ\nCÙNG CHUNG\nVUI!",
               "body": "{{thankYouLine}}"
             }
           },
@@ -765,12 +772,12 @@
       ],
       "text": {
         "heading": [
-          "ONE LOVE\nONE LIFETIME",
-          "ONE HEART\nONE JOURNEY"
+          "MỘT TÌNH YÊU\nMỘT ĐỜI BÊN NHAU",
+          "MỘT TRÁI TIM\nMỘT HÀNH TRÌNH"
         ],
         "body": [
-          "Beautiful moments",
-          "Quiet moments"
+          "Những khoảnh khắc đẹp",
+          "Những khoảnh khắc bình yên"
         ]
       },
       "muteFallback": {
@@ -911,7 +918,7 @@
         }
       ],
       "text": {
-        "tile_text": "MEMORIES"
+        "tile_text": "KỶ NIỆM"
       },
       "repeatable": {
         "maxRepeats": 3,
@@ -923,7 +930,7 @@
           },
           {
             "text": {
-              "tile_text": "We are getting married"
+              "tile_text": "Mình sắp về chung một nhà"
             }
           },
           {
@@ -990,7 +997,7 @@
         }
       ],
       "text": {
-        "body": "ONE LOVE · ONE LIFETIME — từ hôm nay và trong mọi ngày sau."
+        "body": "MỘT TÌNH YÊU · MỘT ĐỜI BÊN NHAU — từ hôm nay và trong mọi ngày sau."
       },
       "look": "two_photo_story_page"
     },
@@ -1018,8 +1025,8 @@
       ],
       "text": {
         "heading": [
-          "Written in Time",
-          "A Moment in Time"
+          "Năm tháng lưu dấu",
+          "Khoảnh khắc còn mãi"
         ]
       },
       "look": "paper_collage_page"
@@ -1050,7 +1057,7 @@
         }
       ],
       "text": {
-        "heading": "A Little More Love"
+        "heading": "Thêm một chút yêu thương"
       },
       "look": "polaroid_scatter_page"
     },
@@ -1248,8 +1255,8 @@
         }
       ],
       "text": {
-        "eyebrow": "{{bride}} & {{groom}}",
-        "date": "{{date}}"
+        "heading": "{{bride}} & {{groom}}",
+        "caption": "{{date}}"
       },
       "look": "magazine_page_turn_page"
     },
@@ -1285,7 +1292,7 @@
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Thank you for celebrating with us · {{date}}"
+        "date": "Cảm ơn đã cùng chung vui · {{date}}"
       },
       "look": "closing_names_page"
     }

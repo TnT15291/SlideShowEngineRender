@@ -12,6 +12,7 @@ import {
   SCENE_PHOTO_COVERAGE_MIN_TEXTED,
   SLOT_AREA_FLOOR,
   SLOT_AREA_FLOOR_GRID,
+  minimumTextSize,
   textSafeInsets,
 } from "./lib/rules/thresholds.mjs";
 
@@ -114,7 +115,7 @@ function validateLayout(layout, context) {
       add("G4", "warning", slot.id,
         `lies outside the title-safe margin (${safe.x}px across, ${safe.y}px down)`);
     }
-    const minimum = slot.fontRole === "body" ? 32 : 68;
+    const minimum = minimumTextSize(slot);
     if (!Number.isFinite(slot.sizePx) || slot.sizePx < minimum) {
       add("G5", "warning", slot.id,
         `uses ${Number.isFinite(slot.sizePx) ? `${slot.sizePx}px` : "no sizePx"}; recommended minimum is ${minimum}px`);

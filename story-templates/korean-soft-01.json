@@ -2,6 +2,7 @@
   "id": "korean-soft-01",
   "version": 1,
   "name": "Korean Soft",
+  "thumbnailScene": "s03_pair",
   "tier": "smart_lite",
   "libraryTheme": "white_weddings",
   "layoutPresets": {
@@ -13,14 +14,25 @@
   },
   "looks": {
     "text_left_photo_right_soft": {
-      "intent": "the text-left spread, wearing the recipe's soft_round frame",
+      "intent": "the portrait set gently in from every edge, its weight centred against the column of text",
       "layout": "text_left_photo_right",
-      "frame": "soft_round"
+      "frame": "soft_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1040, "y": 140, "width": 740, "height": 850 }
+        }
+      }
     },
     "two_photo_story_soft": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's soft_round frame",
+      "intent": "the story pair drawn in from both margins and gently stepped, the figure riding a little higher than the landscape",
       "layout": "two_photo_story",
-      "frame": "soft_round"
+      "frame": "soft_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 250, "y": 100, "width": 540, "height": 650 },
+          "wide": { "x": 870, "y": 200, "width": 850, "height": 560 }
+        }
+      }
     },
     "full_bleed_quote_soft": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -40,9 +52,14 @@
       }
     },
     "photo_left_text_right_soft": {
-      "intent": "the photo-left spread, wearing the recipe's soft_round frame",
+      "intent": "the portrait softened in from every edge, its shadow given room to fall",
       "layout": "photo_left_text_right",
-      "frame": "soft_round"
+      "frame": "soft_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 120, "y": 140, "width": 740, "height": 850 }
+        }
+      }
     },
     "closing_names_soft": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -285,7 +302,7 @@
       "transitionRole": "calm",
       "photoSlots": [
         {
-          "slot": "photo",
+          "slot": "hero",
           "orient": "portrait",
           "quality": "best"
         }
@@ -415,7 +432,7 @@
       "transitionRole": "default",
       "photoSlots": [
         {
-          "slot": "photo",
+          "slot": "hero",
           "orient": "portrait",
           "quality": "best"
         }

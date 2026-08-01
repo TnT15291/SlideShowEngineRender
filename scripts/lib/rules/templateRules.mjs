@@ -31,7 +31,7 @@
 //                        by REWRITING them (lib/recipeCopyPolicy.mjs runs writeRecipeCopy
 //                        only for language "en"), so English-authored copy has no rewrite
 //                        step on the default vi path — it just ships in the wrong language
-import { inspectCaptionLanguage } from "../captionLanguage.mjs";
+import { hasEnglishCopy, inspectCaptionLanguage } from "../captionLanguage.mjs";
 import {
   TEMPLATE_MIN_SCENES, TEMPLATE_MIN_DISTINCT_LOOKS, TEMPLATE_MIN_REPEATABLE_SCENES,
   TEMPLATE_MAX_PHOTOLESS_SCENES, SLOT_AREA_FLOOR, SLOT_AREA_FLOOR_GRID,
@@ -298,14 +298,12 @@ export function evaluateStoryTemplate(template, { library }) {
 
   // -- copy_language -------------------------------------------------------------
   //
-  // Judged with the SAME detector QA runs on the finished film
-  // (lib/captionLanguage.mjs), so a recipe that passes here cannot raise
-  // wrong_caption_language on the default vi path — the two cannot drift apart.
+  // Uses the aggregate detector QA runs on the finished film plus a stricter per-string
+  // authoring check. The latter catches short cards such as "OUR STORY" or "FOREVER"
+  // before Vietnamese lines elsewhere in the recipe can dilute them.
   //
-  // Two recipes shipped authored entirely in English while their own intro prose was
-  // Vietnamese: classic-multisong-album-01 and studio-white-prewedding-01. Every
-  // Vietnamese job on them rendered English cards and QA flagged the film, once per job,
-  // for a defect that lives in the recipe.
+  // English cards in an otherwise Vietnamese recipe ship unchanged on the default vi
+  // path, so this is an authoring defect rather than a per-project rewrite concern.
   const copy = [];
   const collectCopy = (value) => {
     if (typeof value === "string") copy.push(value);
@@ -321,9 +319,10 @@ export function evaluateStoryTemplate(template, { library }) {
     }
   }
   const copyLanguage = inspectCaptionLanguage(copy, "vi");
-  if (copyLanguage.flags?.includes("wrong_caption_language")) {
+  const englishCopy = copy.filter(hasEnglishCopy);
+  if (englishCopy.length || copyLanguage.flags?.includes("wrong_caption_language")) {
     errors.push(finding("copy_language", null,
-      `${copy.length} authored copy string(s) carry no Vietnamese at all (${copyLanguage.signals.enWords} English words). `
+      `${englishCopy.length} authored copy string(s) contain English (${copyLanguage.signals.enWords} aggregate English words). `
       + `Recipes are authored in Vietnamese; an English film comes from writeRecipeCopy.mjs rewriting them`));
   }
 

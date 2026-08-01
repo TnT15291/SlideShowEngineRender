@@ -81,34 +81,70 @@
       }
     },
     "hero_title_card_silk": {
-      "intent": "the hero title card, wearing the recipe's arch frame",
+      "intent": "three arched strips with the centre lifted, reading as a silk triptych",
       "layout": "hero_title_card",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "strip_1": { "x": 190, "y": 340, "width": 470, "height": 640 },
+          "strip_2": { "x": 725, "y": 310, "width": 470, "height": 670 },
+          "strip_3": { "x": 1260, "y": 340, "width": 470, "height": 640 }
+        }
+      }
     },
     "text_left_photo_right_silk": {
-      "intent": "the text-left spread, wearing the recipe's arch frame",
+      "intent": "the portrait drawn tall and narrow so the arched frame reads as an opening rather than a picture",
       "layout": "text_left_photo_right",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1070, "y": 60, "width": 700, "height": 960 }
+        }
+      }
     },
     "photo_left_text_right_silk": {
-      "intent": "the photo-left spread, wearing the recipe's arch frame",
+      "intent": "the portrait drawn tall and slim so the arch reads full height against the silk ground",
       "layout": "photo_left_text_right",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 170, "y": 60, "width": 700, "height": 960 }
+        }
+      }
     },
     "invitation_row_silk": {
-      "intent": "the invitation row, wearing the recipe's arch frame",
+      "intent": "the four panels drawn tall and slim, held well inside the margins like silk banners",
       "layout": "invitation_row",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 230, "y": 270, "width": 340, "height": 540 },
+          "p2": { "x": 600, "y": 270, "width": 340, "height": 540 },
+          "p3": { "x": 970, "y": 270, "width": 340, "height": 540 },
+          "p4": { "x": 1340, "y": 270, "width": 340, "height": 540 }
+        }
+      }
     },
     "gallery_matte_hero_silk": {
-      "intent": "the matted gallery hero, wearing the recipe's arch frame",
+      "intent": "the matted plate inset further on every side, a wider silk border around a smaller picture",
       "layout": "gallery_matte_hero",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 270, "y": 170, "width": 1380, "height": 760 }
+        }
+      }
     },
     "magazine_page_turn_silk": {
-      "intent": "the magazine page turn, wearing the recipe's arch frame",
+      "intent": "both pages caught mid-turn, lifting away from the spine in opposite directions",
       "layout": "magazine_page_turn",
-      "frame": "arch"
+      "frame": "arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "page_left": { "x": 90, "y": 280, "width": 720, "height": 720, "rotation": -2 },
+          "page_right": { "x": 930, "y": 90, "width": 900, "height": 800, "rotation": 2 }
+        }
+      }
     },
     "closing_names_silk": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -386,7 +422,7 @@
         }
       ],
       "text": {
-        "eyebrow": "SAVE THE DATE",
+        "eyebrow": "HẸN NGÀY CHUNG ĐÔI",
         "date": {
           "value": "{{date}}",
           "sizePx": 108
@@ -403,8 +439,8 @@
       "transitionRole": "default",
       "photoSlots": [],
       "captionPattern": [
-        "Save the Date · {{bride}} & {{groom}} · {{date}}",
-        "We're Getting Married · {{bride}} & {{groom}} · {{date}}"
+        "Hẹn ngày chung đôi · {{bride}} & {{groom}} · {{date}}",
+        "Ngày mình về chung một nhà · {{bride}} & {{groom}} · {{date}}"
       ]
     },
     {
@@ -423,8 +459,8 @@
       "text": {
         "heading": {
           "value": [
-            "MEET THE BRIDE",
-            "ABOUT THE BRIDE"
+            "GẶP GỠ CÔ DÂU",
+            "VỀ CÔ DÂU"
           ],
           "sizePx": 58
         },
@@ -461,8 +497,8 @@
       "text": {
         "heading": {
           "value": [
-            "MEET THE GROOM",
-            "ABOUT THE GROOM"
+            "GẶP GỠ CHÚ RỂ",
+            "VỀ CHÚ RỂ"
           ],
           "sizePx": 58
         },
@@ -522,8 +558,8 @@
       "text": {
         "heading": {
           "value": [
-            "WE MEET",
-            "OUR PATH"
+            "NGÀY TA GẶP NHAU",
+            "HÀNH TRÌNH CỦA MÌNH"
           ],
           "sizePx": 76
         },
@@ -549,7 +585,7 @@
           {
             "text": {
               "heading": {
-                "value": "OUR DAY",
+                "value": "NGÀY CỦA CHÚNG MÌNH",
                 "sizePx": 76
               },
               "body": "Một ngày thật đẹp để hai chúng mình cùng bắt đầu hành trình mới."
@@ -571,7 +607,7 @@
           {
             "text": {
               "heading": {
-                "value": "FOREVER",
+                "value": "MÃI MÃI",
                 "sizePx": 76
               },
               "body": "Từ hôm nay, và trong mọi ngày sắp tới, mình vẫn luôn bên nhau."
@@ -581,7 +617,7 @@
           {
             "text": {
               "heading": {
-                "value": "ONE LOVE",
+                "value": "MỘT TÌNH YÊU",
                 "sizePx": 76
               },
               "body": "Chỉ cần hôm nay ta cùng nắm tay nhau, thế là đủ đầy."
@@ -606,8 +642,8 @@
       "text": {
         "heading": {
           "value": [
-            "OUR STORY",
-            "OUR JOURNEY"
+            "CHUYỆN CỦA MÌNH",
+            "HÀNH TRÌNH CỦA MÌNH"
           ],
           "sizePx": 68
         },
@@ -633,7 +669,7 @@
           {
             "text": {
               "heading": {
-                "value": "TOGETHER",
+                "value": "BÊN NHAU",
                 "sizePx": 68
               },
               "body": "Cảm ơn vì đã luôn ở đây, cùng nhau đi hết chặng đường."
@@ -655,7 +691,7 @@
           {
             "text": {
               "heading": {
-                "value": "SWEET",
+                "value": "NGỌT NGÀO",
                 "sizePx": 68
               },
               "body": "Những ánh nhìn, những nụ cười — tất cả đều là yêu thương."
@@ -665,7 +701,7 @@
           {
             "text": {
               "heading": {
-                "value": "US",
+                "value": "CHÚNG MÌNH",
                 "sizePx": 68
               },
               "body": "Một khởi đầu thật đẹp cho câu chuyện của chúng mình."
@@ -728,8 +764,8 @@
       "text": {
         "heading": {
           "value": [
-            "BEAUTIFUL",
-            "TENDER"
+            "TƯƠI ĐẸP",
+            "DỊU DÀNG"
           ],
           "sizePx": 68
         },
@@ -755,7 +791,7 @@
           {
             "text": {
               "heading": {
-                "value": "MOMENTS",
+                "value": "KHOẢNH KHẮC",
                 "sizePx": 68
               },
               "body": "Sánh bước bên nhau, đây là nơi chương mới của chúng mình bắt đầu."
@@ -777,7 +813,7 @@
           {
             "text": {
               "heading": {
-                "value": "YOU & ME",
+                "value": "ANH & EM",
                 "sizePx": 68
               },
               "body": "Một tình yêu, một đời người, một khởi đầu thật đẹp."
@@ -787,7 +823,7 @@
           {
             "text": {
               "heading": {
-                "value": "AFTER THIS DAY",
+                "value": "SAU NGÀY HÔM NAY",
                 "sizePx": 68
               },
               "body": "Xin chào mọi ngày sẽ đến, sau ngày hôm nay."
@@ -990,7 +1026,7 @@
       "photoSlots": [],
       "text": {
         "names": "{{bride}} & {{groom}}",
-        "date": "Thank you for celebrating with us · {{date}}"
+        "date": "Cảm ơn đã cùng chung vui · {{date}}"
       },
       "look": "closing_names_silk"
     }

@@ -91,6 +91,53 @@ export function geometryKey(resolvedLayout, canvas) {
 }
 
 /**
+ * The layout a scene actually renders, preferring its resolved form.
+ * @param {object} resolvedScene
+ * @param {object} library
+ */
+function layoutOfScene(resolvedScene, library) {
+  if (!resolvedScene || typeof resolvedScene !== "object") {
+    throw new TypeError("resolvedScene must be an object");
+  }
+  const layout = resolvedScene.resolvedLayout
+    || (library?.layouts || []).find((candidate) => candidate.id === resolvedScene.layout);
+  if (!layout) {
+    throw new TypeError("resolvedScene must reference a known layout");
+  }
+  return layout;
+}
+
+/**
+ * The slot layerSceneBuilder paints as a full-bleed backdrop, which it renders without a
+ * frame. Shared so the silhouette and perceptual keys cannot disagree about which slot
+ * that is.
+ * @param {object} resolvedScene
+ * @param {object} layout
+ */
+function backgroundSlotIdOf(resolvedScene, layout) {
+  const background = resolvedScene.durationRole === "closing"
+    ? { type: "photo_full_bleed", slot: "__bookend" }
+    : layout.background;
+  return background?.type === "photo_full_bleed" ? background.slot : null;
+}
+
+/**
+ * Resolve one photo slot's effective frame, using the renderer's precedence: a scene slot
+ * wins over the look, which wins over the layout slot; recipe presets win over library ones.
+ * @param {object} resolvedScene
+ * @param {object} template
+ * @param {object} library
+ */
+function frameResolverFor(resolvedScene, template, library) {
+  const resolveFrame = createTemplateTheme({ library, template, direction: undefined }).resolveFrame;
+  return (slot) => {
+    const definition = (resolvedScene.photoSlots || [])
+      .find((candidate) => candidate.slot === slot.id) || {};
+    return resolveFrame(definition.frame || resolvedScene.resolvedFrame || slot.frame);
+  };
+}
+
+/**
  * Classify the rendered silhouette of each photo slot.
  *
  * Frame precedence and named-preset resolution intentionally share the renderer's
@@ -104,30 +151,14 @@ export function geometryKey(resolvedLayout, canvas) {
  * @returns {string}
  */
 export function slotShapeKey(resolvedScene, template, library) {
-  if (!resolvedScene || typeof resolvedScene !== "object") {
-    throw new TypeError("resolvedScene must be an object");
-  }
-  const layout = resolvedScene.resolvedLayout
-    || (library?.layouts || []).find((candidate) => candidate.id === resolvedScene.layout);
-  if (!layout) {
-    throw new TypeError("resolvedScene must reference a known layout");
-  }
-
-  const resolveFrame = createTemplateTheme({ library, template, direction: undefined }).resolveFrame;
-  const sceneSlot = (id) =>
-    (resolvedScene.photoSlots || []).find((candidate) => candidate.slot === id) || {};
-  const background = resolvedScene.durationRole === "closing"
-    ? { type: "photo_full_bleed", slot: "__bookend" }
-    : layout.background;
-  const backgroundSlotId = background?.type === "photo_full_bleed"
-    ? background.slot
-    : null;
+  const layout = layoutOfScene(resolvedScene, library);
+  const frameOf = frameResolverFor(resolvedScene, template, library);
+  const backgroundSlotId = backgroundSlotIdOf(resolvedScene, layout);
 
   const shapes = (layout.photoSlots || []).map((slot) => {
     if (slot.id === backgroundSlotId) return "rect";
 
-    const definition = sceneSlot(slot.id);
-    const frame = resolveFrame(definition.frame || resolvedScene.resolvedFrame || slot.frame);
+    const frame = frameOf(slot);
     const radius = frame?.radius;
     if (typeof radius !== "number" || !Number.isFinite(radius) || radius <= 0) return "rect";
 
@@ -138,6 +169,195 @@ export function slotShapeKey(resolvedScene, template, library) {
   });
 
   return JSON.stringify(shapes);
+}
+
+/**
+ * Where the photographs sit on the canvas, and nothing else.
+ *
+ * The narrowest of the three keys in this file, and the one that answers what a viewer
+ * actually asks of a slide: are the pictures in the same places? geometryKey() folds in
+ * text, panels and background, so two scenes with an identical photo arrangement but
+ * different copy score as different compositions (124 geometry keys over 103 real
+ * arrangements). perceptualSignature() folds in frame, type scale and grade, none of which
+ * move a photograph — which is how 64% of photo-bearing scenes came to share an arrangement
+ * with another recipe while every guard in the repo read green.
+ *
+ * The full-bleed background slot is excluded on purpose. It fills the canvas by definition,
+ * so every recipe on `full_bleed_quote` "shares" it and no override can ever change that;
+ * counting it would report debt that cannot be paid.
+ *
+ * Scenes with no photographs (`closing_names`) return `"[]"`. That is not an arrangement,
+ * and callers measuring sharing must skip it rather than treat every closing card as one.
+ *
+ * @param {object} resolvedScene a scene already through resolveScene()
+ * @param {object} library
+ * @param {{width: number, height: number}} canvas
+ * @returns {string}
+ */
+export function photoArrangementKey(resolvedScene, library, canvas) {
+  const layout = layoutOfScene(resolvedScene, library);
+  const width = positiveNumber(canvas?.width, "canvas.width");
+  const height = positiveNumber(canvas?.height, "canvas.height");
+  const xStep = width / AXIS_BUCKETS;
+  const yStep = height / AXIS_BUCKETS;
+  const backgroundSlotId = backgroundSlotIdOf(resolvedScene, layout);
+
+  return JSON.stringify(
+    (layout.photoSlots || [])
+      .filter((slot) => slot.id !== backgroundSlotId)
+      .map((slot) => [
+        quantize(numberField(slot, "x"), xStep),
+        quantize(numberField(slot, "y"), yStep),
+        quantize(numberField(slot, "width"), xStep),
+        quantize(numberField(slot, "height"), yStep),
+        quantize(numberField(slot, "rotation", 0), 1),
+      ]),
+  );
+}
+
+/**
+ * Perceptual bands. Deliberately coarse: each boundary is a step a viewer can name.
+ * @type {[number, string][]}
+ */
+const BORDER_BANDS = [
+  [0, "none"],      // no border drawn at all
+  [4, "hairline"],  // a drawn line, not a mat
+  [12, "thin"],
+  [24, "mat"],      // reads as a mount around the photograph
+];
+const BORDER_BAND_ABOVE = "heavy";
+/**
+ * Corner radius as a fraction of the largest radius the slot can take.
+ * @type {[number, string][]}
+ */
+const RADIUS_BANDS = [
+  [0, "square"],
+  [0.12, "soft"],
+  [0.5, "rounded"],
+  [0.95, "wide"],
+];
+
+/** @param {string} hex */
+function borderLuma(hex) {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+  if (!match) return null;
+  const value = parseInt(match[1], 16);
+  return 0.2126 * ((value >> 16) & 255)
+    + 0.7152 * ((value >> 8) & 255)
+    + 0.0722 * (value & 255);
+}
+
+/** @param {[number, string][]} bands @param {number} value @param {string} above */
+function bandOf(bands, value, above) {
+  for (const [ceiling, name] of bands) {
+    if (value <= ceiling) return name;
+  }
+  return above;
+}
+
+/**
+ * Describe one slot's frame the way a viewer registers it, not the way it is written.
+ * Two frames land in the same bucket when nobody could tell them apart at a glance:
+ * a 16px and a 24px corner radius on a borderless tile are both "a slightly soft
+ * rectangle". Border colour only survives when there is a border to colour.
+ *
+ * @param {object} frame
+ * @param {object} slot
+ */
+function frameBand(frame, slot) {
+  if (!frame) return "bare";
+  const border = Number.isFinite(frame.border) ? frame.border : 0;
+  const weight = bandOf(BORDER_BANDS, border, BORDER_BAND_ABOVE);
+
+  let tone = "none";
+  if (border > 0) {
+    const luma = borderLuma(frame.borderColor);
+    tone = luma == null ? "unknown" : luma < 85 ? "dark" : luma <= 170 ? "mid" : "light";
+  }
+
+  const radius = Number.isFinite(frame.radius) ? frame.radius : 0;
+  const largest = Math.min(slot.width, slot.height) / 2;
+  let shape = "square";
+  if (radius > 0 && largest > 0) {
+    const ratio = radius / largest;
+    shape = bandOf(RADIUS_BANDS, ratio, slot.width === slot.height ? "circle" : "pill");
+  }
+
+  return [weight, tone, shape, frame.shadow ? "shadow" : "flat"].join(":");
+}
+
+/**
+ * Type scale is perceived logarithmically, so bands are ratios rather than pixel counts:
+ * 8% steps sit near the just-noticeable difference for a heading taken in at a glance.
+ *
+ * geometryKey() covers where the text sits, never how big it is set — it measures
+ * composition on purpose. Without this, the twenty-five closing cards, whose names run
+ * from 112px to 160px, all collapsed into one picture and `closing_names` looked like the
+ * corpus's worst duplicate when it is in fact differentiated on the one axis that layout
+ * has. Alignment and font role ride along: left-ranged and centred names, or a script and
+ * a sans, are not the same card.
+ */
+const TYPE_STEP = 1.08;
+
+/** @param {object} layout */
+function typeBands(layout) {
+  return (layout.textSlots || []).map((slot) => {
+    const size = Number.isFinite(slot.sizePx) ? slot.sizePx : 0;
+    const band = size > 0 ? Math.round(Math.log(size) / Math.log(TYPE_STEP)) : 0;
+    return [band, slot.align ?? null, slot.fontRole ?? null].join(":");
+  });
+}
+
+/**
+ * Quantise a look's grade. A 2% saturation change is not a different picture.
+ * @param {object} treatment
+ */
+function gradeBand(treatment) {
+  if (!treatment) return "neutral";
+  const step = (value, fallback, size) =>
+    (value == null ? fallback : Math.round(value / size) * size).toFixed(2);
+  return [
+    step(treatment.saturation, 1, 0.15),
+    step(treatment.contrast, 1, 0.15),
+    step(treatment.brightness, 0, 0.1),
+  ].join("/");
+}
+
+/**
+ * The fingerprint of what a viewer actually sees: composition, plus the dressing that
+ * survives being looked at from across a room.
+ *
+ * This exists because `visualSignature()` in lookResolver.mjs hashes the frame by its
+ * exact definition, so giving every recipe its own `layoutPresets` entry made all 300
+ * recipe pairs score 0% overlap — the cross-recipe guard could no longer fail, while
+ * thirteen recipes still drew the same three-photo row. That is the regression this
+ * measures. Bytes differing is not a picture differing.
+ *
+ * Do NOT swap this in for `visualSignature()`: that one drives the solver's runtime
+ * diversity choices (diversityPlanner) and the lint's repeat detection, where an exact
+ * fingerprint is the correct tool. This one is for comparing finished products.
+ *
+ * @param {object} resolvedScene a scene already through resolveScene()
+ * @param {object} template
+ * @param {object} library
+ * @param {{width: number, height: number}} canvas
+ * @returns {string}
+ */
+export function perceptualSignature(resolvedScene, template, library, canvas) {
+  const layout = layoutOfScene(resolvedScene, library);
+  const frameOf = frameResolverFor(resolvedScene, template, library);
+  const backgroundSlotId = backgroundSlotIdOf(resolvedScene, layout);
+
+  const frames = (layout.photoSlots || []).map((slot) => (
+    slot.id === backgroundSlotId ? "bare" : frameBand(frameOf(slot), slot)
+  ));
+
+  return JSON.stringify([
+    geometryKey(layout, canvas),
+    frames,
+    typeBands(layout),
+    gradeBand(resolvedScene.resolvedTreatment),
+  ]);
 }
 
 /**

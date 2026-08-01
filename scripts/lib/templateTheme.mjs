@@ -122,7 +122,7 @@ export function createTemplateTheme({ library, template, direction }) {
 
   function textStart(role) {
     const values = stagger();
-    return ["heading", "eyebrow", "display", "names"].includes(role)
+    return ["heading", "eyebrow", "display", "names", "tile_label"].includes(role)
       ? (values.heading ?? 0.2)
       : (values.body ?? 0.5);
   }

@@ -2,6 +2,7 @@
   "id": "warm-film-01",
   "version": 1,
   "name": "Warm Film",
+  "thumbnailScene": "s02_candid",
   "tier": "smart_lite",
   "libraryTheme": "warm_film",
   "layoutPresets": {
@@ -14,19 +15,40 @@
   },
   "looks": {
     "hero_title_card_sprocket": {
-      "intent": "the hero title card, wearing the recipe's sprocket_edge frame",
+      "intent": "three broad frames stepped slightly out of register, like consecutive exposures",
       "layout": "hero_title_card",
-      "frame": "sprocket_edge"
+      "frame": "sprocket_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "strip_1": { "x": 150, "y": 350, "width": 520, "height": 600 },
+          "strip_2": { "x": 700, "y": 320, "width": 520, "height": 640 },
+          "strip_3": { "x": 1250, "y": 350, "width": 520, "height": 600 }
+        }
+      }
     },
     "polaroid_scatter_sprocket": {
-      "intent": "the scattered prints, wearing the recipe's sprocket_edge frame",
+      "intent": "the prints pulled into a tighter cluster with the last one kicked further off-square, like frames cut from one roll",
       "layout": "polaroid_scatter",
-      "frame": "sprocket_edge"
+      "frame": "sprocket_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 160, "y": 160, "width": 510, "height": 510, "rotation": -3 },
+          "p2": { "x": 705, "y": 120, "width": 510, "height": 510, "rotation": 2 },
+          "p3": { "x": 1250, "y": 180, "width": 510, "height": 510, "rotation": -5 }
+        }
+      }
     },
     "collage_cluster_text_sprocket": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's sprocket_edge frame",
+      "intent": "the cluster run as a strip — the tall frame first, then two stills butted close beneath one another like consecutive exposures",
       "layout": "collage_cluster_text",
-      "frame": "sprocket_edge"
+      "frame": "sprocket_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 110, "y": 130, "width": 540, "height": 820 },
+          "tl": { "x": 710, "y": 130, "width": 470, "height": 395 },
+          "bl": { "x": 710, "y": 555, "width": 470, "height": 395 }
+        }
+      }
     },
     "paper_collage_sprocket": {
       "intent": "the layered paper collage, wearing the recipe's sprocket_edge frame",
@@ -53,7 +75,14 @@
     "three_photo_row_sprocket": {
       "intent": "the three-photo row, wearing the recipe's sprocket_edge frame",
       "layout": "three_photo_row",
-      "frame": "sprocket_edge"
+      "frame": "sprocket_edge",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 110, "y": 300, "width": 520, "height": 540, "rotation": -2 },
+          "centre": { "x": 700, "y": 170, "width": 500, "height": 680, "rotation": 1.5 },
+          "right": { "x": 1240, "y": 320, "width": 560, "height": 520, "rotation": 2 }
+        }
+      }
     },
     "closing_names_sprocket": {
       "intent": "the closing card, set in this recipe's own type scale",

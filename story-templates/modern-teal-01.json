@@ -38,24 +38,50 @@
       }
     },
     "two_photo_story_edge": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's edge_soft frame",
+      "intent": "the story pair pushed out to both edges and separated by a single hairline gutter — no margin, no ornament",
       "layout": "two_photo_story",
-      "frame": "edge_soft"
+      "frame": "edge_soft",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 40, "y": 100, "width": 560, "height": 700 },
+          "wide": { "x": 620, "y": 100, "width": 1260, "height": 700 }
+        }
+      }
     },
     "duo_tinted_spread_edge": {
-      "intent": "the tinted two-photo spread, wearing the recipe's edge_soft frame",
+      "intent": "the pair run nearly edge to edge with one thin gutter and nothing else",
       "layout": "duo_tinted_spread",
-      "frame": "edge_soft"
+      "frame": "edge_soft",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 30, "y": 230, "width": 910, "height": 600 },
+          "right": { "x": 970, "y": 230, "width": 910, "height": 600 }
+        }
+      }
     },
     "three_photo_row_edge": {
       "intent": "the three-photo row, wearing the recipe's edge_soft frame",
       "layout": "three_photo_row",
-      "frame": "edge_soft"
+      "frame": "edge_soft",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 70, "y": 350, "width": 590, "height": 460 },
+          "centre": { "x": 680, "y": 280, "width": 560, "height": 540 },
+          "right": { "x": 1260, "y": 220, "width": 590, "height": 620 }
+        }
+      }
     },
     "collage_cluster_text_edge": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's edge_soft frame",
+      "intent": "the cluster squared up to a single grid — two equal stills at the left, one tall frame beside them, all four edges flush",
       "layout": "collage_cluster_text",
-      "frame": "edge_soft"
+      "frame": "edge_soft",
+      "layoutOverrides": {
+        "photoSlots": {
+          "tl": { "x": 20, "y": 60, "width": 560, "height": 440 },
+          "bl": { "x": 20, "y": 540, "width": 560, "height": 440 },
+          "hero": { "x": 620, "y": 60, "width": 560, "height": 920 }
+        }
+      }
     },
     "paper_collage_edge": {
       "intent": "the layered paper collage, wearing the recipe's edge_soft frame",

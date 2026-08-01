@@ -14,14 +14,25 @@
   },
   "looks": {
     "photo_left_text_right_season": {
-      "intent": "the photo-left spread, wearing the recipe's season_round frame",
+      "intent": "the portrait pulled in from the left edge and rounded, sitting a little below centre",
       "layout": "photo_left_text_right",
-      "frame": "season_round"
+      "frame": "season_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 140, "y": 120, "width": 760, "height": 860 }
+        }
+      }
     },
     "two_photo_story_season": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's season_round frame",
+      "intent": "the story pair reversed — the season's landscape reads first at the left, the figure answers it at the right",
       "layout": "two_photo_story",
-      "frame": "season_round"
+      "frame": "season_round",
+      "layoutOverrides": {
+        "photoSlots": {
+          "wide": { "x": 80, "y": 170, "width": 1000, "height": 560 },
+          "portrait": { "x": 1180, "y": 110, "width": 560, "height": 690 }
+        }
+      }
     },
     "full_bleed_quote_season": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",

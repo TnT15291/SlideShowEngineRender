@@ -14,14 +14,27 @@
   },
   "looks": {
     "photo_duo_plate": {
-      "intent": "wordless photo duo beat, wearing this recipe's own frame",
+      "intent": "the pair stood tall and equal, each a full standing portrait inside its mount",
       "layout": "photo_duo",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 190, "y": 100, "width": 700, "height": 880 },
+          "right": { "x": 1030, "y": 100, "width": 700, "height": 880 }
+        }
+      }
     },
     "feature_plus_duo_plate": {
-      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "intent": "the feature squared to the left page with two upright prints mounted beside it",
       "layout": "feature_plus_duo",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 80, "y": 120, "width": 960, "height": 840 },
+          "top": { "x": 1090, "y": 120, "width": 390, "height": 440 },
+          "bottom": { "x": 1090, "y": 600, "width": 390, "height": 430 }
+        }
+      }
     },
     "full_bleed_quote_album": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -42,27 +55,64 @@
     "three_photo_row_album": {
       "intent": "the three-photo row, wearing the recipe's album_mount frame",
       "layout": "three_photo_row",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 90, "y": 270, "width": 500, "height": 580 },
+          "centre": { "x": 710, "y": 180, "width": 540, "height": 690 },
+          "right": { "x": 1300, "y": 250, "width": 520, "height": 610 }
+        }
+      }
     },
     "photo_grid_6_album": {
-      "intent": "the six-up grid, wearing the recipe's album_mount frame",
+      "intent": "the six-up with a deeper top row, so the page reads as two unequal bands",
       "layout": "photo_grid_6",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "a": { "x": 90, "y": 80, "width": 600, "height": 490 },
+          "b": { "x": 720, "y": 80, "width": 600, "height": 490 },
+          "c": { "x": 1350, "y": 80, "width": 470, "height": 490 },
+          "d": { "x": 90, "y": 600, "width": 600, "height": 400 },
+          "e": { "x": 720, "y": 600, "width": 600, "height": 400 },
+          "f": { "x": 1350, "y": 600, "width": 470, "height": 400 }
+        }
+      }
     },
     "photo_network_hero_album": {
-      "intent": "the photo network, wearing the recipe's album_mount frame",
+      "intent": "the network with a dominant centre plate and its two flanking columns drawn wide",
       "layout": "photo_network_hero",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 530, "y": 240, "width": 860, "height": 600 },
+          "left": { "x": 70, "y": 270, "width": 420, "height": 540 },
+          "right": { "x": 1430, "y": 270, "width": 420, "height": 540 }
+        }
+      }
     },
     "two_photo_story_album": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's album_mount frame",
+      "intent": "the story pair set small and square-on inside a generous album margin, both prints held well clear of the page edge",
       "layout": "two_photo_story",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 190, "y": 140, "width": 520, "height": 620 },
+          "wide": { "x": 800, "y": 190, "width": 930, "height": 520 }
+        }
+      }
     },
     "polaroid_scatter_album": {
-      "intent": "the scattered prints, wearing the recipe's album_mount frame",
+      "intent": "the prints nearly squared to the page and evenly spaced, the way photographs sit once they have been mounted rather than dropped",
       "layout": "polaroid_scatter",
-      "frame": "album_mount"
+      "frame": "album_mount",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 180, "y": 170, "width": 500, "height": 500, "rotation": -2 },
+          "p2": { "x": 710, "y": 140, "width": 500, "height": 500, "rotation": 1 },
+          "p3": { "x": 1240, "y": 170, "width": 500, "height": 500, "rotation": -1 }
+        }
+      }
     },
     "closing_names_album": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -315,7 +365,11 @@
         }
       ],
       "text": {
-        "quote": "{{bride}} & {{groom}} · {{date}}"
+        "quote": [
+          "{{bride}} & {{groom}} · {{date}}",
+          "Ngày mình viết tiếp câu chuyện · {{date}}",
+          "Từ hôm nay, mình gọi nhau là nhà · {{date}}"
+        ]
       },
       "look": "full_bleed_quote_album"
     },
@@ -387,8 +441,16 @@
         }
       ],
       "text": {
-        "heading": "CHUYỆN CỦA MÌNH",
-        "caption": "Mỗi tấm ảnh giữ lại một phần của mãi mãi."
+        "heading": [
+          "CHUYỆN CỦA MÌNH",
+          "NHỮNG NGÀY ĐÃ QUA",
+          "MỘT ĐỜI KỶ NIỆM"
+        ],
+        "caption": [
+          "Mỗi tấm ảnh giữ lại một phần của mãi mãi.",
+          "Có những ngày bình thường, sau này lại thành điều quý giá.",
+          "Từng khoảnh khắc nhỏ đưa mình đến ngày hôm nay."
+        ]
       },
       "repeatable": {
         "maxRepeats": 4,
@@ -642,7 +704,11 @@
         }
       ],
       "text": {
-        "body": "Từ lời chào đầu tiên, đến mọi ngày mai."
+        "body": [
+          "Từ lời chào đầu tiên, đến mọi ngày mai.",
+          "Mình đã đi qua thật nhiều ngày để cùng đứng ở đây.",
+          "Hai hành trình, từ hôm nay chung một hướng về."
+        ]
       },
       "repeatable": {
         "maxRepeats": 4,
@@ -703,7 +769,11 @@
         }
       ],
       "text": {
-        "heading": "KỶ NIỆM"
+        "heading": [
+          "KỶ NIỆM",
+          "NHỮNG NGÀY BÊN NHAU",
+          "ĐIỀU MÌNH LUÔN NHỚ"
+        ]
       },
       "look": "polaroid_scatter_album"
     },

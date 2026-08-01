@@ -36,19 +36,35 @@
       }
     },
     "polaroid_feature_studio": {
-      "intent": "the single featured print, wearing the recipe's studio_hairline frame",
+      "intent": "the featured print drawn tall and narrow so a standing figure fits without cropping",
       "layout": "polaroid_feature",
-      "frame": "studio_hairline"
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "feature": { "x": 800, "y": 80, "width": 820, "height": 920 }
+        }
+      }
     },
     "text_left_photo_right_studio": {
-      "intent": "the text-left spread, wearing the recipe's studio_hairline frame",
+      "intent": "the portrait run the full height of the page, hairline-edged, as a studio plate rather than a framed print",
       "layout": "text_left_photo_right",
-      "frame": "studio_hairline"
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 950, "y": 0, "width": 950, "height": 1080 }
+        }
+      }
     },
     "magazine_page_turn_studio": {
-      "intent": "the magazine page turn, wearing the recipe's studio_hairline frame",
+      "intent": "both pages set upright so each holds a standing figure rather than cropping one",
       "layout": "magazine_page_turn",
-      "frame": "studio_hairline"
+      "frame": "studio_hairline",
+      "layoutOverrides": {
+        "photoSlots": {
+          "page_left": { "x": 110, "y": 290, "width": 600, "height": 700 },
+          "page_right": { "x": 950, "y": 80, "width": 680, "height": 780 }
+        }
+      }
     },
     "closing_names_studio": {
       "intent": "the closing card, set in this recipe's own type scale",

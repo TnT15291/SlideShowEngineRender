@@ -14,19 +14,38 @@
   },
   "looks": {
     "arch_trio_plate": {
-      "intent": "wordless arch trio beat, wearing this recipe's own frame",
+      "intent": "three slim arches drawn well inside the margins, each with its own surrounding light",
       "layout": "arch_trio",
-      "frame": "halo_card"
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 200, "y": 140, "width": 460, "height": 800 },
+          "centre": { "x": 730, "y": 140, "width": 460, "height": 800 },
+          "right": { "x": 1260, "y": 140, "width": 460, "height": 800 }
+        }
+      }
     },
     "feature_plus_duo_plate": {
-      "intent": "wordless feature plus duo beat, wearing this recipe's own frame",
+      "intent": "the feature laid out long and low, its two companions shallow and evenly split",
       "layout": "feature_plus_duo",
-      "frame": "halo_card"
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 110, "y": 200, "width": 1080, "height": 700 },
+          "top": { "x": 1250, "y": 200, "width": 560, "height": 330 },
+          "bottom": { "x": 1250, "y": 570, "width": 560, "height": 330 }
+        }
+      }
     },
     "text_left_photo_right_halo": {
-      "intent": "the text-left spread, wearing the recipe's halo_card frame",
+      "intent": "the portrait floated well clear of all four edges, ringed by its own light",
       "layout": "text_left_photo_right",
-      "frame": "halo_card"
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "hero": { "x": 1080, "y": 120, "width": 680, "height": 840 }
+        }
+      }
     },
     "full_bleed_quote_halo": {
       "intent": "the full-bleed quote beat — a frame would render nothing over a full bleed, so the type and the grade carry it",
@@ -51,14 +70,27 @@
       "frame": "halo_card"
     },
     "paper_collage_halo": {
-      "intent": "the layered paper collage, wearing the recipe's halo_card frame",
+      "intent": "the collage barely tipped, each sheet holding its own halo of space",
       "layout": "paper_collage",
-      "frame": "halo_card"
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": { "x": 120, "y": 150, "width": 690, "height": 690, "rotation": -2 },
+          "centre": { "x": 650, "y": 110, "width": 590, "height": 720, "rotation": 1 },
+          "front": { "x": 1200, "y": 160, "width": 610, "height": 690, "rotation": -3 }
+        }
+      }
     },
     "two_photo_story_halo": {
-      "intent": "the portrait-and-wide story pair, wearing the recipe's halo_card frame",
+      "intent": "the story pair floated well inside every margin, each card ringed by its own air",
       "layout": "two_photo_story",
-      "frame": "halo_card"
+      "frame": "halo_card",
+      "layoutOverrides": {
+        "photoSlots": {
+          "portrait": { "x": 310, "y": 120, "width": 520, "height": 640 },
+          "wide": { "x": 910, "y": 200, "width": 880, "height": 560 }
+        }
+      }
     },
     "closing_names_halo": {
       "intent": "the closing card, set in this recipe's own type scale",
@@ -465,10 +497,10 @@
       "repeatable": {
         "variants": [
           {
-            "captionPattern": "Ánh sáng đẹp nhất là ánh sáng trong mắt người mình thương."
+            "captionPattern": "Ánh sáng dịu lại, chỉ còn hai người trong khung hình."
           },
           {
-            "captionPattern": "Chỉ cần đứng cạnh nhau, mọi ánh sáng đều trở nên dịu dàng."
+            "captionPattern": "Có những khoảnh khắc, ánh sáng biết dừng lại đúng lúc."
           }
         ],
         "maxRepeats": 2

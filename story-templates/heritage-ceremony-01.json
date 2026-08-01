@@ -14,24 +14,52 @@
   },
   "looks": {
     "paper_collage_lacquer": {
-      "intent": "the layered paper collage, wearing the recipe's lacquer_frame frame",
+      "intent": "the collage squared closer to the page, the sheets overlapping in a tight formal stack",
       "layout": "paper_collage",
-      "frame": "lacquer_frame"
+      "frame": "lacquer_frame",
+      "layoutOverrides": {
+        "photoSlots": {
+          "back": { "x": 110, "y": 170, "width": 680, "height": 680, "rotation": -3 },
+          "centre": { "x": 640, "y": 130, "width": 600, "height": 700, "rotation": 2 },
+          "front": { "x": 1190, "y": 180, "width": 620, "height": 680, "rotation": -4 }
+        }
+      }
     },
     "invitation_row_lacquer": {
-      "intent": "the invitation row, wearing the recipe's lacquer_frame frame",
+      "intent": "the four invitation panels widened and pushed to the page edges",
       "layout": "invitation_row",
-      "frame": "lacquer_frame"
+      "frame": "lacquer_frame",
+      "layoutOverrides": {
+        "photoSlots": {
+          "p1": { "x": 150, "y": 300, "width": 400, "height": 490 },
+          "p2": { "x": 580, "y": 300, "width": 400, "height": 490 },
+          "p3": { "x": 1010, "y": 300, "width": 400, "height": 490 },
+          "p4": { "x": 1440, "y": 300, "width": 400, "height": 490 }
+        }
+      }
     },
     "three_photo_row_lacquer": {
       "intent": "the three-photo row, wearing the recipe's lacquer_frame frame",
       "layout": "three_photo_row",
-      "frame": "lacquer_frame"
+      "frame": "lacquer_frame",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 100, "y": 300, "width": 560, "height": 540 },
+          "centre": { "x": 700, "y": 230, "width": 540, "height": 620 },
+          "right": { "x": 1260, "y": 300, "width": 560, "height": 540 }
+        }
+      }
     },
     "duo_tinted_spread_lacquer": {
-      "intent": "the tinted two-photo spread, wearing the recipe's lacquer_frame frame",
+      "intent": "the pair given unequal standing — an upright frame at the left, a broader one settled beside it",
       "layout": "duo_tinted_spread",
-      "frame": "lacquer_frame"
+      "frame": "lacquer_frame",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 130, "y": 250, "width": 700, "height": 620 },
+          "right": { "x": 880, "y": 300, "width": 940, "height": 540 }
+        }
+      }
     },
     "closing_names_lacquer": {
       "intent": "the closing card, set in this recipe's own type scale",

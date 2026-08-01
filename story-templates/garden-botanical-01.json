@@ -30,9 +30,16 @@
       }
     },
     "collage_cluster_text_arbour": {
-      "intent": "the photo cluster beside its paragraph, wearing the recipe's arbour_arch frame",
+      "intent": "the cluster opened up — the arched frame stands clear in the middle with the two smaller stills set well back at the left",
       "layout": "collage_cluster_text",
-      "frame": "arbour_arch"
+      "frame": "arbour_arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "tl": { "x": 70, "y": 110, "width": 480, "height": 380 },
+          "bl": { "x": 70, "y": 610, "width": 480, "height": 380 },
+          "hero": { "x": 620, "y": 140, "width": 540, "height": 800 }
+        }
+      }
     },
     "paper_collage_arbour": {
       "intent": "the layered paper collage, wearing the recipe's arbour_arch frame",
@@ -42,7 +49,14 @@
     "three_photo_row_arbour": {
       "intent": "the three-photo row, wearing the recipe's arbour_arch frame",
       "layout": "three_photo_row",
-      "frame": "arbour_arch"
+      "frame": "arbour_arch",
+      "layoutOverrides": {
+        "photoSlots": {
+          "left": { "x": 160, "y": 280, "width": 450, "height": 570 },
+          "centre": { "x": 735, "y": 190, "width": 450, "height": 660 },
+          "right": { "x": 1310, "y": 250, "width": 450, "height": 600 }
+        }
+      }
     },
     "closing_names_arbour": {
       "intent": "the closing card, set in this recipe's own type scale",
