@@ -420,6 +420,19 @@ test("perceptualSignature ignores frames on a full-bleed backdrop, as the render
   );
 });
 
+test("four-corner frames register as arches instead of rectangles", () => {
+  const template = {
+    id: "arch_fixture",
+    layoutPresets: { localArch: { radius: [260, 260, 0, 0] } },
+    looks: { only: { layout: "three_photo_row", frame: "localArch" } },
+  };
+  const { scene } = resolveScene(
+    { id: "arch_probe", effect: "layer_scene", look: "only" },
+    { template, library },
+  );
+  assert.deepEqual(JSON.parse(slotShapeKey(scene, template, library)), ["arch", "arch", "arch"]);
+});
+
 test("negative rotation uses absolute sine and cosine for its bounding box", () => {
   const negative = rotatedSlotBounds({
     x: 820,

@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { rotatedSlotBounds } from "./lib/lookResolver.mjs";
+import { frameRadiusErrors } from "./lib/frameRadius.mjs";
 import {
   SCENE_PHOTO_COVERAGE_MIN,
   SCENE_PHOTO_COVERAGE_MIN_TEXTED,
@@ -155,12 +156,22 @@ function validateLayout(layout, context) {
     }
   }
 
-  // G8 — inline frame objects are valid; named frames must resolve.
+  // G8 — inline frame objects are valid; named frames must resolve; every effective
+  // radius must fit the slot it clips.
   for (const slot of photoSlots) {
     const preset = typeof slot.frame === "string" ? framePresets[slot.frame] : undefined;
     if (typeof slot.frame === "string"
       && (!preset || typeof preset !== "object" || Array.isArray(preset))) {
       add("G8", "error", slot.id, `names unknown frame preset '${slot.frame}'`);
+      continue;
+    }
+    const frame = typeof slot.frame === "string" ? preset : slot.frame;
+    if (frame && (typeof frame !== "object" || Array.isArray(frame))) {
+      add("G8", "error", slot.id, "frame must be an object or a named preset");
+      continue;
+    }
+    for (const detail of frameRadiusErrors(frame?.radius, slot.width, slot.height)) {
+      add("G8", "error", slot.id, detail);
     }
   }
 

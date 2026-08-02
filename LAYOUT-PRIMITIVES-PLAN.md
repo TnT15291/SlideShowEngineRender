@@ -1,7 +1,8 @@
 # Kế hoạch: phá thế đơn điệu hình học của layout library
 
-> Trạng thái: **ĐỀ XUẤT — chưa động vào repo.** Mọi con số trong tài liệu này đo bằng chính
-> `scripts/lib/lookResolver.mjs` trên cây làm việc ngày 2026-07-30, không phải ước lượng.
+> Trạng thái: **ĐÃ TRIỂN KHAI PHA 0–3.** Xem trạng thái, gate và bằng chứng mới nhất tại
+> [LAYOUT-PRIMITIVES-PROGRESS.md](LAYOUT-PRIMITIVES-PROGRESS.md). Các baseline bên dưới là
+> số đo thiết kế trên cây ngày 2026-07-30 và được giữ lại làm lịch sử, không phải trạng thái hiện tại.
 >
 > Đặt ở thư mục gốc (cạnh `LOOKS-MIGRATION-PLAN.md`) chứ không phải `docs/`, vì
 > `scripts/checkDocs.mjs` chỉ quét `docs/` và sẽ báo lỗi với mọi tên file `.mjs` chưa tồn tại —
@@ -97,17 +98,17 @@ Slot **luôn** là hình chữ nhật. Toàn bộ công cụ phá rectangle hi�
 
 | Công cụ | Nơi định nghĩa | Giới hạn thật |
 |---|---|---|
-| `frame.radius` | [validateTimeline.ts:114](src/validateTimeline.ts#L114) | 0–400px, **một** bán kính cho cả 4 góc |
+| `frame.radius` | [validateTimeline.ts:114](src/validateTimeline.ts#L114) | số 0–540px cho cả 4 góc, hoặc tuple `[tl,tr,br,bl]`; từng góc còn bị chặn bởi kích thước slot |
 | `frame.border` / `borderColor` / `shadow` | [buildLayerSceneCommand.ts:133-136](src/buildLayerSceneCommand.ts#L133-L136) | border ≤200px |
 | `slot.rotation` | [buildLayerSceneCommand.ts:137-139](src/buildLayerSceneCommand.ts#L137-L139) | độ, xoay quanh tâm ảnh |
 | `scene.frameOverlay` | [layerSceneBuilder.mjs:118-124](scripts/lib/layerSceneBuilder.mjs#L118-L124) | PNG 1920×1080 đè lên ảnh, dưới text |
 
 Hệ quả trực tiếp:
 
-- **Tròn hoàn hảo** = slot vuông + `radius = width/2`, nên cạnh ≤ **800px** (vì cap 400).
+- **Tròn hoàn hảo** = slot vuông + `radius = width/2`, nên cạnh ≤ **1080px** (vì cap 540).
 - **Oval / viên thuốc** = slot chữ nhật + `radius = nửa cạnh ngắn`.
-- **Arch mái vòm thật** (tròn trên, vuông dưới) = **không làm được** hôm nay. Layout tên
-  `arch_trio` chỉ là 3 chữ nhật. Muốn arch thật: Pha 3, hoặc dùng `frameOverlay` PNG khoét lỗ.
+- **Arch mái vòm thật** (tròn trên, vuông dưới) = tuple `[r,r,0,0]` từ Pha 3. Layout legacy
+  `arch_trio` vẫn chỉ là 3 chữ nhật; dùng preset `arch` mới tạo silhouette vòm thật.
 - Không có polygon, clip-path, hay mask theo từng slot.
 
 ### 3.2 Xoay làm tràn khung khai báo
@@ -290,7 +291,7 @@ Vào `designTokens.framePreset` của [layouts/library.json](layouts/library.jso
 "circleMedallion": { "radius": 260, "border": 10, "borderColor": "#FFFFFF", "shadow": true }
 ```
 
-`radius 260 = 520/2` → tròn tuyệt đối trên slot 520×520, và 260 ≤ cap 400. Tên mới không đụng
+`radius 260 = 520/2` → tròn tuyệt đối trên slot 520×520, và 260 ≤ cap 540. Tên mới không đụng
 24 preset đang có trong các recipe (`reel_hairline`, `gold_mount`, `arbour_arch`, …).
 
 ### 6.2 Bảy primitive active (toạ độ ứng viên)
@@ -763,8 +764,8 @@ Chỉ làm nếu Pha 1-2 đã ổn định. Đây là thay đổi engine duy nh�
 
 1. [src/types.ts:281-286](src/types.ts#L281-L286) — `LayerFrame.radius?: number | [number, number, number, number]`
    (tl, tr, br, bl). Giữ `number` = cả 4 góc, nên mọi recipe cũ không đổi hành vi.
-2. [src/validateTimeline.ts:114](src/validateTimeline.ts#L114) — zod union: `z.number().min(0).max(400)`
-   hoặc `z.tuple([...])`. Cân nhắc nâng cap 400 → 540 để slot 1080px cao vẫn tròn được đầu.
+2. [src/validateTimeline.ts:114](src/validateTimeline.ts#L114) — zod union cho số hoặc
+   `z.tuple([...])`. Cap đã nâng 400 → 540 để slot 1080px cao vẫn tròn được đầu.
    Validator primitive/resolved look phải kiểm thêm từng radius ≤ nửa cạnh ngắn và tổng hai
    radius kề nhau không vượt chiều rộng/chiều cao tương ứng.
 3. [src/buildLayerSceneCommand.ts:156-164](src/buildLayerSceneCommand.ts#L156-L164) —
@@ -777,8 +778,10 @@ Chỉ làm nếu Pha 1-2 đã ổn định. Đây là thay đổi engine duy nh�
    được đưa `0` vào công thức cũ — nếu không cả quadrant nhận alpha 0.5. **Rủi ro**: biểu thức
    `geq` dài làm chậm render đáng kể; đo thời gian một scene trước/sau, nếu >20% chậm hơn thì
    đổi hướng sang sinh mask PNG một lần rồi `alphamerge`.
-4. [layouts/library.json](layouts/library.json) — thêm preset `arch: { radius: [260, 260, 0, 0] }`
-   và một primitive `arch_window_trio` dùng nó (arch thật, thay cho `arch_trio` đang là 3 chữ nhật).
+4. [layouts/library.json](layouts/library.json) — thêm preset `arch: { radius: [260, 260, 0, 0] }`.
+   `arch_window_trio` giữ ở Pha 1b, chưa vào `layouts`: một layout active phải có ít nhất hai host
+   thật, guard portrait và probe ảnh cưới thật trước khi được tham gia rotor. `arch_trio` vẫn là
+   layout legacy gồm ba chữ nhật; năng lực arch có thể dùng độc lập qua frame preset của recipe.
 5. Test mới trong `src/buildLayerSceneCommand.test.ts`: dạng số cho ra chuỗi filter **giống hệt
    hôm nay** (chống hồi quy); dạng mảng phủ `[260,260,0,0]`, bốn radius khác nhau, border và
    radius 0. Ngoài test chuỗi, render một mask nhỏ rồi kiểm alpha pixel ở bốn góc và giữa cạnh.

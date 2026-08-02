@@ -10,11 +10,11 @@
 
 | Trường | Giá trị |
 |---|---|
-| Trạng thái tổng | `MERGED_VERIFIED` |
-| Pha hiện tại | `Xong Pha 0–2D; đã merge và kiểm chứng cây hợp nhất` |
+| Trạng thái tổng | `MERGED_VERIFIED + PHASE3_COMMITTED` |
+| Pha hiện tại | `Xong Pha 0–3; Pha 3 đã triển khai, kiểm chứng và commit trên nhánh hiện tại` |
 | Bước đang thực hiện | Không có |
-| Bước hoàn thành gần nhất | `P2D.4` đóng lại bằng 85 ảnh cưới thật: 19/24 cả hai phía, **0 recipe đổi trạng thái** |
-| Bước tiếp theo | Không còn bước bắt buộc trong Pha 0–2D. Nợ mở: `duplicate_caption` trên repeat variant (5 recipe, có sẵn, không dính hình học) |
+| Bước hoàn thành gần nhất | `P3.7` — radius bốn góc, mask arch thật, preset độc lập và full gate |
+| Bước tiếp theo | Không còn bước bắt buộc. Nợ mở không đổi: `duplicate_caption` trên repeat variant (5 recipe, có sẵn, không dính hình học) |
 | Blocker hiện tại | Không có |
 | Branch lúc tạo tracker | `agent/refactor-engine-and-add-momo` |
 | Commit lúc tạo tracker | `82d59a5` |
@@ -27,7 +27,8 @@
 | Commit Pha 2C B3 | `0b42562` |
 | Commit Pha 2C B4 | `2294cac` |
 | Commit Pha 2C B5 | `9d64e17` |
-| Cập nhật lần cuối | `2026-07-31 — P2D.4 nghiệm thu lại trên ảnh thật; hợp nhất luật lề an toàn và sửa hộp mặt giả` |
+| Commit Pha 3 | Commit chứa chính nhật ký này trên nhánh hiện tại |
+| Cập nhật lần cuối | `2026-08-02 — Pha 3: radius tl/tr/br/bl; arch_window_trio hoãn sang Pha 1b` |
 
 ### Quy ước trạng thái
 
@@ -370,13 +371,13 @@ Chỉ bắt đầu sau khi Pha 1 ổn định. Pha này không chặn mục tiê
 
 | ID | Trạng thái | Công việc | Gate / bằng chứng |
 |---|---|---|---|
-| P3.1 | TODO | Mở rộng `LayerFrame.radius` thành number hoặc tuple 4 góc | Typecheck xanh; number giữ hành vi cũ |
-| P3.2 | TODO | Mở rộng zod và validator radius | Kiểm từng góc và tổng radius kề |
-| P3.3 | TODO | Sửa mask renderer cho bốn góc | Radius 0 giữ alpha nguyên |
-| P3.4 | TODO | Thêm preset `arch` và `arch_window_trio` | Arch thật, không phải rounded rectangle |
-| P3.5 | TODO | Thêm test command và alpha pixel | Test được nối vào `test:api` |
-| P3.6 | TODO | Benchmark render trước/sau | Nếu chậm >20%, chuyển sang PNG mask + alphamerge |
-| P3.7 | TODO | Chạy typecheck, `test:api` và `npm run check` | Tất cả xanh |
+| P3.1 | DONE | Mở rộng `LayerFrame.radius` thành number hoặc tuple 4 góc | `number \| [tl,tr,br,bl]`; typecheck xanh; scalar filter giống byte-for-byte |
+| P3.2 | DONE | Mở rộng zod và validator radius | Một luật dùng chung trong `frameRadius.mjs`: cap 540, tuple, nửa cạnh ngắn và tổng radius kề; timeline, primitive và resolved look cùng gọi nó; JSON Schema đã đồng bộ |
+| P3.3 | DONE | Sửa mask renderer cho bốn góc | Test alpha thật: góc trên trong suốt, hai góc `0` phía dưới giữ alpha 255; characterization test khóa đường nối alpha 1px để nợ không trượt |
+| P3.4 | DONE | Thêm preset `arch`; hoãn layout active | `[260,260,0,0]`; `arch_window_trio` không nằm trong `layouts`/rotor, giữ ở Pha 1b cho đến khi có 2 host + guard portrait + probe ảnh thật; validator library 34/34 |
+| P3.5 | DONE | Thêm test command và alpha pixel | `src/buildLayerSceneCommand.test.ts` nối vào `test:api`; targeted 7/7, full `test:api` 123/123 |
+| P3.6 | DONE | Benchmark render trước/sau | 90 frame 540×890: scalar median 2569ms, arch 1630ms (`-36,6%`); không cần PNG mask |
+| P3.7 | DONE | Chạy typecheck, `test:api` và `npm run check` | Typecheck/build/docs xanh; `test:api` 123/123; `test:unit` 402/402; integration 1/1; audit 0 vulnerability; full `npm run check` exit 0 |
 
 ## 5. Các lệnh kiểm chứng chuẩn
 
@@ -426,9 +427,30 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 | Pha 2 batch B4 | `2294cac` | 12 adoption / 4 recipe. Đo thật sau ghi: `catalog 101 -> 113`, `authored 93 -> 105`, `shared 30 -> 30`, **`maxShare 13 -> 12`**, **`over12 1 -> 0`**; cả 4 recipe meaningful `0 -> 3`. Hai mục tiêu hình học cuối của plan đã đạt. `--check-plan` `12 pending, 58 already applied`; content contract `12 path`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{long-distance-love-01,luminous-editorial-motion-01,modern-teal-01,playful-scrapbook-01}.json`; `scripts/newPrimitiveAdoptionMap.json`; `test/layout-geometry.test.mjs` | DONE |
 | Pha 2 batch B5 | `9d64e17` | 12 adoption / 4 recipe; **rollout hoàn tất**. Đo thật sau ghi: `catalog 113 -> 125`, `authored 105 -> 117`, `shared 30 -> 30`, `maxShare 12`, `over12 0`; cả 4 recipe meaningful `0 -> 3`. `--check-plan` `0 pending, 70 already applied` và `Widespread reachable geometry: 0 group(s)`; gallery-tail `24/24`; composition `253 / 0 dùng chung`; validator `32/32`; lint `24/24`; targeted `50/50`; `typecheck:scripts` exit 0; `test:unit` `376/376` | `story-templates/{studio-white-prewedding-01,three-chapters-biography-01,warm-film-01,white-weddings-editorial-01}.json`; `test/layout-geometry.test.mjs` | DONE |
 | Nghiệm thu cuối | `2bec2d3` | P2D.1–P2D.8 xanh. `npm run check` exit 0. `preview:tier1` 2 job; job A `20/24` pass và 4 fail pre-existing (`duplicate_caption` trên repeat variant), xác nhận bằng cách chạy lại đúng 4 recipe đó ở bản pre-rollout — fail y hệt | `docs/generation-guide.md`; `docs/TEMPLATE-RULES.md`; `temp/p2d/` | DONE |
-| Pha 3 tuỳ chọn | — | — | — | TODO |
+| Pha 3 tuỳ chọn | — | Engine capability hoàn tất; `catalog.distinct=233`; probe 7 scene bằng 6 ảnh cưới thật; Premium timeline trước/sau giống byte sau chuẩn hoá path; `npm run check` xanh | `temp/p3-probe-wedding-real.mp4`; `temp/p3-premium-{before,after}-timeline.normalized.json` | DONE |
 
 ## 7. Nhật ký bàn giao
+
+### 2026-08-02 — Pha 3: radius bốn góc và arch thật
+
+- Session: Codex.
+- Trạng thái nhận việc: `IN_PROGRESS` → `DONE`.
+- Phạm vi: P3.1–P3.7; không sửa recipe, không xử lý nợ `duplicate_caption`, không đụng 5 ảnh preview đã bẩn trước session.
+- Quan sát đầu vào: blocker `lucky-best-friends-01` trong bàn giao đã lỗi thời trên `HEAD 43d03f4`; test geometry hiện xanh 15/15, recipe đã có baseline và geometry riêng, `reachable.maxShare=9`.
+- File code/library/test đã thay đổi: `src/types.ts`, `src/validateTimeline.ts`, `src/buildLayerSceneCommand.ts`, `scripts/lib/frameRadius.mjs`, `scripts/lib/frameRadius.d.mts`, `scripts/lib/geometrySignature.mjs`, `scripts/lib/lookResolver.mjs`, `scripts/validateLayoutPrimitive.mjs`, `layouts/library.json`, `schema/timeline.schema.json`, `src/buildLayerSceneCommand.test.ts`, `test/layout-primitive-validator.test.mjs`, `test/layout-geometry.test.mjs`, `test/library.test.mjs`, `package.json`.
+- Tài liệu đã thay đổi: `docs/NANG-LUC-ENGINE.md`, `docs/generation-guide.md`, `LAYOUT-PRIMITIVES-PLAN.md`, `LAYOUT-PRIMITIVES-PROGRESS.md`.
+- Kết quả kỹ thuật: scalar radius giữ nguyên filter cũ; tuple dùng thứ tự tl/tr/br/bl; nhánh radius 0 giữ alpha; preset `arch=[260,260,0,0]`. `arch_window_trio` đã bị gỡ khỏi catalog/rotor và hoãn sang Pha 1b; `arch_trio` legacy vẫn là ba chữ nhật.
+- Luật radius chỉ còn một nguồn runtime: Zod và kiểm tra hình học timeline, primitive, resolved look đều gọi `frameRadiusErrors`; declaration `.d.mts` giữ typecheck nghiêm. JSON Schema và docs cùng dùng cap 540/type tuple.
+- Đường nối alpha 1px ở giữa thân arch được khóa bằng characterization test tại kích thước thật 540×890 (`127→255` ở hàng 444/445), chưa sửa renderer để tránh bẫy radius 0 làm mờ cả quadrant.
+- Gate: validator 34/34; lint/adoption không đổi; targeted radius/schema/alpha/command 7/7; geometry/library/validator 30/30; full `test:api` 123/123; `npm run check` exit 0 (`test:unit` 402/402, integration 1/1, audit 0 vulnerability).
+- P1.7R chạy lại sau khi dời `temp/scene-cache`: 7 primitive active, 6 ảnh cưới thật (3 ngang + 3 dọc), render 1920×1080/32,5s; review contact sheet không thấy lỗi thiết kế mới. Crop mạnh của `stacked_horizon_trio` vẫn là nợ đã biết và giữ guard landscape.
+- Premium dry-run trước/sau chạy cùng project/config: bản trước từ worktree sạch `HEAD 43d03f4`, bản sau từ cây Pha 3; cả hai 38 slide, 67 image ref unique, 188,83s preflight. Hai timeline JSON giống hệt từng byte sau khi chỉ chuẩn hoá tiền tố path; `arch_window_trio` không xuất hiện.
+- Metric sau Pha 3: catalog `233 distinct / 7 shared / maxShare 9 / over12Count 0`; authored `222 distinct / 7 shared`; reachable `224 distinct / maxShare 9 / over12Count 0`. Ratchet giữ đúng `catalog.distinct >= 233`.
+- Benchmark: FFmpeg 90 frame ở 540×890, bốn lượt xen kẽ sau warm-up; scalar median 2569ms, tuple arch median 1630ms (`-36,6%`). Không kích hoạt fallback PNG mask vì không chậm hơn >20%.
+- Commit: Commit chứa chính nhật ký này trên nhánh hiện tại.
+- Trạng thái kết thúc: `DONE`.
+- Blocker còn lại: Không có blocker hình học. Nợ `duplicate_caption` cũ vẫn ngoài phạm vi.
+- Bước tiếp theo: Không còn bước bắt buộc của Pha 3.
 
 ### 2026-07-31 — P2D.4 đóng lại bằng ảnh thật, và hai luật bị hợp nhất
 

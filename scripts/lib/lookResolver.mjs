@@ -25,6 +25,7 @@
 //   I4  A scene with no look resolves to the library layout unchanged — recipes that
 //       have not migrated render byte-for-byte as before.
 import { hashSeed } from "./copyVariants.mjs";
+import { frameRadiusErrors } from "./frameRadius.mjs";
 import { textSafeInsets } from "./rules/thresholds.mjs";
 
 /** Slot fields a look may override. `id` is absent on purpose (I1). */
@@ -311,6 +312,23 @@ export function validateLook(lookId, look, { template, library }) {
         `photo slot '${slot.id}' resolves to ${slot.x},${slot.y} ${slot.width}x${slot.height} ` +
         `and renders as ${bounds.width.toFixed(1)}x${bounds.height.toFixed(1)} after ${slot.rotation ?? 0}° rotation, ` +
         `outside the ${canvas.width}x${canvas.height} canvas`)); // V4
+    }
+  }
+  const framePresets = {
+    ...(library.designTokens?.framePreset || {}),
+    ...(template.layoutPresets || {}),
+  };
+  for (const slot of resolved.photoSlots || []) {
+    const ref = look.frame || slot.frame;
+    const frame = typeof ref === "string" ? framePresets[ref] : ref;
+    if (typeof ref === "string" && !frame) {
+      out.push(finding("look_overrides", lookId,
+        `photo slot '${slot.id}' names unknown frame preset '${ref}'`));
+      continue;
+    }
+    for (const detail of frameRadiusErrors(frame?.radius, slot.width, slot.height)) {
+      out.push(finding("look_overrides", lookId,
+        `photo slot '${slot.id}' frame ${detail}`));
     }
   }
   // Text has no such licence: a heading cropped by the frame edge is never intended.

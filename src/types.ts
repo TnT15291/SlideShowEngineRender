@@ -279,7 +279,7 @@ export type LayerMotion =
 
 /** Card treatment for an image layer: rounded corners, matte border, drop shadow. */
 export interface LayerFrame {
-  radius?: number; // rounded-corner radius in px
+  radius?: number | [number, number, number, number]; // px: all corners, or tl/tr/br/bl
   border?: number; // white matte border thickness in px
   borderColor?: string; // default "white"
   shadow?: boolean; // soft drop shadow behind the card

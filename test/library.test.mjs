@@ -73,6 +73,13 @@ test("circleMedallion is a true circle frame for a 520x520 slot", () => {
   });
 });
 
+test("arch is available as a four-corner frame preset", () => {
+  assert.deepEqual(library.designTokens?.framePreset?.arch, {
+    radius: [260, 260, 0, 0],
+  });
+  assert.equal(library.layouts.some((layout) => layout.id === "arch_window_trio"), false);
+});
+
 test("seven active primitives are appended without reordering the original layouts", () => {
   const originalIds = [
     "hero_title_card",

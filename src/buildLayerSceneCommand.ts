@@ -1,7 +1,7 @@
 import { toFfmpegPath } from "./fileUtils";
 import { buildLayerGradeFilter, buildTechnicalColorFilter, clamp01, cssColor, quoteFilterPath } from "./ffmpegFilterHelpers";
 import { videoEncodeArgs } from "./quality";
-import type { RenderSlideStep } from "./types";
+import type { LayerFrame, RenderSlideStep } from "./types";
 
 export function buildLayerSceneArgs(step: RenderSlideStep): string[] {
   const inputs: string[] = [
@@ -133,7 +133,12 @@ function buildLayerImageFilter(
   if (border > 0) {
     parts.push(`pad=${w}:${h}:${border}:${border}:color=${cssColor(frame!.borderColor ?? "white")}`);
   }
-  if (frame?.radius) parts.push(roundedMaskGeq(round(frame.radius)));
+  const radius = frame?.radius;
+  if (typeof radius === "number") {
+    if (radius > 0) parts.push(roundedMaskGeq(round(radius)));
+  } else if (radius?.some((corner) => corner > 0)) {
+    parts.push(roundedMaskGeq(radius.map(round) as [number, number, number, number]));
+  }
   if (layer.rotation && layer.rotation !== 0) {
     const radians = (layer.rotation * Math.PI) / 180;
     parts.push(`rotate=${radians.toFixed(6)}:c=none:ow=rotw(${radians.toFixed(6)}):oh=roth(${radians.toFixed(6)})`);
@@ -153,14 +158,32 @@ function buildLayerImageFilter(
 // Rounded-corner alpha mask for an rgba stream: keep the pixel's alpha inside a
 // rounded rectangle of the given corner radius, feathered by 1px. Expressions
 // are single-quoted so their commas survive the filtergraph parser.
-function roundedMaskGeq(radius: number): string {
-  const r = radius;
-  const dx = `max(max(${r}-X,X-(W-1-${r})),0)`;
-  const dy = `max(max(${r}-Y,Y-(H-1-${r})),0)`;
-  const dist = `hypot(${dx},${dy})`;
+export function roundedMaskGeq(radius: NonNullable<LayerFrame["radius"]>): string {
+  if (typeof radius === "number") {
+    const r = radius;
+    const dx = `max(max(${r}-X,X-(W-1-${r})),0)`;
+    const dy = `max(max(${r}-Y,Y-(H-1-${r})),0)`;
+    const dist = `hypot(${dx},${dy})`;
+    return (
+      `geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':` +
+      `a='alpha(X,Y)*clip(${r}+0.5-${dist},0,1)'`
+    );
+  }
+
+  const [tl, tr, br, bl] = radius;
+  const corner = (r: number, dx: string, dy: string) => r === 0
+    ? "1"
+    : `clip(${r}+0.5-hypot(${dx},${dy}),0,1)`;
+  const left = (r: number) => `max(${r}-X,0)`;
+  const right = (r: number) => `max(X-(W-1-${r}),0)`;
+  const top = (r: number) => `max(${r}-Y,0)`;
+  const bottom = (r: number) => `max(Y-(H-1-${r}),0)`;
+  const mask =
+    `if(lt(X,W/2),if(lt(Y,H/2),${corner(tl, left(tl), top(tl))},${corner(bl, left(bl), bottom(bl))}),` +
+    `if(lt(Y,H/2),${corner(tr, right(tr), top(tr))},${corner(br, right(br), bottom(br))}))`;
   return (
     `geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':` +
-    `a='alpha(X,Y)*clip(${r}+0.5-${dist},0,1)'`
+    `a='alpha(X,Y)*${mask}'`
   );
 }
 

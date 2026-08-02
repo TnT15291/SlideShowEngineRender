@@ -134,9 +134,17 @@ side, or a 600px slot wearing `circleMedallion` (radius 260) renders as a rounde
 `stacked_horizon_trio` is the one with a content precondition: every photo request must be
 `orient: "landscape"`. Feed it portraits and the bands crop through faces.
 
-Two further primitives sit in the library unused: `offset_quad_pinwheel` and `filmstrip_band`.
-They would set a scene's photo demand to 4 and 5, which moves the solver's budget, so they
-were deferred rather than adopted.
+Four-corner frames are an engine capability, not an additional active layout. `frame.radius`
+accepts either one number or `[tl, tr, br, bl]`; the library preset `arch` is
+`[260, 260, 0, 0]`. A recipe can use `frame: "arch"` (or define the same treatment in its
+`layoutPresets`) without adding a layout to the Premium rotor. Keep every radius at or below
+540px and half the slot's shorter side. `arch_trio` is a legacy name for three rectangular
+slots; it does not become arched automatically. `arch_window_trio` remains deferred to Phase
+1b until it has at least two real hosts, portrait guards, and a real-photo visual probe.
+
+Two further primitives are also deferred outside the library: `offset_quad_pinwheel` and
+`filmstrip_band`. They would set a scene's photo demand to 4 and 5, which moves the solver's
+budget, so they remain Phase 1b rather than participating in the rotor.
 
 ## 6. Self-check before returning
 

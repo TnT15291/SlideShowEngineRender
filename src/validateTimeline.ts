@@ -1,5 +1,6 @@
 import path from "node:path";
 import { z } from "zod";
+import { frameRadiusErrors } from "../scripts/lib/frameRadius.mjs";
 import { fileExists, ValidationError } from "./fileUtils";
 import {
   CURVES_PRESETS,
@@ -97,6 +98,16 @@ const baseLayerSchema = {
     .default("none"),
 };
 
+const cornerRadiusSchema = z.number();
+const frameRadiusSchema = z.union([
+  cornerRadiusSchema,
+  z.tuple([cornerRadiusSchema, cornerRadiusSchema, cornerRadiusSchema, cornerRadiusSchema]),
+]).superRefine((radius, context) => {
+  for (const message of frameRadiusErrors(radius)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message });
+  }
+});
+
 const layerSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("image"),
@@ -111,7 +122,7 @@ const layerSchema = z.discriminatedUnion("type", [
     grade: layerGradeSchema.optional(),
     frame: z
       .object({
-        radius: z.number().min(0).max(400).optional(),
+        radius: frameRadiusSchema.optional(),
         border: z.number().min(0).max(200).optional(),
         borderColor: z.string().min(1).optional(),
         shadow: z.boolean().optional(),
@@ -384,6 +395,15 @@ export function validateTimeline(normalized: unknown, baseDir: string): Timeline
       }
       if (layer.type === "image" && !fileExists(path.resolve(baseDir, layer.path))) {
         errors.push(`slide ${slide.id} layers[${li}] image not found: ${layer.path}`);
+      }
+      if (layer.type === "image" && layer.frame?.radius !== undefined) {
+        for (const detail of frameRadiusErrors(
+          layer.frame.radius,
+          layer.width,
+          layer.height,
+        )) {
+          errors.push(`slide ${slide.id} layers[${li}] frame ${detail}`);
+        }
       }
       if (layer.type === "text" && layer.font && !fileExists(path.resolve(baseDir, layer.font))) {
         errors.push(`slide ${slide.id} layers[${li}] font not found: ${layer.font}`);

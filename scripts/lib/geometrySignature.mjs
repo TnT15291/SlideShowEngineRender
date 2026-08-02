@@ -160,6 +160,12 @@ export function slotShapeKey(resolvedScene, template, library) {
 
     const frame = frameOf(slot);
     const radius = frame?.radius;
+    if (Array.isArray(radius)) {
+      if (radius.length !== 4 || radius.some((corner) => !Number.isFinite(corner))) return "rect";
+      const [tl, tr, br, bl] = radius;
+      if (tl > 0 && tr > 0 && br === 0 && bl === 0) return "arch";
+      return `corners:${radius.join(",")}`;
+    }
     if (typeof radius !== "number" || !Number.isFinite(radius) || radius <= 0) return "rect";
 
     const width = positiveNumber(slot.width, `photo slot '${slot.id ?? "unknown"}' width`);
@@ -275,12 +281,19 @@ function frameBand(frame, slot) {
     tone = luma == null ? "unknown" : luma < 85 ? "dark" : luma <= 170 ? "mid" : "light";
   }
 
-  const radius = Number.isFinite(frame.radius) ? frame.radius : 0;
   const largest = Math.min(slot.width, slot.height) / 2;
   let shape = "square";
-  if (radius > 0 && largest > 0) {
-    const ratio = radius / largest;
-    shape = bandOf(RADIUS_BANDS, ratio, slot.width === slot.height ? "circle" : "pill");
+  if (Array.isArray(frame.radius) && frame.radius.length === 4 && largest > 0) {
+    shape = frame.radius.map((radius) => {
+      if (!Number.isFinite(radius) || radius <= 0) return "square";
+      return bandOf(RADIUS_BANDS, radius / largest, "round");
+    }).join("/");
+  } else {
+    const radius = Number.isFinite(frame.radius) ? frame.radius : 0;
+    if (radius > 0 && largest > 0) {
+      const ratio = radius / largest;
+      shape = bandOf(RADIUS_BANDS, ratio, slot.width === slot.height ? "circle" : "pill");
+    }
   }
 
   return [weight, tone, shape, frame.shadow ? "shadow" : "flat"].join(":");

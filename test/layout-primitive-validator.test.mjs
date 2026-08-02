@@ -69,6 +69,17 @@ test("G5 uses semantic text roles instead of treating every non-body slot as a h
   assert.equal(minimumTextSize({ role: "names", fontRole: "script_accent" }), 96);
 });
 
+test("G8 validates four-corner radii against the slot", () => {
+  const valid = reportFor({ photo: { frame: { radius: [30, 30, 0, 0] } } });
+  assert.equal(hasGate(valid, "errors", "G8"), false);
+
+  const tooLarge = reportFor({ photo: { frame: { radius: [31, 30, 0, 0] } } });
+  assert.equal(hasGate(tooLarge, "errors", "G8"), true);
+
+  const wrongShape = reportFor({ photo: { frame: { radius: [10, 10, 0] } } });
+  assert.equal(hasGate(wrongShape, "errors", "G8"), true);
+});
+
 test("layout primitive CLI loads the library and a single-layout candidate", () => {
   const library = JSON.parse(fs.readFileSync(path.join(root, "layouts", "library.json"), "utf8"));
   const libraryRun = run("layouts/library.json");

@@ -293,6 +293,14 @@
         "border": 10,
         "borderColor": "#FFFFFF",
         "shadow": true
+      },
+      "arch": {
+        "radius": [
+          260,
+          260,
+          0,
+          0
+        ]
       }
     },
     "textWrap": {

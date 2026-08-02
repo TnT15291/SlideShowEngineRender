@@ -194,7 +194,7 @@ Mỗi phần tử trong `layers` là `image` / `rect` / `text`, vẽ từ sau ra
 
 **Layer `image`:** `path`, `fit` (`cover`/`contain`/`stretch`), thêm:
 - `motion` — Ken Burns liên tục cả slide: `zoom_in`/`zoom_out`/`pan_left`/`pan_right`/`pan_up`/`pan_down`.
-- `frame` — thẻ ảnh `{ radius (0–400), border (0–200), borderColor, shadow }` (bo góc, viền matte giữ kích thước ngoài, đổ bóng mềm).
+- `frame` — thẻ ảnh `{ radius, border (0–200), borderColor, shadow }`; `radius` nhận một số `0–540` cho cả bốn góc hoặc tuple `[tl,tr,br,bl]` (mỗi góc không vượt nửa cạnh ngắn và các cặp kề phải vừa khung). Preset `arch` dùng `[260,260,0,0]` để tạo đầu vòm thật.
 - `focusX`, `focusY` (0–1) — điểm neo khi cover-crop (mặc định 0.5 = giữa). Cho phép crop lệch để giữ mặt.
 
 **Layer `rect`:** khối màu đặc `color` (góc vuông).
