@@ -94,8 +94,13 @@ export function App() {
 
   useEffect(() => { setNavOpen(false) }, [view])
 
+  // Keyed on who is signed in, not on the user *object*: `reloadUser` hands
+  // back a fresh object every time it re-reads the render balance, and keying
+  // on that re-resolved the route — flipping the workspace back to the
+  // "Opening project…" screen — for a change that never touches the route.
+  const userId = user?.id ?? null
   useEffect(() => {
-    if (!user) return
+    if (!userId) return
     let active = true
     async function syncRoute() {
       const route = routeFromUrl()
@@ -118,7 +123,7 @@ export function App() {
     const onPopState = () => { void syncRoute() }
     window.addEventListener("popstate", onPopState)
     return () => { active = false; window.removeEventListener("popstate", onPopState) }
-  }, [user])
+  }, [userId])
 
   if (loading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">{t("common.loading")}</main>
   // Reachable with zero login — checked before the auth gate below.
@@ -146,10 +151,10 @@ export function App() {
       render: { step: "review", focus: "all" },
     }
     const selected = config[view as keyof typeof config]
-    return <AppShell {...shell}><AssetsPage key={`${activeProject.id}:${view}`} project={activeProject} initialStep={selected.step} focus={selected.focus} plan={user.plan} onOpenNav={onOpenNav} onUpgrade={() => navigate("billing")} onRenderStarted={reloadUser} /></AppShell>
+    return <AppShell {...shell}><AssetsPage key={`${activeProject.id}:${view}`} project={activeProject} initialStep={selected.step} focus={selected.focus} plan={user.plan} onOpenNav={onOpenNav} onUpgrade={() => navigate("billing")} onEntitlementChanged={reloadUser} /></AppShell>
   }
   if (view === "recipes") return <AppShell {...shell}><RecipeLibrary onOpenNav={onOpenNav} /></AppShell>
-  if (view === "billing") return <AppShell {...shell}><BillingPage onOpenNav={onOpenNav} /></AppShell>
+  if (view === "billing") return <AppShell {...shell}><BillingPage onOpenNav={onOpenNav} plan={user.plan} /></AppShell>
   if (view === "admin") return <AppShell {...shell}><AdminIncidentsPage onOpenNav={onOpenNav} /></AppShell>
   return <AppShell {...shell}><Dashboard onOpenNav={onOpenNav} onCreate={() => navigate("intake")} onNavigate={navigate} onReloadUser={reloadUser} /></AppShell>
 }
@@ -296,14 +301,16 @@ function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNa
           <button aria-label={t("common.openNavigation")} onClick={onOpenNav} className="grid size-11 shrink-0 place-items-center rounded-md border lg:hidden"><Menu className="size-5" /></button>
           <div className="min-w-0"><p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">{t("common.studio")}</p><h1 className="font-serif text-base font-semibold sm:text-xl">{t("dashboard.welcome")}</h1></div>
         </div>
-        <Button onClick={onCreate} size="lg" className="shrink-0"><Plus className="size-4" /> <span className="hidden sm:inline">{t("dashboard.createFilm")}</span></Button>
+        {/* The sidebar already has a full-width "New film" button and the empty
+            state offers the same action again; a third copy in the header made
+            one action appear three times in one viewport under two labels. */}
       </header>
 
       <div className="mx-auto max-w-[1440px] space-y-6 px-6 py-8 md:px-10">
-        {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success"><span>{t("dashboard.checkoutSuccess")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
-        {checkoutBanner === "cancelled" && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-warning"><span>{t("dashboard.checkoutCancelled")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
+        {checkoutBanner === "success" && <Card className="border-success/40 bg-success/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-success-text"><span>{t("dashboard.checkoutSuccess")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
+        {checkoutBanner === "cancelled" && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-warning-text"><span>{t("dashboard.checkoutCancelled")}</span><Button variant="outline" size="sm" onClick={() => setCheckoutBanner(null)}>{t("common.dismiss")}</Button></CardContent></Card>}
         {error && <Card className="border-destructive/40 bg-destructive/5"><CardContent className="flex items-center justify-between gap-4 p-5 text-sm text-destructive"><span>{error}</span><Button variant="outline" size="sm" onClick={reload}>{t("common.retry")}</Button></CardContent></Card>}
-        {data && data.issues.length > 0 && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5 text-sm text-warning"><div><p className="font-medium">{t("dashboard.issuesTitle", { count: data.issues.length })}</p><p className="mt-1 text-xs text-warning">{t("dashboard.issuesDetail")}</p></div><Button variant="outline" size="sm" onClick={onBrowseProjects}>{t("dashboard.reviewIssues", { count: data.issues.length })} <ArrowRight className="size-4" /></Button></CardContent></Card>}
+        {data && data.issues.length > 0 && <Card className="border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-4 p-5 text-sm text-warning-text"><div><p className="font-medium">{t("dashboard.issuesTitle", { count: data.issues.length })}</p><p className="mt-1 text-xs text-warning-text">{t("dashboard.issuesDetail")}</p></div><Button variant="outline" size="sm" onClick={onBrowseProjects}>{t("dashboard.reviewIssues", { count: data.issues.length })} <ArrowRight className="size-4" /></Button></CardContent></Card>}
         <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
           {loading && !data ? <DashboardHeroSkeleton /> : featured ? <Card className="relative min-h-[360px] overflow-hidden border-0 bg-[linear-gradient(135deg,#3a302b_0%,#7b5a42_52%,#c9a878_100%)] text-white shadow-xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,.22),transparent_35%),linear-gradient(to_top,rgba(14,12,11,.78),transparent_65%)]" />
@@ -329,7 +336,7 @@ function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNa
           <Card><CardHeader className="flex-row items-center justify-between"><div><CardTitle className="text-base">{t("dashboard.recentProjects")}</CardTitle><CardDescription>{loading ? t("dashboard.loadingProjects") : t("dashboard.orderedByUpdate")}</CardDescription></div><Button variant="ghost" size="sm" onClick={onBrowseProjects}>{t("dashboard.viewAll")} <ArrowRight className="size-4" /></Button></CardHeader>{/* auto-fit (not a fixed 4) so one project fills the row instead of sitting
     in a quarter-width tile beside three empty tracks. */}
 <CardContent className="grid gap-3 sm:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">{projects.slice(0, 4).map((project, index) => <button onClick={() => onNavigate("assets", project)} key={project.id} className="overflow-hidden rounded-lg border bg-background text-left transition hover:border-primary/40 hover:shadow-sm"><ProjectAvatar project={project} className={cn("h-28 w-full", ["bg-[#8b7869]", "bg-[#65705f]", "bg-[#9b745d]", "bg-[#687a87]"][index])} textClassName="text-2xl" /><div className="p-3"><p className="text-sm font-medium">{project.name}</p><p className="mt-0.5 text-xs text-muted-foreground">{t(tierLabelKey[project.tier] ?? "tier.template")} · {project.currentPhase ? t(phaseLabelKey[project.currentPhase]) : t("status.not_started")}</p><Badge className={cn("mt-3 border-0", statusClass[project.status])}>{t(statusLabelKey[project.status])}</Badge></div></button>)}{!loading && projects.length === 0 && <p className="col-span-full py-8 text-center text-sm text-muted-foreground">{t("dashboard.noRecentProjects")}</p>}</CardContent></Card>
-          <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><ShieldAlert className="size-4 text-primary" /> {t("dashboard.needsAttention")}</CardTitle><CardDescription>{t("dashboard.needsAttentionDetail")}</CardDescription></CardHeader><CardContent className="space-y-4 text-sm">{attentionItems.slice(0, 4).map((item) => <button onClick={item.onSelect} key={item.key} className="flex w-full gap-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-ring"><span className={cn("mt-1 size-2 shrink-0 rounded-full", item.severe ? "bg-destructive" : "bg-warning")} /><span className="min-w-0 flex-1"><span className="block truncate">{item.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{item.detail}</span></span></button>)}{attentionItems.length > 4 && <p className="text-xs text-muted-foreground">{t("dashboard.andMore", { count: attentionItems.length - 4 })}</p>}{!loading && attentionItems.length === 0 && <div className="py-8 text-center"><Check className="mx-auto size-6 text-success" /><p className="mt-2 text-sm font-medium">{t("dashboard.allClear")}</p><p className="mt-1 text-xs text-muted-foreground">{t("dashboard.allClearDetail")}</p></div>}</CardContent></Card>
+          <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><ShieldAlert className="size-4 text-primary" /> {t("dashboard.needsAttention")}</CardTitle><CardDescription>{t("dashboard.needsAttentionDetail")}</CardDescription></CardHeader><CardContent className="space-y-4 text-sm">{attentionItems.slice(0, 4).map((item) => <button onClick={item.onSelect} key={item.key} className="flex w-full gap-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-ring"><span className={cn("mt-1 size-2 shrink-0 rounded-full", item.severe ? "bg-destructive" : "bg-warning")} /><span className="min-w-0 flex-1"><span className="block truncate">{item.title}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{item.detail}</span></span></button>)}{attentionItems.length > 4 && <p className="text-xs text-muted-foreground">{t("dashboard.andMore", { count: attentionItems.length - 4 })}</p>}{!loading && attentionItems.length === 0 && <div className="py-8 text-center"><Check className="mx-auto size-6 text-success-text" /><p className="mt-2 text-sm font-medium">{t("dashboard.allClear")}</p><p className="mt-1 text-xs text-muted-foreground">{t("dashboard.allClearDetail")}</p></div>}</CardContent></Card>
         </div>
       </div>
     </>

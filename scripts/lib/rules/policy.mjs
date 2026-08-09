@@ -23,6 +23,7 @@ const REPAIR = { severity: "error", action: "repair" };
 const BLOCK = { severity: "error", action: "block" };
 const REVIEW = { severity: "error", action: "manual-review" };
 const WARN = { severity: "warn", action: "warn" };
+export const POLICY_VERSION = 2;
 
 // Mirrors today's behavior exactly: a rule is "repair" iff its emitter proposes
 // a deterministic fix that qaLoop applies; tier-1 gate warnings are advisories.
@@ -43,6 +44,7 @@ const BASE = {
   black_frame: REVIEW,
   music_edit: REVIEW,
   audio_drift: REVIEW,
+  photo_coverage: REVIEW,
 };
 
 // Lite saves cost by limiting creative intervention, not by shipping broken
@@ -55,15 +57,47 @@ const LITE = {
   text_safe_area: BLOCK,
   caption_integrity: BLOCK,
   closing_card: BLOCK,
-  duplicate_photo: WARN,
+  // Global assignment makes adjacency collisions exceptional. If one survives, Lite no
+  // longer ships it under a warning while delivery independently refuses the same report.
+  duplicate_photo: BLOCK,
   hero: WARN,
   black_frame: BLOCK,
   music_edit: BLOCK,
   audio_drift: BLOCK,
+  photo_coverage: BLOCK,
+};
+
+// Premium used to be `{ ...BASE }` — one BLOCK row against Lite's eight. It never shipped
+// a broken film for it (runProject always passes --strict, so a manual-review finding still
+// fails the run and delivery still refuses a non-pass verdict), but the timing was upside
+// down: qaLoop only halts on `block` BEFORE the render, so the most expensive tier was the
+// only one that paid for an encode and THEN failed. These four are the failures a premium
+// job can prove from the timeline alone, so it can now fail on them for free.
+//
+// photo_coverage stays manual-review here rather than block: premium is the tier where a
+// director's instruction may legitimately cost the film a photograph, and that is a
+// judgement for a person with the receipt in analysis/directive-impact.json in front of
+// them — not an automatic refusal.
+//
+// text_safe_area is here for a second reason. src/preflightTimeline.ts decided how hard to
+// judge a caption by testing `metadata.pipelineVersion === "lite-v2"` — a string only the
+// Lite generator ever wrote — so premium captions were allowed to overrun the 86% safe
+// width, run to four lines and outpace the reading rate as WARNINGS while Lite failed on
+// all four. There was never a product reason for that; there was a string comparison. The
+// gate now reads this row. Measured before flipping it: 18 of 49 stored timelines carry
+// findings that would newly become errors, but all 18 predate fitTextInTimeline being wired
+// in — a freshly built premium timeline scores zero after the fitter runs.
+const PREMIUM = {
+  ...BASE,
+  must_use_coverage: BLOCK,
+  caption_integrity: BLOCK,
+  text_safe_area: BLOCK,
+  audio_drift: BLOCK,
+  black_frame: BLOCK,
 };
 
 export const TIERS = ["template", "lite", "premium"];
-export const POLICY = { template: { ...BASE }, lite: LITE, premium: { ...BASE } };
+export const POLICY = { template: { ...BASE }, lite: LITE, premium: PREMIUM };
 
 export function actionFor(tier, check) {
   const rows = POLICY[tier];

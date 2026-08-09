@@ -170,10 +170,10 @@
     "notes": "Adapted from the reference video's bright studio slideshow language: centered portrait cards, soft enlarged background echoes, white-flash dissolves, triptychs, page turns and floating gallery motion. It recreates the visual grammar with engine-native effects rather than copying source media."
   },
   "intro": {
-    "summary": "Ngôn ngữ slideshow studio sáng trắng — thẻ chân dung, hiệu ứng trắng lóa, tam liên ảnh và trang lật.",
-    "photos": "Hợp bộ ảnh chân dung studio prewedding (portrait-heavy), tông sáng, nền đơn giản; không cần ảnh phóng sự.",
-    "story": "Phù hợp video prewedding thuần túy, giới thiệu vẻ đẹp cặp đôi qua các concept chụp studio, không kể hành trình yêu hay ngày cưới.",
-    "music": "Hợp nhạc piano-pop lãng mạn, nhẹ nhàng, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Ngôn ngữ slideshow studio sáng trắng — thẻ chân dung, hiệu ứng trắng lóa, tam liên ảnh và trang lật.", "en": "A bright white studio slideshow language — portrait cards, white flares, triptychs and page turns." },
+    "photos": { "vi": "Hợp bộ ảnh chân dung studio prewedding (portrait-heavy), tông sáng, nền đơn giản; không cần ảnh phóng sự.", "en": "Suits a studio pre-wedding portrait set (portrait-heavy), bright in tone and simple in background. No documentary coverage needed." },
+    "story": { "vi": "Phù hợp video prewedding thuần túy, giới thiệu vẻ đẹp cặp đôi qua các concept chụp studio, không kể hành trình yêu hay ngày cưới.", "en": "For a pure pre-wedding film that presents the couple through studio concepts, without the love story or the wedding day." },
+    "music": { "vi": "Hợp nhạc piano-pop lãng mạn, nhẹ nhàng, tiết tấu chậm đến vừa.", "en": "Suits romantic, gentle piano-pop at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

@@ -190,6 +190,19 @@ test("resume reuses every phase when artifacts are fresh", (t) => {
   assert.deepEqual([...state.reusable], ["analyze", "plan", "build", "render", "qa", "deliver"]);
 });
 
+test("resume rebuilds a Lite timeline produced by another pipeline version", (t) => {
+  const f = completedFixture({ tier: "lite" });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(f.dir, "timeline/timeline.json"), JSON.stringify({
+    metadata: { pipelineVersion: "lite-v1" },
+    slides: [],
+  }));
+  const state = inspectResume(f.project);
+  assert.equal(state.invalidatedAt, "build");
+  assert.deepEqual([...state.reusable], ["analyze", "plan"]);
+  assert.match(state.reason, /different pipeline version/);
+});
+
 test("resume invalidates plan and downstream phases after prompt changes", (t) => {
   const f = completedFixture();
   t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));

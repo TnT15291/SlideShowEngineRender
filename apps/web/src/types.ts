@@ -36,13 +36,23 @@ export interface BillingCatalog {
   momo: { enabled: boolean; perVideoAmountVnd: number }
 }
 
+/**
+ * Recipe prose in both languages. The API sends both rather than resolving one
+ * server-side, so flipping the language switch re-renders without a refetch.
+ * Read it through `localized()` in recipeFormat.ts, never `.vi` directly.
+ */
+export interface LocalizedText {
+  vi: string
+  en: string
+}
+
 export interface RecipeSummary {
   id: string
   name: string
   libraryTheme: string | null
   themeBackground: string | null
   themeAccent: string | null
-  intro: { summary: string; photos: string; story: string; music: string } | null
+  intro: { summary: LocalizedText; photos: LocalizedText; story: LocalizedText; music: LocalizedText } | null
   bestFor: string[]
   minPhotos: number | null
   idealPhotos: number | null
@@ -135,6 +145,10 @@ export interface JobSnapshot {
   mode: "render" | null
   deliver: boolean | null
   phases: Record<string, "pending" | "running" | "completed" | "failed" | "skipped">
+  /** A recognised failure reason; `code` keys into `jobCause.*` in strings.ts. */
+  cause?: { code: string; params: Record<string, string | number> } | null
+  /** Server-persisted tail of the run's output, so it survives a page reload. */
+  logTail?: string[]
 }
 
 export interface ProjectArtifact {

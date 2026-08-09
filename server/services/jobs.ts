@@ -8,6 +8,11 @@ import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
 import { writeJsonAtomic } from "./atomicFile.js"
+import { describeFailure, redactEnginePaths, type FailureCause } from "./failureCause.js"
+
+// Enough to carry the stack trace and the lines above it that name the cause,
+// without turning the manifest into a log file.
+const LOG_TAIL_LINES = 80
 
 const phases = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 const phaseStatusSchema = z.enum(["pending", "running", "completed", "failed", "skipped"])
@@ -69,6 +74,18 @@ export type JobSnapshot = {
   mode: StartJobInput["mode"] | null
   deliver: boolean | null
   phases: Record<string, z.infer<typeof phaseStatusSchema>>
+  /**
+   * A recognised, customer-language reason for a failure, when the output
+   * matched one — see `failureCause.ts`. `null` means "unknown", not "fine".
+   */
+  cause: FailureCause | null
+  /**
+   * The tail of the run's own output, persisted with the manifest.
+   * The live log arrives over SSE and lived only in the browser's memory, so
+   * reloading the page after a failure threw away the sole explanation the
+   * customer had been given.
+   */
+  logTail: string[]
 }
 export type JobEvent =
   | { type: "snapshot"; data: JobSnapshot }
@@ -84,6 +101,7 @@ type ActiveJob = {
   manifestTimer: NodeJS.Timeout
   lastManifest: string
   releaseOperation: () => void
+  tail: string[]
 }
 
 export class JobRequestError extends Error {
@@ -94,6 +112,21 @@ export class JobRequestError extends Error {
 
 function pendingPhases(): Record<string, z.infer<typeof phaseStatusSchema>> {
   return Object.fromEntries(phases.map((phase) => [phase, "pending" as const]))
+}
+
+// `jobManifestSchema` is `.passthrough()`, so these ride along untyped and are
+// read back defensively — an older manifest simply has neither.
+function tailFromManifest(manifest: z.infer<typeof jobManifestSchema>): string[] {
+  const value = (manifest as { logTail?: unknown }).logTail
+  return Array.isArray(value) ? value.filter((line): line is string => typeof line === "string") : []
+}
+
+function causeFromManifest(manifest: z.infer<typeof jobManifestSchema>): FailureCause | null {
+  const value = (manifest as { cause?: unknown }).cause
+  if (!value || typeof value !== "object") return null
+  const candidate = value as { code?: unknown; params?: unknown }
+  if (typeof candidate.code !== "string") return null
+  return { code: candidate.code, params: (candidate.params ?? {}) as Record<string, string | number> }
 }
 
 function progressOf(manifest: z.infer<typeof jobManifestSchema>) {
@@ -144,7 +177,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
         status: manifest.status,
         currentPhase: manifest.currentPhase || null,
         progress: progressOf(manifest),
-        error: manifest.error?.message || null,
+        error: manifest.error?.message ? redactEnginePaths(manifest.error.message, engineRoot) : null,
         pauseReason: manifest.currentPhase ? String(manifest.phases[manifest.currentPhase].reason || "") || null : null,
         warnings: manifest.warnings?.length
           ? manifest.warnings
@@ -155,6 +188,10 @@ export function createJobRunner(engineRoot = process.cwd()) {
         mode: running?.mode || null,
         deliver: running?.deliver ?? null,
         phases: Object.fromEntries(phases.map((phase) => [phase, manifest.phases[phase].status])),
+        // Live runs stream their tail over SSE; a finished one reads it back
+        // from the manifest that `persistRunDiagnostics` wrote.
+        cause: causeFromManifest(manifest),
+        logTail: running?.tail ?? tailFromManifest(manifest),
       }
     } catch (error) {
       if (!running && (error as NodeJS.ErrnoException).code !== "ENOENT") throw new JobRequestError(500, "INVALID_JOB_MANIFEST", "Job manifest is invalid")
@@ -173,6 +210,8 @@ export function createJobRunner(engineRoot = process.cwd()) {
         mode: running?.mode || null,
         deliver: running?.deliver ?? null,
         phases: pendingPhases(),
+        cause: null,
+        logTail: running?.tail ?? [],
       }
     }
   }
@@ -183,19 +222,23 @@ export function createJobRunner(engineRoot = process.cwd()) {
 
   function pipeLogs(projectId: string, job: ActiveJob, stream: "stdout" | "stderr") {
     let remainder = ""
+    // The on-disk log keeps the raw line (it is an operator artefact); the tail
+    // and the SSE stream, both of which a customer can read, do not.
+    const publish = (line: string) => {
+      job.log.write(`[${stream}] ${line}\n`)
+      const safe = redactEnginePaths(line, engineRoot)
+      job.tail.push(`${stream === "stderr" ? "!" : ">"} ${safe}`)
+      if (job.tail.length > LOG_TAIL_LINES) job.tail.splice(0, job.tail.length - LOG_TAIL_LINES)
+      emit(projectId, { type: "log", data: { stream, line: safe, timestamp: new Date().toISOString() } })
+    }
     job.child[stream].on("data", (chunk: Buffer) => {
       const text = remainder + chunk.toString("utf8")
       const lines = text.split(/\r?\n/)
       remainder = lines.pop() || ""
-      for (const line of lines) {
-        job.log.write(`[${stream}] ${line}\n`)
-        emit(projectId, { type: "log", data: { stream, line, timestamp: new Date().toISOString() } })
-      }
+      for (const line of lines) publish(line)
     })
     job.child[stream].on("end", () => {
-      if (!remainder) return
-      job.log.write(`[${stream}] ${remainder}\n`)
-      emit(projectId, { type: "log", data: { stream, line: remainder, timestamp: new Date().toISOString() } })
+      if (remainder) publish(remainder)
     })
   }
 
@@ -226,6 +269,25 @@ export function createJobRunner(engineRoot = process.cwd()) {
       phaseMap[currentPhase] = { ...phaseMap[currentPhase], status: "pending", reason: "Cancelled by user" }
     }
     await mkdir(path.dirname(project.jobManifest), { recursive: true })
+    await writeJsonAtomic(project.jobManifest, document)
+  }
+
+  /**
+   * Attach the run's output tail, and any cause recognised from it, to the job
+   * manifest. `jobManifestSchema` passes unknown keys through, so these ride
+   * alongside the engine's own fields without the engine knowing about them.
+   */
+  async function persistRunDiagnostics(projectId: string, tail: string[]) {
+    if (!tail.length) return
+    const project = await loadProject(projectId)
+    const document = JSON.parse(await readFile(project.jobManifest, "utf8")) as Record<string, unknown>
+    document.logTail = tail
+    const cause = describeFailure(tail)
+    if (cause) document.cause = cause
+    if (document.error && typeof document.error === "object") {
+      const error = document.error as { message?: unknown }
+      if (typeof error.message === "string") error.message = redactEnginePaths(error.message, engineRoot)
+    }
     await writeJsonAtomic(project.jobManifest, document)
   }
 
@@ -336,7 +398,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
     const job: ActiveJob = {
       child, startedAt, mode: input.mode, deliver: input.deliver, cancelRequested: false,
       log: createWriteStream(logPath, { flags: "a" }), lastManifest: "",
-      manifestTimer: setInterval(() => undefined, 60_000), releaseOperation,
+      manifestTimer: setInterval(() => undefined, 60_000), releaseOperation, tail: [],
     }
     clearInterval(job.manifestTimer)
     active.set(projectId, job)
@@ -359,6 +421,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
       if (!job.cancelRequested && code !== 0) {
         const snapshot = await snapshotFromDisk(projectId).catch(() => null)
         if (snapshot?.status === "running") await markRunnerFailure(projectId, `Pipeline process exited with code ${code ?? 1}`).catch(() => undefined)
+        // Written after the failure is marked so it lands on the final
+        // manifest: this is the only copy of the output that survives a reload.
+        await persistRunDiagnostics(projectId, job.tail).catch(() => undefined)
       }
       job.log.end(`[runner] process exited with code ${code ?? 1}\n`)
       active.delete(projectId)

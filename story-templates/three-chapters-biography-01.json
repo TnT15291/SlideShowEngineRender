@@ -195,10 +195,10 @@
     "notes": "A clearly divided three-act wedding biography: two individual lives, the relationship, then the wedding day; visually informed by White Weddings' ivory editorial restraint."
   },
   "intro": {
-    "summary": "Tiểu sử cưới chia ba hồi rõ ràng: hai cuộc đời riêng, chuyện tình, rồi ngày cưới.",
-    "photos": "Cần ảnh từ nhiều giai đoạn cuộc đời mỗi người (thời nhỏ, trưởng thành) cộng ảnh hẹn hò và ảnh cưới — lượng ảnh khá lớn (28–70) để đủ kể ba chương.",
-    "story": "Phù hợp cặp đôi muốn kể đầy đủ: mỗi người trước khi gặp nhau → chuyện tình → ngày cưới — như một cuốn tiểu sử song hành.",
-    "music": "Hợp nhạc piano tự sự, lãng mạn, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Tiểu sử cưới chia ba hồi rõ ràng: hai cuộc đời riêng, chuyện tình, rồi ngày cưới.", "en": "A wedding biography in three clear acts: two separate lives, the love story, then the wedding day." },
+    "photos": { "vi": "Cần ảnh từ nhiều giai đoạn cuộc đời mỗi người (thời nhỏ, trưởng thành) cộng ảnh hẹn hò và ảnh cưới — lượng ảnh khá lớn (28–70) để đủ kể ba chương.", "en": "Needs photos from several stages of each person's life (childhood, adulthood) plus dating and wedding coverage. A fairly large count (28–70) is needed to fill three chapters." },
+    "story": { "vi": "Phù hợp cặp đôi muốn kể đầy đủ: mỗi người trước khi gặp nhau → chuyện tình → ngày cưới — như một cuốn tiểu sử song hành.", "en": "For couples who want the full telling: each of them before they met → the love story → the wedding day, like two biographies running side by side." },
+    "music": { "vi": "Hợp nhạc piano tự sự, lãng mạn, tiết tấu chậm đến vừa.", "en": "Suits narrative, romantic piano at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

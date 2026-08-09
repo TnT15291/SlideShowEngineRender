@@ -373,7 +373,8 @@ Chỉ bắt đầu sau khi Pha 1 ổn định. Pha này không chặn mục tiê
 |---|---|---|---|
 | P3.1 | DONE | Mở rộng `LayerFrame.radius` thành number hoặc tuple 4 góc | `number \| [tl,tr,br,bl]`; typecheck xanh; scalar filter giống byte-for-byte |
 | P3.2 | DONE | Mở rộng zod và validator radius | Một luật dùng chung trong `frameRadius.mjs`: cap 540, tuple, nửa cạnh ngắn và tổng radius kề; timeline, primitive và resolved look cùng gọi nó; JSON Schema đã đồng bộ |
-| P3.3 | DONE | Sửa mask renderer cho bốn góc | Test alpha thật: góc trên trong suốt, hai góc `0` phía dưới giữ alpha 255; characterization test khóa đường nối alpha 1px để nợ không trượt |
+| P3.3 | DONE | Sửa mask renderer cho bốn góc | Test alpha thật: góc trên trong suốt, thân dưới giữ alpha 255. Đường nối alpha 1px **đã sửa, không còn là nợ**: góc `0` nay tự feather theo hai cạnh của nó thay vì trả hằng `1`, nên viền chạy đều 127 từ trên xuống dưới (trước: bậc 127→255 ngay giữa thân) |
+| P3.3b | DONE | Đóng nợ đường nối alpha 1px | `roundedMaskGeq` góc `0` → `clip(min(cạnh,cạnh),0,1)`; scalar vẫn byte-for-byte; test đo bậc lớn nhất dọc cạnh ≤15 (bằng đúng AA của cung tròn ở scalar); benchmark 1972ms vs scalar 2855ms |
 | P3.4 | DONE | Thêm preset `arch`; hoãn layout active | `[260,260,0,0]`; `arch_window_trio` không nằm trong `layouts`/rotor, giữ ở Pha 1b cho đến khi có 2 host + guard portrait + probe ảnh thật; validator library 34/34 |
 | P3.5 | DONE | Thêm test command và alpha pixel | `src/buildLayerSceneCommand.test.ts` nối vào `test:api`; targeted 7/7, full `test:api` 123/123 |
 | P3.6 | DONE | Benchmark render trước/sau | 90 frame 540×890: scalar median 2569ms, arch 1630ms (`-36,6%`); không cần PNG mask |
@@ -451,6 +452,38 @@ npm run premium -- --project <job> --dry-run > temp/premium-after.txt
 - Trạng thái kết thúc: `DONE`.
 - Blocker còn lại: Không có blocker hình học. Nợ `duplicate_caption` cũ vẫn ngoài phạm vi.
 - Bước tiếp theo: Không còn bước bắt buộc của Pha 3.
+
+### 2026-08-02 — Rà soát Pha 3: đóng nợ mask và vá lỗ thủng của metric
+
+- Session: Claude, rà soát lại bàn giao Codex ở trên trên cùng cây.
+- Nghiệm thu lại các tuyên bố của Codex: `catalog 233 distinct / 7 shared / maxShare 9 / over12Count 0` — đo lại đúng.
+  `arch_window_trio` không có trong `layouts` (test khóa). Premium dry-run trước/sau: hai file
+  `normalized.json` cùng md5 `59b5069c…`, 38 slide — **đúng**, nhưng cần ghi rõ giới hạn: timeline đó
+  không chứa `radius` nào cả, nên nó chứng minh Pha 3 không gây hồi quy, KHÔNG chứng minh code mới chạy.
+  Phần đó do 7 test targeted + probe alpha ffmpeg thật gánh.
+- Sửa 1 — nợ P3.3 (đường nối alpha 1px). Không phải chỉ là "đường nối": góc `0` trả hằng `1` trong khi
+  hàng xóm bo tròn feather viền xuống 0.5, nên alpha nhảy bậc 127→255 đúng tại `Y=H/2` dọc **cả hai**
+  cạnh bên của mọi arch. Bẫy mà Codex tránh là có thật (đưa `0` vào công thức cung tròn làm mờ nguyên
+  quadrant), nhưng có lối thứ ba: góc `0` feather theo chính hai cạnh của nó. Viền nay đều 127 toàn thân,
+  bậc lớn nhất dọc cạnh còn 15 — đúng bằng AA cung tròn mà scalar vốn có. Scalar giữ byte-for-byte.
+- Sửa 2 — `slotShapeKey` nhánh tuple không đo gì cả. Nó trả `"arch"` cho mọi `[tl>0,tr>0,0,0]` bất kể
+  radius có vừa slot hay không, trong khi nhánh scalar ngay bên dưới đòi radius **đúng bằng** nửa cạnh
+  ngắn mới được tính là circle/pill. Chính fixture của commit là bằng chứng: `three_photo_row` +
+  `[260,260,0,0]` bị `validateLook` bắn 3 lỗi (slot 500×760 và 551×460 không đeo nổi), vậy mà test khóa
+  `["arch","arch","arch"]`. Vì `slotShapeKey` nuôi `meaningfullyDiffers` → ratchet mỗi recipe, đây là
+  đúng loại lỗ đã sinh ra bản đính chính 08-01. Nay tuple chịu chung một thước với scalar; fixture đổi
+  sang `polaroid_scatter` (slot 520×520, chỗ preset `arch` thật sự là nửa cung).
+- Sửa 3 — `frameBand`: `[260,260,260,260]` và `260` vẽ ra cùng một cái thẻ nhưng ký khác nhau
+  (`round/round/round/round` vs `circle`), ngay trong hàm có nhiệm vụ gộp khác biệt mắt không thấy.
+  Bốn góc bằng nhau nay thu về đúng nhãn của scalar.
+- Doc: `docs/generation-guide.md` ghi rõ preset `arch` cắt cho slot 520px như `circleMedallion`; slot rộng
+  hơn vẫn render nhưng để lại đoạn phẳng trên đỉnh và không được metric tính; slot hẹp hơn là lỗi lint.
+- Gate sau sửa: `npm run check` exit 0 — `test:api` 124/124, `test:unit` 406/406, integration 1/1,
+  audit 0 vulnerability. Ratchet không đổi (chưa recipe nào dùng tuple nên `catalog.distinct` giữ 233).
+- Lưu ý bàn giao: `test:api` là 124 chứ không phải 123 vì cây đang có `server/services/director.{ts,test.ts}`
+  sửa mà **chưa commit** (guard 409 `TECHNICAL_ANALYSIS_REQUIRED` cho Lite director, +1 test). Đó là việc
+  của một session khác, không nằm trong Pha 3 và không được commit ở đây. Con số 123 của Codex đúng tại
+  thời điểm đo.
 
 ### 2026-07-31 — P2D.4 đóng lại bằng ảnh thật, và hai luật bị hợp nhất
 

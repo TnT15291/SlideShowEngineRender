@@ -29,11 +29,16 @@ export const SCOPES = [
 
 // Every repair kind qaLoop.mjs knows how to execute. A rule (or a policy row)
 // may only reference these.
-export const REPAIR_KINDS = ["set_duration", "swap_hero", "set_focus", "set_fit", "fit_text"];
+export const REPAIR_KINDS = ["pacing_adjustment", "swap_hero", "set_focus", "set_fit", "fit_text"];
 
 export const RULES = {
   // -- timeline -----------------------------------------------------------------
   must_use_coverage: { scope: "timeline", repairs: [] }, // a customer lock; nothing may auto-substitute for it
+  // must_use_coverage asks "did the photographs the customer LOCKED reach the film?".
+  // This asks the wider question nobody was asking: did the rest of their album? The
+  // metric existed (photo-assignment.json's selectedNotRendered) and was wired to no gate,
+  // so a directive could delete fifteen photographs from a film and every check said ok.
+  photo_coverage:     { scope: "timeline", repairs: [] },
   text_safe_area:    { scope: "timeline", repairs: [] },
   text_overflow:     { scope: "timeline", repairs: ["fit_text"] },
   caption_integrity: { scope: "timeline", repairs: [] }, // mojibake/tokens/dupes need a human or a re-generate
@@ -47,7 +52,7 @@ export const RULES = {
   duplicate_photo:   { scope: "editorial", repairs: [] },
   layout_repetition: { scope: "editorial", repairs: [] },
   overlay_repetition:{ scope: "editorial", repairs: [] },
-  pacing:            { scope: "editorial", repairs: ["set_duration"] },
+  pacing:            { scope: "editorial", repairs: ["pacing_adjustment"] },
   hero:              { scope: "editorial", repairs: ["swap_hero"] },
 
   // -- rendered-frame ---------------------------------------------------------------

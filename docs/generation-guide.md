@@ -142,6 +142,14 @@ accepts either one number or `[tl, tr, br, bl]`; the library preset `arch` is
 slots; it does not become arched automatically. `arch_window_trio` remains deferred to Phase
 1b until it has at least two real hosts, portrait guards, and a real-photo visual probe.
 
+`arch` is cut for a 520px slot exactly as `circleMedallion` is: radius 260 is half of 520, so
+the head is a true semicircle only there (`polaroid_scatter`, `circle_trio_stagger`). It still
+renders on a wider slot — 260 on `arch_trio`'s 540px is legal — but leaves a flat span across
+the top, and the geometry metric counts only a fully rounded side as a silhouette change, so
+that scene scores as a rectangle. Resize the radius with the slot, the same rule as circles.
+On a slot too small it is not a soft arch but a lint error: `three_photo_row`'s 500×760 centre
+rejects 260 outright, because two 260px arcs cannot fit across 500px.
+
 Two further primitives are also deferred outside the library: `offset_quad_pinwheel` and
 `filmstrip_band`. They would set a scene's photo demand to 4 and 5, which moves the solver's
 budget, so they remain Phase 1b rather than participating in the rotor.

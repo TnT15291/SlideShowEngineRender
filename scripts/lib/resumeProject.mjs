@@ -88,6 +88,16 @@ export function inspectResume(project) {
     if (!fresh(rule.inputs.map(project.abs), rule.outputs.map(project.abs))) {
       return { reusable, invalidatedAt: phase, reason: `${phase} artifacts are missing or stale` };
     }
+    if (phase === "build" && project.manifest.tier === "lite") {
+      try {
+        const timeline = JSON.parse(fs.readFileSync(project.abs(project.manifest.timeline), "utf8"));
+        if (timeline.metadata?.pipelineVersion !== "lite-v2") {
+          return { reusable, invalidatedAt: "build", reason: "Lite timeline was built by a different pipeline version" };
+        }
+      } catch {
+        return { reusable, invalidatedAt: "build", reason: "Lite timeline pipeline version cannot be verified" };
+      }
+    }
     if (phase === "analyze") {
       for (const rel of musicAnalysis) {
         try {

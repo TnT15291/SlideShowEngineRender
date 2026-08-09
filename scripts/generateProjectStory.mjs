@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { arg, loadProject } from "./lib/project.mjs";
 import { callDeepSeekJSON, hasKey, provenance, str, oneOf } from "./lib/deepseek.mjs";
+import { STORY_CARD_SECONDS, storyBodyBudget } from "./lib/textBudget.mjs";
 
 const project = loadProject(arg("--project"));
 const language = project.manifest.language || "vi";
@@ -20,6 +21,7 @@ const musicRel = (project.manifest.music || [])[0];
 const music = musicRel ? read(`${project.manifest.analysisDir}/music/${path.parse(musicRel).name}.json`) : null;
 const moods = new Set(["calm", "warm", "build", "peak", "tender"]);
 const sceneKinds = new Set(["single", "montage"]);
+const budget = storyBodyBudget(language);
 
 function fallback() {
   const sentences = prompt.split(/(?<=[.!?])\s+|\r?\n+/).map((s) => s.trim()).filter(Boolean);
@@ -43,7 +45,18 @@ if (hasKey()) {
   });
   raw = await callDeepSeekJSON({
     temperature: 0.45,
-    system: `You are a slideshow story editor. Return one JSON object with title, closing, and beats (3..10). Each beat has heading, body, emotion (calm|warm|build|peak|tender), sceneKind (single|montage), and optional preferredPhotos containing only exact file strings from the supplied photo menu. Do not output durations, paths outside the menu, effects, transitions, or pixel geometry. Shape the emotional arc to the music sections and the user's prompt. Write every viewer-visible string in ${languageName} only.`,
+    system: `You are a slideshow story editor. Return one JSON object with title, closing, and beats (3..10). `
+      + `Each beat has heading, body, emotion (calm|warm|build|peak|tender), sceneKind (single|montage), and optional preferredPhotos containing only exact file strings from the supplied photo menu. `
+      + `Do not output durations, paths outside the menu, effects, transitions, or pixel geometry. `
+      + `Shape the emotional arc to the music sections and the user's prompt. `
+      // Each beat gets ONE card, on screen for about five seconds. Text that
+      // cannot be read in that time is cut with an ellipsis before it reaches
+      // the viewer — mid-clause, losing whatever the sentence was building to.
+      // Better a whole short chapter than a long one the film has to amputate.
+      + `Every beat becomes a single card on screen for about ${STORY_CARD_SECONDS} seconds, so each body must be ${budget.sentence}: one or two short sentences that finish. `
+      + `A body longer than that is trimmed mid-sentence before anyone sees it, so write more beats rather than longer ones. `
+      + `Keep heading to a few words, and closing to one sentence. `
+      + `Write every viewer-visible string in ${languageName} only.`,
     user: JSON.stringify({ language, prompt, music: music ? { duration: music.duration, bpmEstimate: music.bpmEstimate, sections: music.sections, buildWindows: music.buildWindows } : null, photos: photoMenu }),
   });
 }

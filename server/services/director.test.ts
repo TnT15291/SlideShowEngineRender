@@ -38,6 +38,18 @@ test("Lite director saves the brief and creates one story", async (context) => {
   assert.equal((await readFile(path.join(project, "prompt.txt"), "utf8")).trim(), "A quiet family story")
 })
 
+test("Lite director refuses to write a story before the photos are analyzed", async (context) => {
+  const { root, project, service } = await fixture("lite"); context.after(() => rm(root, { recursive: true, force: true }))
+  // Exactly the state a fresh upload leaves behind: assets on disk, no analysis yet.
+  await rm(path.join(project, "analysis", "photos.json"), { force: true })
+  await assert.rejects(
+    () => service.generate("sample", { brief: "A quiet family story" }),
+    (error: unknown) => error instanceof DirectorRequestError && error.status === 409 && error.code === "TECHNICAL_ANALYSIS_REQUIRED",
+  )
+  // The brief is the customer's own words — a precondition failure must not discard them.
+  assert.equal((await readFile(path.join(project, "prompt.txt"), "utf8")).trim(), "A quiet family story")
+})
+
 test("Premium director keeps decision gates before producing notes and plan", async (context) => {
   const { root, service } = await fixture("premium"); context.after(() => rm(root, { recursive: true, force: true }))
   const proposed = await service.generate("sample", { brief: "Tell our full journey" })

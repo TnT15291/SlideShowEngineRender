@@ -286,6 +286,25 @@ test("a face box spanning an axis constrains only the axis that still locates so
   // A real detection near the edge still fails: this is the safety the check exists for.
   assert.equal(run([{ box: { x: 0.86, y: 0.4, width: 0.12, height: 0.2 }, confidence: 0.91 }], "real")
     .includes("face_cropped"), true);
+
+  // The axis guard above only catches boxes that span ~a whole axis. A skin blob does not
+  // have to be that extreme to do damage: the boxes on the job that exposed this were 0.73
+  // and 0.80 of the frame HEIGHT — comfortably under the 0.9 axis guard, and both sub-0.5,
+  // which is the value analyzePhotos stamps when the detector found nothing at all.
+  // Enforced, they pushed real photographs into `contain` at 54-67% of their slot.
+  //
+  // One geometry, uncontainable by this crop, judged only by confidence. The detector's own
+  // scoreThreshold is 0.5, so the low reading is never a real face being discarded.
+  const tallBlob = { x: 0, y: 0, width: 0.5, height: 0.729 };
+  assert.equal(run([{ box: tallBlob, confidence: 0.35 }], "blob-tall")
+    .includes("face_cropped"), false, "a skin estimate must not forbid a crop");
+  assert.equal(run([{ box: tallBlob, confidence: 0.88 }], "real-tall")
+    .includes("face_cropped"), true, "the same box, actually detected, still constrains");
+  // And a real face still wins when a skin blob sits beside it.
+  assert.equal(run([
+    { box: { x: 0, y: 0, width: 0.9, height: 0.85 }, confidence: 0.35 },
+    { box: { x: 0.86, y: 0.4, width: 0.12, height: 0.2 }, confidence: 0.91 },
+  ], "mixed").includes("face_cropped"), true);
 });
 
 test("deterministic QA reports overflow, adjacent reuse and unsafe crop", (t) => {
@@ -456,15 +475,55 @@ test("global assignment keeps perceptual duplicates out of neighbouring scenes",
   assert.equal(plan.unfilled.length, 0);
 });
 
-test("customer must-use preference outranks automatic quality", () => {
+test("customer must-use requirement outranks automatic quality", () => {
   const photos = [
     { file: "customer-choice.jpg", orient: "landscape", qualityNorm: 0.2 },
     { file: "automatic-best.jpg", orient: "landscape", qualityNorm: 1 },
   ];
   const plan = assignPhotos({ photos, requests: [
-    { key: "story:wide", order: 0, count: 1, orient: "landscape", preferred: "customer-choice.jpg" },
+    { key: "story:wide", order: 0, count: 1, orient: "landscape", required: "customer-choice.jpg" },
   ] });
   assert.deepEqual(plan.assignments.get("story:wide"), ["customer-choice.jpg"]);
+});
+
+test("story preferred photo is a soft hint, not an exclusive pool", () => {
+  const photos = [
+    { file: "story-choice.jpg", orient: "landscape", qualityNorm: 0.7 },
+    { file: "automatic-best.jpg", orient: "landscape", qualityNorm: 1 },
+  ];
+  const plan = assignPhotos({ photos, requests: [
+    { key: "story:wide", order: 0, count: 2, orient: "landscape", preferred: "story-choice.jpg" },
+  ] });
+  assert.deepEqual(new Set(plan.assignments.get("story:wide")), new Set(["story-choice.jpg", "automatic-best.jpg"]));
+});
+
+test("controlled reuse starts after unique supply and records a reason", () => {
+  const photos = [
+    { file: "a.jpg", orient: "landscape", qualityNorm: 1 },
+    { file: "b.jpg", orient: "landscape", qualityNorm: 0.8 },
+  ];
+  const requests = [
+    { key: "scene-1", sceneId: "scene-1", order: 0, count: 1, orient: "landscape" },
+    { key: "scene-2", sceneId: "scene-2", order: 1, count: 1, orient: "landscape" },
+    { key: "scene-3", sceneId: "scene-3", order: 2, count: 1, orient: "landscape" },
+  ];
+  const plan = assignPhotos({ photos, requests, maxReuse: 2 });
+  assert.equal(plan.unfilled.length, 0);
+  assert.equal(new Set([...plan.assignments.values()].flat()).size, 2);
+  assert.equal(plan.reuses.length, 1);
+  assert.equal(plan.reuses[0].reason, "small_album_fallback");
+  assert.equal(Math.max(...plan.useCounts.values()), 2);
+});
+
+test("assignment never duplicates a file or duplicate group inside one scene", () => {
+  const photos = [
+    { file: "a.jpg", duplicateGroup: "same", qualityNorm: 1 },
+    { file: "a-copy.jpg", duplicateGroup: "same", qualityNorm: 0.9 },
+    { file: "b.jpg", qualityNorm: 0.8 },
+  ];
+  const plan = assignPhotos({ photos, requests: [{ key: "scene", order: 0, count: 3 }], maxReuse: 2 });
+  assert.deepEqual(plan.assignments.get("scene"), ["a.jpg", "b.jpg"]);
+  assert.equal(plan.unfilled.length, 1);
 });
 
 test("role scoring and assignment choose photos for the requested editorial job", () => {

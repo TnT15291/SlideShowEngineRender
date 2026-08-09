@@ -1,12 +1,34 @@
-import type { Translate } from "@/lib/i18n"
-import type { RecipeSummary } from "@/types"
+import type { Locale, Translate } from "@/lib/i18n"
+import { strings, type StringKey } from "@/lib/strings"
+import type { LocalizedText, RecipeSummary } from "@/types"
 
 const FALLBACK_BACKGROUND = "#3a302b"
 const FALLBACK_ACCENT = "#c9a878"
 
+/** Pick the reader's language out of a bilingual recipe field. */
+export function localized(value: LocalizedText | null | undefined, locale: Locale): string {
+  if (!value) return ""
+  return (locale === "en" ? value.en : value.vi) || value.vi || value.en || ""
+}
+
 /** `long_distance` / `wedding-day` → `long distance` / `wedding day`. */
 export function humanizeTag(value: string): string {
   return value.replace(/[_-]+/g, " ").trim()
+}
+
+/**
+ * Story-arc beats and mood/fit tags arrive as engine identifiers
+ * (`save_the_date`, `signature`, `long_distance`). Title-casing them produced
+ * a row of chips reading "Save The Date → Title → Bride → Groom → Signature",
+ * which is our vocabulary, not a couple's. Anything without a translation
+ * falls back to the humanised slug, so a new beat is merely untranslated
+ * rather than missing.
+ */
+export function tagLabel(value: string, t: Translate): string {
+  // `.label` keeps a slug such as `choosing_each_other` from looking like the
+  // `_other` half of a plural pair to the string-table guard in i18n.test.ts.
+  const key = `tag.${value}.label`
+  return key in strings ? t(key as StringKey) : humanizeTag(value)
 }
 
 /** `TEAL_ORANGE_EDITORIAL` → `Teal Orange Editorial`. */

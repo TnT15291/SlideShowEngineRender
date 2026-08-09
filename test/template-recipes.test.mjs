@@ -4,7 +4,7 @@ import path from "node:path";
 import os from "node:os";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { buildPhotoAssignmentRequests } from "../scripts/lib/templatePhotoRequests.mjs";
+import { buildPhotoAssignmentRequests, impliedSlotOrient } from "../scripts/lib/templatePhotoRequests.mjs";
 import { resolveTemplate, visualSignature } from "../scripts/lib/lookResolver.mjs";
 import { perceptualSignature } from "../scripts/lib/geometrySignature.mjs";
 import { hasEnglishCopy, inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
@@ -554,4 +554,37 @@ test("recipe copy includes captionPattern in the language rewrite contract", (t)
   assert.equal(copy.totalSlots, 2);
   assert.equal(copy.factSlotsWithheld, 1);
   assert.equal(copy.scenes.s01.captionPattern, "Canned caption A");
+});
+
+// Every one of the library's 104 photo slots leaves `orient` unset, so buildPhotoAssignmentRequests
+// resolved all of them to "any" and the solver's orientation machinery — a strict filter, a
+// supply-aware ordering, a fallback — was fully built and never given anything to enforce. What
+// that produced: a portrait photograph in the 3.93:1 banner of stacked_horizon_trio, which QA
+// then "rescued" into `contain` at 17% of its slot.
+test("a slot's shape constrains the orientation the solver seats in it", () => {
+  assert.equal(impliedSlotOrient({ width: 1180, height: 300 }), "landscape"); // stacked_horizon_trio
+  assert.equal(impliedSlotOrient({ width: 540, height: 890 }), "portrait");
+  assert.equal(impliedSlotOrient({ width: 520, height: 520 }), "any", "a square slot takes either");
+  assert.equal(impliedSlotOrient({ width: 620, height: 500 }), "any", "1.24 is squarer than the threshold");
+  assert.equal(impliedSlotOrient({}), "any", "geometry we do not have cannot imply anything");
+
+  const library = JSON.parse(fs.readFileSync("layouts/library.json", "utf8"));
+  const layout = library.layouts.find((l) => l.id === "stacked_horizon_trio");
+  assert.ok(layout, "stacked_horizon_trio should exist");
+  const scenes = [
+    { id: "s01", effect: "still", photoSlots: [{ slot: "hero" }] },
+    { id: "s02", effect: "layer_scene", layout: layout.id },
+  ];
+  const requests = buildPhotoAssignmentRequests({ scenes, library });
+  const banner = requests.filter((r) => r.sceneId === "s02");
+  assert.equal(banner.length, layout.photoSlots.length);
+  assert.ok(banner.every((r) => r.orient === "landscape"),
+    `banner slots asked for ${banner.map((r) => r.orient).join(", ")}`);
+
+  // A recipe that states its own orientation still outranks the geometry.
+  const declared = buildPhotoAssignmentRequests({
+    scenes: [scenes[0], { ...scenes[1], photoSlots: layout.photoSlots.map((s) => ({ slot: s.id, orient: "portrait" })) }],
+    library,
+  }).filter((r) => r.sceneId === "s02");
+  assert.ok(declared.every((r) => r.orient === "portrait"), "an authored orient must win");
 });

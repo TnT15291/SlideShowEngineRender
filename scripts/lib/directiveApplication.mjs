@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import { MONTAGE_MAX, MONTAGE_EFFECTS } from "./engineCapabilities.mjs";
+import { MAX_LAYOUT_RUN } from "./rules/thresholds.mjs";
 
 const root = process.cwd();
 const timelineSchema = JSON.parse(fs.readFileSync(path.resolve(root, "schema/timeline.schema.json"), "utf8"));
@@ -77,9 +79,18 @@ export function applyToStoryPlan(doc, directives) {
 
 /** SEMANTICS of an effect directive, and why they differ by target:
  *
- *   SINGLE-IMAGE target ("đoạn này dùng zoom chậm") — asks for a LOOK, so it sweeps
- *   every retargetable scene in scope. Honour = "all of them". A sweep only ever
- *   LOWERS photo demand (a 3-photo layout becomes a 1-photo shot), so it is safe.
+ *   SINGLE-IMAGE target ("đoạn này dùng zoom chậm") — asks for a LOOK. It is honoured
+ *   from the top of the scope and stops at MAX_LAYOUT_RUN scenes in a row, because a
+ *   whole act flattened to one effect is not the film the customer described; it is
+ *   what taking them literally produced. The seven-scene, forty-seven-second run of
+ *   still frames that "mở đầu tĩnh" once shipped is the receipt.
+ *
+ *   This branch used to carry the note that a sweep "only ever LOWERS photo demand ...
+ *   so it is safe". It is safe for the COMPILER — the assignment fills fewer slots and
+ *   nothing throws. It was never safe for the FILM: three six-photo montages became
+ *   three one-photo stills and fifteen of the couple's photographs left the film with
+ *   no gate saying so. Freed photographs are therefore reallocated to montages that
+ *   still have room, and whatever cannot be placed is reported with a reason.
  *
  *   MONTAGE target ("đoạn bạn bè dùng lật trang phim") — asks the act to CONTAIN a
  *   montage. This one is dangerous, and the danger is not obvious:
@@ -98,9 +109,60 @@ export function applyToStoryPlan(doc, directives) {
  * Structural scenes (title card, closing card) are exempt from all of this: they carry
  * the couple's names and date. An effect request must not cost them their names.
  */
-export function applyToStoryboard(doc, directives, { availablePhotos = Infinity, photoDemand } = {}) {
+/** Record what one order cost, on the order itself and in the running totals. The
+ *  customer's sentence is quoted alongside the number so the receipt reads as a
+ *  sentence and a consequence, not as an anonymous delta. */
+function noteOrder(ledger, d, { scenes = [], freed = 0, reallocated = 0, lost = 0, capped = false, reasons = [] }) {
+  ledger.byOrder[d.id] = { quote: d.quote, kind: d.kind, target: d.target, scenes, freed, reallocated, lost, capped, reasons };
+  ledger.scenesRewritten += scenes.length;
+  ledger.photoFreed += freed;
+  ledger.photoReallocated += reallocated;
+  ledger.photoLost += lost;
+  if (capped) ledger.runsCapped += 1;
+}
+
+/** Hand `freed` photographs to the montages that still have room for them, skipping the
+ *  scenes the directive just rewrote. Grows one declared photo at a time and re-measures
+ *  with the caller's own demand function: photoDemandOf may apply the pacing direction's
+ *  montage multiplier, so one declared photo does not necessarily cost one assigned
+ *  photo. Same discipline as the surplus pass in recipeShotList.mjs — this is the same
+ *  job (photos the fixed layouts cannot absorb, handed to the beats that exist for them),
+ *  arriving from the directive layer instead of the solver.
+ *
+ *  Returns how many were actually placed. The remainder is a real loss and the caller
+ *  reports it; it does not get rounded away. */
+function reallocate(scenes, freed, demandOf, skip) {
+  let placed = 0;
+  for (const scene of scenes) {
+    if (placed >= freed) break;
+    if (skip.has(scene) || !MONTAGE_EFFECTS.has(scene.effect)) continue;
+    const slot = scene.photoSlots?.[0];
+    if (!slot || slot.fixedCount) continue;
+    const room = (MONTAGE_MAX[scene.effect] ?? 0) - slot.count;
+    for (let add = 0; add < room && placed < freed; add++) {
+      const before = demandOf(scene);
+      const cost = demandOf({ ...scene, photoSlots: [{ ...slot, count: slot.count + 1 }] }) - before;
+      if (cost <= 0 || placed + cost > freed) break;
+      slot.count += 1;
+      placed += cost;
+    }
+  }
+  return placed;
+}
+
+/** @param {object} [options.report] mutable; filled with what the orders cost the film.
+ *   Kept as an out-parameter rather than a return value because the return type is a
+ *   string[] of applied ids that applyStoryTemplate iterates and revisionDiff ignores. */
+export function applyToStoryboard(doc, directives, { availablePhotos = Infinity, photoDemand, report } = {}) {
   const scenes = doc.scenes || [];
   const applied = [];
+  const ledger = report || {};
+  ledger.scenesRewritten ??= 0;
+  ledger.photoFreed ??= 0;
+  ledger.photoReallocated ??= 0;
+  ledger.photoLost ??= 0;
+  ledger.runsCapped ??= 0;
+  ledger.byOrder ??= {};
 
   // How many photos a scene consumes. The caller knows (it has the layout library);
   // without it we can only see the slots a scene declares explicitly.
@@ -124,11 +186,48 @@ export function applyToStoryboard(doc, directives, { availablePhotos = Infinity,
     if (!candidates.length) continue;
 
     if (!isMontage(d.target)) {
+      // Scenes ALREADY carrying the target, immediately before the scope, count toward
+      // the run: three still frames in a row read as three still frames whoever wrote
+      // them, and the customer sees the run, not its authorship.
+      let run = 0;
+      for (let i = candidates[0].i - 1; i >= 0 && scenes[i].effect === d.target; i--) run++;
+
+      const rewritten = [];
+      let freed = 0;
+      let capped = false;
       for (const { scene, i } of candidates) {
+        if (run >= MAX_LAYOUT_RUN) { capped = true; break; }
+        run++;
+        if (scene.effect === d.target) continue; // already what was asked for; costs nothing
+        freed += Math.max(0, demandOf(scene) - 1);
         scenes[i] = { ...scene, effect: d.target, photoSlots: [{ slot: "hero", count: 1 }] };
         delete scenes[i].layout; // the new effect owns its own composition...
         delete scenes[i].text;   // ...so the layout's text slots no longer exist
+        // A composed storyboard solved this number against the shape the scene HAD. A
+        // six-image memory wall's nine seconds, kept by the one still frame that
+        // replaced it, is nine seconds of nothing happening. Dropping it returns the
+        // scene to the recipe's own duration table — the single model that already
+        // exists — and retimeSlidesToMusic renormalises the film onto the track either
+        // way, so the length does not move.
+        delete scenes[i].durationSec;
+        rewritten.push(scenes[i]);
       }
+      if (!rewritten.length) {
+        // Every scene in scope already looked like this, or the run cap left no room.
+        if (capped) noteOrder(ledger, d, { capped: true, reasons: ["run_cap"] });
+        continue;
+      }
+
+      const placed = reallocate(scenes, freed, demandOf, new Set(rewritten));
+      const lost = freed - placed;
+      const reasons = [
+        ...(capped ? ["run_cap"] : []),
+        ...(lost > 0 ? ["no_montage_capacity"] : []),
+      ];
+      noteOrder(ledger, d, {
+        scenes: rewritten.map((s) => s.id),
+        freed, reallocated: placed, lost, capped, reasons,
+      });
       applied.push(d.id);
       continue;
     }

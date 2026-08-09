@@ -170,10 +170,10 @@
     "notes": "Fashion-editorial urban romance: city geometry and street-life energy gradually soften into the ceremony and reception."
   },
   "intro": {
-    "summary": "Câu chuyện tình yêu đô thị: nhịp sống phố xá sôi động dần lắng lại thành lễ cưới ấm áp.",
-    "photos": "Hợp ảnh đường phố, ảnh hẹn hò ở thành phố, ảnh đời thường hiện đại, tới ảnh cầu hôn, chuẩn bị và lễ cưới/tiệc tối.",
-    "story": "Phù hợp cặp đôi có chất liệu 'đời thường thành phố' — hẹn hò, dạo phố, cầu hôn — trước khi bước vào ngày cưới, tiệc tối.",
-    "music": "Hợp nhạc indie/hiện đại tiết tấu vừa đến nhanh, tươi mới, năng lượng tăng dần về cuối."
+    "summary": { "vi": "Câu chuyện tình yêu đô thị: nhịp sống phố xá sôi động dần lắng lại thành lễ cưới ấm áp.", "en": "An urban love story: the rush of the city gradually settling into a warm ceremony." },
+    "photos": { "vi": "Hợp ảnh đường phố, ảnh hẹn hò ở thành phố, ảnh đời thường hiện đại, tới ảnh cầu hôn, chuẩn bị và lễ cưới/tiệc tối.", "en": "Suits street photography, city dates, modern everyday moments, through to the proposal, getting ready and the ceremony or dinner." },
+    "story": { "vi": "Phù hợp cặp đôi có chất liệu 'đời thường thành phố' — hẹn hò, dạo phố, cầu hôn — trước khi bước vào ngày cưới, tiệc tối.", "en": "For couples with real 'city life' material — dates, walks, the proposal — before the wedding day and the reception." },
+    "music": { "vi": "Hợp nhạc indie/hiện đại tiết tấu vừa đến nhanh, tươi mới, năng lượng tăng dần về cuối.", "en": "Suits indie or modern tracks at a medium-to-fast tempo, fresh, with energy building towards the end." }
   },
   "fit": {
     "bestFor": [

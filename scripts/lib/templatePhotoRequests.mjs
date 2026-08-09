@@ -1,6 +1,36 @@
 import { editorialRole } from "./tier1Editorial.mjs";
 import { MONTAGE_EFFECTS, MONTAGE_MAX } from "./engineCapabilities.mjs";
 
+/**
+ * The orientation a slot's own SHAPE demands, for the 104 library slots that declare none.
+ *
+ * The solver has full orientation machinery — a strict filter, a supply-aware `hardness`
+ * ordering that serves constrained slots first, and a fallback for when the album cannot
+ * pay. It was simply never given a constraint to enforce: every `photoSlots` entry in
+ * layouts/library.json leaves `orient` unset, so all 104 resolved to "any" and the solver
+ * seated whatever came next. What that produced is a portrait photograph in the 3.93:1
+ * banner of `stacked_horizon_trio`; QA's crop check then found no focus that could hold the
+ * face, "rescued" it by swapping cover for contain, and the photo rendered at **17% of its
+ * slot** with the page showing through the other 83%. Two more scenes on the same job
+ * landed at 40% and 56%.
+ *
+ * The threshold is set by what a mismatch actually costs. Photographs are near-enough 3:2
+ * and 2:3, so in a slot of aspect `a` a wrong-way photo fills about `0.67 / a` of it —
+ * below 55% once `a` passes ~1.22. Slots squarer than that take either orientation without
+ * a visible hole and stay unconstrained, because an unnecessary constraint just spends the
+ * fallback. A recipe that declares its own `orient` still wins; this only fills the silence.
+ */
+const SLOT_ORIENT_ASPECT = 1.25;
+
+export function impliedSlotOrient(slot) {
+  const { width, height } = slot || {};
+  if (!(width > 0 && height > 0)) return "any";
+  const aspect = width / height;
+  if (aspect >= SLOT_ORIENT_ASPECT) return "landscape";
+  if (aspect <= 1 / SLOT_ORIENT_ASPECT) return "portrait";
+  return "any";
+}
+
 export function principalSlotId(layout) {
   return layout?.background?.type === "photo_full_bleed"
     ? layout.background.slot
@@ -27,11 +57,13 @@ export function buildPhotoAssignmentRequests({ scenes, library, direction }) {
           sceneId: scene.id,
           order,
           count: 1,
-          orient: definition.orient || "any",
+          // The recipe's own word first; the slot's geometry only fills the silence.
+          orient: definition.orient || impliedSlotOrient(slot),
           role: editorialRole(scene, definition),
           allowSequence: Boolean(scene.allowSequence),
           cohesionMode: scene.cohesionMode || "auto",
           hero: definition.quality === "best" || Boolean(definition.motion),
+          ...(scene.photoHints?.length ? { preferred: scene.photoHints } : {}),
         });
       }
       return;
@@ -57,6 +89,7 @@ export function buildPhotoAssignmentRequests({ scenes, library, direction }) {
       allowSequence: Boolean(scene.allowSequence),
       cohesionMode: scene.cohesionMode || "auto",
       hero: slot.quality === "best" || slot.slot === "hero",
+      ...(scene.photoHints?.length ? { preferred: scene.photoHints } : {}),
     });
   });
 

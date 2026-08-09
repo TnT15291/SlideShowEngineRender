@@ -517,11 +517,29 @@ test("DELETE project cancels a running job before removing its workspace", async
   })
 })
 
+// Starting a render now has preconditions (renderPreconditions.ts) that run
+// BEFORE the charge, so every job test has to supply media a run could
+// actually succeed with. `recipe: null` means "no authored minimum", which is
+// how Lite and Premium projects behave.
+const READY_ASSETS = {
+  photos: [{ id: "p1" }, { id: "p2" }] as never,
+  music: [{ id: "m1" }] as never,
+  limits: { photoMaxBytes: 1, musicMaxBytes: 1 },
+}
+const readyToRender = {
+  listProjectAssets: async () => READY_ASSETS,
+  getRecipe: async () => null,
+  findOpenReservation: async () => null,
+  reserveRender: async () => undefined,
+  settleRender: async () => false,
+}
+
 test("every public job is a metered render", async () => {
   const snapshot: JobSnapshot = {
     projectId: "linh-nam", status: "running", currentPhase: "render", progress: 60, error: null,
     startedAt: "2026-07-21T10:00:00.000Z", updatedAt: "2026-07-21T10:01:00.000Z", mode: "render", deliver: false,
     phases: { validate: "completed", analyze: "completed", plan: "completed", build: "completed", render: "running", qa: "pending", deliver: "pending" },
+    cause: null, logTail: [],
   }
   const calls: string[] = []
 
@@ -531,6 +549,7 @@ test("every public job is a metered render", async () => {
     assert.equal(response.status, 202)
   }, {
     getProject: async () => OWNED_PROJECT,
+    ...readyToRender,
     consumeRenderEntitlement: async () => { calls.push("consumed"); },
     startJob: async () => { calls.push("started"); return snapshot },
   })
@@ -543,6 +562,7 @@ test("every public job is a metered render", async () => {
     assert.equal((await response.json() as { error: { code: string } }).error.code, "RENDER_QUOTA_EXCEEDED")
   }, {
     getProject: async () => OWNED_PROJECT,
+    ...readyToRender,
     consumeRenderEntitlement: async () => { throw new AuthRequestError(402, "RENDER_QUOTA_EXCEEDED", "No render credits remaining") },
     startJob: async () => { throw new Error("startJob must not be called once entitlement is exhausted") },
   })
@@ -553,6 +573,7 @@ test("every public job is a metered render", async () => {
     assert.equal(response.status, 202)
   }, {
     getProject: async () => OWNED_PROJECT,
+    ...readyToRender,
     consumeRenderEntitlement: async () => undefined,
     startJob: async () => snapshot,
   })
@@ -731,4 +752,86 @@ test("the public gallery lists only shared projects and streams shared video and
     getProject: async (id) => id === sharedProject.id ? sharedProject : OWNED_PROJECT,
     getProjectArtifact: async (_projectId, artifactId) => artifactsById[artifactId as keyof typeof artifactsById],
   })
+})
+
+test("a render that cannot succeed is refused before the credit is charged", async () => {
+  // The failure this replaces: the recipe declared a minimum of 18 photos, the
+  // UI printed it twice, the customer started with 3, a credit was spent, and
+  // the run died in `build` without rendering a frame.
+  const calls: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    assert.equal(response.status, 409)
+    const body = await response.json() as { error: { code: string; details: { photos: number; minPhotos: number } } }
+    assert.equal(body.error.code, "RECIPE_PHOTO_RANGE")
+    assert.deepEqual({ photos: body.error.details.photos, minPhotos: body.error.details.minPhotos }, { photos: 3, minPhotos: 18 })
+  }, {
+    getProject: async () => ({ ...OWNED_PROJECT, recipe: "jmii-silk-botanical-01" }),
+    listProjectAssets: async () => ({ photos: [{ id: "a" }, { id: "b" }, { id: "c" }] as never, music: [{ id: "m" }] as never, limits: { photoMaxBytes: 1, musicMaxBytes: 1 } }),
+    getRecipe: async () => ({ id: "jmii-silk-botanical-01", name: "Silk Botanical Wedding", minPhotos: 18, idealPhotos: 30 } as never),
+    consumeRenderEntitlement: async () => { calls.push("consumed") },
+    startJob: async () => { calls.push("started"); throw new Error("startJob must not run") },
+  })
+  assert.deepEqual(calls, [], "neither the charge nor the job runner may be reached")
+})
+
+test("a render with no photos or no music is refused before the credit is charged", async () => {
+  const cases = [
+    { assets: { photos: [] as never, music: [{ id: "m" }] as never, limits: { photoMaxBytes: 1, musicMaxBytes: 1 } }, code: "NO_PHOTOS" },
+    { assets: { photos: [{ id: "a" }] as never, music: [] as never, limits: { photoMaxBytes: 1, musicMaxBytes: 1 } }, code: "NO_MUSIC" },
+  ]
+  for (const { assets, code } of cases) {
+    const calls: string[] = []
+    await withServer(async (baseUrl) => {
+      const response = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+      assert.equal(response.status, 409)
+      assert.equal((await response.json() as { error: { code: string } }).error.code, code)
+    }, {
+      getProject: async () => OWNED_PROJECT,
+      listProjectAssets: async () => assets,
+      getRecipe: async () => null,
+      consumeRenderEntitlement: async () => { calls.push("consumed") },
+      startJob: async () => { calls.push("started"); throw new Error("startJob must not run") },
+    })
+    assert.deepEqual(calls, [])
+  }
+})
+
+test("an open reservation means resuming a paused run is not charged twice", async () => {
+  // `resume: true` is what the web client always sends, so continuing a job
+  // that paused for a music-fit confirmation used to cost a second credit.
+  const calls: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam/job`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ resume: true }) })
+    assert.equal(response.status, 202)
+  }, {
+    getProject: async () => OWNED_PROJECT,
+    listProjectAssets: async () => READY_ASSETS,
+    getRecipe: async () => null,
+    findOpenReservation: async () => ({ projectId: "linh-nam", userId: "test-user", reservedAt: "2026-08-06T00:00:00.000Z" }),
+    reserveRender: async () => { calls.push("reserved") },
+    settleRender: async () => false,
+    consumeRenderEntitlement: async () => { calls.push("consumed") },
+    startJob: async () => { calls.push("started"); return { projectId: "linh-nam", status: "running" } as JobSnapshot },
+  })
+  assert.deepEqual(calls, ["started"], "an open hold must not be charged again")
+})
+
+test("project issues belonging to nobody are withheld from customers and raised as incidents", async () => {
+  // A brand-new account with zero projects used to open on "1 project folder
+  // can't be opened", naming another tenant's directory and its server path.
+  const reported: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects`)
+    const body = await response.json() as { data: { projects: unknown[]; issues: unknown[] } }
+    assert.deepEqual(body.data.issues, [], "an unownable folder is not a customer's problem")
+    assert.equal(body.data.projects.length, 0)
+  }, {
+    listProjects: async () => ({
+      projects: [],
+      issues: [{ projectId: "inputs anh", ownerId: null, message: "unreadable", detail: "projects/inputs anh/project.json is missing" }],
+    }),
+    reportUnreadableProject: (projectId: string) => { reported.push(projectId) },
+  })
+  assert.deepEqual(reported, ["inputs anh"])
 })

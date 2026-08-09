@@ -210,20 +210,27 @@ function keywordTags(file) {
   if (/bokeh|blurred|light/.test(s)) mood.push("soft", "dreamy");
   if (/leak|flare|sunlight/.test(s)) mood.push("cinematic", "warm");
   if (/particle|spark|golden/.test(s)) mood.push("sparkle", "luxury");
+  if (/snow|winter|frost|ice/.test(s)) mood.push("winter", "airy", "elegant");
+  if (/moon|lunar|crescent|celestial/.test(s)) mood.push("moonlight", "celestial", "romantic");
   if (/dark|black/.test(s)) mood.push("cinematic");
   if (/waiting|girl|smells|bouquet/.test(s)) mood.push("romantic", "intimate");
   if (/yellow|gold|golden/.test(s)) colors.push("gold");
   if (/pink/.test(s)) colors.push("pink");
   if (/white|cream|wedding/.test(s)) colors.push("white", "cream");
+  if (/snow|winter|frost|ice/.test(s)) colors.push("white", "silver", "cool");
+  if (/moon|lunar|crescent|celestial/.test(s)) colors.push("navy", "silver", "cool");
   if (/sunset|warm|sunlight|gold/.test(s)) colors.push("warm");
   if (/background|bokeh|flower|bouquet/.test(s)) bestFor.push("opening", "title", "ending");
   if (/overlay|leak|flare|particle|bokeh/.test(s)) bestFor.push("memory", "ceremony", "ending");
   if (/frame|floral_corner|border/.test(s)) bestFor.push("portrait", "title", "ending");
+  if (/snow|winter|frost|ice/.test(s)) bestFor.push("opening", "title", "winter", "ending");
+  if (/moon|lunar|crescent|celestial/.test(s)) bestFor.push("opening", "title", "ceremony", "ending");
   return { mood: uniq(mood), colors: uniq(colors), bestFor: uniq(bestFor) };
 }
 
 function probeMedia(rel) {
   const abs = path.resolve(root, rel);
+  const isVideo = VIDEO_EXT.has(path.extname(rel).toLowerCase());
   const r = spawnSync(ffprobe, [
     "-v", "error",
     "-select_streams", "v:0",
@@ -239,7 +246,7 @@ function probeMedia(rel) {
     return {
       ...(st.width ? { width: st.width } : {}),
       ...(st.height ? { height: st.height } : {}),
-      ...(Number.isFinite(duration) ? { duration: +duration.toFixed(2) } : {}),
+      ...(isVideo && Number.isFinite(duration) ? { duration: +duration.toFixed(2) } : {}),
       ...(st.r_frame_rate && st.r_frame_rate !== "0/0" ? { fps: st.r_frame_rate } : {}),
     };
   } catch {
@@ -252,7 +259,13 @@ function sourceHint(rel) {
   if (s.includes("mixkit")) return { source: "Mixkit", license: "see assets/licenses" };
   if (s.includes("openclipart")) return { source: "OpenClipart", license: "public-domain/source" };
   if (s.includes("cutestock")) return { source: "Cute Stock Footage", license: "free-with-credit-hint" };
-  if (rel.startsWith("assets/backgrounds/editorial/")) return { source: "local-ai-generated", license: "project-owned" };
+  if (rel.startsWith("assets/backgrounds/editorial/")
+    || rel.startsWith("assets/backgrounds/snow-white/")
+    || rel.startsWith("assets/overlays/snow-white/")
+    || rel.startsWith("assets/backgrounds/moonlight/")
+    || rel.startsWith("assets/overlays/moonlight/")) {
+    return { source: "local-ai-generated", license: "project-owned" };
+  }
   if (rel.startsWith("overlays/light_leak_")) return { source: "local-procedural", license: "repo-generated" };
   if (rel.startsWith("fonts/")) return { source: "Google Fonts/local", license: "see font upstream" };
   return { source: "local", license: "unknown/local" };
@@ -282,6 +295,9 @@ function overlayAsset(rel) {
   const k = keywordTags(rel);
   const base = path.basename(rel);
   const isBundledLeak = /^light_leak_(warm|soft|sunset)\.mp4$/i.test(base);
+  const isScreenPlate = rel.startsWith("assets/overlays/snow-white/")
+    || rel.startsWith("assets/overlays/moonlight/");
+  const screenPlateOpacity = base === "crescent-halo-screen.png" ? 0.22 : 0.28;
   const variant = isBundledLeak ? base.match(/^light_leak_(warm|soft|sunset)\.mp4$/i)[1].toLowerCase() : undefined;
   const label = variant ? `${titleCase(variant)} cinematic light leak` : titleCase(base);
   return {
@@ -297,8 +313,8 @@ function overlayAsset(rel) {
     mood: uniq(k.mood.length ? k.mood : ["wedding"]),
     bestFor: uniq(k.bestFor.length ? k.bestFor : ["memory", "ending"]),
     colors: k.colors,
-    recommendedBlend: rel.toLowerCase().endsWith(".png") ? "alpha" : "screen",
-    recommendedOpacity: variant ? 0.55 : 0.35,
+    recommendedBlend: isScreenPlate || !rel.toLowerCase().endsWith(".png") ? "screen" : "alpha",
+    recommendedOpacity: variant ? 0.55 : isScreenPlate ? screenPlateOpacity : 0.35,
     ...probeMedia(rel),
     ...sourceHint(rel),
   };

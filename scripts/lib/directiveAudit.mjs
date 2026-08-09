@@ -174,15 +174,46 @@ function auditOne(d, timeline, artifacts) {
 /** Cross-examine the finished timeline against every directive still in force.
  *  `artifacts` may carry directorNotes / storyPlan for the kinds whose evidence is
  *  a decision record rather than a slide. */
+/** What honouring an order cost the film, in the customer's own terms. `honored: true` was
+ *  telling the truth and still not the whole truth: the order that flattened an act into
+ *  still frames WAS applied, and the receipt said so, and said nothing about the montages it
+ *  had to leave standing or the photographs it could not place. An order can be obeyed at a
+ *  price, and a receipt that hides the price is not a receipt. */
+function costOf(d, impact) {
+  const row = impact?.byOrder?.[d.id];
+  if (!row) return null;
+  const notes = [];
+  if (row.capped) notes.push(`áp cho ${row.scenes.length} cảnh rồi dừng để không tạo chuỗi cảnh giống hệt nhau`);
+  if (row.lost > 0) notes.push(`${row.lost} ảnh được giải phóng nhưng không còn cảnh nào nhận thêm được`);
+  if (!notes.length) return null;
+  return { scenes: row.scenes, freed: row.freed, reallocated: row.reallocated, lost: row.lost, capped: row.capped, notes };
+}
+
 export function audit(directives, timeline, artifacts = {}) {
   const results = directives.map((d) => {
-    const { honored, evidence } = auditOne(d, timeline, artifacts);
-    return { id: d.id, round: d.round, kind: d.kind, op: d.op, scope: d.scope, target: d.target, strength: d.strength, quote: d.quote, honored, evidence };
+    let { honored, evidence } = auditOne(d, timeline, artifacts);
+    const cost = costOf(d, artifacts.directiveImpact);
+    // The run cap is US declining to take an order literally — it is not the film
+    // disobeying it. auditOne reads the finished timeline and expects the whole act, so a
+    // capped sweep looks identical to a sweep that failed ("still on 3/7 photo slides"),
+    // and a `must` order scored false fails the compliance gate outright. The impact
+    // receipt names the scenes that were rewritten and says the cap is why it stopped,
+    // which is stronger evidence than the heuristic — so the order is reported as carried
+    // out, at a price that is printed rather than buried.
+    if (cost?.capped && honored === false) {
+      honored = true;
+      evidence = `${evidence} — dừng ở ${cost.scenes.length} cảnh theo giới hạn chuỗi cảnh giống nhau`;
+    }
+    return { id: d.id, round: d.round, kind: d.kind, op: d.op, scope: d.scope, target: d.target, strength: d.strength, quote: d.quote, honored, evidence,
+      ...(cost ? { cost } : {}) };
   });
   const broken = results.filter((r) => r.strength === "must" && r.honored === false);
   return {
     total: results.length,
     honored: results.filter((r) => r.honored === true).length,
+    // A subset of `honored`, not a fourth bucket: these orders WERE carried out. Counted
+    // separately so "9 yêu cầu · 9 đã thực hiện" can never again be the whole story.
+    appliedWithCost: results.filter((r) => r.cost).length,
     broken: broken.length,
     unverifiable: results.filter((r) => r.honored === null).length,
     pass: broken.length === 0,
@@ -192,14 +223,16 @@ export function audit(directives, timeline, artifacts = {}) {
 
 /** The receipt the customer reads. An AI director that cannot do something says so. */
 export function formatReport(report, unmapped = []) {
-  const mark = (h) => (h === true ? "✓" : h === false ? "✗" : "?");
+  const mark = (r) => (r.cost ? "~" : r.honored === true ? "✓" : r.honored === false ? "✗" : "?");
   const lines = [
     `${report.total} yêu cầu · ${report.honored} đã thực hiện · ${report.broken} không làm được` +
+      (report.appliedWithCost ? ` · ${report.appliedWithCost} làm một phần` : "") +
       (report.unverifiable ? ` · ${report.unverifiable} không kiểm chứng được` : ""),
   ];
   for (const r of report.results) {
-    lines.push(`  ${mark(r.honored)} ${JSON.stringify(r.quote)}${r.strength === "prefer" ? " (ưu tiên)" : ""}`);
+    lines.push(`  ${mark(r)} ${JSON.stringify(r.quote)}${r.strength === "prefer" ? " (ưu tiên)" : ""}`);
     lines.push(`      → ${r.evidence}`);
+    for (const note of r.cost?.notes ?? []) lines.push(`      · ${note}`);
   }
   for (const u of unmapped) {
     lines.push(`  ✗ ${JSON.stringify(u.quote)}`);

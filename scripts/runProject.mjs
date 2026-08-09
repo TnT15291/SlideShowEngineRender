@@ -119,6 +119,9 @@ process.env.TEXT_CACHE_DIR = project.abs(project.manifest.analysisDir);
 const promptFile = project.rel(project.manifest.promptFile || "prompt.txt");
 const directives = project.rel("directives.json");
 const compliance = `${analysisDir}/compliance.json`;
+// What the orders cost the film — written by applyStoryTemplate, read by the receipt so an
+// order that was carried out at a price is reported as one.
+const directiveImpact = `${analysisDir}/directive-impact.json`;
 const visionSample = arg("--vision-sample", "24");
 const qaDir = `${analysisDir}/qa`;
 const base = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
@@ -535,6 +538,7 @@ try {
         "--directives", directives,
         ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
         "--content", content,
+        "--impact", directiveImpact,
         "--out", compliance,
         "--report-only",
       ], "node 0b: brief compliance (report)");
@@ -594,6 +598,7 @@ try {
         "--directives", directives,
         ...(tier === "premium" ? ["--notes", director, "--plan", plan] : []),
         "--content", content,
+        "--impact", directiveImpact,
         "--out", compliance,
         ...(acceptBriefGaps ? ["--report-only"] : []),
         ], `node 0b: brief compliance (${acceptBriefGaps ? "report, gaps accepted" : "gate"})`);

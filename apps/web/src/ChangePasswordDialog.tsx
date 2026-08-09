@@ -37,6 +37,9 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
     }
   }
 
+  // The reveal button used to sit inside the <label>, so each input's accessible
+  // name computed to "New password Show new password". Label and control are
+  // now associated by id instead of by nesting.
   function passwordField(
     label: string,
     value: string,
@@ -45,28 +48,32 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
     autoComplete: string,
   ) {
     const shown = visible[name]
+    const id = `password-${name}`
     return (
-      <label className="block space-y-1.5 text-sm font-medium">
-        {label}
+      <div className="space-y-1.5">
+        <label htmlFor={id} className="block text-sm font-medium">{label}</label>
         <span className="relative block">
           <input
+            id={id}
             type={shown ? "text" : "password"}
             autoComplete={autoComplete}
-            className="field w-full pr-10"
+            className="field mt-0 w-full pr-10"
             minLength={name === "current" ? undefined : 8}
+            aria-describedby={name === "next" ? "password-next-hint" : undefined}
             value={value}
             onChange={(event) => onChange(event.target.value)}
           />
           <button
             type="button"
-            className="absolute bottom-0 right-0 top-2 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
+            className="absolute inset-y-0 right-0 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
             aria-label={t(shown ? "password.hide" : "password.show", { field: label.toLowerCase() })}
             onClick={() => setVisible((state) => ({ ...state, [name]: !shown }))}
           >
             {shown ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </span>
-      </label>
+        {name === "next" && <p id="password-next-hint" className="text-xs text-muted-foreground">{t("login.passwordHint")}</p>}
+      </div>
     )
   }
 
@@ -83,7 +90,7 @@ export function ChangePasswordDialog({ onClose }: { onClose: () => void }) {
 
         {success ? (
           <div className="mt-6">
-            <p className="rounded-lg bg-success/10 px-4 py-3 text-sm text-success">{t("password.success")}</p>
+            <p className="rounded-lg bg-success/10 px-4 py-3 text-sm text-success-text">{t("password.success")}</p>
             <Button className="mt-4 w-full" onClick={onClose}>{t("common.done")}</Button>
           </div>
         ) : (

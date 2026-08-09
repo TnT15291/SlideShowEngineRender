@@ -9,6 +9,13 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 // — each internal join gives back up to this many seconds. Getting this wrong is exactly
 // what let the ceiling this module enforces be computed too optimistically upstream.
 export const MAX_TRANSITION_SEC = 1.25;
+// Measured across 1,888 accepted Template/Premium transitions on 2026-08-02:
+// p95=25%, p99/max=27%. A 30% cap preserves that corpus with a small rounding margin.
+export const MAX_TRANSITION_RATIO = 0.30;
+export const ALLOCATOR_VERSION = "music-retime-v2";
+
+export const timelineNetDuration = (slides = []) => slides.reduce((sum, slide, index) =>
+  sum + Number(slide.duration || 0) - (index < slides.length - 1 ? Number(slide.transition?.duration || 0) : 0), 0);
 
 function energyAt(music, time) {
   const section = (music.sections || []).find((item) => time >= item.start && time < item.end);
@@ -62,7 +69,14 @@ export function retimeSlidesToMusic(slides, music, options = {}) {
   const boundaries = [...new Set([...phraseTimes, ...downbeatTimes])].sort((a, b) => a - b);
   // The authored durations are a SHAPE, not a schedule: they say which scene should
   // breathe longer than its neighbour, and the track says how much room there is.
-  const weights = slides.map((slide) => Math.max(minScene, Number(slide.duration) || minScene));
+  const adjustmentRows = Array.isArray(options.pacingAdjustments) ? options.pacingAdjustments : [];
+  const adjustmentById = new Map(adjustmentRows.map((row) => [row.sceneId || row.id, Number(row.scale)]));
+  const weights = slides.map((slide) => {
+    const fromObject = options.pacingAdjustments && !Array.isArray(options.pacingAdjustments)
+      ? Number(options.pacingAdjustments[slide.id]) : NaN;
+    const factor = adjustmentById.get(slide.id) ?? fromObject;
+    return Math.max(minScene, Number(slide.duration) || minScene) * (Number.isFinite(factor) ? clamp(factor, 0.5, 1.5) : 1);
+  });
   const copy = slides.map((slide) => ({ ...slide, transition: { ...(slide.transition || {}) } }));
   let cursor = 0;
   let snapped = 0;
@@ -96,7 +110,11 @@ export function retimeSlidesToMusic(slides, music, options = {}) {
     const earliest = Math.max(cursor + minScene, target - slidesLeft * maxScene);
     const end = nearestBoundary(boundaries, wantedEnd, earliest, Math.max(earliest, latest));
     if (Math.abs(end - wantedEnd) > 0.001) snapped++;
-    slide.duration = +(end - cursor + transitionDuration).toFixed(3);
+    const netShare = end - cursor;
+    const ratioCeiling = MAX_TRANSITION_RATIO * netShare / (1 - MAX_TRANSITION_RATIO);
+    const clampedTransition = +Math.min(transitionDuration, MAX_TRANSITION_SEC, ratioCeiling).toFixed(3);
+    slide.transition.duration = clampedTransition;
+    slide.duration = +(netShare + clampedTransition).toFixed(3);
     cursor = end;
   }
 
@@ -132,14 +150,19 @@ export function retimeSlidesToMusic(slides, music, options = {}) {
     }
   }
 
+  const drift = +(timelineNetDuration(copy) - target).toFixed(6);
+  if (Math.abs(drift) > 0.1) throw new Error(`retime drift ${drift}s exceeds 0.1s for target ${target}s`);
   return {
     slides: copy,
+    drift,
     sync: {
       mode: "music-aware-v1",
+      allocatorVersion: ALLOCATOR_VERSION,
       targetDuration: +target.toFixed(3),
       bpm: music.bpmEstimate || null,
       beatSeconds: +beat.toFixed(4),
       snappedBoundaries: snapped,
+      drift,
     },
   };
 }

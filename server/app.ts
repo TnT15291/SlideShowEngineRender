@@ -16,13 +16,15 @@ import { analysisService, AnalysisRequestError, cullInputSchema, startAnalysisIn
 import { directorGenerateSchema, directorMusicChoiceSchema, directorService, directorStoryChoiceSchema, DirectorRequestError, type DirectorGenerateInput, type DirectorMusicChoiceInput, type DirectorState, type DirectorStoryChoiceInput } from "./services/director.js"
 import { deliveryService, DeliveryRequestError, type DeliverySnapshot } from "./services/delivery.js"
 import { artifactService, ArtifactRequestError, type ProjectArtifact, type ProjectArtifactFile } from "./services/artifacts.js"
-import { jobRunner, JobRequestError, startJobInputSchema, type JobEvent, type JobSnapshot, type StartJobInput } from "./services/jobs.js"
+import { jobRunner, JobRequestError, startJobInputSchema, type JobEvent, type JobSnapshot, type JobStatus, type StartJobInput } from "./services/jobs.js"
 import { incidentService, IncidentRequestError, updateIncidentSchema, type Incident, type IncidentStatus } from "./services/incidents.js"
 import { createProject, createProjectInputSchema, deleteProject, getProject, listProjects, listSharedProjects, ProjectAlreadyExistsError, setProjectShared, type CreateProjectInput, type ProjectListResult, type ProjectSummary, UnknownRecipeError } from "./services/projects.js"
 import { qaService, QaRequestError, type QaSnapshot } from "./services/qa.js"
 import { getRecipe, listRecipes, type RecipeSummary } from "./services/recipes.js"
 import { revisionInputSchema, revisionService, revisionUndoSchema, RevisionRequestError, type RevisionInput, type RevisionResult, type RevisionSnapshot, type RevisionUndoInput } from "./services/revisions.js"
 import { replaceTimelineImageSchema, timelineService, TimelineRequestError, type ReplaceTimelineImageInput, type TimelineImageFile, type TimelineSnapshot } from "./services/timeline.js"
+import { findOpenReservation, releaseReservation, reserveRender, settleRender, type RenderReservation } from "./services/renderBilling.js"
+import { assertRenderPreconditions } from "./services/renderPreconditions.js"
 
 type Services = {
   verifyLogin: (input: LoginInput) => Promise<AuthenticatedUser>
@@ -33,6 +35,10 @@ type Services = {
   getSession: (token: string) => Promise<{ userId: string } | null>
   getUserById: (userId: string) => Promise<AuthenticatedUser | null>
   consumeRenderEntitlement: (userId: string) => Promise<void>
+  findOpenReservation: (projectId: string, userId: string) => Promise<RenderReservation | null>
+  reserveRender: (projectId: string, userId: string) => Promise<void>
+  settleRender: (projectId: string, status: JobStatus) => Promise<boolean>
+  releaseReservation: (projectId: string) => Promise<void>
   listRecipes: () => Promise<RecipeSummary[]>
   getRecipe: (recipeId: string) => Promise<RecipeSummary | null>
   listProjects: () => Promise<ProjectListResult>
@@ -80,6 +86,7 @@ type Services = {
   listIncidents: () => { incidents: Incident[]; openCount: number }
   updateIncident: (id: string, status: IncidentStatus) => Incident | null
   retryIncident: (id: string) => Incident
+  reportUnreadableProject: (projectId: string, detail: string) => void
   checkAuthRateLimit: (ip: string) => boolean
 }
 
@@ -92,6 +99,7 @@ const defaultServices: Services = {
   createUser: (input) => createUser(input.username, input.password),
   changePassword: (userId, input) => changePassword(userId, input.currentPassword, input.newPassword),
   createSession, deleteSession, getSession, getUserById, consumeRenderEntitlement,
+  findOpenReservation, reserveRender, settleRender, releaseReservation,
   listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, deleteProjectAsset,
   getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, completeJobManually: jobRunner.completeManually, subscribeToJob: jobRunner.subscribe,
   getAnalysis: analysisService.get, startAnalysis: analysisService.start, suggestCull: analysisService.suggestCull, applyCull: analysisService.applyCull,
@@ -105,12 +113,28 @@ const defaultServices: Services = {
   listIncidents: () => incidentService.list(),
   updateIncident: (id, status) => incidentService.update(id, status),
   retryIncident: (id) => incidentService.retry(id),
+  reportUnreadableProject: (projectId, detail) => incidentService.recordUnreadableProject(projectId, detail),
   checkAuthRateLimit: authRateLimiter,
 }
 const checkoutInputSchema = z.object({
   plan: z.enum(["subscription", "per_video"]),
   provider: z.enum(["stripe", "momo"]).default("stripe"),
 })
+
+/**
+ * Read a job and close its billing hold if it has finished.
+ *
+ * Settling here rather than inside the job runner is what makes a refund
+ * survive a server restart: the runner's in-memory `close` handler is gone
+ * after a crash, but the very next snapshot the client reads goes through this.
+ * `settleRender` ignores non-terminal states and is idempotent, so calling it
+ * on every read is safe.
+ */
+async function settledJob(services: Services, projectId: string) {
+  const job = await services.getJob(projectId)
+  await services.settleRender(projectId, job.status).catch(() => undefined)
+  return job
+}
 
 async function requireSession(request: IncomingMessage, services: Services) {
   const token = bearerToken(request)
@@ -391,7 +415,18 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
   if (url.pathname === "/api/projects") {
     if (request.method === "GET") {
       const result = await services.listProjects()
-      const mine = { ...result, projects: result.projects.filter((project) => project.ownerId === session!.userId) }
+      // Issues used to ride along unfiltered while only `projects` was scoped,
+      // so every account — including one created seconds earlier with nothing
+      // in it — opened on a warning about a folder it did not own, named and
+      // path-quoted. An unreadable manifest has no knowable owner, so it is
+      // withheld from customers entirely and raised as an incident instead.
+      const mine = {
+        projects: result.projects.filter((project) => project.ownerId === session!.userId),
+        issues: result.issues.filter((issue) => issue.ownerId !== null && issue.ownerId === session!.userId),
+      }
+      for (const issue of result.issues) {
+        if (issue.ownerId === null) services.reportUnreadableProject(issue.projectId, issue.detail)
+      }
       sendJson(response, 200, { ok: true, data: mine })
       return
     }
@@ -486,14 +521,19 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
   if (projectJobEventsMatch) {
     if (request.method !== "GET") return methodNotAllowed(response)
     const projectId = parseResourceId(projectJobEventsMatch[1])
-    const initial = await services.getJob(projectId)
+    const initial = await settledJob(services, projectId)
     response.writeHead(200, {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     })
-    const sendEvent = (event: JobEvent) => response.write(`event: ${event.type}\ndata: ${JSON.stringify(event.data)}\n\n`)
+    const sendEvent = (event: JobEvent) => {
+      // A run that dies while the customer is watching should return the credit
+      // now, not on their next page load.
+      if (event.type === "snapshot") void services.settleRender(projectId, event.data.status).catch(() => undefined)
+      response.write(`event: ${event.type}\ndata: ${JSON.stringify(event.data)}\n\n`)
+    }
     const unsubscribe = services.subscribeToJob(projectId, sendEvent)
     sendEvent({ type: "snapshot", data: initial })
     const heartbeat = setInterval(() => response.write(": heartbeat\n\n"), 15_000)
@@ -726,13 +766,35 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
   if (projectJobMatch) {
     const projectId = parseResourceId(projectJobMatch[1])
     if (request.method === "GET") {
-      sendJson(response, 200, { ok: true, data: await services.getJob(projectId) })
+      sendJson(response, 200, { ok: true, data: await settledJob(services, projectId) })
       return
     }
     if (request.method === "POST") {
       const input = await readJsonBody(request, startJobInputSchema) as StartJobInput
-      await services.consumeRenderEntitlement(session!.userId)
-      sendJson(response, 202, { ok: true, data: await services.startJob(projectId, input) })
+      // Order matters and is the whole point: check first, charge second, start
+      // third. A run that cannot succeed must never reach the billing call, and
+      // a start that throws must not leave the charge behind.
+      const project = await services.getProject(projectId)
+      if (!project) throw new HttpError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)
+      assertRenderPreconditions({
+        project,
+        assets: await services.listProjectAssets(projectId),
+        recipe: project.recipe ? await services.getRecipe(project.recipe) : null,
+      })
+
+      // Resuming a paused run, or retrying after the credit was handed back,
+      // reuses the open hold instead of charging again.
+      const reserved = await services.findOpenReservation(projectId, session!.userId)
+      if (!reserved) {
+        await services.consumeRenderEntitlement(session!.userId)
+        await services.reserveRender(projectId, session!.userId)
+      }
+      try {
+        sendJson(response, 202, { ok: true, data: await services.startJob(projectId, input) })
+      } catch (error) {
+        if (!reserved) await services.settleRender(projectId, "failed")
+        throw error
+      }
       return
     }
     response.setHeader("Allow", "GET, POST, OPTIONS")
@@ -752,6 +814,10 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     if (request.method === "DELETE") {
       const job = await services.getJob(projectId)
       if (job.status === "running" || job.status === "pending") await services.cancelJob(projectId)
+      // Drop the hold without refunding. Deleting a project you started a
+      // render for is not a pipeline failure, and refunding here would make
+      // "start, delete, repeat" a free-render loop.
+      await services.releaseReservation(projectId)
       sendJson(response, 200, { ok: true, data: await services.deleteProject(projectId) })
       return
     }

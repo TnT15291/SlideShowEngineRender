@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react"
-import { AlertCircle, ArrowRight, Check, ChevronDown, ChevronRight, Circle, CreditCard, Film, LoaderCircle, Minus, Play, Square } from "lucide-react"
+import { AlertCircle, Check, ChevronDown, ChevronRight, Circle, Film, LoaderCircle, Minus, Play, Square } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { apiGet, apiPost, subscribeToApiEvents } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
+import { createSettlementTracker, recordJobStatus } from "@/lib/jobSettlement"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { jobStatusLabelKey, phaseLabelKey, phaseLongLabelKey } from "@/projectFormat"
+import { strings, type StringKey } from "@/lib/strings"
 import { TemplateMvpPanel } from "@/TemplateMvpPanel"
 import type { JobSnapshot, ProjectSummary } from "@/types"
 
@@ -17,14 +19,19 @@ import type { JobSnapshot, ProjectSummary } from "@/types"
 // pipeline id — that is how customers ended up reading "Qa".
 const phaseNames = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 
-export function JobRunnerPanel({ project, styleName, renderBlocked = false, blockedReason, onUpgrade, onJobChanged, onRenderStarted }: {
+export function JobRunnerPanel({ project, styleName, renderBlocked = false, blockedReason, onJobChanged, onEntitlementChanged }: {
   project: ProjectSummary
   styleName?: string | null
   renderBlocked?: boolean
   blockedReason?: string
-  onUpgrade?: () => void
   onJobChanged?: (job: JobSnapshot) => void
-  onRenderStarted?: () => void
+  /**
+   * Fires whenever the account's render balance can have moved: on start (a
+   * credit is held) and when a run finishes (a failed one is refunded by the
+   * server). Without the second call the sidebar would keep showing the
+   * charged-but-since-refunded number until the next full page load.
+   */
+  onEntitlementChanged?: () => void
 }) {
   const { t } = useI18n()
   const [job, setJob] = useState<JobSnapshot | null>(null)
@@ -35,14 +42,27 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
   const [logOpen, setLogOpen] = useState(false)
   const logEnd = useRef<HTMLDivElement>(null)
 
+  // The server hands the credit back when a run reaches a terminal state, so
+  // the balance in the sidebar has to be re-read — once per transition, not on
+  // every snapshot the stream pushes, and never for the snapshot this panel
+  // opens with. See `lib/jobSettlement.ts` for why that last clause matters.
+  const settlement = useRef(createSettlementTracker())
+
   function commitJob(value: JobSnapshot) {
     setJob(value)
     onJobChanged?.(value)
+    if (recordJobStatus(settlement.current, value.status)) onEntitlementChanged?.()
   }
 
   useEffect(() => {
     let active = true
-    apiGet<JobSnapshot>(`/projects/${project.id}/job`).then((value) => { if (active) commitJob(value) }).catch((reason: unknown) => { if (active) setError(apiMessage(reason, t)) })
+    apiGet<JobSnapshot>(`/projects/${project.id}/job`).then((value) => {
+      if (!active) return
+      commitJob(value)
+      // Seed the console from the tail the server persisted. Without this the
+      // only record of a failure vanished the moment the page was reloaded.
+      if (value.logTail?.length) setLogs(value.logTail)
+    }).catch((reason: unknown) => { if (active) setError(apiMessage(reason, t)) })
     const unsubscribe = subscribeToApiEvents(`/projects/${project.id}/job/events`, {
       onOpen: () => { if (active) setConnected(true) },
       onError: () => { if (active) setConnected(false) },
@@ -72,7 +92,7 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
         deliver: true,
         acceptMusicMismatch,
       }))
-      onRenderStarted?.()
+      onEntitlementChanged?.()
     } catch (reason) {
       setError(apiMessage(reason, t))
     } finally {
@@ -121,14 +141,17 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
         it is actually showing. */}
     <CardContent className="p-0">
       <section className="p-6">
-        {renderBlocked
-          ? <div className="rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm text-warning"><p className="flex items-center gap-2 font-medium"><CreditCard className="size-4 shrink-0" /> {t("job.creditNeeded")}</p><p className="mt-1 text-xs leading-5">{blockedReason}</p>{onUpgrade && <Button className="mt-3" size="sm" variant="outline" onClick={onUpgrade}>{t("workspace.viewPlans")} <ArrowRight className="size-4" /></Button>}</div>
-          : <div className="rounded-lg border bg-background p-4 text-xs leading-5 text-muted-foreground">{t("job.runsOnItsOwn")}</div>}
+        {/* The page already carries a credit banner with the same wording and
+            the same "View plans" button. Repeating the whole card here said it
+            twice on one screen; the disabled button and its tooltip carry the
+            reason at the point of action. */}
+        <div className="rounded-lg border bg-background p-4 text-xs leading-5 text-muted-foreground">{renderBlocked ? blockedReason : t("job.runsOnItsOwn")}</div>
         <div className="mt-6 flex gap-3">{running ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? t("job.stopping") : t("common.cancel")}</Button> : <Button onClick={() => void start()} disabled={submitting || renderBlocked} title={renderBlocked ? blockedReason : undefined}><Play className="size-4" /> {submitting ? t("job.starting") : job?.status === "paused" || job?.status === "failed" ? t("job.tryAgain") : t("job.createVideo")}</Button>}</div>
         {job?.status === "paused" && job.pauseReason?.startsWith("PLAYLIST_FIT_CONFIRMATION_REQUIRED:") && <PlaylistFitConfirmation reason={job.pauseReason} accepting={submitting} onAccept={() => void start(true)} />}
         {error && <p className="mt-4 flex gap-2 text-sm text-destructive"><AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}</p>}
-        {job?.manuallyCompleted && <div className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm text-warning"><p className="font-medium">{t("job.finishedWithWarning")}</p><p className="mt-1 text-xs">{t("job.manualCompleteDetail")}</p></div>}
-        {job?.warnings?.map((warning) => <div key={warning.code} className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm text-warning"><p className="font-medium">{t("job.finishedWithWarning")}</p><p className="mt-1 text-xs">{warning.message}</p></div>)}
+        {job?.status === "failed" && <FailureExplanation cause={job.cause} fallback={job.error} />}
+        {job?.manuallyCompleted && <div className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm text-warning-text"><p className="font-medium">{t("job.finishedWithWarning")}</p><p className="mt-1 text-xs">{t("job.manualCompleteDetail")}</p></div>}
+        {job?.warnings?.map((warning) => <div key={warning.code} className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm text-warning-text"><p className="font-medium">{t("job.finishedWithWarning")}</p><p className="mt-1 text-xs">{warning.message}</p></div>)}
         <div className="mt-7 rounded-xl border bg-card-soft p-5" aria-live="polite">
           <div className="flex items-start justify-between gap-5">
             <div><p className="text-sm font-semibold">{progressTitle}</p><p className="mt-1 max-w-md text-xs leading-5 text-muted-foreground">{progressDetail}</p></div>
@@ -150,13 +173,39 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
   </Card><TemplateMvpPanel project={project} job={job} styleName={styleName} /></>
 }
 
+/**
+ * What actually went wrong, in the reader's language, above the console rather
+ * than inside it.
+ *
+ * The server recognises a handful of engine failures by their output and sends
+ * back a `cause` code (see `server/services/failureCause.ts`); anything it
+ * doesn't recognise falls back to the raw message, which is still better than
+ * silence. Either way the stack trace stays where it belongs — behind
+ * "Technical details".
+ */
+function FailureExplanation({ cause, fallback }: { cause: JobSnapshot["cause"]; fallback: string | null }) {
+  const { t } = useI18n()
+  const key = cause ? `jobCause.${cause.code}` : null
+  const known = key && key in strings
+  if (!known && !fallback) return null
+  return <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm">
+    <p className="flex items-center gap-2 font-medium text-destructive"><AlertCircle className="size-4 shrink-0" /> {t("job.whatWentWrong")}</p>
+    {known
+      ? <>
+        <p className="mt-1.5 leading-6">{t(key as StringKey, cause?.params)}</p>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">{t(`jobCause.${cause!.code}.fix` as StringKey)}</p>
+      </>
+      : <p className="mt-1.5 break-words leading-6">{fallback}</p>}
+  </div>
+}
+
 // A skipped phase used to share the completed styling — a green tick for work
 // that was never done. It now reads as "not applicable" instead.
 function Phase({ label, status }: { label: string; status: string }) {
   const { t } = useI18n()
   const Icon = status === "completed" ? Check : status === "skipped" ? Minus : status === "running" ? LoaderCircle : status === "failed" ? AlertCircle : Circle
   return <div
-    className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 text-xs", status === "running" && "bg-primary/10 text-primary", status === "failed" && "bg-destructive/10 text-destructive", status === "completed" && "text-success", status === "skipped" && "text-muted-foreground")}
+    className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 text-xs", status === "running" && "bg-primary/10 text-primary", status === "failed" && "bg-destructive/10 text-destructive", status === "completed" && "text-success-text", status === "skipped" && "text-muted-foreground")}
     title={status === "skipped" ? t("job.phaseSkipped", { label }) : undefined}
   ><Icon className={cn("size-3.5 shrink-0", status === "running" && "animate-spin")} /> <span className="truncate">{label}</span></div>
 }
@@ -165,7 +214,7 @@ function PlaylistFitConfirmation({ reason, accepting, onAccept }: { reason: stri
   const { t } = useI18n()
   const [, mismatch, photos, duration, secondsPerPhoto] = reason.split(":")
   const tooLong = mismatch === "too_much_music"
-  return <div className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm text-warning">
+  return <div className="mt-4 rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm text-warning-text">
     <p className="font-medium">{t("job.playlistMismatch")}</p>
     <p className="mt-1 text-xs leading-5">{t("job.playlistMismatchDetail", { duration: Math.round(Number(duration)), photos: photos ?? "?", perPhoto: secondsPerPhoto ?? "?" })} {t(tooLong ? "job.playlistTooLong" : "job.playlistTooShort")}</p>
     <Button className="mt-3" size="sm" variant="outline" onClick={onAccept} disabled={accepting}><Play className="size-4" /> {accepting ? t("job.continuing") : t("job.continueAnyway")}</Button>

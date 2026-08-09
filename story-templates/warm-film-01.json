@@ -192,10 +192,10 @@
     "notes": "Warm analog 35mm nostalgia (2026 trend: vintage film frames, sun-kissed grain, editorial nostalgia). Light leaks + grain + polaroid scatter. Original recipe."
   },
   "intro": {
-    "summary": "Hoài niệm phim analog 35mm ấm áp — light leak, hạt phim, rải polaroid.",
-    "photos": "Hợp ảnh candid, ảnh ngoài trời ánh sáng vàng ấm, ảnh gia đình gần gũi; cần khá nhiều ảnh (35–70) để giữ chất liệu phim xuyên suốt.",
-    "story": "Phù hợp câu chuyện tình lãng mạn, mộc mạc, ấm áp — kể hành trình yêu và gia đình theo nhịp phim hoài cổ, không quá kịch tính.",
-    "music": "Hợp nhạc acoustic ấm áp, lãng mạn, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Hoài niệm phim analog 35mm ấm áp — light leak, hạt phim, rải polaroid.", "en": "Warm 35 mm analogue nostalgia — light leaks, film grain, scattered polaroids." },
+    "photos": { "vi": "Hợp ảnh candid, ảnh ngoài trời ánh sáng vàng ấm, ảnh gia đình gần gũi; cần khá nhiều ảnh (35–70) để giữ chất liệu phim xuyên suốt.", "en": "Suits candids, outdoor photos in warm golden light and close family moments. Needs a fair number (35–70) to sustain the film texture throughout." },
+    "story": { "vi": "Phù hợp câu chuyện tình lãng mạn, mộc mạc, ấm áp — kể hành trình yêu và gia đình theo nhịp phim hoài cổ, không quá kịch tính.", "en": "For a romantic, unfussy, warm love story — the relationship and the family told at a nostalgic film pace, without high drama." },
+    "music": { "vi": "Hợp nhạc acoustic ấm áp, lãng mạn, tiết tấu chậm đến vừa.", "en": "Suits warm, romantic acoustic music at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

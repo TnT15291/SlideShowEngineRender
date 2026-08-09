@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process"
-import { readFile, rm } from "node:fs/promises"
+import { readFile, rm, stat } from "node:fs/promises"
 import path from "node:path"
 
 import { z } from "zod"
@@ -55,6 +55,10 @@ export function createDirectorService(engineRoot = process.cwd(), commandRunner?
     }
   }
 
+  async function exists(file: string) {
+    try { await stat(file); return true } catch { return false }
+  }
+
   async function optionalJson(file: string) {
     try { return JSON.parse(await readFile(file, "utf8")) }
     catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return null; throw new DirectorRequestError(500, "INVALID_DIRECTOR_DATA", `Cannot read ${path.basename(file)}`) }
@@ -108,6 +112,16 @@ export function createDirectorService(engineRoot = process.cwd(), commandRunner?
       await writeTextAtomic(project.prompt, `${input.brief.trim()}\n`)
       await run(["scripts/parseBrief.mjs", "--prompt", path.relative(engineRoot, project.prompt), "--out", path.relative(engineRoot, path.join(project.projectDir, "directives.json"))])
       if (project.manifest.tier === "lite") {
+        // The Lite story node resolves its photo pool exactly as its generator does —
+        // the policy-filtered selection when the plan phase produced one, otherwise the
+        // technical analysis. Neither on disk means analysis never ran, which is a 409
+        // the UI can explain, not an ENOENT stack thrown out of node:fs at import time.
+        const pool = [project.manifest.selectedPhotos, `${project.manifest.analysisDir}/photos.json`]
+          .filter((file): file is string => Boolean(file))
+          .map((file) => path.resolve(project.projectDir, file))
+        if (!(await Promise.all(pool.map(exists))).some(Boolean)) {
+          throw new DirectorRequestError(409, "TECHNICAL_ANALYSIS_REQUIRED", "Run technical photo analysis before generating the Lite story")
+        }
         await run(["scripts/generateProjectStory.mjs", "--project", project.projectRel], project.analysisDir)
       } else {
         const content = project.rel("photo_content.json")

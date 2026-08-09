@@ -23,18 +23,22 @@
 //
 // Usage: node scripts/qaProxy.mjs <timeline.json> [--music analysis/music/<t>.json]
 //   [--content analysis/photo_content.json] [--out analysis/qa/<name>.proxy.json]
-//   [--tolerance 0.25] [--hero-margin 0.15] [--strict]
+//   [--tolerance 0.25] [--hero-margin 0.15] [--tier template|lite|premium] [--strict]
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { makeEnergy, sceneDur, sceneTimes, barLength, fitScale } from "./lib/pacing.mjs";
+import { retimeSlidesToMusic, ALLOCATOR_VERSION, timelineNetDuration } from "./lib/musicRetime.mjs";
 import { createTextMeasurer } from "./lib/textMeasure.mjs";
 import { sliceMusicAnalysis } from "./lib/musicHighlight.mjs";
 import { readPlaylistAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusic.mjs";
 import { evaluateTier1Quality } from "./lib/tier1QualityGate.mjs";
+import { evaluateFindings } from "./lib/rules/verdict.mjs";
+import { TIERS } from "./lib/rules/policy.mjs";
 import { hasMojibake, inspectCaptionLanguage } from "./lib/captionLanguage.mjs";
-import { PACING_TOLERANCE, HERO_SWAP_MARGIN, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
-  HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC, DEGENERATE_FACE_AXIS } from "./lib/rules/thresholds.mjs";
+import { PACING_TOLERANCE, HERO_SWAP_MARGIN, HERO_WEAK_PERCENTILE, FOCUS_SAFE_MIN, FOCUS_SAFE_MAX, FACE_CONTAIN_MARGIN,
+  HIGHLIGHT_MIN_SEC, HIGHLIGHT_MAX_SEC, PHRASE_SNAP_TOLERANCE_SEC, BLACK_FRAME_YAVG, AUDIO_DRIFT_MAX_SEC, DEGENERATE_FACE_AXIS,
+  PHOTO_COVERAGE_FLOOR, FACE_CONFIDENCE_MIN } from "./lib/rules/thresholds.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -53,6 +57,13 @@ const HERO_MARGIN = Number(arg("--hero-margin", String(HERO_SWAP_MARGIN)));
 // bookend when its copy echoes on the closing card (a cold-open pushes it off slide 0).
 const OPENING_BOOKEND_MAX = 1;
 const strict = process.argv.includes("--strict");
+// Optional: with a tier this report can also state what the tier's policy DOES about
+// each finding, instead of leaving every reader to infer failure from a raw count.
+const TIER = arg("--tier", "");
+if (TIER && !TIERS.includes(TIER)) {
+  console.error(`--tier must be one of ${TIERS.join(", ")}, got "${TIER}"`);
+  process.exit(1);
+}
 // Same rule as qaLoop: the report belongs to the job that owns the timeline, so
 // derive `<job>/analysis` from `<job>/timeline/x.json`. A root timeline still
 // resolves to plain "analysis".
@@ -225,7 +236,12 @@ for (const slide of tl.slides) {
         (layer.focusY ?? 0.5) < FOCUS_SAFE_MIN || (layer.focusY ?? 0.5) > FOCUS_SAFE_MAX) flags.push("unsafe_focus");
     if (!(layer.width > 0 && layer.height > 0)) flags.push("invalid_crop_box");
     const photo = technicalByFile.get(layer.path);
-    const faces = photo?.faces?.length ? photo.faces.map((f) => f.box) : (photo?.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
+    // Only a real detection may forbid a crop — see FACE_CONFIDENCE_MIN. Where the record
+    // carries confidences we read them; a legacy record with no `faces` array at all keeps
+    // the old faceBoxEstimate behaviour, since there is nothing there to judge it by.
+    const faces = photo?.faces
+      ? photo.faces.filter((f) => (f.confidence ?? 0) >= FACE_CONFIDENCE_MIN).map((f) => f.box)
+      : (photo?.faceBoxEstimate ? [photo.faceBoxEstimate] : []);
     let visible = null;
     if (photo?.w > 0 && photo?.h > 0 && layer.width > 0 && layer.height > 0) {
       const sourceAspect = photo.w / photo.h, targetAspect = layer.width / layer.height;
@@ -322,33 +338,17 @@ if (musicMissing) {
   pacing.status = "ran";
   const energy = makeEnergy(music);
   const bar = barLength(music);
-
-  // QA computes the scale ITSELF, from the rendered timeline and the track — it
-  // does not read a number the generator wrote down, which would make the check
-  // agree with the generator by construction. Montages (bar-locked) and the
-  // closing card (a fixed full stop) are excluded, exactly as they are from the
-  // per-scene check below.
-  const storyScenes = scenes.filter((sc, i) => {
-    const k = kindOf(tl.slides[i], i);
-    return k !== "montage" && k !== "closing";
-  });
-  const fixed = scenes
-    .filter((sc, i) => {
-      const k = kindOf(tl.slides[i], i);
-      return k === "montage" || k === "closing";
-    })
-    .reduce((n, sc) => n + sc.dur, 0);
-  const pacingScale = storyScenes.length
-    ? fitScale({
-        baseDurations: storyScenes.map((sc) => sceneDur(energy.meanOver(sc.start, sc.end))),
-        transitions: storyScenes.map((sc, i) => tl.slides[i]?.transition?.duration ?? 0),
-        targetDuration: Math.max(1, (music.duration ?? 0) - fixed),
-      })
-    : 1;
-  pacing.scale = +pacingScale.toFixed(3);
+  // QA asks the production allocator for the expected schedule. It no longer carries a
+  // second sceneDur(energy)*scale model that can disagree with the timeline generator.
+  const allocation = retimeSlidesToMusic(tl.slides, music);
+  pacing.allocatorVersion = allocation.sync.allocatorVersion;
+  pacing.targetDrift = allocation.drift;
+  pacing.plan = allocation.slides.map((slide) => ({ id: slide.id, duration: slide.duration,
+    transitionDuration: slide.transition?.duration || 0 }));
 
   pacing.scenes = scenes.map((sc, i) => {
     const slide = tl.slides[i];
+    const allocated = allocation.slides[i];
     const kind = kindOf(slide, i);
     const eStart = energy.at(sc.start);
     const eMean = energy.meanOver(sc.start, sc.end);
@@ -383,7 +383,7 @@ if (musicMissing) {
     // derived from energy at each scene's START; QA re-derives them from the MEAN
     // energy over the span each scene actually occupies, and computes its own k
     // from those. Hand edits, emphasis multipliers and energy drift still show up.
-    const expected = +(sceneDur(eMean) * pacingScale).toFixed(2);
+    const expected = Number(allocated.duration);
     const deviation = (sc.dur - expected) / expected;
     row.expected = expected;
     row.deviation = +deviation.toFixed(3);
@@ -397,14 +397,76 @@ if (musicMissing) {
         check: "pacing",
         flags: [flag],
         detail:
-          `held ${sc.dur}s over music whose mean energy (${eMean.toFixed(2)}) implies ${expected}s ` +
-          `(${(deviation * 100).toFixed(0)}%); energy at its start was ${eStart.toFixed(2)}`,
-        fix: { kind: "set_duration", to: expected },
+          `held ${sc.dur}s while ${ALLOCATOR_VERSION} allocates ${expected}s ` +
+          `(${(deviation * 100).toFixed(0)}%); QA will request a global pacing adjustment`,
+        fix: { kind: "pacing_adjustment", scale: +Math.max(0.5, Math.min(1.5, expected / sc.dur)).toFixed(3) },
       });
     }
     return row;
   });
   pacing.flagged = pacing.scenes.filter((s) => s.flags.length).length;
+}
+
+// Timeline-to-music drift is distinct from the rendered file's audio/video drift below.
+if (!musicMissing) {
+  const drift = +(timelineNetDuration(tl.slides) - Number(music.duration)).toFixed(3);
+  if (Math.abs(drift) > 0.1) problems.push({ id: "timeline", check: "audio_drift", flags: ["timeline_music_duration_mismatch"],
+    detail: `timeline net duration differs from music edit by ${drift}s` });
+}
+
+// --- photo coverage --------------------------------------------------------
+// How much of the album reached the screen. The numbers were already being written to
+// photo-assignment.json; what was missing was anyone reading them. A premium job shipped
+// 66 of 82 photographs — a customer's own pictures, absent from their own film — with
+// `verdict=ok` on every gate, because selectedNotRendered was wired to nothing.
+//
+// Two flags, both provable, neither guessed. `directive_photo_loss` is exact: the directive
+// layer reports what it freed and could not place. `coverage_below_floor` is the backstop
+// for everything else, and stays loose on purpose — a plan that fits 81 slots to 82 photos
+// is a fair fit, not a defect.
+//
+// The floor is applied as an ALLOWANCE IN PHOTOGRAPHS, not as a ratio, because a ratio's
+// resolution is coarser than the thing it measures once the album is small: 15% of four
+// photographs is 0.6, which rounds to an allowance of none, so the rule demanded of a
+// four-photo album a perfect fit it never demanded of an eighty-photo one. Since
+// `notRendered` is an integer, `notRendered > floor(0.15 * selected)` is EQUIVALENT to
+// `ratio < 0.85` for every album of seven photographs or more; only albums of six or
+// fewer change, and only by tolerating exactly one unplaced picture.
+const coverage = { status: "skipped", selected: null, usedUnique: null, ratio: null };
+const assignmentPath = `${analysisDir}/photo-assignment.json`;
+const assignmentAbs = path.resolve(root, assignmentPath);
+if (!fs.existsSync(assignmentAbs)) {
+  coverage.reason = `${assignmentPath} not found — coverage is measured by the builder, not re-derived here`;
+} else {
+  const assignment = JSON.parse(fs.readFileSync(assignmentAbs, "utf8"));
+  const shipped = assignment.timeline;
+  if (!shipped) {
+    coverage.reason = `${assignmentPath} predates the shipped-coverage block`;
+  } else {
+    const selected = assignment.selected ?? (shipped.usedUnique + (shipped.selectedNotRendered?.length ?? 0));
+    const ratio = selected > 0 ? shipped.usedUnique / selected : 1;
+    const notRendered = shipped.selectedNotRendered?.length ?? 0;
+    const allowance = Math.max(1, Math.floor(selected * (1 - PHOTO_COVERAGE_FLOOR)));
+    Object.assign(coverage, {
+      status: "ran", selected, usedUnique: shipped.usedUnique, ratio: +ratio.toFixed(4),
+      notRendered,
+      reasons: shipped.notRenderedReasons ?? {},
+      floor: PHOTO_COVERAGE_FLOOR,
+      allowance,
+    });
+    const flags = [];
+    if (coverage.reasons.directive_reduced_demand > 0) flags.push("directive_photo_loss");
+    if (notRendered > allowance) flags.push("coverage_below_floor");
+    if (flags.length) {
+      coverage.flagged = coverage.notRendered;
+      problems.push({ id: "project", check: "photo_coverage", flags,
+        detail: `${shipped.usedUnique}/${selected} selected photo(s) reached the film `
+          + `(${(ratio * 100).toFixed(1)}%; ${notRendered} unplaced, `
+          + `${allowance} allowed at a ${(PHOTO_COVERAGE_FLOOR * 100).toFixed(0)}% floor)`
+          + (Object.keys(coverage.reasons).length
+            ? ` — ${Object.entries(coverage.reasons).map(([k, n]) => `${k}: ${n}`).join(", ")}` : "") });
+    }
+  }
 }
 
 // --- check 2: hero ---------------------------------------------------------
@@ -423,7 +485,15 @@ if (!content) {
   const pool = new Map(content.photos.map((p) => [p.file, p]));
   const scores = content.photos.map((p) => p.heroScore).sort((a, b) => a - b);
   const median = scores[Math.floor(scores.length / 2)];
+  // The trigger used to be `heroScore < median`, which half of any album fails by
+  // construction — so this check reported ~half of all hero slots and was the sole
+  // reason both stored Lite jobs came out `verdict=review` while the tier policy
+  // (hero=warn for Lite) considered them clean. Ask the useful question instead:
+  // is this frame in the album's weakest slice, with something better still unused?
+  const weakAt = scores[Math.min(scores.length - 1, Math.floor(scores.length * HERO_WEAK_PERCENTILE))];
   hero.poolMedian = +median.toFixed(3);
+  hero.weakPercentile = HERO_WEAK_PERCENTILE;
+  hero.weakThreshold = +weakAt.toFixed(3);
 
   const used = new Set();
   for (const s of tl.slides) {
@@ -447,11 +517,17 @@ if (!content) {
         return;
       }
       const row = { id: slide.id, layer: li, path: l.path, heroScore: rec.heroScore, orient: rec.orient, flags: [] };
-      if (rec.heroScore < median) {
+      if (rec.heroScore <= weakAt) {
         const better = content.photos
           .filter((p) => !used.has(p.file) && p.orient === rec.orient && p.heroScore >= rec.heroScore + HERO_MARGIN)
           .sort((a, b) => b.heroScore - a.heroScore)[0];
         if (better) {
+          // Claim it. `used` was built once from the timeline and never updated, so every
+          // weak slot was handed the SAME top-scoring spare — on tuan-tien-725c four of the
+          // five proposals pointed at one file. Lite never applied them (hero=warn), but
+          // premium repairs heroes, and qaLoop applies a whole report in one pass: that is
+          // one photograph seated in four slides, traded for a duplicate_photo block.
+          used.add(better.file);
           row.flags.push("weak_hero");
           row.suggest = { file: better.file, heroScore: better.heroScore };
           hero.flagged++;
@@ -460,7 +536,8 @@ if (!content) {
             check: "hero",
             flags: ["weak_hero"],
             detail:
-              `hero ${l.path} scores ${rec.heroScore} (below pool median ${median.toFixed(3)}); ` +
+              `hero ${l.path} scores ${rec.heroScore} (in the album's weakest ` +
+              `${(HERO_WEAK_PERCENTILE * 100).toFixed(0)}%, at or below ${weakAt.toFixed(3)}); ` +
               `unused ${better.file} scores ${better.heroScore}`,
             fix: {
               kind: "swap_hero",
@@ -580,16 +657,24 @@ if (!videoAbs || !fs.existsSync(videoAbs)) {
 }
 
 // --- report ----------------------------------------------------------------
+// `verdict` stays the raw MEASUREMENT ("did anything trip?"), which is all this script
+// can know on its own and what stored reports and lib/liteQualityReport already read.
+// What a tier does about those findings is policy, and until now nothing printed it:
+// a Lite job whose only findings were hero warnings — findings the tier's own policy
+// classifies as advisory — announced `verdict=review` on the console and in every
+// report, so a clean run read as a failed one. With --tier we can say which it is.
 const verdict = problems.length ? "review" : "ok";
+const policy = TIER ? evaluateFindings({ tier: TIER, problems }) : null;
 const report = {
   timeline: tlPath.replace(/\\/g, "/"),
   video: videoRel ?? null,
   generatedAt: new Date().toISOString(),
+  ...(policy ? { policy: { tier: TIER, verdict: policy.verdict, policyVersion: policy.policyVersion, counts: policy.counts } } : {}),
   inputs: {
     music: musicJson ? musicJson.replace(/\\/g, "/") : null,
     photoContent: content ? { path: contentPath.replace(/\\/g, "/"), generatedBy: content.generatedBy } : null,
   },
-  checks: { pacing, hero, textOverflow, captionIntegrity, captionLanguage, duplicates, crop, tier1Gate, blackFrames, audioDrift, musicEdit, bookend },
+  checks: { pacing, hero, textOverflow, captionIntegrity, captionLanguage, duplicates, crop, coverage, tier1Gate, blackFrames, audioDrift, musicEdit, bookend },
   advisories,
   problems,
   verdict,
@@ -601,13 +686,24 @@ fs.writeFileSync(path.resolve(root, outPath), JSON.stringify(report, null, 2));
 const storyN = pacing.scenes.filter((s) => s.kind === "story").length;
 const pacingN = pacing.status === "ran" ? `${pacing.flagged} flagged/${storyN} story scenes` : "skipped";
 const heroN = hero.status === "ran" ? hero.flagged : "skipped";
+const headline = policy
+  ? `${TIER} verdict=${policy.verdict} (${problems.length} finding(s): ` +
+    `${["block", "repair", "manual-review", "warn"].filter((a) => policy.counts[a])
+      .map((a) => `${policy.counts[a]} ${a}`).join(", ") || "none"})`
+  : `verdict=${verdict}`;
 console.log(
-  `QA-proxy ${base}: verdict=${verdict} — pacing ${pacingN}, hero ${heroN}, bookend ${bookend.status}. -> ${outPath}`
+  `QA-proxy ${base}: ${headline} — pacing ${pacingN}, hero ${heroN}, bookend ${bookend.status}. -> ${outPath}`
 );
-for (const p of problems) console.log(`  [${p.check}] ${p.id}: ${p.flags.join(",")} — ${p.detail}`);
+// evaluateFindings maps problems positionally, so findings[i] is problems[i] + its action.
+for (const [index, p] of problems.entries()) {
+  const action = policy ? `:${policy.findings[index].action}` : "";
+  console.log(`  [${p.check}${action}] ${p.id}: ${p.flags.join(",")} — ${p.detail}`);
+}
 for (const a of advisories) console.log(`  (advisory) ${a}`);
 if (pacing.status === "skipped") console.log(`  pacing check skipped: ${pacing.reason}`);
 if (hero.status === "skipped") console.log(`  hero check skipped: ${hero.reason}`);
 if (bookend.status === "skipped") console.log(`  bookend skipped: ${bookend.reason}`);
 
-if (strict && verdict !== "ok") process.exit(1);
+// With a tier, --strict gates on what the tier would actually refuse to ship; without one
+// it keeps its old meaning (any finding at all), since there is no policy to consult.
+if (strict && (policy ? policy.verdict !== "pass" : verdict !== "ok")) process.exit(1);

@@ -230,10 +230,10 @@
     "notes": "Fashion-magazine editorial look (2026 trend: cursive out, big expressive serif headlines, clean sans companion, generous whitespace, high contrast). Original recipe, not copied from any marketplace timeline."
   },
   "intro": {
-    "summary": "Phong cách tạp chí thời trang: tiêu đề chữ lớn, tối giản, tương phản cao.",
-    "photos": "Hợp ảnh prewedding chất lượng cao, bố cục đẹp, nhiều khoảng trống — ảnh cần sắc nét, chỉn chu như ảnh studio/editorial.",
-    "story": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tối giản — tập trung vào hai nhân vật chính, không đi sâu chi tiết gia đình.",
-    "music": "Hợp nhạc điện ảnh, thanh lịch, hiện đại, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Phong cách tạp chí thời trang: tiêu đề chữ lớn, tối giản, tương phản cao.", "en": "A fashion-magazine look: oversized headlines, stripped back, high contrast." },
+    "photos": { "vi": "Hợp ảnh prewedding chất lượng cao, bố cục đẹp, nhiều khoảng trống — ảnh cần sắc nét, chỉn chu như ảnh studio/editorial.", "en": "Suits high-quality pre-wedding photos with strong composition and generous empty space — sharp and polished, like studio or editorial work." },
+    "story": { "vi": "Phù hợp kể hành trình tình yêu theo hướng hiện đại, tối giản — tập trung vào hai nhân vật chính, không đi sâu chi tiết gia đình.", "en": "Tells a love story in a modern, pared-back way — centred on the two of them, without going deep into family detail." },
+    "music": { "vi": "Hợp nhạc điện ảnh, thanh lịch, hiện đại, tiết tấu chậm đến vừa.", "en": "Suits cinematic, elegant, modern tracks at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

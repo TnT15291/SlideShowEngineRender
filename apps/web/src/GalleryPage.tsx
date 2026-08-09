@@ -56,7 +56,7 @@ export function GalleryPage({ onBack }: { onBack: () => void }) {
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 md:px-8">
         <div className="mb-8 max-w-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{t("gallery.eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-text">{t("gallery.eyebrow")}</p>
           <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{t("gallery.heading")}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("gallery.intro")}</p>
         </div>

@@ -7,13 +7,17 @@ export function useAuth() {
   const [user, setUser] = useState<StudioUser | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // `loading` gates the whole app behind a full-screen spinner, so it may only
+  // describe the *initial* sign-in check. Raising it again on every re-read
+  // (the render step re-reads the balance whenever a credit moves) tore the
+  // entire tree down and rebuilt it mid-render for a request that changes one
+  // number in the sidebar. It starts true and is only ever lowered.
   const refresh = useCallback(() => {
     if (!getStoredToken()) {
       setUser(null)
       setLoading(false)
       return
     }
-    setLoading(true)
     apiGet<{ user: StudioUser }>("/auth/me")
       .then((response) => setUser(response.user))
       .catch(() => setUser(null))

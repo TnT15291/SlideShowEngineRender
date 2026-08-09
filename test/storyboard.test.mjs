@@ -232,3 +232,39 @@ test("a signature hybrid carries its params, so the template is not left on its 
   });
   assert.ok(!("params" in bare.filter((s) => s.renderer)[0]));
 });
+
+// A card holding one photograph is a caption over a picture; a card holding three is a
+// composition. The allocator used to reach the second kind only in theory: the montage
+// loop sized its appetite as surplus/5 and then drew ceil(surplus/remaining) each, which
+// sums to the whole surplus, so the card-enrichment loop below it always started at zero.
+// `cardSlots` was computed, passed in, and never once acted on — on a real 37-scene Lite
+// job all 45 surplus photographs went to 9 montages and each of the 11 cards held one.
+test("a photo-rich film spends its surplus on cards, not montages alone", () => {
+  const sb = composeStoryboard({ photoCount: 120, musicDuration: 200, energy: track(200), library });
+  const cards = sb.scenes.filter((s) => s.effect === "layer_scene");
+  const multi = cards.filter((s) => s.photos >= 2);
+
+  assert.ok(multi.length >= 3,
+    `only ${multi.length} of ${cards.length} cards hold more than one photograph`);
+  // Every multi-photo card must name a layout that really has that many slots, or the
+  // photo budget promises pictures the renderer has nowhere to put.
+  for (const scene of multi) {
+    const layout = library.layouts.find((l) => l.id === scene.layout);
+    assert.ok(layout, `${scene.id} names unknown layout ${scene.layout}`);
+    assert.equal(layout.photoSlots.length, scene.photos,
+      `${scene.id} wants ${scene.photos} photos in ${scene.layout}, which has ${layout.photoSlots.length} slots`);
+  }
+  // Montages keep priority for the larger share — starving them would trade one monotony
+  // for another. They stay the widest shape in the film.
+  const montages = sb.scenes.filter((s) => s.photos >= 4 && s.effect !== "layer_scene");
+  assert.ok(montages.length > 0, "a photo-rich film still needs montages");
+  assert.ok(Math.max(...montages.map((s) => s.photos)) > Math.max(...cards.map((s) => s.photos)));
+});
+
+test("a photo-poor film gives its few photographs to the frames, not to cards", () => {
+  // 23 photos over 203s: there is no surplus to reserve, so nothing changes here and every
+  // scene stays a single held frame.
+  const sb = composeStoryboard({ photoCount: 23, musicDuration: 203, energy: track(203), library });
+  assert.ok(sb.scenes.every((s) => s.photos <= 4));
+  assert.ok(photosIn(sb) <= 23, `demands ${photosIn(sb)} photos, only 23 exist`);
+});

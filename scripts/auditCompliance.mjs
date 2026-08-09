@@ -33,6 +33,10 @@ const directivesPath = arg("--directives");
 const notesPath = arg("--notes", "");
 const planPath = arg("--plan", "");
 const contentPath = arg("--content", "");
+// What applying the orders cost the film (scripts/applyStoryTemplate.mjs writes it). An
+// order can be carried out and still leave the customer with fewer photographs than they
+// gave us; without this the receipt reports the first half of that sentence only.
+const impactPath = arg("--impact", "");
 const outPath = arg("--out", "");
 const reportOnly = process.argv.includes("--report-only");
 
@@ -71,6 +75,10 @@ const report = audit(orders, timeline, {
   directorNotes: readIf(notesPath),
   storyPlan: readIf(planPath),
   photoTags,
+  // Falls back to the receipt sitting beside the ledger, so an operator running this by
+  // hand gets the same report the pipeline does.
+  directiveImpact: readIf(impactPath)
+    ?? readIf(path.posix.join(path.dirname(directivesPath.replace(/\\/g, "/")), "analysis/directive-impact.json")),
 });
 
 const doc = {

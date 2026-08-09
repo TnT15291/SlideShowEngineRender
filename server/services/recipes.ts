@@ -3,15 +3,29 @@ import path from "node:path"
 
 import { z } from "zod"
 
+/**
+ * Recipe prose in both languages.
+ *
+ * The studio chrome has been fully bilingual for a while, but this copy was
+ * Vietnamese-only, so an English reader met paragraphs of Vietnamese between
+ * English labels on the one screen where they choose their film's whole look.
+ * A bare string is still accepted and read as Vietnamese, so a recipe that has
+ * not been translated yet degrades to the old behaviour instead of going blank.
+ */
+const localizedSchema = z.union([
+  z.string(),
+  z.object({ vi: z.string(), en: z.string().optional() }),
+])
+
 const recipeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   libraryTheme: z.string().optional(),
   intro: z.object({
-    summary: z.string().optional(),
-    photos: z.string().optional(),
-    story: z.string().optional(),
-    music: z.string().optional(),
+    summary: localizedSchema.optional(),
+    photos: localizedSchema.optional(),
+    story: localizedSchema.optional(),
+    music: localizedSchema.optional(),
   }).optional(),
   fit: z.object({
     bestFor: z.array(z.string()).optional(),
@@ -49,6 +63,11 @@ const librarySchema = z.object({
   }),
 }).passthrough()
 
+// Both languages are sent, not one resolved server-side: the reader can flip
+// the language switch without a refetch, and the API stays locale-free.
+const localizedTextSchema = z.object({ vi: z.string(), en: z.string() })
+export type LocalizedText = z.infer<typeof localizedTextSchema>
+
 export const recipeSummarySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -56,10 +75,10 @@ export const recipeSummarySchema = z.object({
   themeBackground: z.string().nullable(),
   themeAccent: z.string().nullable(),
   intro: z.object({
-    summary: z.string(),
-    photos: z.string(),
-    story: z.string(),
-    music: z.string(),
+    summary: localizedTextSchema,
+    photos: localizedTextSchema,
+    story: localizedTextSchema,
+    music: localizedTextSchema,
   }).nullable(),
   bestFor: z.array(z.string()),
   minPhotos: z.number().nullable(),
@@ -79,6 +98,19 @@ export const recipeSummarySchema = z.object({
 })
 
 export type RecipeSummary = z.infer<typeof recipeSummarySchema>
+
+/**
+ * Normalise one recipe field to both languages.
+ *
+ * An untranslated field falls back to the Vietnamese rather than to an empty
+ * string: showing the original copy to an English reader is imperfect, showing
+ * them nothing is a blank card.
+ */
+function localized(value: z.infer<typeof localizedSchema> | undefined): { vi: string; en: string } {
+  if (!value) return { vi: "", en: "" }
+  if (typeof value === "string") return { vi: value, en: value }
+  return { vi: value.vi, en: value.en || value.vi }
+}
 
 async function readJson(file: string): Promise<unknown> {
   try {
@@ -104,10 +136,10 @@ export async function listRecipes(engineRoot = process.cwd()): Promise<RecipeSum
       themeBackground: theme?.background || null,
       themeAccent: theme?.palette?.accent || null,
       intro: recipe.intro ? {
-        summary: recipe.intro.summary || "",
-        photos: recipe.intro.photos || "",
-        story: recipe.intro.story || "",
-        music: recipe.intro.music || "",
+        summary: localized(recipe.intro.summary),
+        photos: localized(recipe.intro.photos),
+        story: localized(recipe.intro.story),
+        music: localized(recipe.intro.music),
       } : null,
       bestFor: recipe.fit?.bestFor || [],
       minPhotos: recipe.fit?.minPhotos ?? null,

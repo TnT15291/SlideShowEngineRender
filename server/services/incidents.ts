@@ -2,6 +2,7 @@ import path from "node:path"
 import { mkdirSync } from "node:fs"
 import { readFileSync } from "node:fs"
 import { spawnSync } from "node:child_process"
+import { createHash, randomUUID } from "node:crypto"
 import { DatabaseSync } from "node:sqlite"
 
 import { z } from "zod"
@@ -71,6 +72,37 @@ function map(row: IncidentRow): Incident {
 
 export function createIncidentService(engineRoot = process.cwd()) {
   return {
+    /**
+     * A folder under `projects/` whose manifest cannot be read.
+     *
+     * Nobody can own it (the owner id lives in the file that won't parse), so
+     * it used to be broadcast to every signed-in customer as "1 project folder
+     * can't be opened" — complete with the server-side path. It belongs here
+     * instead, where an operator can act on it.
+     *
+     * Deliberately does not bump `occurrences` on an already-open incident:
+     * the caller is the project-list route, which the dashboard polls, and a
+     * counter climbing by one per poll would say nothing useful.
+     */
+    recordUnreadableProject(projectId: string, detail: string): void {
+      const db = open(engineRoot)
+      try {
+        const fingerprint = createHash("sha256").update(`UNREADABLE_PROJECT_FOLDER|${projectId}|validate`).digest("hex")
+        if (db.prepare("SELECT id FROM incidents WHERE fingerprint = ? AND status != 'resolved'").get(fingerprint)) return
+        const now = new Date().toISOString()
+        const id = `INC-${now.slice(0, 10).replaceAll("-", "")}-${randomUUID().slice(0, 8).toUpperCase()}`
+        db.prepare(`INSERT INTO incidents
+          (id, fingerprint, code, project_id, user_id, phase, message, technical_detail, customer_impact, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+          .run(id, fingerprint, "UNREADABLE_PROJECT_FOLDER", projectId, null, "validate",
+            "A folder under projects/ has no readable project.json, so it can be neither opened nor attributed to an account.",
+            detail, "None — the folder is hidden from every customer's project list.", now, now)
+      } catch {
+        // Observability must never break the list route that noticed it.
+      } finally {
+        db.close()
+      }
+    },
     list(): { incidents: Incident[]; openCount: number } {
       const db = open(engineRoot)
       try {

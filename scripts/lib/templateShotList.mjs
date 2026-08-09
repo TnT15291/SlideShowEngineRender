@@ -54,12 +54,13 @@ export function planTemplateShotList({
     );
 
   const composed = template.source?.origin === "composed";
+  const photoDemandOf = (scene) => scenePhotoCount(scene, { library, direction });
   const solveShotList = () => solveRecipeShotList({
     recipe: template,
     photoCount: editorialPhotoCount,
     musicDuration: Number(music.duration) || 0,
     durationOf: (scene, at) => durationFor(scene.durationRole, at),
-    photoDemandOf: (scene) => scenePhotoCount(scene, { library, direction }),
+    photoDemandOf,
     // The solver swaps a scene's look mid-solve (a muted recurrence adopting its
     // muteFallback, a variant carrying its own look). It owns the swap; it must not also
     // own the merge, so it hands the swapped scene back here to be re-resolved.
@@ -67,11 +68,26 @@ export function planTemplateShotList({
     bodyPhotoBudget: editorialPhotoCount - reservedPhotos.size - bookendPoolCost,
     energy: makeEnergy(music),
   });
+  // `template.fit` was written by composeStoryboard, which solved the scene plan BEFORE
+  // the directive layer was allowed to reshape it. Quoting it verbatim is how a build log
+  // came to read "82/82 photos" over a film that showed 66: the number described a plan
+  // that no longer existed. The scenes are re-measured here so the fit describes the plan
+  // this run actually holds.
+  const composedScenes = () => template.scenes.map((scene) => ({ ...scene }));
   let shotList = composed
-    ? {
-        scenes: template.scenes.map((scene) => ({ ...scene })),
-        fit: template.fit ?? { message: "composed", scale: 1 },
-      }
+    ? (() => {
+        const scenes = composedScenes();
+        const photosUsed = scenes.reduce((n, scene) => n + photoDemandOf(scene), 0);
+        const fit = { ...(template.fit ?? { message: "composed", scale: 1 }) };
+        return {
+          scenes,
+          fit: {
+            ...fit,
+            photosUsed,
+            photosLeftOver: Math.max(0, (fit.photoCount ?? editorialPhotoCount) - photosUsed),
+          },
+        };
+      })()
     : solveShotList();
 
   const ceiling = () => sceneDurationCeiling(shotList.scenes.length);

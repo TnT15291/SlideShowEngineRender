@@ -195,10 +195,10 @@
     "notes": "Original 2026 editorial-motion recipe. Warm ivory paper, black serif type and restrained champagne light pair with shared-element morph, kinetic typography, refraction and particle transitions."
   },
   "intro": {
-    "summary": "Editorial sáng, sang và hiện đại: nền ivory, serif lớn, nhiều khoảng thở, chuyển động GPU dùng như dấu chấm câu.",
-    "photos": "Hợp album prewedding hoặc wedding-day có ảnh sắc nét, ánh sáng sạch, chân dung đẹp và đủ ảnh ngang/dọc. Tốt nhất 45–80 ảnh.",
-    "story": "Kể từ lời tuyên ngôn mở đầu đến những mảnh ký ức, sự gần gũi, ngày hội và lời hứa lâu dài.",
-    "music": "Hợp cinematic pop, modern classical hoặc electronic nhẹ; mở chậm, thân bài có pulse vừa và cao trào sáng."
+    "summary": { "vi": "Editorial sáng, sang và hiện đại: nền ivory, serif lớn, nhiều khoảng thở, chuyển động GPU dùng như dấu chấm câu.", "en": "Bright, refined, modern editorial: an ivory ground, large serif type, room to breathe, and GPU motion used as punctuation." },
+    "photos": { "vi": "Hợp album prewedding hoặc wedding-day có ảnh sắc nét, ánh sáng sạch, chân dung đẹp và đủ ảnh ngang/dọc. Tốt nhất 45–80 ảnh.", "en": "Suits a pre-wedding or wedding-day album with sharp images, clean light, strong portraits and a mix of landscape and portrait frames. Best at 45–80 photos." },
+    "story": { "vi": "Kể từ lời tuyên ngôn mở đầu đến những mảnh ký ức, sự gần gũi, ngày hội và lời hứa lâu dài.", "en": "Runs from an opening statement through fragments of memory, closeness, the celebration, and the long promise." },
+    "music": { "vi": "Hợp cinematic pop, modern classical hoặc electronic nhẹ; mở chậm, thân bài có pulse vừa và cao trào sáng.", "en": "Suits cinematic pop, modern classical or light electronic; a slow opening, a medium pulse through the body, and a bright climax." }
   },
   "fit": {
     "bestFor": [

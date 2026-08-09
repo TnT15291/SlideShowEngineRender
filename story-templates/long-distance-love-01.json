@@ -180,10 +180,10 @@
     "notes": "A clean geographic-feeling story for long-distance couples, moving from two separate places through messages and reunions to one home."
   },
   "intro": {
-    "summary": "Câu chuyện tình yêu xa — từ hai nơi cách biệt, qua tin nhắn và những lần đoàn tụ, đến một mái nhà chung.",
-    "photos": "Cần ảnh ở nhiều địa điểm khác nhau (thể hiện khoảng cách địa lý), ảnh những lần gặp lại, ảnh du lịch/đi cùng nhau.",
-    "story": "Phù hợp cặp đôi từng yêu xa — muốn kể rõ hành trình từ xa cách đến đoàn tụ và về chung một nhà.",
-    "music": "Hợp nhạc hiện đại, đầy hy vọng, mang chút chất điện ảnh, tiết tấu vừa."
+    "summary": { "vi": "Câu chuyện tình yêu xa — từ hai nơi cách biệt, qua tin nhắn và những lần đoàn tụ, đến một mái nhà chung.", "en": "A long-distance love story — two separate places, messages, reunions, and finally one home." },
+    "photos": { "vi": "Cần ảnh ở nhiều địa điểm khác nhau (thể hiện khoảng cách địa lý), ảnh những lần gặp lại, ảnh du lịch/đi cùng nhau.", "en": "Needs photos from several different places (to show the distance), reunion moments, and travel or trips taken together." },
+    "story": { "vi": "Phù hợp cặp đôi từng yêu xa — muốn kể rõ hành trình từ xa cách đến đoàn tụ và về chung một nhà.", "en": "For couples who spent time apart and want the journey from distance to reunion to a shared home told clearly." },
+    "music": { "vi": "Hợp nhạc hiện đại, đầy hy vọng, mang chút chất điện ảnh, tiết tấu vừa.", "en": "Suits modern, hopeful music with a cinematic edge at a medium tempo." }
   },
   "fit": {
     "bestFor": [

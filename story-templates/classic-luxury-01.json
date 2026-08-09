@@ -160,10 +160,10 @@
     "notes": "Formal black-and-gold reception look: symmetrical cards, deliberate holds and an Art Deco finish."
   },
   "intro": {
-    "summary": "Phong cách sang trọng cổ điển đen-vàng, đối xứng và trang trọng, phảng phất Art Deco.",
-    "photos": "Hợp ảnh lễ cưới/tiệc trang trọng, ảnh nghi thức, không gian sảnh tiệc lộng lẫy; ảnh nên bố cục ngay ngắn, ánh sáng đẹp vì khung hình được giữ lâu.",
-    "story": "Dành cho đám cưới hình thức cổ điển, sang trọng — tập trung nghi lễ và tiệc cưới, không cần kể hành trình yêu trước đó.",
-    "music": "Hợp nhạc giao hưởng thanh lịch, tiết tấu chậm đến vừa, sang trọng, cổ điển."
+    "summary": { "vi": "Phong cách sang trọng cổ điển đen-vàng, đối xứng và trang trọng, phảng phất Art Deco.", "en": "Classic black-and-gold luxury: symmetrical, formal, with a hint of Art Deco." },
+    "photos": { "vi": "Hợp ảnh lễ cưới/tiệc trang trọng, ảnh nghi thức, không gian sảnh tiệc lộng lẫy; ảnh nên bố cục ngay ngắn, ánh sáng đẹp vì khung hình được giữ lâu.", "en": "Suits formal ceremony and reception photos, ritual moments and grand venues. Compose them carefully and light them well — each frame is held on screen a long time." },
+    "story": { "vi": "Dành cho đám cưới hình thức cổ điển, sang trọng — tập trung nghi lễ và tiệc cưới, không cần kể hành trình yêu trước đó.", "en": "For a formal, classic wedding — focused on the ceremony and the reception, with no need for the courtship beforehand." },
+    "music": { "vi": "Hợp nhạc giao hưởng thanh lịch, tiết tấu chậm đến vừa, sang trọng, cổ điển.", "en": "Suits elegant orchestral music, slow to medium, refined and classical." }
   },
   "fit": {
     "bestFor": [

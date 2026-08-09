@@ -63,6 +63,9 @@ function readTimeline(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, "timeline", "timeline.json"), "utf8"));
 }
 
+const filesOfSlide = (slide) => [slide.image, ...(slide.images || []),
+  ...(slide.layers || []).filter((layer) => layer.type === "image").map((layer) => layer.path)].filter(Boolean);
+
 const singleBeats = (n) => ({
   title: "Title", closing: "Closing",
   beats: Array.from({ length: n }, (_, i) => ({
@@ -133,7 +136,7 @@ test("music-aware: scenes are paced to the track's phrasing, not a flat split", 
   assert.ok(Math.abs(net - 60) < 0.05, `net runtime ${net} should match the 60s track`);
 });
 
-test("no-phrasing music: the generator falls back to an even split and says so", (t) => {
+test("no-phrasing music: the common allocator keeps the target and reports zero snaps", (t) => {
   // A stub/old analysis carries a duration but no beatGrid or phrases — the same shape a
   // pre-upgrade project has on disk. Lite must still produce a timeline, just a flat one.
   const f = fixture({ photos: withBookends(clumpedBody()), story: singleBeats(4), music: { duration: 60 } });
@@ -141,9 +144,8 @@ test("no-phrasing music: the generator falls back to an even split and says so",
   generate(f.rel);
   const tl = readTimeline(f.dir);
 
-  assert.equal(tl.metadata.musicSync, undefined, "flat split must not claim music-aware provenance");
-  const durations = tl.slides.map((s) => s.duration.toFixed(3));
-  assert.equal(new Set(durations).size, 1, "a flat split gives every scene the same length");
+  assert.equal(tl.metadata.musicSync.mode, "music-aware-v1");
+  assert.equal(tl.metadata.musicSync.snappedBoundaries, 0, "a duration-only analysis has no musical boundaries to snap to");
 
   const net = tl.slides.reduce((sum, s) => sum + s.duration - (s.transition?.duration || 0), 0);
   assert.ok(Math.abs(net - 60) < 0.05, `net runtime ${net} should match the 60s target`);
@@ -153,12 +155,12 @@ test("bookends are the analyzer's opening/closing picks, not the cursor's", (t) 
   const f = fixture({ photos: withBookends(clumpedBody()), story: singleBeats(4), music: musicAware });
   t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
   generate(f.rel);
-  const singles = readTimeline(f.dir).slides.filter((s) => s.image);
+  const slides = readTimeline(f.dir).slides;
 
-  assert.equal(singles[0].image, "op.jpg", "the opening scene ignored the top openingScore photo");
-  assert.equal(singles.at(-1).image, "cl.jpg", "the closing scene ignored the top closingScore photo");
+  assert.ok(filesOfSlide(slides[0]).includes("op.jpg"), "the opening scene ignored the top openingScore photo");
+  assert.ok(filesOfSlide(slides.at(-1)).includes("cl.jpg"), "the closing scene ignored the top closingScore photo");
   // A reserved bookend is not reused in the body when the pool can spare it.
-  assert.ok(!singles.slice(1, -1).some((s) => s.image === "op.jpg" || s.image === "cl.jpg"),
+  assert.ok(!slides.slice(1, -1).some((slide) => filesOfSlide(slide).includes("op.jpg") || filesOfSlide(slide).includes("cl.jpg")),
     "a reserved bookend leaked back into the body of the film");
 });
 
@@ -168,9 +170,9 @@ test("a story beat naming its own opening photo outranks the score heuristic", (
   const f = fixture({ photos: withBookends(clumpedBody()), story, music: musicAware });
   t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
   generate(f.rel);
-  const singles = readTimeline(f.dir).slides.filter((s) => s.image);
+  const slides = readTimeline(f.dir).slides;
 
-  assert.equal(singles[0].image, "L3.jpg", "the beat's explicit choice was overridden by the hero heuristic");
+  assert.ok(filesOfSlide(slides[0]).includes("L3.jpg"), "the beat's explicit choice was overridden by the hero heuristic");
 });
 
 test("neighbouring single scenes materially avoid the same orientation-and-people shape", (t) => {
@@ -224,6 +226,63 @@ test("perceptual duplicates are not placed on adjacent scenes", (t) => {
     assert.ok(!previous.duplicateGroup || previous.duplicateGroup !== current.duplicateGroup,
       `adjacent scenes use perceptual duplicates ${previous.file} and ${current.file}`);
   }
+});
+
+test("Lite v2 long-form fixture uses the common composer and all 84 selected photos", (t) => {
+  const photos = Array.from({ length: 84 }, (_, index) => ({
+    file: `photo-${String(index + 1).padStart(3, "0")}.jpg`,
+    orient: index % 3 === 0 ? "portrait" : "landscape",
+    subjectCount: index % 5 === 0 ? 1 : 2,
+    qualityNorm: +(0.5 + (index % 10) / 20).toFixed(2),
+    openingScore: index === 0 ? 1 : 0.1,
+    closingScore: index === 83 ? 1 : 0.1,
+  }));
+  const story = singleBeats(8);
+  story.beats.forEach((beat, index) => { beat.preferredPhotos = [photos[index * 2].file, photos[index * 2 + 1].file]; });
+  const music = {
+    ...musicAware,
+    duration: 235.27,
+    sections: [
+      { kind: "calm", start: 0, end: 60 }, { kind: "build", start: 60, end: 120 },
+      { kind: "calm", start: 120, end: 180 }, { kind: "build", start: 180, end: 235.27 },
+    ],
+    phrases: Array.from({ length: 30 }, (_, index) => ({ index, time: index * 8 })).filter((row) => row.time < 235.27),
+    downbeats: Array.from({ length: 60 }, (_, index) => ({ index, time: index * 4 })).filter((row) => row.time < 235.27),
+  };
+  const f = fixture({ photos, story, music });
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  generate(f.rel);
+
+  const timeline = readTimeline(f.dir);
+  const storyboard = JSON.parse(fs.readFileSync(path.join(f.dir, "analysis", "lite-storyboard.json"), "utf8"));
+  const assignment = JSON.parse(fs.readFileSync(path.join(f.dir, "analysis", "photo-assignment.json"), "utf8"));
+  assert.equal(timeline.metadata.pipelineVersion, "lite-v2");
+  assert.equal(timeline.metadata.storyboard.endsWith("analysis/lite-storyboard.json"), true);
+  assert.equal(assignment.usedUnique, 84);
+  assert.deepEqual(assignment.unfilled, []);
+  assert.equal(assignment.reuses.length, 0);
+  // A clean assignment PLAN does not prove a clean FILM. Every assertion above reads the
+  // solver's own bookkeeping, which cannot see a slot that missed its key and drew from the
+  // pool instead — so it would pass on a timeline that put one photograph on screen twice
+  // while two others never appeared. These read what was actually written.
+  assert.deepEqual(assignment.timeline.assignedNotRendered, [],
+    "the solver assigned photos that never reached the timeline");
+  assert.equal(assignment.timeline.maxUses, 1,
+    "maxReuse is 1, so no photograph may appear twice in the film");
+  assert.equal(assignment.timeline.usedUnique, assignment.timeline.references,
+    "unique count must equal reference count when nothing is reused");
+  const rendered = timeline.slides.flatMap(filesOfSlide);
+  assert.equal(assignment.timeline.references, rendered.length,
+    "the coverage report must count the timeline it shipped with");
+  assert.equal(assignment.timeline.usedUnique, new Set(rendered).size);
+  const montage = new Set(["collage_grid", "film_roll_up", "film_roll_left", "photo_strip_up", "photo_strip_left", "carousel_3d", "fly_in_stagger", "double_exposure"]);
+  for (let index = 1; index < storyboard.scenes.length; index++) {
+    assert.ok(!(montage.has(storyboard.scenes[index - 1].effect) && montage.has(storyboard.scenes[index].effect)), "montages must not be adjacent");
+  }
+  assert.ok(new Set(storyboard.scenes.map((scene) => scene.effect)).size >= 4, "long-form Lite needs at least four visual families");
+  for (const slide of timeline.slides) assert.equal(filesOfSlide(slide).length, new Set(filesOfSlide(slide)).size, `${slide.id} repeats a file inside one scene`);
+  const net = timeline.slides.reduce((sum, slide, index) => sum + slide.duration - (index < timeline.slides.length - 1 ? slide.transition.duration : 0), 0);
+  assert.ok(Math.abs(net - 235.27) <= 0.1, `net duration ${net} drifted from music`);
 });
 
 // --- generateProjectStory: the words half of the Lite tier ---

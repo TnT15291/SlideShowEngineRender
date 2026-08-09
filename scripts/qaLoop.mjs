@@ -34,6 +34,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { appendFeedback } from "./lib/feedbackLedger.mjs";
 import { actionFor } from "./lib/rules/policy.mjs";
+import { evaluateQualityReport } from "./lib/rules/verdict.mjs";
+import { planExposureRepair } from "./lib/exposureRepair.mjs";
 
 const root = process.cwd();
 const node = process.execPath;
@@ -91,6 +93,7 @@ function sh(args, label) {
 
 const runProxy = () => {
   sh(["scripts/qaProxy.mjs", TL, "--content", contentPath, "--out", proxyOut, "--analysis-dir", analysisDir,
+    "--tier", TIER,
     ...(photosPath ? ["--photos", photosPath] : []), ...(musicPath ? ["--music", musicPath] : [])], "qaProxy");
   return readJson(proxyOut);
 };
@@ -115,6 +118,7 @@ const repaired = new Set(); // "<sceneId>:<check>" — fix each pair at most onc
 function applyProxyFixes(report) {
   const tl = readJson(TL);
   const applied = [];
+  let applyPacingPlan = false;
   for (const p of report.problems) {
     if (!p.fix) continue;                       // e.g. hero_not_in_content: needs re-analysis, not a swap
     if (actionFor(TIER, p.check) !== "repair") continue; // this tier reports the rule but may not touch the film for it
@@ -123,10 +127,8 @@ function applyProxyFixes(report) {
     const slide = tl.slides.find((s) => s.id === p.id);
     if (!slide) continue;
 
-    if (p.fix.kind === "set_duration") {
-      const from = slide.duration;
-      slide.duration = p.fix.to;
-      applied.push(`${p.id}: duration ${from}s -> ${p.fix.to}s (${p.flags.join(",")})`);
+    if (p.fix.kind === "pacing_adjustment") {
+      applyPacingPlan = true;
     } else if (p.fix.kind === "swap_hero") {
       const l = slide.layers?.[p.fix.layer];
       if (!l || l.type !== "image") continue;
@@ -153,49 +155,67 @@ function applyProxyFixes(report) {
     } else continue;
     repaired.add(key);
   }
+  if (applyPacingPlan && report.checks?.pacing?.plan?.length) {
+    const byId = new Map(report.checks.pacing.plan.map((row) => [row.id, row]));
+    for (const slide of tl.slides) {
+      const row = byId.get(slide.id);
+      if (!row) continue;
+      slide.duration = row.duration;
+      slide.transition = { ...(slide.transition || {}), duration: row.transitionDuration };
+    }
+    tl.metadata = { ...(tl.metadata || {}), musicSync: {
+      ...(tl.metadata?.musicSync || {}), allocatorVersion: report.checks.pacing.allocatorVersion,
+      drift: report.checks.pacing.targetDrift,
+    } };
+    applied.push(`global pacing reallocation (${report.checks.pacing.allocatorVersion})`);
+  }
   if (applied.length) {
     writeTl(tl);
-    if (report.problems.some((p) => p.fix?.kind === "fit_text")) {
+    if (applyPacingPlan || report.problems.some((p) => p.fix?.kind === "fit_text")) {
       sh(["scripts/fitTextInTimeline.mjs", TL], "fitText");
     }
   }
   return applied;
 }
 
-/** Swap the hero of any story scene qaClip found dark/bright/flat for the best unused photo. */
+/** Correct the exposure of any scene qaClip found dark/bright/flat, on whatever it measured.
+ *
+ *  qaClip reports `layer` when it measured a card's photograph rather than the whole frame.
+ *  The grade has to land in the same place: buildLayerSceneCommand applies `layer.grade` and
+ *  never reads `slide.color` at all, while every other effect path runs the slide-level
+ *  colour filter. See EXPOSURE_REPAIR_* for why this replaced a photo swap. */
 function applyClipFixes(qa) {
   if (actionFor(TIER, "frame_brightness") !== "repair") return [];
   const fixable = qa.problems.filter((p) => /_dark|_bright|flat/.test(p.flags.join(",")));
   if (!fixable.length) return [];
-  const photos = readJson(`${analysisDir}/photos.json`).photos;
-  const byQual = [...photos].sort((a, b) => b.qualityNorm - a.qualityNorm);
   const tl = readJson(TL);
-  const used = new Set(tl.slides.flatMap((s) => [
-    ...(s.layers || []).filter((l) => l.type === "image").map((l) => l.path),
-    ...(s.images || []),
-  ]));
   const applied = [];
   for (const prob of fixable) {
-    const key = `${prob.id}:frame`;
+    // Exposure is the one repair that may run again on a later revision, and the key is
+    // scoped to the revision for that reason. Brightness does not respond linearly on a
+    // photograph whose highlights are already clipped — those pixels are pinned at white
+    // and do not move with the rest — so a correction solved from one measurement lands
+    // short: a real blown-out frame computed from 231.7 came back at 224.2 instead of the
+    // 212 it aimed for. Measuring again and solving again converges, and it cannot
+    // oscillate the way a pacing fix can: each pass reads the frame as it now renders,
+    // the correction is local to one scene, and the revision cap bounds the whole thing.
+    const key = `${prob.id}:frame:${revisions}`;
     if (repaired.has(key)) continue;
     const slide = tl.slides.find((s) => s.id === prob.id);
-    if (!slide || !slide.layers) continue;      // montages have no hero layer to swap
-    const hero = slide.layers.find((l) => l.type === "image" && l.motion);
-    if (!hero) continue;
-    const orient = photos.find((p) => p.file === hero.path)?.orient;
-    const repl = byQual.find((p) => p.orient === orient && !used.has(p.file));
-    if (!repl) continue;
-    applied.push(`${prob.id}: hero ${hero.path} -> ${repl.file} (${prob.flags.join(",")})`);
-    hero.path = repl.file; hero.focusX = repl.focusX; hero.focusY = repl.focusY;
-    used.add(repl.file);
+    const plan = planExposureRepair({ slide, problem: prob });
+    if (!plan) continue;
+    const target = plan.layer == null ? slide : slide.layers[plan.layer];
+    target[plan.holder] = plan.next;
+    applied.push(`${prob.id}: ${plan.layer == null ? "" : `layer ${plan.layer} `}`
+      + `${plan.notes.join(", ")} (${prob.flags.join(",")})`);
     repaired.add(key);
   }
   if (applied.length) writeTl(tl);
   return applied;
 }
 
-const policyProblems = (problems) => problems.filter((p) => actionFor(TIER, p.check) !== "warn");
-const blockingProblems = (problems) => problems.filter((p) => actionFor(TIER, p.check) === "block");
+const policyProblems = (problems) => evaluateQualityReport({ tier: TIER, report: { problems } }).findings.filter((finding) => finding.action !== "warn");
+const blockingProblems = (problems) => evaluateQualityReport({ tier: TIER, report: { problems } }).actions.block;
 
 // --- loop ------------------------------------------------------------------
 console.log(`[qaLoop] ${TL} — max ${MAX_REVISIONS} revision(s) after the first render.`);
@@ -228,6 +248,14 @@ function writeSummary(manualReview = [], statusOverride = "") {
     manualReview,
     status: statusOverride || (manualReview.length ? "delivered_with_flags" : "clean"),
   };
+  const finalProxy = fs.existsSync(path.resolve(root, proxyOut)) ? readJson(proxyOut) : { problems: [] };
+  const finalVerdict = evaluateQualityReport({ tier: TIER, report: finalProxy });
+  const verdictOut = `${analysisDir}/qa/final-verdict.json`;
+  fs.mkdirSync(path.dirname(path.resolve(root, verdictOut)), { recursive: true });
+  fs.writeFileSync(path.resolve(root, verdictOut), JSON.stringify({ ...finalVerdict,
+    pipelineVersion: tl.metadata?.pipelineVersion || null, generatedAt: new Date().toISOString() }, null, 2) + "\n");
+  summary.verdict = finalVerdict.verdict;
+  summary.policyVersion = finalVerdict.policyVersion;
   const loopOut = `${analysisDir}/qa/${base}.loop.json`;
   fs.mkdirSync(path.dirname(path.resolve(root, loopOut)), { recursive: true });
   fs.writeFileSync(path.resolve(root, loopOut), JSON.stringify(summary, null, 2));
@@ -249,7 +277,7 @@ for (let pass = 1; pass <= PREFLIGHT_SAFETY_CAP; pass++) {
   const applied = applyProxyFixes(preflight);
   preflightFixes += applied.length;
   writeState("preflight");
-  if (!applied.length) { console.log(`  pass ${pass}: nothing left to repair (verdict=${preflight.verdict}).`); break; }
+  if (!applied.length) { console.log(`  pass ${pass}: nothing left to repair (${TIER} verdict=${preflight.policy?.verdict ?? preflight.verdict}).`); break; }
   for (const a of applied) console.log(`  pass ${pass} fix: ${a}`);
   journal.push(...applied.map((a) => `preflight: ${a}`));
   // The fix-once rule (repaired, above) means a pass with zero new fixes is the only exit
@@ -265,7 +293,14 @@ for (let pass = 1; pass <= PREFLIGHT_SAFETY_CAP; pass++) {
 // Do not spend an encode on a timeline that the tier is forbidden to ship.
 // Repairs above get their bounded chance first; unresolved blockers stop here.
 const preRenderReport = runProxy();
-const preRenderBlockers = blockingProblems(preRenderReport.problems);
+const staticVerdict = evaluateQualityReport({ tier: TIER, report: preRenderReport });
+const staticGateOut = `${analysisDir}/qa/static-gate.json`;
+fs.mkdirSync(path.dirname(path.resolve(root, staticGateOut)), { recursive: true });
+fs.writeFileSync(path.resolve(root, staticGateOut), JSON.stringify({ ...staticVerdict,
+  pipelineVersion: readJson(TL).metadata?.pipelineVersion || null,
+  generatedAt: new Date().toISOString(), source: proxyOut,
+}, null, 2) + "\n");
+const preRenderBlockers = staticVerdict.actions.block;
 if (preRenderBlockers.length) {
   const open = preRenderBlockers.map((p) => `${p.id}[${p.flags.join(",")}]`);
   console.error(`[qaLoop] PRE-RENDER GATE FAILED: ${open.join(" ")}`);
@@ -277,7 +312,8 @@ if (skipRender) {
   console.log("\n[qaLoop] --skip-render: stopping after pre-flight.");
   const rep = runProxy();
   const open = policyProblems(rep.problems).map((p) => `${p.id}[${p.flags.join(",")}]`);
-  console.log(`[qaLoop] final proxy verdict: ${rep.verdict} (${rep.problems.length} problem(s) remain).`);
+  console.log(`[qaLoop] final ${TIER} verdict: ${rep.policy?.verdict ?? rep.verdict} `
+    + `(${rep.problems.length} finding(s), ${open.length} actionable).`);
   writeSummary(open);
   // --strict gates in every mode. A pre-flight-only run that leaves manual-review issues
   // open must fail exactly as the render+revise path does below — otherwise --skip-render

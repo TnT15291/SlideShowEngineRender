@@ -41,6 +41,10 @@ import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_SLOT, MOTION_EFFECTS, ALL_TRANSITIONS,
   HYBRID_SIGNATURE_TEMPLATES, HYBRID_RENDERER,
 } from "./lib/engineCapabilities.mjs";
+import { CANVAS_EFFECTS } from "./lib/rules/templateRules.mjs";
+import { CANVAS_BG_MIN_LUMA } from "./lib/rules/thresholds.mjs";
+import { declareTextSlots } from "./lib/composedRepair.mjs";
+import { deriveComposedLooks, composedGrade } from "./lib/composedLooks.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -56,6 +60,7 @@ const die = (msg) => {
 
 const photosPath = arg("--photos", "analysis/photos.json");
 const musicPath = arg("--music", "");
+const targetDuration = Number(arg("--target-duration", ""));
 const extraMusicPaths = args("--extra-music");
 const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 const libraryPath = arg("--library", "layouts/library.json");
@@ -68,7 +73,9 @@ const outPath = arg("--out", `${analysisDir}/storyboard.json`);
 const maxReuse = Number(arg("--max-reuse", "1"));
 const strict = process.argv.includes("--strict");
 
-if (!musicPath) die("--music is required (the shot list is solved against the track's length)");
+if (!musicPath && (!Number.isFinite(targetDuration) || targetDuration <= 0)) {
+  die("--music is required unless a positive --target-duration is provided");
+}
 if (!Number.isFinite(maxReuse) || maxReuse < 1) die(`--max-reuse must be >= 1, got "${maxReuse}"`);
 
 const readJson = (p) => JSON.parse(fs.readFileSync(path.resolve(root, p), "utf8"));
@@ -84,13 +91,18 @@ const brief = exists(briefPath) ? readJson(briefPath) : {};
 const excluded = new Set(brief.excludePhotos || []);
 const photos = (readJson(photosPath).photos ?? []).filter((p) => !excluded.has(p.file));
 if (!photos.length) die(`${photosPath} has no photos`);
+const editorialPhotoCount = new Set(photos.map((photo) =>
+  photo.duplicateGroup ? `group:${photo.duplicateGroup}` : `file:${photo.file}`
+)).size;
 
-const musicName = path.basename(musicPath).replace(/\.[^.]+$/, "");
-const musicJson = `${analysisDir}/music/${musicName}.json`;
-if (!exists(musicJson)) die(`music analysis not found: ${musicJson} — run analyzeMusic first`);
-const sourceMusic = extraMusicPaths.length
-  ? readPlaylistAnalyses({ root, analysisDir, musicPaths: [musicPath, ...extraMusicPaths] })
-  : readJson(musicJson);
+const musicName = musicPath ? path.basename(musicPath).replace(/\.[^.]+$/, "") : "";
+const musicJson = musicPath ? `${analysisDir}/music/${musicName}.json` : "";
+if (musicPath && !exists(musicJson)) die(`music analysis not found: ${musicJson} — run analyzeMusic first`);
+const sourceMusic = !musicPath
+  ? { analysisVersion: 2, duration: targetDuration, sections: [], phrases: [], downbeats: [], energyEnvelope: [] }
+  : extraMusicPaths.length
+    ? readPlaylistAnalyses({ root, analysisDir, musicPaths: [musicPath, ...extraMusicPaths] })
+    : readJson(musicJson);
 
 // WHICH SONG ARE WE MAKING? The two halves of premium used to answer differently. This
 // file solved the shot list against the FULL track; applyStoryTemplate, reading the same
@@ -100,16 +112,18 @@ const sourceMusic = extraMusicPaths.length
 // inputs, one answer.
 const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
 const orders = active(ledger);
-const musicEdit = extraMusicPaths.length
+const musicEdit = !musicPath
+  ? { mode: "silent", sourceDuration: targetDuration, start: 0, end: targetDuration, duration: targetDuration }
+  : extraMusicPaths.length
   ? { mode: "playlist", sourceDuration: sourceMusic.duration, start: 0, end: sourceMusic.duration, duration: sourceMusic.duration }
   : resolveMusicWindow({
       music: sourceMusic,
-      photoCount: photos.length,
+      photoCount: editorialPhotoCount,
       orders,
       brief,
       musicMode: musicModeArg,
     });
-const music = extraMusicPaths.length ? sourceMusic : sliceMusicAnalysis(sourceMusic, musicEdit);
+const music = !musicPath || extraMusicPaths.length ? sourceMusic : sliceMusicAnalysis(sourceMusic, musicEdit);
 if (musicEdit.mode === "highlight") {
   console.log(
     `[composeStoryboard] highlight: ${musicEdit.start}s–${musicEdit.end}s (${musicEdit.duration}s of ` +
@@ -121,7 +135,7 @@ const plan = exists(planPath) ? readJson(planPath) : null;
 const director = exists(directorPath) ? readJson(directorPath) : null;
 const notes = director?.director_notes ?? {};
 
-const acts = (plan?.segments ?? []).map((s) => s.segment);
+const acts = (plan?.segments ?? plan?.acts ?? []).map((s) => s.segment ?? s.id);
 const theme = arg("--theme", notes.libraryTheme || "white_weddings");
 
 // --- the director's vocabulary ------------------------------------------------
@@ -166,10 +180,12 @@ const topUp = (key, house, want, accept = () => true) => {
 topUp("singlePhotoEffects", DEFAULT_GRAMMAR.singlePhotoEffects, 3, (e) => MOTION_EFFECTS.includes(e));
 topUp("singlePhotoEffects", DEFAULT_GRAMMAR.singlePhotoEffects, 5);
 topUp("montageEffects", DEFAULT_GRAMMAR.montageEffects, 2);
-topUp("transitionPalette", DEFAULT_GRAMMAR.transitionPalette, 3);
+topUp("transitionPalette", DEFAULT_GRAMMAR.transitionPalette, 5); // one per transition role
 
 const { scenes: composedScenes, fit } = composeStoryboard({
-  photoCount: photos.length,
+  // One selected photo is reserved for the closing full-bleed background. The opening
+  // hero is already counted by its layout; the closing background is not a layout slot.
+  photoCount: Math.max(1, editorialPhotoCount - 1),
   musicDuration: music.duration,
   energy: makeEnergy(music),
   library,
@@ -233,18 +249,49 @@ if (hybridTemplate) {
 // exist. Empty is also the honest fallback — a wordless film beats a film wearing
 // someone else's words.
 const layoutById = new Map((library.layouts || []).map((l) => [l.id, l]));
-function textSlotsFor(scene) {
-  const layout = layoutById.get(scene.layout);
-  const out = {};
-  for (const slot of layout?.textSlots ?? []) out[slot.id] = "";
-  // The closing card is the one place with a sane default: tokens the brief fills,
-  // never a name borrowed from another couple. Groom first, as Vietnamese wedding
-  // films conventionally read.
-  if (scene.id === "s99_closing") {
-    if ("names" in out) out.names = "{{groom}} & {{bride}}";
-    if ("date" in out) out.date = "{{date}}";
-  }
-  return out;
+// FACT SLOTS ARE FILLED BY declareTextSlots, NOT BY THE COPYWRITER. A slot named `names` or
+// `date` asks for something only the brief knows, so leaving it to writeRecipeCopy leaves it
+// blank — a title card with no title. Measured on a real lite film: welcome_title_page
+// mid-film with `names` and `date` both empty. It used to run only on s99_closing, which is
+// why only the closing card was right. Shared with the repair pass (lib/composedRepair.mjs)
+// so a swapped-in scene declares its slots exactly as a composed one does.
+const textSlotsFor = (scene) => declareTextSlots(layoutById.get(scene.layout));
+
+/** Luma of a #rrggbb, on the same 0..255 scale the canvas rule is stated in. */
+function hexLuma(hex) {
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(String(hex ?? "").trim());
+  if (!m) return null;
+  const v = parseInt(m[1], 16);
+  return 0.2126 * ((v >> 16) & 255) + 0.7152 * ((v >> 8) & 255) + 0.0722 * (v & 255);
+}
+
+/** The theme's own background, lifted off pure black if the theme sits below the canvas
+ *  floor. Only dark_film does (#101010, luma 16): scaling keeps its hue and its darkness
+ *  while clearing the threshold that exists because a near-black canvas is indistinguishable
+ *  from the engine having drawn no canvas at all. */
+function canvasBackground() {
+  const hex = library.designTokens?.themes?.[theme]?.background;
+  const luma = hexLuma(hex);
+  if (luma == null) return null;
+  if (luma >= CANVAS_BG_MIN_LUMA) return hex;
+  const k = (CANVAS_BG_MIN_LUMA + 4) / Math.max(1, luma);
+  const v = parseInt(hex.replace("#", ""), 16);
+  const lift = (c) => Math.min(255, Math.round(c * k)).toString(16).padStart(2, "0");
+  return `#${lift((v >> 16) & 255)}${lift((v >> 8) & 255)}${lift(v & 255)}`.toUpperCase();
+}
+
+/** A scene's params, as the recipe must carry them.
+ *
+ *  Two things were being lost here. `mask_reveal` and `memory_wall` paint their own canvas
+ *  over the engine's pure-black default, so a composed film ran them on black — measured at
+ *  3 of 38 scenes on a real premium job, and the authored recipes all tint it. And the
+ *  hybrid params computed by signatureHybridParams() were dropped by this emit entirely,
+ *  which is the same defect that comment warns about: the template falls back to its
+ *  component's hardcoded English title and invented BPM. */
+function paramsFor(scene) {
+  const background = CANVAS_EFFECTS.has(scene.effect) ? canvasBackground() : null;
+  const params = { ...(background ? { background } : {}), ...(scene.params ?? {}) };
+  return Object.keys(params).length ? { params } : {};
 }
 
 /** The photo slots applyStoryTemplate will request from the global assignment.
@@ -265,18 +312,57 @@ function photoSlotsFor(scene) {
 // is chosen, rejected and replaced by a crossfade without anyone being told.
 const palette = grammar.transitionPalette?.length ? grammar.transitionPalette : DEFAULT_GRAMMAR.transitionPalette;
 const namedTransition = (v, fallback) => (ALL_TRANSITIONS.includes(v) ? v : fallback);
-const transitionStrategy = {
-  default: { type: namedTransition(notes.defaultTransition, palette[0]), duration: 0.8 },
-  chapter: { type: palette[1] ?? palette[0], duration: 1.1 },
-  peak: { type: palette[2] ?? palette[palette.length - 1], duration: 0.55 },
-  final: { type: namedTransition(notes.endingTransition, "fade_slow"), duration: 1.2 },
+
+// FOUR ROLES, FOUR DIFFERENT CUTS — where the palette can pay for it.
+//
+// The roles used to be filled positionally (`palette[1]`, `palette[2]`, a hardcoded
+// fade_slow for the ending) and collided constantly: on both a real premium and a real lite
+// job, `peak` and `final` landed on the same transition, so a film with four transition
+// roles played three. A peak beat that cuts exactly like the last frame of the film is not
+// a peak. Measured against the 25 authored recipes (median 5 distinct transitions) that is
+// where a composed film was cheapest.
+//
+// The two the DIRECTOR names win first — they are decisions, not defaults — then the
+// remaining roles take the best unused entry, falling back to a repeat only when the
+// palette has genuinely run out.
+const taken = new Set();
+const claim = (...preferences) => {
+  const usable = preferences.filter((t) => t && ALL_TRANSITIONS.includes(t));
+  const fresh = usable.find((t) => !taken.has(t)) ?? usable[0] ?? palette[0];
+  taken.add(fresh);
+  return fresh;
 };
+// ONLY THE ROLES THIS FILM ACTUALLY ASKS FOR. A strategy entry for a role no scene carries
+// is a transition the customer never sees, and putting it in `transitionGrammar.vocabulary`
+// would let the scorecard count a cut that never plays. `default` and `final` always exist:
+// every film has a first cut and a last one.
+const requestedRoles = new Set(["default", "final", ...scenes.map((s) => s.transitionRole).filter(Boolean)]);
+const defaultType = claim(namedTransition(notes.defaultTransition, ""), palette[0]);
+const finalType = claim(namedTransition(notes.endingTransition, ""), "fade_slow", ...palette);
+const transitionStrategy = { default: { type: defaultType, duration: 0.8 } };
+// Claimed in this order because it is the order of how much the role has to say: an act
+// change is the film's loudest punctuation, a peak beat next, and the quiet cut takes what
+// is left — which is right, since what it wants is to be unremarkable.
+if (requestedRoles.has("chapter")) transitionStrategy.chapter = { type: claim(...palette.slice(1), ...palette), duration: 1.1 };
+if (requestedRoles.has("peak")) transitionStrategy.peak = { type: claim(...palette.slice(2), ...palette.slice(1), ...palette), duration: 0.55 };
+if (requestedRoles.has("quiet")) transitionStrategy.quiet = { type: claim(...palette.slice(3), ...palette), duration: 1.35 };
+transitionStrategy.final = { type: finalType, duration: 1.2 };
+
+// THIS JOB'S FACE. Until now a composed storyboard emitted bare library layouts, so every
+// film premium or lite has ever made shared one set of photo geometry — the same thing that
+// once made nine white_weddings recipes byte-identical. Derived from the job name, so it is
+// stable across re-runs of one job and different between two couples; every candidate is
+// validated and any that fails leaves its layout bare. See lib/composedLooks.mjs.
+const jobSeed = arg("--name", "storyboard");
+const { looks, layoutPresets, applied: dressed, skipped: undressed } =
+  deriveComposedLooks(scenes, { library, theme, seed: jobSeed });
 
 const recipe = {
   id: arg("--name", "storyboard"),
   version: 1,
   name: "Composed storyboard",
   libraryTheme: theme,
+  ...(Object.keys(looks).length ? { looks, layoutPresets } : {}),
   generatedBy: "code:composeStoryboard",
   generatedAt: new Date().toISOString(),
   fit,
@@ -284,13 +370,18 @@ const recipe = {
   // against the photo budget and the track, so re-solving it there throws this shot list
   // away and rebuilds it off a flat 5.5s-per-scene table — which is what used to happen,
   // and is why every premium scene came out within a tenth of a second of every other.
-  source: { origin: "composed", notes: `Solved against ${photos.length} photos and a ${music.duration.toFixed(0)}s track.` },
+  source: { origin: "composed", notes: `Solved against ${editorialPhotoCount} editorial photos and a ${music.duration.toFixed(0)}s track.` },
   musicEdit,
   defaults: {
     project: { width: 1920, height: 1080, fps: 30, quality: arg("--quality", "share") },
     audio: { fade_in: 1.5, fade_out: 3.5, crossfade: 0 },
+    // The film's OWN theme, nudged per job. These four numbers used to be hardcoded — and
+    // they were white_weddings' grade verbatim, applied to every composed film whatever
+    // theme it had asked for. A warm_film job rendered 1000K too cool with none of its
+    // grain; super8_nostalgia and teal_orange_editorial lost their LUTs entirely, which is
+    // the whole of what those two themes are.
     color: {
-      temperature: 5600, saturation: 1.05, contrast: 1.03, glow: 0.12,
+      ...composedGrade(library.designTokens?.themes?.[theme], jobSeed),
       ...(notes.colorCurves ? { curves: notes.colorCurves } : {}),
     },
     ...(overlayFor(notes.overlayVariant) ?? {}),
@@ -309,13 +400,16 @@ const recipe = {
   },
   scenes: scenes.map((s) => ({
     id: s.id,
+    ...(s.id === "s99_closing" ? { durationRole: "closing" } : {}),
     effect: s.effect,
     ...(s.renderer ? { renderer: s.renderer, template: s.template } : {}),
     ...(s.layout ? { layout: s.layout } : {}),
+    ...(s.look ? { look: s.look } : {}),
     ...(s.act ? { act: s.act } : {}),
     durationSec: s.duration,
     ...(s.transitionRole ? { transitionRole: s.transitionRole } : {}),
     ...(s.easing ? { easing: s.easing } : {}),
+    ...paramsFor(s),
     ...photoSlotsFor(s),
     text: textSlotsFor(s),
   })),
@@ -341,7 +435,9 @@ console.log(
     `${film.toFixed(0)}s of a ${music.duration.toFixed(0)}s track -> ${outPath}\n` +
     `  budget ${fit.budgetSecondsPerPhoto}s/photo, bound by ${fit.boundBy}, ${fit.message}\n` +
     `  variety: ${v.distinctEffects} effect(s) [${v.effects.join(", ")}], ${v.distinctLayouts} layout(s), ` +
-    `${v.distinctPhotoCounts} scene size(s), ${v.adjacentRepeats} adjacent repeat(s)`
+    `${v.distinctPhotoCounts} scene size(s), ${v.adjacentRepeats} adjacent repeat(s)\n` +
+    `  looks: ${Object.keys(looks).length} derived for this job over ${dressed.length} card(s)` +
+    (undressed.length ? `, ${undressed.length} layout(s) kept bare (${undressed.join(", ")})` : "")
 );
 
 // A film that leaves a third of the song playing over nothing, or shows one photo

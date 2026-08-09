@@ -1,178 +1,166 @@
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { arg, loadProject } from "./lib/project.mjs";
-import { loadLedger, active, applyToTimeline } from "./lib/directives.mjs";
-import { retimeSlidesToMusic } from "./lib/musicRetime.mjs";
-import { validateMusicAnalysis } from "./lib/musicAnalysis.mjs";
-import { bucketPeople } from "./lib/diversityPlanner.mjs";
-import { readPlaylistAnalyses } from "./lib/playlistMusic.mjs";
+import { adaptLiteStory } from "./lib/liteStoryAdapter.mjs";
+import { LITE_STYLE_PROFILES } from "./lib/liteStyleProfiles.mjs";
+import { placeStoryCopy } from "./lib/liteStoryPlacement.mjs";
+import { nudgeGrade } from "./lib/composedLooks.mjs";
 
-const project = loadProject(arg("--project"));
-const read = (p) => JSON.parse(fs.readFileSync(project.abs(p), "utf8"));
-const selectedRel = project.manifest.selectedPhotos || "analysis/photos.selected.json";
-const photosDoc = read(fs.existsSync(project.abs(selectedRel)) ? selectedRel : `${project.manifest.analysisDir}/photos.json`);
-const story = read(project.manifest.story || "analysis/story-template.generated.json");
-const photos = [...photosDoc.photos];
-if (!photos.length) throw new Error("Project has no analyzed photos");
-
-const musicRels = project.manifest.music || [];
-const musicRel = musicRels[0];
-let music = null;
-if (musicRel) music = readPlaylistAnalyses({
-  root: process.cwd(),
-  analysisDir: project.rel(project.manifest.analysisDir),
-  musicPaths: musicRels.map((track) => project.rel(track)),
-});
-
-const transitions = ["crossfade", "dissolve", "smooth_left", "smooth_right"];
-const singleEffects = ["slow_zoom_in", "kenburns_tl", "slow_zoom_out", "kenburns_br", "pan_left", "pan_right"];
-const font = "fonts/BeVietnamPro-Regular.ttf";
-const beats = story.beats || [];
-const targetDuration = music?.duration || Math.max(15, photos.length * 5);
-const transitionDuration = 0.7;
-// About 5.5 visible seconds per scene. Reuse is allowed only when the song is
-// longer than the available photo set can cover once.
-const sceneCount = Math.max(beats.length + 1, Math.ceil((targetDuration - transitionDuration) / 5.5));
-let slides = [];
-let photoCursor = 0;
-
-// Bookends get the photo the analyzer scored for that job, not whatever the round-robin
-// cursor happens to land on. photos.json already carries openingScore/closingScore
-// (the same fields the premium tier's hero-check reuses) — Lite just never read them.
-const scored = (photo, key) => Number(photo?.[key] ?? photo?.heroScore ?? 0);
-const bestBy = (pool, key) => [...pool].sort((a, b) => scored(b, key) - scored(a, key))[0];
-const openingPhoto = bestBy(photos, "openingScore");
-const closingCandidates = photos.filter((p) => p.file !== openingPhoto.file);
-const closingPhoto = bestBy(closingCandidates.length ? closingCandidates : photos, "closingScore");
-
-// Reserved bookends only leave the general cycle when the pool can spare them —
-// a tiny album still needs every photo available for the body of the film.
-const reserved = photos.length > 2 ? new Set([openingPhoto.file, closingPhoto.file]) : new Set();
-const cyclePool = photos.filter((p) => !reserved.has(p.file));
-const pool = cyclePool.length ? cyclePool : photos;
-let lastPicked = null;
-
-function caption(text, role = "caption") {
-  return { text, role, position: role === "title" ? "center" : "bottom_center", start: 0.5, duration: 3.5, font, color: "white", shadow: true, animation: "fade" };
-}
-// Same signals as the template tier's diversityPlanner (orientation + people-count
-// bucket), scaled down to Lite's flat photo list: no "requests"/"slots" to solve
-// against, just a short lookahead swap so two same-shaped photos are less likely to
-// land on neighbouring scenes. "unknown" people counts never testify as a match.
-function samePattern(a, b) {
-  if (!a || !b || a.orient !== b.orient) return false;
-  const bucketA = bucketPeople(a.subjectCount);
-  return bucketA !== "unknown" && bucketA === bucketPeople(b.subjectCount);
-}
-function conflictsWith(a, b) {
-  if (!a || !b) return false;
-  if (a.file === b.file) return true;
-  if (a.duplicateGroup && a.duplicateGroup === b.duplicateGroup) return true;
-  return samePattern(a, b);
-}
-function preferredPhoto(preferred, avoid = null) {
-  return preferred.map((file) => photos.find((p) => p.file === file && !conflictsWith(p, avoid))).find(Boolean);
-}
-function nextPhoto(preferred = []) {
-  const chosen = preferredPhoto(preferred, lastPicked);
-  if (chosen) return (lastPicked = chosen);
-  const i = photoCursor % pool.length;
-  if (conflictsWith(pool[i], lastPicked)) {
-    const window = Math.min(pool.length - 1, 4);
-    for (let step = 1; step <= window; step++) {
-      const j = (i + step) % pool.length;
-      if (!conflictsWith(pool[j], lastPicked)) {
-        [pool[i], pool[j]] = [pool[j], pool[i]];
-        break;
-      }
-    }
-  }
-  photoCursor++;
-  if (conflictsWith(pool[i], lastPicked)) {
-    const fallback = photos.find((photo) => !conflictsWith(photo, lastPicked));
-    if (fallback) return (lastPicked = fallback);
-  }
-  return (lastPicked = pool[i]);
-}
-
-for (let i = 0; i < sceneCount; i++) {
-  const beatIndex = Math.min(beats.length - 1, Math.floor(i * beats.length / sceneCount));
-  const beat = beats[Math.max(0, beatIndex)] || { heading: "", body: "", sceneKind: "single", preferredPhotos: [] };
-  const id = `scene_${String(i + 1).padStart(3, "0")}`;
-  const transition = { type: transitions[i % transitions.length], duration: transitionDuration };
-  const showText = i === 0 || i === sceneCount - 1 || i % Math.max(2, Math.floor(sceneCount / Math.max(1, beats.length))) === 0;
-  if (beat.sceneKind === "montage" && i > 0 && i < sceneCount - 1) {
-    const count = Math.min(6, Math.max(3, photos.length));
-    const images = Array.from({ length: count }, () => nextPhoto(beat.preferredPhotos).file);
-    slides.push({ id, images, duration: 5, effect: i % 2 ? "film_roll_up" : "collage_grid", transition, captions: showText ? [caption(`${beat.heading} — ${beat.body}`)] : [] });
-  } else {
-    // Bookends: the beat's own preference still wins (a story beat that names a file is a
-    // more specific signal than the generic hero heuristic), otherwise the analyzer's
-    // opening/closing score picks the photo instead of whatever the cursor lands on.
-    const closingFallback = !conflictsWith(closingPhoto, lastPicked)
-      ? closingPhoto
-      : bestBy(photos.filter((p) => !conflictsWith(p, lastPicked)), "closingScore") || closingPhoto;
-    const photo = i === 0 ? preferredPhoto(beat.preferredPhotos) || openingPhoto
-      : i === sceneCount - 1 ? preferredPhoto(beat.preferredPhotos, lastPicked) || closingFallback
-      : nextPhoto(beat.preferredPhotos);
-    if (i === 0 || i === sceneCount - 1) lastPicked = photo;
-    const effect = photo.orient === "portrait" ? "portrait_blur_background" : singleEffects[i % singleEffects.length];
-    const text = i === 0 ? story.title : i === sceneCount - 1 ? story.closing : showText ? `${beat.heading} — ${beat.body}` : "";
-    // Carry the analyzer's face-derived focus onto the slide. Without it the renderer
-    // cover-crops dead centre, which beheads a portrait photo in a 16:9 frame — heads sit
-    // at the top and the top is exactly what a centre crop throws away. The whole face
-    // pipeline (YuNet -> faces[] -> focusX/focusY) used to stop in photos.json and reach
-    // nothing; this is the line that connects it to the pixels.
-    slides.push({
-      id, image: photo.file, duration: 5, effect, transition,
-      ...(Number.isFinite(photo.focusX) ? { focusX: photo.focusX } : {}),
-      ...(Number.isFinite(photo.focusY) ? { focusY: photo.focusY } : {}),
-      ...(photo.faceBoxEstimate ? { faceBox: photo.faceBoxEstimate } : {}),
-      captions: text ? [caption(text, i === 0 ? "title" : "caption")] : [],
-    });
-  }
-}
-
-slides.at(-1).transition = { type: "none", duration: 0 };
-// Prefer phrase/downbeat-aware retiming (same lib the template tier uses) whenever the
-// music analysis actually carries that structure. A project with no music, or an older/
-// stub analysis missing beatGrid/phrases, falls back to the flat even split — Lite must
-// still work without music (see runProject.mjs).
-let musicSync = null;
-if (music && validateMusicAnalysis(music).ok) {
-  const retimed = retimeSlidesToMusic(slides, music);
-  slides = retimed.slides;
-  musicSync = retimed.sync;
-} else {
-  const overlap = slides.slice(0, -1).reduce((sum, slide) => sum + slide.transition.duration, 0);
-  const exactSceneDuration = (targetDuration + overlap) / slides.length;
-  if (exactSceneDuration < 2 || exactSceneDuration > 30) throw new Error(`Cannot fit ${targetDuration}s into ${slides.length} valid scenes`);
-  for (const slide of slides) slide.duration = +exactSceneDuration.toFixed(3);
-}
-
-const timeline = {
-  project: { name: project.manifest.id, width: 1920, height: 1080, fps: 30, quality: project.manifest.quality || "share" },
-  music: musicRels.map((track) => ({ path: project.rel(track), volume: 0.85 })),
-  audio: { fade_in: 2, fade_out: 3, crossfade: 2 },
-  output: { path: project.rel(project.manifest.output) },
-  color: { temperature: 5700, saturation: 1.04, contrast: 1.02, glow: 0.1 },
-  metadata: { storyTemplate: project.rel(project.manifest.story || "analysis/story-template.generated.json"), targetDuration, ...(musicSync ? { musicSync } : {}) },
-  slides,
+const root = process.cwd();
+const projectArg = arg("--project");
+const project = loadProject(projectArg);
+const read = (relative) => JSON.parse(fs.readFileSync(project.abs(relative), "utf8"));
+const write = (relative, value) => {
+  const absolute = project.abs(relative);
+  fs.mkdirSync(path.dirname(absolute), { recursive: true });
+  fs.writeFileSync(absolute, JSON.stringify(value, null, 2) + "\n");
 };
-// The cheap tier still has to do as it is told. Lite cannot honour everything — it has no
-// acts, so an act-scoped order has nowhere to land — but colour, overlays, transitions,
-// captions, a whole-film look and the running time it CAN do, and applyToTimeline is the
-// one place all three tiers agree on how. What Lite genuinely cannot do, the compliance
-// report says out loud rather than passing over in silence.
-const ledger = fs.existsSync(project.abs("directives.json")) ? loadLedger(project.rel("directives.json")) : { directives: [] };
-const orders = active(ledger);
-const appliedIds = orders.length ? applyToTimeline(timeline, orders) : [];
+const run = (script, args) => {
+  const result = spawnSync(process.execPath, [script, ...args], { cwd: root, encoding: "utf8" });
+  if (result.status !== 0) throw new Error(result.stderr || result.stdout || `${script} exited ${result.status}`);
+  if (result.stdout.trim()) console.log(result.stdout.trim());
+};
 
-const out = project.abs(project.manifest.timeline);
-fs.mkdirSync(path.dirname(out), { recursive: true });
-fs.writeFileSync(out, JSON.stringify(timeline, null, 2) + "\n");
-const finalOverlap = slides.reduce((n, s) => n + (s.transition?.duration || 0), 0);
-const actual = slides.reduce((n, s) => n + s.duration, 0) - finalOverlap;
-console.log(`Wrote ${project.rel(project.manifest.timeline)}: ${slides.length} scene(s), ${actual.toFixed(2)}s / target ${targetDuration.toFixed(2)}s.`);
-console.log(`  pacing: ${musicSync ? `music-aware (${musicSync.snappedBoundaries} phrase/downbeat snaps)` : "flat split (no usable music analysis)"}`);
-if (orders.length) console.log(`  directives: ${appliedIds.length}/${orders.length} applied by the lite generator`);
+const analysisDir = project.manifest.analysisDir;
+const analysisRel = project.rel(analysisDir);
+const selected = project.manifest.selectedPhotos || `${analysisDir}/photos.selected.json`;
+const selectedProjectPath = fs.existsSync(project.abs(selected)) ? selected : `${analysisDir}/photos.json`;
+const selectedRel = project.rel(selectedProjectPath);
+const storyRel = project.manifest.story || `${analysisDir}/story-template.generated.json`;
+const story = read(storyRel);
+const promptRel = project.manifest.promptFile || "prompt.txt";
+const prompt = fs.existsSync(project.abs(promptRel)) ? fs.readFileSync(project.abs(promptRel), "utf8") : "";
+const adapter = adaptLiteStory({ story, prompt, requestedStyle: project.manifest.styleProfile });
+const adapterRel = project.rel(`${analysisDir}/lite-story-adapter.json`);
+const storyboardRel = project.rel(`${analysisDir}/lite-storyboard.json`);
+const styleDirectionRel = project.rel(`${analysisDir}/lite-style-direction.json`);
+write(`${analysisDir}/lite-story-adapter.json`, adapter);
+
+const music = (project.manifest.music || []).map((track) => project.rel(track));
+const targetDuration = Math.max(15, (read(selectedProjectPath).photos || []).length * 5);
+const selectedProfile = LITE_STYLE_PROFILES[adapter.styleProfile];
+write(`${analysisDir}/lite-style-direction.json`, { version: 1, profile: selectedProfile.id, provenance: adapter.styleProvenance,
+  director_notes: {
+    libraryTheme: selectedProfile.libraryTheme,
+    singlePhotoEffects: selectedProfile.singlePhotoEffects,
+    montageEffects: selectedProfile.montageEffects,
+    transitionPalette: selectedProfile.transitionPalette,
+    layoutMix: selectedProfile.layoutMix,
+  } });
+const composeArgs = [
+  "--photos", selectedRel,
+  "--analysis-dir", analysisRel,
+  "--plan", adapterRel,
+  "--director", styleDirectionRel,
+  "--theme", LITE_STYLE_PROFILES[adapter.styleProfile].libraryTheme,
+  "--name", `${project.manifest.id}-lite-v2`,
+  "--out", storyboardRel,
+  "--max-reuse", "1",
+  ...(music.length ? ["--music", music[0], ...music.slice(1).flatMap((track) => ["--extra-music", track])]
+    : ["--target-duration", String(targetDuration)]),
+  ...(project.manifest.musicMode ? ["--music-mode", project.manifest.musicMode] : []),
+  ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+  ...(fs.existsSync(project.abs("directives.json")) ? ["--directives", project.rel("directives.json")] : []),
+];
+run("scripts/composeStoryboard.mjs", composeArgs);
+
+const recipe = JSON.parse(fs.readFileSync(path.resolve(root, storyboardRel), "utf8"));
+const profile = LITE_STYLE_PROFILES[adapter.styleProfile];
+// Group the scenes by act, then let lib/liteStoryPlacement.mjs put each act's
+// words somewhere that can actually show them — see that file for what used to
+// go wrong here and why the placement is act-wide rather than first-scene-only.
+const byAct = new Map(adapter.acts.map((act) => [act.id, act]));
+const groups = new Map();
+for (const [index, scene] of recipe.scenes.entries()) {
+  if (scene.id === "s99_closing") continue;
+  const act = byAct.get(scene.act) || adapter.acts[Math.min(adapter.acts.length - 1,
+    Math.floor(index * adapter.acts.length / Math.max(1, recipe.scenes.length - 1)))];
+  if (!act) continue;
+  scene.act = act.id;
+  scene.photoHints = act.photoHints;
+  if (!groups.has(act.id)) groups.set(act.id, { act, scenes: [], firstIndex: index });
+  groups.get(act.id).scenes.push(scene);
+}
+const placements = placeStoryCopy([...groups.values()], { title: story.title });
+// Say it out loud. A chapter that never reaches the screen is invisible in the
+// render, in the QA report and in every gate — the only place it can show up is
+// here, so this line is the whole early warning.
+const toldChapters = placements.filter((row) => !row.hasBody || row.bodyAt).length;
+console.log(`[story] ${toldChapters}/${placements.length} chapter(s) placed: ${placements
+  .map((row) => `${row.act}→${row.bodyAt || (row.hasBody ? "LOST" : "—")}`).join(" ")}`);
+if (toldChapters < placements.length) console.warn(`[story] WARNING: ${placements.length - toldChapters} chapter(s) of the customer's story have nowhere to appear.`);
+// The style profile decides the LOOK of the grade; the job decides where inside it this
+// particular film sits. Assigning the profile's numbers flat meant every couple who landed
+// on white_wedding_gentle got the same four values to three decimal places.
+recipe.defaults.color = nudgeGrade(profile.grade, project.manifest.id);
+// No `defaults.fonts` here on purpose: resolveFont() reads defaults.fonts BEFORE the
+// library theme, so writing one pins every slot and throws away the theme's display
+// face and script accent. `recipe.libraryTheme` (set by composeStoryboard from --theme)
+// carries the typography instead — see liteStyleProfiles.mjs.
+recipe.pipelineVersion = "lite-v2";
+recipe.styleProfile = adapter.styleProfile;
+recipe.storyAdapter = adapterRel;
+recipe.openingPhotoHint = adapter.acts[0]?.photoHints?.[0] || null;
+fs.writeFileSync(path.resolve(root, storyboardRel), JSON.stringify(recipe, null, 2) + "\n");
+
+// The same gate premium runs (renderWithRetry node 8b'), at the same point in the flow:
+// after the words are in the storyboard, before it is built. Lite writes its own copy in
+// the loop above rather than through writeRecipeCopy, so there is no --copy to pass.
+//
+// Strict, and it throws: lite has no director layer to drop and no second composition to
+// fall back to, so a finding that survives the repair is a film we should not be shipping.
+// Measured on a real 41-scene job: the repair clears every finding this raises today.
+run("scripts/lintComposedFilm.mjs", ["--storyboard", storyboardRel, "--repair", "--strict"]);
+
+// And what it is MADE of, next to the corpus a person art-directed. Never fails a build —
+// a photo-poor album legitimately scores lower than a rich one on half of these — but it is
+// written down per job, because the whole argument for this pass was that a number nobody
+// records is not a standard.
+const scorecardRel = project.rel(`${analysisDir}/film-scorecard.json`);
+run("scripts/gradeComposedFilm.mjs", ["--storyboard", storyboardRel, "--out", scorecardRel]);
+
+const applyArgs = [
+  "--template", storyboardRel,
+  "--photos", selectedRel,
+  "--analysis-dir", analysisRel,
+  "--out", project.rel(project.manifest.timeline),
+  "--output", project.rel(project.manifest.output),
+  "--name", project.manifest.id,
+  "--quality", project.manifest.quality || "share",
+  "--tier", "lite",
+  "--prompt", project.rel(promptRel),
+  "--language", project.manifest.language || "vi",
+  "--sequence-mode", project.manifest.sequenceMode || "editorial",
+  "--allow-legacy-music-analysis",
+  ...(music.length ? ["--music", music[0], ...music.slice(1).flatMap((track) => ["--extra-music", track])]
+    : ["--target-duration", String(targetDuration)]),
+  ...(project.manifest.musicMode ? ["--music-mode", project.manifest.musicMode] : []),
+  ...(fs.existsSync(project.abs("brief.json")) ? ["--brief", project.rel("brief.json")] : []),
+  ...(fs.existsSync(project.abs("directives.json")) ? ["--directives", project.rel("directives.json")] : []),
+];
+run("scripts/applyStoryTemplate.mjs", applyArgs);
+
+const timeline = read(project.manifest.timeline);
+timeline.metadata = {
+  ...(timeline.metadata || {}),
+  pipelineVersion: "lite-v2",
+  qualityPolicyVersion: 2,
+  storyTemplate: project.rel(storyRel),
+  storyAdapter: adapterRel,
+  storyboard: storyboardRel,
+  scorecard: scorecardRel,
+  styleProfile: adapter.styleProfile,
+  styleProvenance: adapter.styleProvenance,
+  targetDuration: timeline.recipeDecisions?.musicEdit?.duration,
+  musicSync: timeline.recipeDecisions?.musicSync,
+};
+write(project.manifest.timeline, timeline);
+write(`${analysisDir}/music-fit.json`, {
+  version: 1,
+  allocatorVersion: timeline.metadata.musicSync?.allocatorVersion || null,
+  targetDuration: timeline.metadata.targetDuration,
+  drift: timeline.metadata.musicSync?.drift ?? null,
+  musicEdit: timeline.recipeDecisions?.musicEdit || null,
+});
+console.log(`Wrote ${project.rel(project.manifest.timeline)} through common composer + global assignment (${timeline.slides.length} scenes).`);

@@ -10,7 +10,7 @@ import {
   photoArrangementKey,
   slotShapeKey,
 } from "../scripts/lib/geometrySignature.mjs";
-import { resolveScene, rotatedSlotBounds } from "../scripts/lib/lookResolver.mjs";
+import { resolveScene, rotatedSlotBounds, validateLook } from "../scripts/lib/lookResolver.mjs";
 
 const root = process.cwd();
 const library = JSON.parse(fs.readFileSync(path.join(root, "layouts", "library.json"), "utf8"));
@@ -343,6 +343,18 @@ test("perceptualSignature collapses frame differences no viewer could resolve", 
     perceptionOf({ photoTreatment: { saturation: 1.0 } }),
     perceptionOf({ photoTreatment: { saturation: 1.02 } }),
   );
+  // The tuple form is a spelling, not a picture: four equal corners draw the same card.
+  assert.equal(
+    perceptionOf({ frame: { radius: 16, border: 0, shadow: false } }),
+    perceptionOf({ frame: { radius: [16, 16, 16, 16], border: 0, shadow: false } }),
+  );
+});
+
+test("perceptualSignature keeps an arch apart from the rounded rectangle it is not", () => {
+  assert.notEqual(
+    perceptionOf({ frame: { radius: [300, 300, 0, 0], border: 0, shadow: false } }),
+    perceptionOf({ frame: { radius: 300, border: 0, shadow: false } }),
+  );
 });
 
 test("perceptualSignature keeps frame differences a viewer can name", () => {
@@ -420,17 +432,45 @@ test("perceptualSignature ignores frames on a full-bleed backdrop, as the render
   );
 });
 
-test("four-corner frames register as arches instead of rectangles", () => {
+const shapeOf = (radius, layout) => {
   const template = {
     id: "arch_fixture",
-    layoutPresets: { localArch: { radius: [260, 260, 0, 0] } },
-    looks: { only: { layout: "three_photo_row", frame: "localArch" } },
+    layoutPresets: { localArch: { radius } },
+    looks: { only: { layout, frame: "localArch" } },
   };
   const { scene } = resolveScene(
     { id: "arch_probe", effect: "layer_scene", look: "only" },
     { template, library },
   );
-  assert.deepEqual(JSON.parse(slotShapeKey(scene, template, library)), ["arch", "arch", "arch"]);
+  return { shapes: JSON.parse(slotShapeKey(scene, template, library)), template };
+};
+
+// polaroid_scatter's slots are 520x520, which is what the library's `arch` preset is cut for:
+// radius 260 is exactly half the side, so the top really is a semicircle.
+test("four-corner frames register as arches instead of rectangles", () => {
+  const { shapes, template } = shapeOf([260, 260, 0, 0], "polaroid_scatter");
+  assert.deepEqual(shapes, ["arch", "arch", "arch"]);
+  assert.deepEqual(validateLook("only", template.looks.only, { template, library }), []);
+});
+
+// The bar the single-radius branch has always applied, now applied to tuples as well. Both of
+// these used to key as "arch": the first is a rectangle with a 4px lip, and the second does not
+// fit its slots at all — validateLook rejects it, so no frame would ever be drawn from it.
+test("a tuple that does not round its slot is not an arch", () => {
+  assert.deepEqual(shapeOf([4, 4, 0, 0], "polaroid_scatter").shapes, ["rect", "rect", "rect"]);
+
+  const { shapes, template } = shapeOf([260, 260, 0, 0], "three_photo_row");
+  assert.deepEqual(shapes, ["rect", "rect", "rect"]);
+  assert.ok(
+    validateLook("only", template.looks.only, { template, library })
+      .some((finding) => /half the shorter side/.test(finding.detail)),
+    "three_photo_row's 500x760 and 551x460 slots cannot wear a 260px arch",
+  );
+});
+
+test("four full corners stay a circle whether they arrive as a number or a tuple", () => {
+  assert.deepEqual(shapeOf([260, 260, 260, 260], "polaroid_scatter").shapes, ["circle", "circle", "circle"]);
+  assert.deepEqual(shapeOf(260, "polaroid_scatter").shapes, ["circle", "circle", "circle"]);
 });
 
 test("negative rotation uses absolute sine and cosine for its bounding box", () => {

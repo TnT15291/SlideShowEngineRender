@@ -113,7 +113,12 @@
       "additionalProperties": false,
       "required": ["verdict"],
       "properties": {
-        "verdict": { "type": "string", "enum": ["ok", "review", "unknown"] },
+        "verdict": {
+          "description": "Shared quality-policy verdict. 'ok' is retained for manifests produced before policy v2.",
+          "type": "string",
+          "enum": ["pass", "review", "block", "ok", "unknown"]
+        },
+        "policyVersion": { "type": "integer", "minimum": 1 },
         "problems": { "type": "integer", "minimum": 0 },
         "source": { "type": "string" },
         "reason": { "type": "string" },

@@ -224,10 +224,10 @@
     "notes": "Reverse-engineered from the local White Weddings Theme reference video's full 390s / 39-page venue-loop (templates/Weddings/White Weddings Theme). Broadens white-weddings-editorial-01 with the loop's extra layout vocabulary — masonry grid wall, tinted spread, save-the-date card, polaroid feature, arch/gazebo breathers — added to layouts/library.json. Almost entirely layer_scene (flat Canva-style pages, matching what the reference actually does), plus one mask_reveal signature beat to satisfy the engine's advanced-effect requirement. Every page now names a `look` on the `page_round` frame preset (radius 24, no matte). That is a move TOWARD the reference, not away from it: the source pages have rounded photo corners and the original port could not express them, so it shipped square. Three of those looks also depart from a literal page-for-page reading, and each is a move TOWARD the reference's variety rather than away from it: the reference gives every page its own composition, while this adaptation had full_bleed_quote carrying the announcement, a second beat and the wordless fallback of four scenes at once."
   },
   "intro": {
-    "summary": "Bộ sưu tập đầy đủ nhất của dòng White Weddings — nhiều 'trang' giai điệu ngà ấm, phù hợp video dài hơi.",
-    "photos": "Hợp đa dạng loại ảnh: chân dung, chi tiết, nhóm, phong cảnh — bộ layout phong phú nhất trong các recipe white_weddings (20–55 ảnh).",
-    "story": "Phù hợp khi muốn video save-the-date/prewedding dài, đầy đủ chi tiết hơn white-weddings-editorial-01, với nhiều 'trang' câu chuyện khác nhau.",
-    "music": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Bộ sưu tập đầy đủ nhất của dòng White Weddings — nhiều 'trang' giai điệu ngà ấm, phù hợp video dài hơi.", "en": "The fullest collection in the White Weddings line — many warm ivory 'pages', suited to a longer film." },
+    "photos": { "vi": "Hợp đa dạng loại ảnh: chân dung, chi tiết, nhóm, phong cảnh — bộ layout phong phú nhất trong các recipe white_weddings (20–55 ảnh).", "en": "Suits a mix of photo types: portraits, details, groups and landscapes. The richest layout set of any white_weddings recipe (20–55 photos)." },
+    "story": { "vi": "Phù hợp khi muốn video save-the-date/prewedding dài, đầy đủ chi tiết hơn white-weddings-editorial-01, với nhiều 'trang' câu chuyện khác nhau.", "en": "For a longer, more detailed save-the-date or pre-wedding film than white-weddings-editorial-01, with more distinct story 'pages'." },
+    "music": { "vi": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa.", "en": "Suits gentle, elegant, romantic acoustic music at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

@@ -40,6 +40,8 @@ import { spawnSync } from "node:child_process";
 import { sceneTimes } from "./lib/pacing.mjs";
 import { validate } from "./lib/checkSchema.mjs";
 import { appendFeedback } from "./lib/feedbackLedger.mjs";
+import { evaluateQualityReport } from "./lib/rules/verdict.mjs";
+import { timelineNetDuration } from "./lib/musicRetime.mjs";
 
 const root = process.cwd();
 const arg = (flag, def) => {
@@ -63,11 +65,17 @@ if (!tlPath || tlPath.startsWith("--")) {
 const tlAbs = path.resolve(root, tlPath);
 if (!fs.existsSync(tlAbs)) die(`timeline not found: ${tlPath}`);
 const tl = JSON.parse(fs.readFileSync(tlAbs, "utf8"));
+const expectedNetDuration = timelineNetDuration(tl.slides);
+const musicTarget = Number(tl.metadata?.targetDuration ?? tl.recipeDecisions?.musicEdit?.duration);
+if (Number.isFinite(musicTarget)) {
+  const drift = +(expectedNetDuration - musicTarget).toFixed(3);
+  if (Math.abs(drift) > 0.1) die(`timeline/music drift is ${drift}s (target ${musicTarget}s, tolerance 0.1s)`);
+}
 const base = path.basename(tlPath).replace(/\.[^.]+$/, "");
 
 const outDir = arg("--out-dir", `output/deliver/${base}`);
 const tier = arg("--tier", "unknown");
-if (!["director", "template", "lite", "unknown"].includes(tier)) die(`--tier must be director|template|lite|unknown, got "${tier}"`);
+if (!["director", "template", "lite", "premium", "unknown"].includes(tier)) die(`--tier must be director|template|lite|premium|unknown, got "${tier}"`);
 const analysisDir = arg("--analysis-dir", "analysis").replace(/\\/g, "/").replace(/\/$/, "");
 const contentPath = arg("--content", `${analysisDir}/photo_content.json`);
 const previewHeight = Number(arg("--preview-height", "720"));
@@ -147,6 +155,13 @@ const escText = (s) => s.replace(/\\/g, "\\\\").replace(/:/g, "\\:").replace(/'/
 fs.mkdirSync(path.resolve(root, outDir), { recursive: true });
 
 const video = probe(finalRel, "final.mp4");
+const renderDrift = +(video.durationSec - expectedNetDuration).toFixed(3);
+if (Math.abs(renderDrift) > 0.1) {
+  die(
+    `rendered video/timeline drift is ${renderDrift}s ` +
+      `(video ${video.durationSec}s, timeline ${expectedNetDuration}s, tolerance 0.1s); re-render before delivery`
+  );
+}
 
 // --- thumbnail: choose a frame, and say out loud which rule chose it ---------
 // "Hero slot" is the same notion qaProxy uses: the image layer that MOVES.
@@ -287,6 +302,7 @@ const artifacts = directorApplied ? found : [];
 
 const usedPhotos = [];
 for (const s of tl.slides) {
+  if (s.image) usedPhotos.push(s.image);
   for (const l of s.layers || []) if (l.type === "image" && l.path) usedPhotos.push(l.path);
   for (const f of s.images || []) usedPhotos.push(f);
 }
@@ -328,16 +344,20 @@ if (!proxy) {
       `${new Date(tlMtime).toISOString()} — that verdict measured a different timeline. ` +
       `Re-run: node scripts/qaProxy.mjs ${tlPath}`,
   };
+} else if (tier === "unknown") {
+  qa = { verdict: "unknown", reason: "--tier is required to evaluate the shared quality policy" };
 } else {
+  const evaluated = evaluateQualityReport({ tier: tier === "director" ? "premium" : tier, report: proxy });
   qa = {
-    verdict: proxy.verdict === "ok" ? "ok" : "review",
+    verdict: evaluated.verdict,
+    policyVersion: evaluated.policyVersion,
     problems: proxy.problems?.length || 0,
     source: proxyRel,
   };
   if (loop?.manualReview && !staleAgainstTimeline(loop)) qa.manualReview = true;
 }
 
-if (!allowQaFlags && qa.verdict !== "ok") {
+if (!allowQaFlags && qa.verdict !== "pass") {
   die(`quality gate: QA verdict is ${qa.verdict}. ${qa.reason || `${qa.problems || 0} problem(s) remain`} ` +
     `(use --allow-qa-flags only for an explicitly approved manual exception)`);
 }
@@ -406,7 +426,7 @@ const approvalReceipt = {
   } : null,
   timeline: rel(tlPath),
   recipeId: tl.recipeDecisions?.recipeId || tl.recipeDecisions?.recipe || null,
-  qa: { ...qa, manualException: allowQaFlags && qa.verdict !== "ok" },
+  qa: { ...qa, manualException: allowQaFlags && qa.verdict !== "pass" },
   compliance: compliance ? {
     verdict: compliance.verdict || compliance.status || null,
     honoured: compliance.honoured?.length ?? compliance.summary?.honoured ?? null,

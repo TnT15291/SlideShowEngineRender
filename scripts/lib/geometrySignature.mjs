@@ -160,18 +160,31 @@ export function slotShapeKey(resolvedScene, template, library) {
 
     const frame = frameOf(slot);
     const radius = frame?.radius;
-    if (Array.isArray(radius)) {
-      if (radius.length !== 4 || radius.some((corner) => !Number.isFinite(corner))) return "rect";
-      const [tl, tr, br, bl] = radius;
-      if (tl > 0 && tr > 0 && br === 0 && bl === 0) return "arch";
-      return `corners:${radius.join(",")}`;
-    }
-    if (typeof radius !== "number" || !Number.isFinite(radius) || radius <= 0) return "rect";
+    const corners = Array.isArray(radius) ? radius : null;
+    if (corners
+      ? corners.length !== 4 || corners.some((corner) => !Number.isFinite(corner) || corner < 0)
+        || corners.every((corner) => corner === 0)
+      : typeof radius !== "number" || !Number.isFinite(radius) || radius <= 0) return "rect";
 
     const width = positiveNumber(slot.width, `photo slot '${slot.id ?? "unknown"}' width`);
     const height = positiveNumber(slot.height, `photo slot '${slot.id ?? "unknown"}' height`);
-    if (!equalMeasure(radius, Math.min(width, height) / 2)) return "rect";
-    return equalMeasure(width, height) ? "circle" : "pill";
+    // One bar for both forms: a radius only changes the silhouette once it rounds the whole
+    // side it sits on. Anything short of that is a rectangle with a softened lip, and this
+    // key feeds meaningfullyDiffers() — the per-recipe ratchet — so crediting a 4px corner
+    // would sell a recipe a distinct shape for geometry no viewer can see. A tuple that
+    // overruns its slot fails the same test, which is right: the look and primitive lints
+    // reject it, so it never reaches a frame.
+    const filled = Math.min(width, height) / 2;
+    if (!corners) {
+      if (!equalMeasure(radius, filled)) return "rect";
+      return equalMeasure(width, height) ? "circle" : "pill";
+    }
+
+    const [tl, tr, br, bl] = corners.map((corner) => corner > 0 && equalMeasure(corner, filled));
+    if (tl && tr && br && bl) return equalMeasure(width, height) ? "circle" : "pill";
+    if (tl && tr && corners[2] === 0 && corners[3] === 0) return "arch";
+    if (!tl && !tr && !br && !bl) return "rect";
+    return `corners:${[tl, tr, br, bl].map((round) => (round ? "round" : "square")).join(",")}`;
   });
 
   return JSON.stringify(shapes);
@@ -284,10 +297,14 @@ function frameBand(frame, slot) {
   const largest = Math.min(slot.width, slot.height) / 2;
   let shape = "square";
   if (Array.isArray(frame.radius) && frame.radius.length === 4 && largest > 0) {
-    shape = frame.radius.map((radius) => {
+    const bands = frame.radius.map((radius) => {
       if (!Number.isFinite(radius) || radius <= 0) return "square";
-      return bandOf(RADIUS_BANDS, radius / largest, "round");
-    }).join("/");
+      return bandOf(RADIUS_BANDS, radius / largest, slot.width === slot.height ? "circle" : "pill");
+    });
+    // Four equal corners draw the same card as one radius written once. Nobody can tell
+    // `260` from `[260, 260, 260, 260]`, so this key must not either — otherwise the one
+    // function built to collapse differences a viewer cannot resolve invents one.
+    shape = bands.every((band) => band === bands[0]) ? bands[0] : bands.join("/");
   } else {
     const radius = Number.isFinite(frame.radius) ? frame.radius : 0;
     if (radius > 0 && largest > 0) {

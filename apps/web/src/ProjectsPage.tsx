@@ -1,16 +1,16 @@
 import { AlertTriangle, FolderOpen, Menu, RefreshCw, Square, Trash2, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useProjects } from "@/hooks/useProjects"
-import { apiDelete, apiPost } from "@/lib/api"
+import { apiDelete, apiGet, apiPost } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { formatDate, phaseLabelKey, statusClass, statusLabelKey, tierLabelKey } from "@/projectFormat"
-import type { ProjectSummary } from "@/types"
+import type { ProjectSummary, RecipeSummary } from "@/types"
 
 // Shared by the header row and every project row so the two can't drift apart.
 // Below `xl` the rows stack and each value carries its own inline label instead.
@@ -22,6 +22,16 @@ export function ProjectsPage({ onOpenNav, onOpen, title, description }: { onOpen
   const [actionError, setActionError] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [pendingDelete, setPendingDelete] = useState<ProjectSummary | null>(null)
+  // The workspace already resolves `project.recipe` (an engine slug like
+  // `jmii-silk-botanical-01`) to the name the customer actually chose. This row
+  // printed the slug next to the project id, so the one screen listing every
+  // film spoke entirely in internal identifiers.
+  const [recipeNames, setRecipeNames] = useState<Record<string, string>>({})
+  useEffect(() => {
+    apiGet<RecipeSummary[]>("/recipes")
+      .then((recipes) => setRecipeNames(Object.fromEntries(recipes.map((recipe) => [recipe.id, recipe.name]))))
+      .catch(() => undefined)
+  }, [])
 
   async function cancel(project: ProjectSummary) {
     setBusy(`cancel:${project.id}`)
@@ -55,12 +65,12 @@ export function ProjectsPage({ onOpenNav, onOpen, title, description }: { onOpen
     <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-10">
       {error && <Card className="mb-5 border-destructive/40 bg-destructive/5"><CardContent className="p-5 text-sm text-destructive">{error}</CardContent></Card>}
       {actionError && <Card className="mb-5 border-destructive/40 bg-destructive/5"><CardContent className="p-5 text-sm text-destructive">{actionError}</CardContent></Card>}
-      {data && data.issues.length > 0 && <Card className="mb-5 border-warning/40 bg-warning/10"><CardContent className="p-5 text-sm text-warning">
+      {data && data.issues.length > 0 && <Card className="mb-5 border-warning/40 bg-warning/10"><CardContent className="p-5 text-sm text-warning-text">
         <p className="flex items-center gap-2 font-medium"><AlertTriangle className="size-4 shrink-0" /> {t("projects.issuesTitle", { count: data.issues.length })}</p>
         <ul className="mt-3 space-y-3">{data.issues.map((issue) => <li key={`${issue.projectId}-${issue.detail}`}>
           <p className="font-medium">{issue.projectId}</p>
           <p className="mt-0.5 text-xs leading-5">{issue.message}</p>
-          <p className="mt-1 font-mono text-[11px] text-warning/80">{issue.detail}</p>
+          <p className="mt-1 font-mono text-[11px] text-warning-text/80">{issue.detail}</p>
         </li>)}</ul>
       </CardContent></Card>}
       {loading && !data && <ProjectListSkeleton />}
@@ -70,7 +80,7 @@ export function ProjectsPage({ onOpenNav, onOpen, title, description }: { onOpen
           <span>{t("projects.column.project")}</span><span>{t("projects.column.tier")}</span><span>{t("projects.column.phase")}</span><span>{t("projects.column.status")}</span><span>{t("projects.column.progress")}</span><span>{t("projects.column.updated")}</span><span />
         </div>
         {data.projects.map((project) => <Card key={project.id}><CardContent className={cn("grid gap-4 p-5 xl:items-center", rowColumns)}>
-          <button className="min-w-0 text-left" onClick={() => onOpen(project)}><p className="font-medium hover:text-primary">{project.name}</p><p className="mt-1 truncate text-xs text-muted-foreground">{project.id}{project.recipe ? ` · ${project.recipe}` : ""}</p>{project.error && <p className="mt-1 line-clamp-1 text-xs text-destructive">{project.error}</p>}{project.warnings?.map((warning, index) => <p key={`${warning.code}-${index}`} className="mt-1 line-clamp-1 text-xs text-warning"><AlertTriangle className="mr-1 inline size-3" />{warning.message}</p>)}</button>
+          <button className="min-w-0 text-left" onClick={() => onOpen(project)} title={project.id}><p className="font-medium hover:text-primary-text">{project.name}</p><p className="mt-1 truncate text-xs text-muted-foreground">{project.recipe ? recipeNames[project.recipe] ?? project.recipe : t(tierLabelKey[project.tier] ?? "tier.template")}</p>{project.error && <p className="mt-1 line-clamp-1 text-xs text-destructive">{project.error}</p>}{project.warnings?.map((warning, index) => <p key={`${warning.code}-${index}`} className="mt-1 line-clamp-1 text-xs text-warning-text"><AlertTriangle className="mr-1 inline size-3" />{warning.message}</p>)}</button>
           <ProjectDatum label={t("projects.column.tier")} value={t(tierLabelKey[project.tier] ?? "tier.template")} />
           <ProjectDatum label={t("projects.column.phase")} value={project.currentPhase ? t(phaseLabelKey[project.currentPhase]) : "—"} />
           <div><p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground xl:hidden">{t("projects.column.status")}</p><Badge className={`${statusClass[project.status]} w-fit border-0`}>{t(statusLabelKey[project.status])}</Badge></div>

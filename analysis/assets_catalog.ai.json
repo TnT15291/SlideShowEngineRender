@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-26T04:18:28.507Z",
+  "generatedAt": "2026-08-08T15:47:57.312Z",
   "version": 1,
   "purpose": "Short asset menu for AI Director. Choose ids only; timeline generator maps ids to local paths.",
   "counts": {
     "fonts": 18,
-    "overlays": 41,
-    "backgrounds": 11,
+    "overlays": 45,
+    "backgrounds": 15,
     "frames": 20
   },
   "fonts": [
@@ -1202,6 +1202,60 @@
       "recommendedOpacity": 0.35
     },
     {
+      "id": "ov_crescent_halo_screen",
+      "label": "Crescent Halo Screen",
+      "summary": "Crescent Halo Screen; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "moonlight",
+        "celestial",
+        "romantic"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "opening",
+        "title"
+      ],
+      "colors": [
+        "navy",
+        "silver",
+        "cool"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.22
+    },
+    {
+      "id": "ov_lunar_dust_screen",
+      "label": "Lunar Dust Screen",
+      "summary": "Lunar Dust Screen; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "soft",
+        "dreamy",
+        "moonlight",
+        "celestial",
+        "romantic"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "opening",
+        "title"
+      ],
+      "colors": [
+        "navy",
+        "silver",
+        "cool"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.28
+    },
+    {
       "id": "ov_photoshop_overlay_wedding_bokeh",
       "label": "Photoshop Overlay Wedding Bokeh",
       "summary": "Photoshop Overlay Wedding Bokeh; local overlay asset.",
@@ -1225,6 +1279,60 @@
       ],
       "recommendedBlend": "screen",
       "recommendedOpacity": 0.35
+    },
+    {
+      "id": "ov_frosted_edge_screen",
+      "label": "Frosted Edge Screen",
+      "summary": "Frosted Edge Screen; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "winter",
+        "airy",
+        "elegant"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "opening",
+        "title",
+        "winter"
+      ],
+      "colors": [
+        "white",
+        "cream",
+        "silver",
+        "cool"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.28
+    },
+    {
+      "id": "ov_snow_dust_screen",
+      "label": "Snow Dust Screen",
+      "summary": "Snow Dust Screen; local overlay asset.",
+      "type": "overlay",
+      "mood": [
+        "winter",
+        "airy",
+        "elegant"
+      ],
+      "bestFor": [
+        "memory",
+        "ceremony",
+        "ending",
+        "opening",
+        "title",
+        "winter"
+      ],
+      "colors": [
+        "white",
+        "cream",
+        "silver",
+        "cool"
+      ],
+      "recommendedBlend": "screen",
+      "recommendedOpacity": 0.28
     }
   ],
   "backgrounds": [
@@ -1401,6 +1509,54 @@
       ]
     },
     {
+      "id": "bg_moonlit_cloud_garden",
+      "label": "Moonlit Cloud Garden",
+      "summary": "Moonlit Cloud Garden; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "soft",
+        "dreamy",
+        "moonlight",
+        "celestial",
+        "romantic"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "ceremony"
+      ],
+      "colors": [
+        "navy",
+        "silver",
+        "cool"
+      ]
+    },
+    {
+      "id": "bg_moonlit_silk_crescent",
+      "label": "Moonlit Silk Crescent",
+      "summary": "Moonlit Silk Crescent; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "soft",
+        "dreamy",
+        "moonlight",
+        "celestial",
+        "romantic"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "ceremony"
+      ],
+      "colors": [
+        "navy",
+        "silver",
+        "cool"
+      ]
+    },
+    {
       "id": "bg_silk_champagne_leaf",
       "label": "Silk Champagne Leaf",
       "summary": "Silk Champagne Leaf; use for title cards, chapter cards, or soft interludes.",
@@ -1413,6 +1569,52 @@
         "opening",
         "title",
         "ending"
+      ]
+    },
+    {
+      "id": "bg_snow_white_silk_frost",
+      "label": "Snow White Silk Frost",
+      "summary": "Snow White Silk Frost; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "winter",
+        "airy",
+        "elegant"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "winter"
+      ],
+      "colors": [
+        "white",
+        "cream",
+        "silver",
+        "cool"
+      ]
+    },
+    {
+      "id": "bg_snow_white_winter_garden",
+      "label": "Snow White Winter Garden",
+      "summary": "Snow White Winter Garden; use for title cards, chapter cards, or soft interludes.",
+      "type": "video_background",
+      "mood": [
+        "winter",
+        "airy",
+        "elegant"
+      ],
+      "bestFor": [
+        "opening",
+        "title",
+        "ending",
+        "winter"
+      ],
+      "colors": [
+        "white",
+        "cream",
+        "silver",
+        "cool"
       ]
     }
   ],

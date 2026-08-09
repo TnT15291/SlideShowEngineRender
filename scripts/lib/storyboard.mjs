@@ -44,6 +44,22 @@ export const CLOSING_SEC = 8;
 export const DEFAULT_MAX_REUSE = 1;
 export const MIN_K = 0.9;
 export const MAX_K = 1.7;
+/**
+ * The largest share of the photo surplus the CARDS may claim before the montages draw.
+ *
+ * The montage loop in allocatePhotos sizes its own appetite as `surplus / 5` montages and
+ * then gives each `ceil(surplus / remaining)` — a sum that consumes the entire surplus by
+ * construction, every time. The card-enrichment loop that runs after it therefore always
+ * found nothing left, and `cardSlots` was a parameter that was computed, passed, and never
+ * once acted on: measured on a real 37-scene job, all 45 surplus photographs went to 9
+ * montages and every one of the 11 cards held a single photograph. That is what made a Lite
+ * film read as a slideshow — the library's 8 two-slot, 9 three-slot and 4 four-slot layouts
+ * were unreachable no matter how photo-rich the album was.
+ *
+ * Half, not all: a montage is still the shape with the most room, and starving it to fill
+ * cards would just trade one monotony for another.
+ */
+export const CARD_SURPLUS_SHARE = 0.5;
 
 export { layoutsByPhotoCount };
 
@@ -52,7 +68,11 @@ export { layoutsByPhotoCount };
 export const DEFAULT_GRAMMAR = {
   singlePhotoEffects: ["slow_zoom_in", "kenburns_tl", "pan_right", "slow_zoom_out", "kenburns_br", "dark_feather"],
   montageEffects: ["film_roll_up", "collage_grid", "memory_wall"],
-  transitionPalette: ["crossfade", "dissolve", "fade_slow"],
+  // One entry per transition ROLE composeStoryboard can fill — default, chapter, peak,
+  // quiet, final. A palette shorter than the roles guarantees two of them play the same cut;
+  // measured against the authored corpus (median 5 distinct transitions) a composed film
+  // scored 3 when this held three names.
+  transitionPalette: ["crossfade", "dissolve", "fade_slow", "fade_to_black", "fade_to_white"],
   layoutMix: 0.35,
   easingCalm: "gentle",
   easingEnergetic: "snap",
@@ -132,6 +152,20 @@ function allocatePhotos({ budget, energyAt, times, buckets, montageCap = 0, card
   const byEnergy = times.map((t, i) => ({ i, e: energyAt(t) })).sort((a, b) => b.e - a.e);
   const picked = [];
 
+  // WHICH card size to aim for, decided before anything is spent because the montages
+  // below have to know what to leave behind. Size 3 over size 2 where the library allows
+  // it: the 3-bucket holds nine layouts and the 2-bucket eight, so enriching everything to
+  // 2 would hand back the same frame every time.
+  const sizes = [3, 2].filter((n) => (buckets.get(n)?.length ?? 0) > 0);
+  const preferred = sizes.sort((a, b) => (buckets.get(b).length - buckets.get(a).length) || b - a)[0];
+  // Reserve the cards' share up front — see CARD_SURPLUS_SHARE. Whatever the montages do
+  // not draw stays available to the cards, and the remainder loop at the end still hands
+  // anything the cards cannot spend back to the montages, so nothing is stranded.
+  const cardReserve = preferred && cardSlots > 0
+    ? Math.min(cardSlots * (preferred - 1), Math.floor(surplus * CARD_SURPLUS_SHARE))
+    : 0;
+  let montageSurplus = surplus - cardReserve;
+
   // A montage is only worth being one at four photographs; below that it is a crossfade
   // with extra machinery. And it can only hold what the director's chosen montage effects
   // can hold — a palette of nothing but double_exposure tops out at two, so there are no
@@ -146,7 +180,7 @@ function allocatePhotos({ budget, energyAt, times, buckets, montageCap = 0, card
     // ~5 photographs per montage rather than the 12 it could hold: two montages of five are
     // a rhythm, one of nine is a lump. The ceiling is the non-adjacency rule itself — no two
     // montages in a row, and none on the bookends.
-    const wanted = Math.min(Math.round(surplus / 5), Math.floor((count - 1) / 2));
+    const wanted = Math.min(Math.round(montageSurplus / 5), Math.floor((count - 1) / 2));
     for (const { i } of byEnergy) {
       if (picked.length >= wanted) break;
       if (i === 0 || i === count - 1) continue;              // the opening is a title card
@@ -159,25 +193,21 @@ function allocatePhotos({ budget, energyAt, times, buckets, montageCap = 0, card
   // Share the surplus BETWEEN the montages rather than pouring it all into the first one.
   // Handing the loudest beat everything it could hold produced a single nine-photo sweep
   // and left the second montage empty — one lump, not a rhythm.
-  for (let k = 0; k < picked.length && surplus > 0; k++) {
-    const share = Math.min(montageCap - 1, Math.ceil(surplus / (picked.length - k)));
+  for (let k = 0; k < picked.length && montageSurplus > 0; k++) {
+    const share = Math.min(montageCap - 1, Math.ceil(montageSurplus / (picked.length - k)));
     if (1 + share < 4) continue;
     photos[picked[k]] += share;
-    surplus -= share;
+    montageSurplus -= share;
     montageAt.add(picked[k]);
   }
+  // Whatever the montages left plus the reserve is what the cards may now spend.
+  surplus = montageSurplus + cardReserve;
 
-  // Anything still left over enriches the CARDS — a card holding three photographs is a
-  // different picture from a card holding one. Only a layout can render a multi-photo
-  // scene that is not a montage, so enriching a scene MAKES it a card: this loop is bounded
-  // by the card budget, or the surplus would quietly turn the whole film back into the
-  // slideshow of text cards this rewrite exists to end.
-  //
-  // Size 3 over size 2 where the library allows it, because the 3-bucket holds three
-  // layouts and the 2-bucket holds exactly one — enrich everything to 2 and you get the
-  // same frame every time.
-  const sizes = [3, 2].filter((n) => (buckets.get(n)?.length ?? 0) > 0);
-  const preferred = sizes.sort((a, b) => (buckets.get(b).length - buckets.get(a).length) || b - a)[0];
+  // Spend the reserve on the CARDS — a card holding three photographs is a different
+  // picture from a card holding one. Only a layout can render a multi-photo scene that is
+  // not a montage, so enriching a scene MAKES it a card: this loop stays bounded by the
+  // card budget, or the surplus would quietly turn the whole film back into the slideshow
+  // of text cards this rewrite exists to end.
   let cards = 0;
   for (const { i } of byEnergy) {
     if (surplus <= 0 || !preferred || cards >= cardSlots) break;
@@ -332,6 +362,30 @@ export function composeStoryboard({
       ...(EASING_EFFECTS.has(scene.effect) ? { easing: e > 0.6 ? g.easingEnergetic : g.easingCalm } : {}),
     };
   });
+
+  // THE QUIET ROLE, decided against this film's own energy rather than a fixed number.
+  //
+  // Four transition roles left a composed film one short of the authored corpus's five, and
+  // an absolute threshold would have been worse than none: a track that never drops below
+  // 0.4 would never once cut quietly, and a uniformly gentle one would cut quietly
+  // throughout. The calmest quarter of THIS film gets the gentlest cut, which is both a
+  // real editorial decision and one that always has somewhere to land.
+  //
+  // `peak`, `chapter` and the opening keep what they were given: those are structural, and a
+  // low-energy act change is still an act change.
+  // A track with no dynamic range gets no quiet role at all — `energy <= q1` would be true of
+  // EVERY scene on a flat curve, which is not "the calmest quarter", it is the whole film, and
+  // it would leave `default` in the vocabulary as a cut that never plays.
+  const sortedEnergy = [...draft.map((s) => s.energy)].sort((a, b) => a - b);
+  const q1 = sortedEnergy[Math.floor(draft.length / 4)];
+  const median = sortedEnergy[Math.floor(draft.length / 2)];
+  if (q1 < median) {
+    for (const scene of draft) {
+      if (scene.transitionRole === "default" && scene.energy <= q1 && scene.id !== draft[0].id) {
+        scene.transitionRole = "quiet";
+      }
+    }
+  }
 
   // Lay the scenes out at their natural length, then scale the whole set so it lands on
   // the track. Scaling is uniform, so the RATIOS survive — a montage still runs twice as

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { retimeSlidesToMusic } from "../scripts/lib/musicRetime.mjs";
+import { retimeSlidesToMusic, MAX_TRANSITION_RATIO, ALLOCATOR_VERSION } from "../scripts/lib/musicRetime.mjs";
 
 test("music retiming preserves authored structure and fits the track", () => {
   const slides = [
@@ -62,4 +62,28 @@ test("music retiming never emits a scene below the configured floor", () => {
   const netDurations = result.slides.map((slide) => slide.duration - slide.transition.duration);
   assert.ok(netDurations.every((duration) => duration >= 2.5));
   assert.equal(+netDurations.reduce((sum, duration) => sum + duration, 0).toFixed(3), 10);
+});
+
+test("allocator applies relative pacing intents globally without duration drift", () => {
+  const slides = Array.from({ length: 5 }, (_, index) => ({
+    id: `s${index + 1}`, duration: 6,
+    transition: { type: index === 4 ? "none" : "crossfade", duration: index === 4 ? 0 : 1 },
+  }));
+  const result = retimeSlidesToMusic(slides, { duration: 40 }, { pacingAdjustments: [{ sceneId: "s2", scale: 0.6 }] });
+  const net = result.slides.reduce((sum, slide, index) => sum + slide.duration - (index < 4 ? slide.transition.duration : 0), 0);
+  assert.ok(result.slides[1].duration < result.slides[2].duration, "compressed scene should receive less time than its neighbour");
+  assert.ok(Math.abs(net - 40) <= 0.1);
+  assert.equal(result.drift, 0);
+  assert.equal(result.sync.allocatorVersion, ALLOCATOR_VERSION);
+});
+
+test("transition ratio stays below the corpus-backed 30% cap", () => {
+  const slides = Array.from({ length: 4 }, (_, index) => ({
+    id: `s${index + 1}`, duration: 3,
+    transition: { type: index === 3 ? "none" : "crossfade", duration: index === 3 ? 0 : 1.25 },
+  }));
+  const result = retimeSlidesToMusic(slides, { duration: 10, beatGrid: { beatSeconds: 1 } });
+  for (const slide of result.slides.slice(0, -1)) {
+    assert.ok(slide.transition.duration / slide.duration <= MAX_TRANSITION_RATIO + 0.001);
+  }
 });

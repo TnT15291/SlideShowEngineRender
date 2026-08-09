@@ -279,10 +279,32 @@ function checkCaptionText(
   const lines = caption.text.split("\n");
   const maxLine = Math.max(0, ...lines.map((line) => line.length));
   const estimatedWidth = maxLine * size * AVG_GLYPH;
+  // How hard to judge a caption is a POLICY decision, and the builder resolves it from the
+  // tier's own row in scripts/lib/rules/policy.mjs (`text_safe_area`). It used to be
+  // inferred here from `pipelineVersion === "lite-v2"` — a string only the Lite generator
+  // ever wrote — so the same overrun was an error for Lite and a warning for everyone else
+  // by accident of provenance. A timeline that declares nothing keeps the lenient reading:
+  // hand-built and legacy timelines are not the thing this gate is for.
+  const strictLiteText = Boolean(
+    (timeline as Timeline & { metadata?: { strictText?: boolean } }).metadata?.strictText
+  );
   if (estimatedWidth > safeWidth) {
-    stats.warnings.push(
-      `${label} caption may exceed safe width; add manual line breaks`
-    );
+    (strictLiteText ? stats.errors : stats.warnings).push(`${label} caption exceeds the 86% safe width after fitting`);
+  }
+  if (lines.length > 3) {
+    (strictLiteText ? stats.errors : stats.warnings).push(`${label} caption has ${lines.length} lines; maximum is 3`);
+  }
+  const estimatedHeight = lines.length * size * 1.32;
+  if (estimatedHeight > timeline.project.height * 0.34) {
+    (strictLiteText ? stats.errors : stats.warnings).push(`${label} caption exceeds the vertical safe box`);
+  }
+  const language = (timeline as Timeline & { language?: string }).language;
+  const units = language === "en"
+    ? caption.text.trim().split(/\s+/).filter(Boolean).length
+    : caption.text.replace(/\s/g, "").length;
+  const limit = language === "en" ? 3 : 18;
+  if (caption.duration <= 0 || units / caption.duration > limit) {
+    (strictLiteText ? stats.errors : stats.warnings).push(`${label} caption exceeds reading-rate policy (${limit} ${language === "en" ? "words" : "characters"}/s)`);
   }
 }
 

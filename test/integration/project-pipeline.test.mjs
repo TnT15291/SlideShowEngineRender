@@ -94,7 +94,7 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   const timelinePath = path.join(projectDir, "timeline", "timeline.json");
   assert.ok(fs.existsSync(timelinePath));
   const timeline = readJson(timelinePath);
-  assert.equal(timeline.slides.length, 4);
+  assert.ok(timeline.slides.length >= 3, "common composer must keep a readable opening/body/closing shape");
   assert.equal(timeline.output.path, `${projectRel}/output/final.mp4`);
   run(node, ["scripts/lib/checkSchema.mjs", "schema/timeline.schema.json", path.relative(root, timelinePath)]);
 
@@ -105,7 +105,7 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   const qaDir = path.join(projectDir, "analysis", "qa");
   const qa = readJson(path.join(qaDir, "timeline.json"));
   assert.equal(qa.flagged, 0);
-  assert.equal(qa.scenes, 4);
+  assert.equal(qa.scenes, timeline.slides.length);
   assert.ok(fs.existsSync(path.join(qaDir, "timeline.proxy.json")));
 
   const metadata = JSON.parse(run(ffprobe, [
@@ -146,8 +146,15 @@ test("project pipeline dry-runs, renders, resumes, QAs and delivers", { timeout:
   }
   const summary = readJson(path.join(deliveryDir, "project_summary.json"));
   assert.equal(summary.tier, "lite");
-  assert.equal(summary.qa.verdict, "ok");
+  assert.equal(summary.qa.verdict, "pass");
   assert.equal(summary.provenance.photoContent, "stub");
+  const timelinePhotos = timeline.slides.flatMap((slide) => [
+    ...(slide.image ? [slide.image] : []),
+    ...(slide.images || []),
+    ...(slide.layers || []).filter((layer) => layer.type === "image" && layer.path).map((layer) => layer.path),
+  ]);
+  assert.equal(summary.content.photosUsed, timelinePhotos.length);
+  assert.equal(summary.content.uniquePhotos, new Set(timelinePhotos).size);
   assert.equal(summary.preview.watermark, "StoReel Preview");
   assert.ok(summary.preview.durationSec <= 60.1);
 

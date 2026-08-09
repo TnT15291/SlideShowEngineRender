@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { getRecipe } from "./recipes.js"
 import { writeJsonAtomic } from "./atomicFile.js"
+import { redactEnginePaths } from "./failureCause.js"
 import { manualCompletionReason, manualCompletionWarning } from "./jobs.js"
 
 const phaseNames = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
@@ -71,7 +72,15 @@ export const projectSummarySchema = z.object({
 })
 
 export type ProjectSummary = z.infer<typeof projectSummarySchema>
-export type ProjectIssue = { projectId: string; message: string; detail: string }
+/**
+ * `ownerId` is `null` when the manifest itself is what could not be read — the
+ * folder's owner is unknowable, so the issue belongs to whoever operates the
+ * server, not to a customer. `/api/projects` filters on this: a signed-in
+ * customer must only ever be told about their own projects, and a brand-new
+ * account with nothing in it used to open on "1 project folder can't be
+ * opened" naming somebody else's directory.
+ */
+export type ProjectIssue = { projectId: string; ownerId: string | null; message: string; detail: string }
 export type ProjectListResult = { projects: ProjectSummary[]; issues: ProjectIssue[] }
 
 /**
@@ -162,7 +171,7 @@ export async function listProjects(engineRoot = process.cwd()): Promise<ProjectL
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
           jobError = error instanceof Error ? error.message : String(error)
-          issues.push({ projectId: project.id, ...describeIssue(error, `projects/${entry.name}/job.json`, "job history") })
+          issues.push({ projectId: project.id, ownerId: project.ownerId || null, ...describeIssue(error, `projects/${entry.name}/job.json`, "job history") })
         }
       }
 
@@ -182,7 +191,9 @@ export async function listProjects(engineRoot = process.cwd()): Promise<ProjectL
         progress: job ? progressFromJob(job) : 0,
         updatedAt: job?.updatedAt || project.createdAt || manifestStat.mtime.toISOString(),
         createdAt: project.createdAt || null,
-        error: jobError || job?.error?.message || null,
+        // The engine logs absolute paths; the project list is a customer
+        // surface, so the host's filesystem never reaches it.
+        error: redactEnginePaths(jobError || job?.error?.message || "", engineRoot) || null,
         warnings: job?.warnings?.length
           ? job.warnings
           : job?.phases.deliver.reason === manualCompletionReason ? [manualCompletionWarning] : [],
@@ -192,7 +203,9 @@ export async function listProjects(engineRoot = process.cwd()): Promise<ProjectL
         shared: Boolean(project.shared),
       }))
     } catch (error) {
-      issues.push({ projectId: entry.name, ...describeIssue(error, `projects/${entry.name}/project.json`, "settings") })
+      // No readable manifest means no readable `ownerId`, so this one is an
+      // operator problem — see the `ProjectIssue.ownerId` note above.
+      issues.push({ projectId: entry.name, ownerId: null, ...describeIssue(error, `projects/${entry.name}/project.json`, "settings") })
     }
   }
 

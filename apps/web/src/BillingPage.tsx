@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { apiGet, apiPost } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
 import { intlLocales, useI18n, type Locale } from "@/lib/i18n"
-import type { BillingCatalog } from "@/types"
+import { cn } from "@/lib/utils"
+import { planIsExhausted, planSummary } from "@/planFormat"
+import type { BillingCatalog, Plan } from "@/types"
 
 function formatPrice(unitAmountCents: number, currency: string, locale: Locale): string {
   try {
@@ -24,7 +26,7 @@ function formatVnd(amount: number): string {
   return `${new Intl.NumberFormat("vi-VN").format(amount)} ₫`
 }
 
-export function BillingPage({ onOpenNav }: { onOpenNav: () => void }) {
+export function BillingPage({ onOpenNav, plan }: { onOpenNav: () => void; plan: Plan }) {
   const { t, locale } = useI18n()
   const [catalog, setCatalog] = useState<BillingCatalog | null>(null)
   const [busy, setBusy] = useState<"stripe_subscription" | "stripe_per_video" | "momo_per_video" | null>(null)
@@ -63,6 +65,17 @@ export function BillingPage({ onOpenNav }: { onOpenNav: () => void }) {
       </header>
 
       <div className="mx-auto max-w-4xl px-6 py-10 md:px-10">
+        {/* What the account is on right now, before what it could buy. */}
+        <Card className="mb-6">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("billing.currentPlan")}</p>
+              <p className="mt-1 font-medium">{t(plan.type === "per_video" ? "billing.currentPerVideo" : "billing.currentSubscription")}</p>
+            </div>
+            <p className={cn("text-sm", planIsExhausted(plan) ? "font-medium text-warning-text" : "text-muted-foreground")}>{planSummary(plan, t)}</p>
+          </CardContent>
+        </Card>
+        <p className="mb-6 text-xs leading-5 text-muted-foreground">{t("billing.failedRefundNote")}</p>
         {error && <Card className="mb-6 border-destructive/40 bg-destructive/5"><CardContent className="p-5 text-sm text-destructive">{error}</CardContent></Card>}
         {!catalog && !error && <p className="text-sm text-muted-foreground">{t("billing.loading")}</p>}
         {catalog && (
@@ -103,8 +116,8 @@ export function BillingPage({ onOpenNav }: { onOpenNav: () => void }) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2"><Check className="size-4 text-success" /> {t("billing.rendersPerPeriod", { quota: catalog.subscription.monthlyRenderQuota })}</li>
-                  <li className="flex items-center gap-2"><Check className="size-4 text-success" /> {t("billing.cancelAnyTime")}</li>
+                  <li className="flex items-center gap-2"><Check className="size-4 text-success-text" /> {t("billing.rendersPerPeriod", { quota: catalog.subscription.monthlyRenderQuota })}</li>
+                  <li className="flex items-center gap-2"><Check className="size-4 text-success-text" /> {t("billing.cancelAnyTime")}</li>
                 </ul>
                 <Button className="w-full" onClick={() => void checkout("subscription", "stripe")} disabled={busy !== null}>
                   {busy === "stripe_subscription" ? t("billing.redirecting") : t("billing.subscribe")}

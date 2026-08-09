@@ -209,10 +209,10 @@
     "notes": "Adapted from Tuan Tien Slideshow.mp4: an 18:37 classic wedding slideshow using five romantic/pop songs, portrait cards over blurred backdrops, photo stacks, grids, page turns, white flashes and checker mosaics. Designed for long playlists and roughly 140-220 photographs."
   },
   "intro": {
-    "summary": "Album cưới cổ điển dạng phim dài, nối nhiều bài nhạc và thay đổi nhịp theo từng chương.",
-    "photos": "Phù hợp bộ ảnh lớn 140–220 tấm, gồm ảnh chân dung, ngoại cảnh, đời thường, chi tiết và ảnh cưới.",
-    "story": "Mở đầu nhẹ nhàng, đi qua chân dung và kỷ niệm, tăng tốc ở chương vui, rồi kết bằng lời hứa cưới.",
-    "music": "Playlist 4–6 bài, tổng khoảng 14–20 phút; acoustic/ballad ở đầu và cuối, pop vừa hoặc nhanh ở chương celebration."
+    "summary": { "vi": "Album cưới cổ điển dạng phim dài, nối nhiều bài nhạc và thay đổi nhịp theo từng chương.", "en": "A classic long-form wedding album that runs several songs together and changes pace chapter by chapter." },
+    "photos": { "vi": "Phù hợp bộ ảnh lớn 140–220 tấm, gồm ảnh chân dung, ngoại cảnh, đời thường, chi tiết và ảnh cưới.", "en": "Built for a large set of 140–220 photos: portraits, location work, candids, details and the wedding itself." },
+    "story": { "vi": "Mở đầu nhẹ nhàng, đi qua chân dung và kỷ niệm, tăng tốc ở chương vui, rồi kết bằng lời hứa cưới.", "en": "Opens gently, moves through portraits and memories, lifts for a celebration chapter, then closes on the wedding promise." },
+    "music": { "vi": "Playlist 4–6 bài, tổng khoảng 14–20 phút; acoustic/ballad ở đầu và cuối, pop vừa hoặc nhanh ở chương celebration.", "en": "A playlist of 4–6 tracks, roughly 14–20 minutes total; acoustic or ballad at each end, medium-to-fast pop through the celebration chapter." }
   },
   "fit": {
     "bestFor": [

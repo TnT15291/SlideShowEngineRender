@@ -32,9 +32,16 @@ export function RecipeSwatch({ recipe, className, compact = false }: { recipe: S
       onError={(event) => { event.currentTarget.hidden = true; setImageLoaded(false) }}
       aria-hidden="true"
     />
-    {/* Guarantees the lettering keeps its contrast even when a palette lands
-        near the luminance threshold the ink choice is made on. */}
-    <div className={cn("absolute inset-0 bg-gradient-to-t", lightInk ? "from-black/70 via-black/10 to-transparent" : "from-white/55 to-transparent")} />
+    {/*
+      A linear scrim reached only ~black/38 behind the title, because the text
+      block sits about a quarter of the way up rather than on the very bottom
+      edge where `from-` is at full strength. On the White Weddings and Garden
+      themes — near-white photographs — the recipe name was close to unreadable,
+      and it is the only place the name is drawn at all (RecipeLibrary's
+      CardTitle is `sr-only`). The scrim is now a solid band sized to the text
+      it has to carry, fading out above it.
+    */}
+    <div className={cn("absolute inset-x-0 bottom-0 h-3/5", lightInk ? "bg-gradient-to-t from-black/80 from-40% to-transparent" : "bg-gradient-to-t from-white/85 from-40% to-transparent")} />
     <Clapperboard className={cn("absolute right-3 top-3 size-4", lightInk ? "text-white/70" : "text-black/40")} aria-hidden="true" />
     {swatches.length > 0 && <div className="absolute left-3 top-3 flex gap-1" aria-hidden="true">
       {swatches.map(([name, color]) => <span key={name} title={`${name}: ${color}`} className="size-2.5 rounded-full ring-1 ring-black/10" style={{ backgroundColor: color }} />)}

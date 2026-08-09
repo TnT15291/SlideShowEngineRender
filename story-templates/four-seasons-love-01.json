@@ -165,10 +165,10 @@
     "notes": "A seasonal chapter structure where changes in light, color and pace mirror a relationship maturing toward marriage."
   },
   "intro": {
-    "summary": "Cấu trúc theo bốn mùa — ánh sáng và màu sắc đổi theo mùa, phản chiếu một tình yêu trưởng thành dần tới hôn nhân.",
-    "photos": "Cần ảnh trải dài nhiều thời điểm/nhiều năm bên nhau — ảnh du lịch, ảnh theo mùa, ảnh ngoài trời ở nhiều bối cảnh khác nhau.",
-    "story": "Phù hợp cặp đôi yêu nhau lâu năm, có nhiều kỷ niệm theo thời gian, muốn kể hành trình 'trưởng thành cùng nhau' trước ngày cưới.",
-    "music": "Hợp nhạc acoustic, hoài niệm, dần tươi sáng lên, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Cấu trúc theo bốn mùa — ánh sáng và màu sắc đổi theo mùa, phản chiếu một tình yêu trưởng thành dần tới hôn nhân.", "en": "Structured around the four seasons — light and colour shift with each one, mirroring a love that grew into a marriage." },
+    "photos": { "vi": "Cần ảnh trải dài nhiều thời điểm/nhiều năm bên nhau — ảnh du lịch, ảnh theo mùa, ảnh ngoài trời ở nhiều bối cảnh khác nhau.", "en": "Needs photos spanning several periods or years together — travel, seasonal shots, outdoor images in a range of settings." },
+    "story": { "vi": "Phù hợp cặp đôi yêu nhau lâu năm, có nhiều kỷ niệm theo thời gian, muốn kể hành trình 'trưởng thành cùng nhau' trước ngày cưới.", "en": "For couples together a long time, with memories built up over the years, who want the 'growing up together' journey before the wedding day." },
+    "music": { "vi": "Hợp nhạc acoustic, hoài niệm, dần tươi sáng lên, tiết tấu chậm đến vừa.", "en": "Suits acoustic and nostalgic music that brightens as it goes, at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

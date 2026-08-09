@@ -31,6 +31,14 @@
 //                        by REWRITING them (lib/recipeCopyPolicy.mjs runs writeRecipeCopy
 //                        only for language "en"), so English-authored copy has no rewrite
 //                        step on the default vi path — it just ships in the wrong language
+//
+// TWO PROFILES, ONE RULE SET. `profile: "composed"` judges a storyboard that
+// composeStoryboard.mjs GENERATED (premium node 8, and lite through the same composer)
+// rather than one a person wrote. Everything about how a frame RENDERS is judged
+// identically — a black canvas is a black canvas whoever emitted it. What is skipped is
+// the handful of rules that ask an AUTHOR for material a generator has no way to supply,
+// and which nothing downstream would read anyway: see AUTHORING_ONLY below. Skipping is
+// per-rule and stated, so the two profiles cannot silently drift apart.
 import { hasEnglishCopy, inspectCaptionLanguage } from "../captionLanguage.mjs";
 import {
   TEMPLATE_MIN_SCENES, TEMPLATE_MIN_DISTINCT_LOOKS, TEMPLATE_MIN_REPEATABLE_SCENES,
@@ -79,10 +87,47 @@ const isBody = (scene, index, scenes) =>
   index > 0 && scene.durationRole !== "closing";
 
 /**
+ * Rules that only make sense against a hand-authored recipe, with the reason each one
+ * cannot be asked of a composed storyboard. A rule is listed here ONLY when a generated
+ * film cannot fail the underlying defect, never merely because it currently would fail.
+ *
+ *   repeat_depth       repeat variants exist so a LONG song can replay a scene without
+ *                      going mute. applyStoryTemplate does not re-solve a storyboard whose
+ *                      source.origin is "composed" — the composer already fitted the shot
+ *                      list to this exact track — so no composed scene ever recurs.
+ *   balanced_text/     the muteFallback half of that rule is the same argument: a stand-in
+ *     mute_fallback    for a wordless RECURRENCE, and there are no recurrences. The
+ *                      "textRequired layout with no copy" half still applies and still runs.
+ *   signature_hybrid   the >=2 floor asks an author to spend the engine's richest scenes.
+ *                      applySignatureHybridScene substitutes at most ONE, by construction,
+ *                      because every other scene's duration and photo count were already
+ *                      solved. The <=3 cap, the <=1 Blender cap and the renderer/template
+ *                      consistency checks are real render constraints and still run.
+ *   copy_language      recipes are authored in Vietnamese and rewritten for "en" jobs.
+ *                      Composed copy is written by writeRecipeCopy in the job's own
+ *                      language, so English here is the product, not a defect.
+ *   scene_count_min    an author chooses how many scenes to write; a composer SOLVES the
+ *                      count from the album and the track (planSceneCount). Demanding 8
+ *                      scenes of a six-photograph job demands something the input cannot
+ *                      supply. The distinct-looks half of scene_variety still runs, scaled
+ *                      to the film's own length — see below.
+ */
+const AUTHORING_ONLY = new Set([
+  "repeat_depth", "mute_fallback", "signature_hybrid_min", "copy_language", "scene_count_min",
+]);
+
+/**
  * Evaluate one story template against the authoring rules.
+ * @param {object} template a recipe, authored or composed
+ * @param {{library: object, profile?: "authored"|"composed"}} options
  * @returns {{errors: object[], warnings: object[], verdict: string}}
  */
-export function evaluateStoryTemplate(template, { library }) {
+export function evaluateStoryTemplate(template, { library, profile = "authored" }) {
+  if (!["authored", "composed"].includes(profile)) {
+    throw new Error(`evaluateStoryTemplate: profile must be "authored" or "composed", got "${profile}"`);
+  }
+  /** Does this rule run under the active profile? */
+  const runs = (rule) => profile === "authored" || !AUTHORING_ONLY.has(rule);
   const errors = [];
   const warnings = [];
   const layouts = new Map((library?.layouts ?? []).map((l) => [l.id, l]));
@@ -128,14 +173,19 @@ export function evaluateStoryTemplate(template, { library }) {
   }
 
   // -- scene_variety ------------------------------------------------------------
-  if (scenes.length < TEMPLATE_MIN_SCENES) {
+  if (runs("scene_count_min") && scenes.length < TEMPLATE_MIN_SCENES) {
     errors.push(finding("scene_variety", null,
       `${scenes.length} scenes; a palette under ${TEMPLATE_MIN_SCENES} makes the solver repeat it sooner`));
   }
   const looks = new Set(scenes.map(lookOf));
-  if (looks.size < TEMPLATE_MIN_DISTINCT_LOOKS) {
+  // A composed film cannot show more distinct looks than it has scenes, and its scene count
+  // is solved from the job rather than chosen — so the floor is the smaller of the two.
+  const looksFloor = profile === "composed"
+    ? Math.min(TEMPLATE_MIN_DISTINCT_LOOKS, scenes.length)
+    : TEMPLATE_MIN_DISTINCT_LOOKS;
+  if (looks.size < looksFloor) {
     errors.push(finding("scene_variety", null,
-      `${looks.size} distinct looks (${[...looks].join(", ")}); minimum is ${TEMPLATE_MIN_DISTINCT_LOOKS}`));
+      `${looks.size} distinct looks (${[...looks].join(", ")}); minimum is ${looksFloor}`));
   }
 
   // -- look_adjacency -----------------------------------------------------------
@@ -223,24 +273,26 @@ export function evaluateStoryTemplate(template, { library }) {
         `layout ${layout.id} is textRequired but the scene supplies no copy — its text region renders as empty background`));
     }
     if (!isBody(scene, index, scenes)) return;
-    const demand = photoDemand(scene, library);
-    const fallback = scene.muteFallback;
-    // The stand-in may be named as a look or as a bare layout; both resolve here, so the
-    // rule judges the composition that will actually stand in.
-    const resolvedFallback = resolveAlternative(scene, fallback);
-    const fallbackLayout = resolvedFallback ? layoutOfScene(resolvedFallback) : null;
-    if (!fallback || !fallbackLayout) {
-      errors.push(finding("balanced_text", scene.id,
-        `body scene on textRequired layout ${layout.id} needs a muteFallback layout for wordless recurrences`));
-    } else {
-      if (fallbackLayout.textRequired) {
+    if (runs("mute_fallback")) {
+      const demand = photoDemand(scene, library);
+      const fallback = scene.muteFallback;
+      // The stand-in may be named as a look or as a bare layout; both resolve here, so the
+      // rule judges the composition that will actually stand in.
+      const resolvedFallback = resolveAlternative(scene, fallback);
+      const fallbackLayout = resolvedFallback ? layoutOfScene(resolvedFallback) : null;
+      if (!fallback || !fallbackLayout) {
         errors.push(finding("balanced_text", scene.id,
-          `muteFallback ${fallbackLayout.id} is itself textRequired — a wordless repeat would still be half-empty`));
-      }
-      const fallbackDemand = photoDemand(resolvedFallback, library);
-      if (fallbackDemand !== demand) {
-        errors.push(finding("balanced_text", scene.id,
-          `muteFallback ${fallback.look ?? fallback.layout} costs ${fallbackDemand} photo(s) but the scene costs ${demand} — the solver only adopts an equal-cost stand-in`));
+          `body scene on textRequired layout ${layout.id} needs a muteFallback layout for wordless recurrences`));
+      } else {
+        if (fallbackLayout.textRequired) {
+          errors.push(finding("balanced_text", scene.id,
+            `muteFallback ${fallbackLayout.id} is itself textRequired — a wordless repeat would still be half-empty`));
+        }
+        const fallbackDemand = photoDemand(resolvedFallback, library);
+        if (fallbackDemand !== demand) {
+          errors.push(finding("balanced_text", scene.id,
+            `muteFallback ${fallback.look ?? fallback.layout} costs ${fallbackDemand} photo(s) but the scene costs ${demand} — the solver only adopts an equal-cost stand-in`));
+        }
       }
     }
     for (const [i, variant] of (scene.repeatable?.variants ?? []).entries()) {
@@ -255,7 +307,7 @@ export function evaluateStoryTemplate(template, { library }) {
 
   // -- signature_hybrid ----------------------------------------------------------
   const hybrids = scenes.filter((s) => s.renderer && s.template);
-  if (hybrids.length < 2) {
+  if (runs("signature_hybrid_min") && hybrids.length < 2) {
     errors.push(finding("signature_hybrid", null,
       `${hybrids.length} Remotion/Blender signature scene(s); each recipe must carry 2-3`));
   }
@@ -281,7 +333,7 @@ export function evaluateStoryTemplate(template, { library }) {
   // -- repeat_depth --------------------------------------------------------------
   const withVariants = scenes.filter((s, i) => isBody(s, i, scenes)
     && (s.repeatable?.variants?.length ?? 0) >= 2);
-  if (withVariants.length < TEMPLATE_MIN_REPEATABLE_SCENES) {
+  if (runs("repeat_depth") && withVariants.length < TEMPLATE_MIN_REPEATABLE_SCENES) {
     errors.push(finding("repeat_depth", null,
       `${withVariants.length} body scene(s) carry >=2 repeat variants; minimum is ${TEMPLATE_MIN_REPEATABLE_SCENES} — long songs mute-cycle everything else`));
   }
@@ -320,7 +372,7 @@ export function evaluateStoryTemplate(template, { library }) {
   }
   const copyLanguage = inspectCaptionLanguage(copy, "vi");
   const englishCopy = copy.filter(hasEnglishCopy);
-  if (englishCopy.length || copyLanguage.flags?.includes("wrong_caption_language")) {
+  if (runs("copy_language") && (englishCopy.length || copyLanguage.flags?.includes("wrong_caption_language"))) {
     errors.push(finding("copy_language", null,
       `${englishCopy.length} authored copy string(s) contain English (${copyLanguage.signals.enWords} aggregate English words). `
       + `Recipes are authored in Vietnamese; an English film comes from writeRecipeCopy.mjs rewriting them`));

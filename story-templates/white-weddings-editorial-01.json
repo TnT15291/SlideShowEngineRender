@@ -206,10 +206,10 @@
     "notes": "Adapted from the local White Weddings Theme reference deck: warm ivory editorial pages, restrained serif typography, asymmetric photo stories and soft dissolves."
   },
   "intro": {
-    "summary": "Trang sách cưới ngà ấm phong cách editorial — chữ serif tinh tế, bố cục ảnh bất đối xứng.",
-    "photos": "Hợp ảnh prewedding/save-the-date ngoài trời hoặc vườn, ảnh chi tiết, phong cách tối giản, sang trọng nhẹ nhàng.",
-    "story": "Phù hợp video save-the-date hoặc prewedding kể chuyện ngắn gọn, thanh lịch — giới thiệu cặp đôi và những chi tiết đáng nhớ.",
-    "music": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Trang sách cưới ngà ấm phong cách editorial — chữ serif tinh tế, bố cục ảnh bất đối xứng.", "en": "Warm ivory wedding-book pages in an editorial style — fine serif type and asymmetric photo layouts." },
+    "photos": { "vi": "Hợp ảnh prewedding/save-the-date ngoài trời hoặc vườn, ảnh chi tiết, phong cách tối giản, sang trọng nhẹ nhàng.", "en": "Suits outdoor or garden pre-wedding and save-the-date photos, plus detail shots, in a pared-back, quietly refined style." },
+    "story": { "vi": "Phù hợp video save-the-date hoặc prewedding kể chuyện ngắn gọn, thanh lịch — giới thiệu cặp đôi và những chi tiết đáng nhớ.", "en": "For a save-the-date or pre-wedding film told briefly and elegantly — introducing the couple and the details worth remembering." },
+    "music": { "vi": "Hợp nhạc acoustic nhẹ nhàng, thanh lịch, lãng mạn, tiết tấu chậm đến vừa.", "en": "Suits gentle, elegant, romantic acoustic music at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

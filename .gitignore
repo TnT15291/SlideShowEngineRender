@@ -45,6 +45,18 @@ assets/*
 assets/backgrounds/*
 !assets/backgrounds/editorial/
 !assets/backgrounds/editorial/*.png
+!assets/backgrounds/snow-white/
+!assets/backgrounds/snow-white/*.png
+!assets/backgrounds/moonlight/
+!assets/backgrounds/moonlight/*.png
+
+# Project-owned AI-generated snow overlays. These are source plates, not stock media.
+!assets/overlays/
+assets/overlays/*
+!assets/overlays/snow-white/
+!assets/overlays/snow-white/*.png
+!assets/overlays/moonlight/
+!assets/overlays/moonlight/*.png
 
 # The couple's photographs. Irreplaceable, but binary and private: back these up
 # somewhere real, not in git. The pipeline reads them from input/ on disk.

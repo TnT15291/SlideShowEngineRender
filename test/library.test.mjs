@@ -80,6 +80,20 @@ test("arch is available as a four-corner frame preset", () => {
   assert.equal(library.layouts.some((layout) => layout.id === "arch_window_trio"), false);
 });
 
+// Same 520px cut as circleMedallion, and for the same reason: radius 260 is half of 520, so
+// the head is a true semicircle only on a slot that wide. Wider slots still render — 260 on
+// arch_trio's 540px is a legal near-arch — but they leave a flat span across the top, which
+// is why slotShapeKey does not count them as a silhouette change.
+test("the arch preset is cut for the same 520px slot circleMedallion is", () => {
+  const [tl, tr] = library.designTokens.framePreset.arch.radius;
+  assert.equal(tl, tr);
+  assert.equal(tl * 2, 520);
+  const hosts = library.layouts.flatMap((layout) => (layout.photoSlots || [])
+    .filter((slot) => Math.min(slot.width, slot.height) === 520)
+    .map((slot) => `${layout.id}.${slot.id}`));
+  assert.ok(hosts.length > 0, "no layout has a slot the arch preset fits exactly");
+});
+
 test("seven active primitives are appended without reordering the original layouts", () => {
   const originalIds = [
     "hero_title_card",

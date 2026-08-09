@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from "react"
-import { AlertCircle, ArrowRight, Check, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, Sparkles, Trash2, Upload, X } from "lucide-react"
+import { AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, Sparkles, Trash2, Upload, X } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LazyApiImage } from "@/components/LazyApiImage"
 import { RecipeSwatch } from "@/components/RecipeSwatch"
-import { humanizeTag, photoRange } from "@/recipeFormat"
+import { localized, photoRange, tagLabel } from "@/recipeFormat"
 import { apiDelete, apiGet, apiUpload } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
 import { useI18n, type Translate } from "@/lib/i18n"
@@ -52,7 +52,7 @@ const accepted = {
   music: { input: ".mp3,.wav,.m4a,.aac,.flac,.ogg", mime: new Set(["audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/x-m4a", "audio/aac", "audio/flac", "audio/x-flac", "audio/ogg"]) },
 } as const
 
-export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarted, initialStep = "setup", focus = "all" }: { project: ProjectSummary; plan: Plan; onOpenNav: () => void; onUpgrade: () => void; onRenderStarted?: () => void; initialStep?: WorkspaceStep; focus?: WorkspaceFocus }) {
+export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementChanged, initialStep = "setup", focus = "all" }: { project: ProjectSummary; plan: Plan; onOpenNav: () => void; onUpgrade: () => void; onEntitlementChanged?: () => void; initialStep?: WorkspaceStep; focus?: WorkspaceFocus }) {
   const { t } = useI18n()
   const [step, setStep] = useState<WorkspaceStep>(() => initialWorkspaceStep(initialStep))
   const [currentProject, setCurrentProject] = useState(project)
@@ -62,9 +62,18 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
   const [error, setError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<Set<string>>(new Set())
   const [recipe, setRecipe] = useState<RecipeSummary | null>(null)
+  // Bumped by every write to `assets`. Panels further down (analysis today,
+  // anything asset-derived tomorrow) key their own fetch on it, because they
+  // otherwise have no way to learn that a file was just added or removed.
+  const [assetRevision, setAssetRevision] = useState(0)
   const activeStepButton = useRef<HTMLButtonElement>(null)
   const queueRef = useRef(queue)
   queueRef.current = queue
+
+  const applyAssets = useCallback((next: ProjectAssets | ((current: ProjectAssets | null) => ProjectAssets | null)) => {
+    setAssets(next as Parameters<typeof setAssets>[0])
+    setAssetRevision((value) => value + 1)
+  }, [])
 
   const reload = useCallback(() => {
     setLoading(true)
@@ -72,9 +81,9 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
     Promise.all([
       apiGet<ProjectAssets>(`/projects/${project.id}/assets`),
       apiGet<ProjectSummary>(`/projects/${project.id}`),
-    ]).then(([nextAssets, nextProject]) => { setAssets(nextAssets); setCurrentProject(nextProject) }).catch((reason: unknown) => setError(apiMessage(reason, t))).finally(() => setLoading(false))
+    ]).then(([nextAssets, nextProject]) => { applyAssets(nextAssets); setCurrentProject(nextProject) }).catch((reason: unknown) => setError(apiMessage(reason, t))).finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.id])
+  }, [project.id, applyAssets])
 
   useEffect(reload, [reload])
 
@@ -124,7 +133,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       const uploaded = await apiUpload<ProjectAsset>(`/projects/${project.id}/assets?${query}`, item.file, (progress) => {
         setQueue((current) => current.map((queued) => queued.id === item.id ? { ...queued, progress } : queued))
       })
-      setAssets((current) => current ? {
+      applyAssets((current) => current ? {
         ...current,
         photos: item.kind === "photo" ? [...current.photos, uploaded].sort(byUploadIndex) : current.photos,
         music: item.kind === "music" ? [...current.music, uploaded].sort(byUploadIndex) : current.music,
@@ -141,11 +150,37 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
     if (next) void uploadOne(next)
   }, [queue])
 
+  // "Classic Multisong Wedding Album" asks for 140–220 photos. Removing a bad
+  // batch one tile at a time was the only option, which is not a workflow.
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  function toggleSelected(id: string) {
+    setSelected((current) => { const next = new Set(current); if (!next.delete(id)) next.add(id); return next })
+  }
+
+  async function removeSelected() {
+    const ids = [...selected]
+    setError(null)
+    setDeleting((current) => new Set([...current, ...ids]))
+    try {
+      // Sequential on purpose: each DELETE returns the whole asset list, and
+      // firing them in parallel would have them race to write it back.
+      let latest: ProjectAssets | null = null
+      for (const id of ids) latest = await apiDelete<ProjectAssets>(`/projects/${project.id}/assets/${id}`)
+      if (latest) applyAssets(latest)
+      setSelected(new Set())
+    } catch (reason) {
+      setError(apiMessage(reason, t))
+      reload()
+    } finally {
+      setDeleting((current) => { const next = new Set(current); for (const id of ids) next.delete(id); return next })
+    }
+  }
+
   async function removeAsset(asset: ProjectAsset) {
     setDeleting((current) => new Set(current).add(asset.id))
     setError(null)
     try {
-      setAssets(await apiDelete<ProjectAssets>(`/projects/${project.id}/assets/${asset.id}`))
+      applyAssets(await apiDelete<ProjectAssets>(`/projects/${project.id}/assets/${asset.id}`))
     } catch (reason) {
       setError(apiMessage(reason, t))
     } finally {
@@ -155,9 +190,15 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
 
   const uploading = queue.some((item) => item.status === "uploading")
 
-  const hasPhotos = Boolean(assets?.photos.length)
+  // The recipe's authored minimum is the real bar, not "at least one". Letting
+  // a customer past this point with three photos against an 18-photo recipe is
+  // what used to burn a render credit on a guaranteed failure.
+  const photoCount = assets?.photos.length ?? 0
+  const minPhotos = recipe?.minPhotos ?? 0
+  const hasPhotos = photoCount > 0
   const hasMusic = Boolean(assets?.music.length)
-  const mediaReady = hasPhotos && hasMusic
+  const enoughPhotos = photoCount >= Math.max(1, minPhotos)
+  const mediaReady = enoughPhotos && hasMusic
   const renderReady = currentProject.phases.render === "completed"
   const reviewReady = renderReady && currentProject.phases.qa === "completed"
   const manuallyCompleted = currentProject.manuallyCompleted
@@ -184,7 +225,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
 
     {/* Sticky under the header: the Media step is thousands of pixels tall, and
         a workflow nav you have to scroll back to the top to reach is not one. */}
-    <div className="sticky top-20 z-10 border-b bg-card-soft/95 backdrop-blur"><p className="px-4 pt-2 text-xs text-muted-foreground sm:hidden">{t("workspace.swipeHint", { current: stepIndex(step) + 1, total: workflow.length })}</p><nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-3 md:px-10" aria-label={t("workspace.workflowNav")}>{workflow.map(({ id, label, icon: Icon }, index) => <button key={id} ref={id === step ? activeStepButton : undefined} onClick={() => goToStep(id)} aria-current={step === id ? "step" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-colors", step === id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground")}><span className={cn("grid size-5 place-items-center rounded-full", step === id ? "bg-white/15" : completed[id] ? "bg-success/15 text-success" : "bg-muted")}>{completed[id] ? <Check className="size-3" /> : <Icon className="size-3" />}</span><span>{index + 1}. {t(label)}</span></button>)}</nav></div>
+    <div className="sticky top-20 z-10 border-b bg-card-soft/95 backdrop-blur"><p className="px-4 pt-2 text-xs text-muted-foreground sm:hidden">{t("workspace.swipeHint", { current: stepIndex(step) + 1, total: workflow.length })}</p><nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-3 md:px-10" aria-label={t("workspace.workflowNav")}>{workflow.map(({ id, label, icon: Icon }, index) => <button key={id} ref={id === step ? activeStepButton : undefined} onClick={() => goToStep(id)} aria-current={step === id ? "step" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-colors", step === id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground")}><span className={cn("grid size-5 place-items-center rounded-full", step === id ? "bg-white/15" : completed[id] ? "bg-success/15 text-success-text" : "bg-muted")}>{completed[id] ? <Check className="size-3" /> : <Icon className="size-3" />}</span><span>{index + 1}. {t(label)}</span></button>)}</nav></div>
 
     <div className="mx-auto max-w-6xl px-6 py-9 md:px-10">
       {error && <Card className="mb-6 border-destructive/40 bg-destructive/5"><CardContent className="flex gap-2 p-4 text-sm text-destructive"><AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}</CardContent></Card>}
@@ -192,7 +233,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       {/* Surfaced from step 1 onward, not just at the Create step: uploading a
           hundred photos only to be stopped by a 402 at the very end is the
           failure this replaces. */}
-      {renderBlocked && <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-start gap-2"><CreditCard className="mt-0.5 size-4 shrink-0" /><span><span className="font-medium">{t("workspace.renderBlocked")}</span><span className="mt-0.5 block text-xs">{planExhaustedReason(plan, t)}</span></span></span><Button variant="outline" size="sm" onClick={onUpgrade}>{t("workspace.viewPlans")} <ArrowRight className="size-4" /></Button></CardContent></Card>}
+      {renderBlocked && <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning-text"><span className="flex items-start gap-2"><CreditCard className="mt-0.5 size-4 shrink-0" /><span><span className="font-medium">{t("workspace.renderBlocked")}</span><span className="mt-0.5 block text-xs">{planExhaustedReason(plan, t)}</span></span></span><Button variant="outline" size="sm" onClick={onUpgrade}>{t("workspace.viewPlans")} <ArrowRight className="size-4" /></Button></CardContent></Card>}
 
       {loading && !assets && <WorkspaceSkeleton />}
       {assets && <>
@@ -202,13 +243,13 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       </WorkspaceSection>}
 
       {step === "media" && <WorkspaceSection step="media" description={t("media.description")} action={uploading ? <Badge variant="secondary" className="border-0"><RefreshCw className="mr-1 size-3 animate-spin" /> {t("media.uploading")}</Badge> : undefined}>
-        <Card className="mb-6"><CardContent className="grid gap-3 p-4 sm:grid-cols-2"><Requirement done={hasPhotos} label={hasPhotos ? t("media.photosAdded", { count: assets?.photos.length ?? 0 }) : t("media.needPhoto")} /><Requirement done={hasMusic} label={hasMusic ? t("media.tracksAdded", { count: assets?.music.length ?? 0 }) : t("media.needMusic")} /></CardContent></Card>
+        <Card className="mb-6"><CardContent className="grid gap-3 p-4 sm:grid-cols-2"><Requirement done={enoughPhotos} label={photoLabel({ count: photoCount, min: minPhotos, t })} /><Requirement done={hasMusic} label={hasMusic ? t("media.tracksAdded", { count: assets?.music.length ?? 0 }) : t("media.needMusic")} /></CardContent></Card>
         <div className="space-y-6">
-          <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
+          <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} selected={selected} onToggleSelected={toggleSelected} onSelectAll={(ids) => setSelected(new Set(ids))} onClearSelection={() => setSelected(new Set())} onDeleteSelected={removeSelected} />
           <AssetSection projectId={project.id} kind="music" title={t("media.music")} description={t("media.musicHint")} icon={Music2} assets={assets?.music || []} queue={queue.filter((item) => item.kind === "music")} deleting={deleting} onFiles={(files) => addFiles("music", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
         </div>
-        <AnalysisPanel project={currentProject} music={assets?.music || []} />
-        <NextAction title={mediaReady ? t("media.ready") : t("media.incomplete")} detail={mediaReady ? t("media.readyDetail") : t("media.incompleteDetail")} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
+        <AnalysisPanel project={currentProject} music={assets?.music || []} assetRevision={assetRevision} />
+        <NextAction title={mediaReady ? t("media.ready") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotos") : t("media.incomplete")} detail={mediaReady ? t("media.readyDetail") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotosDetail", { name: recipeName ?? "", min: minPhotos, count: photoCount }) : t("media.incompleteDetail")} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
       </WorkspaceSection>}
 
       {step === "direct" && <WorkspaceSection step="direct" description={currentProject.tier === "template" ? t("direct.templateDescription") : t("direct.aiDescription")}>
@@ -218,8 +259,8 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       </WorkspaceSection>}
 
       {step === "review" && <WorkspaceSection step="review" description={t("review.description")}>
-        {!mediaReady ? <BlockedNotice message={t("review.blocked")} onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} styleName={recipeName} renderBlocked={renderBlocked} blockedReason={planExhaustedReason(plan, t)} onUpgrade={onUpgrade} onRenderStarted={onRenderStarted} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: projectStatusFromJob(job), currentPhase: job.currentPhase, progress: job.progress, error: job.error, warnings: job.warnings, manuallyCompleted: job.manuallyCompleted, phases: job.phases, updatedAt: job.updatedAt }))} />}
-        <details className="mt-6 rounded-xl border bg-card" open={currentProject.status === "paused" || currentProject.status === "failed" ? true : undefined}><summary className="cursor-pointer list-none px-6 py-5 text-sm font-medium">{t("review.qualityReport")} <span className="ml-2 text-xs font-normal text-muted-foreground">{t("review.qualityReportHint")}</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
+        {!mediaReady ? <BlockedNotice message={hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotosDetail", { name: recipeName ?? "", min: minPhotos, count: photoCount }) : t("review.blocked")} onClick={() => goToStep("media")} /> : <JobRunnerPanel project={currentProject} styleName={recipeName} renderBlocked={renderBlocked} blockedReason={planExhaustedReason(plan, t)} onEntitlementChanged={onEntitlementChanged} onJobChanged={(job) => setCurrentProject((value) => ({ ...value, status: projectStatusFromJob(job), currentPhase: job.currentPhase, progress: job.progress, error: job.error, warnings: job.warnings, manuallyCompleted: job.manuallyCompleted, phases: job.phases, updatedAt: job.updatedAt }))} />}
+        <details className="group mt-6 rounded-xl border bg-card" open={currentProject.status === "paused" || currentProject.status === "failed" ? true : undefined}><summary className="flex cursor-pointer list-none items-center gap-2 px-6 py-5 text-sm font-medium"><ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" aria-hidden="true" />{t("review.qualityReport")} <span className="text-xs font-normal text-muted-foreground">{t("review.qualityReportHint")}</span></summary><div className="border-t px-6 pb-6"><AdvancedQaPanel project={currentProject} /></div></details>
         <NextAction
           title={manuallyCompleted ? t("review.manualComplete") : deliveryReady ? t("review.deliveryReady") : reviewReady ? t("review.passedQa") : renderReady ? t("review.qaRunning", { progress: currentProject.progress }) : t("review.createFirst")}
           detail={manuallyCompleted ? t("review.manualCompleteDetail") : deliveryReady ? t("review.deliveryReadyDetail") : reviewReady ? t("review.passedQaDetail") : renderReady ? t("review.qaRunningDetail") : t("review.createFirstDetail")}
@@ -227,7 +268,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
       </WorkspaceSection>}
 
       {step === "deliver" && <WorkspaceSection step="deliver" description={t("deliver.description")}>
-        {manuallyCompleted ? <Card className="border-success/40 bg-success/5"><CardContent className="flex gap-3 p-5 text-sm"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-success"><Check className="size-5" /></span><div><p className="font-medium">{t("review.manualComplete")}</p><p className="mt-1 text-muted-foreground">{t("deliver.manualCompleteDetail", { step: stepLabel("review", t) })}</p></div></CardContent></Card> : !deliveryReady ? <BlockedNotice message={t("deliver.needPreview", { step: stepLabel("review", t) })} onClick={() => goToStep("review")} /> : <DeliveryPanel project={currentProject} />}
+        {manuallyCompleted ? <Card className="border-success/40 bg-success/5"><CardContent className="flex gap-3 p-5 text-sm"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-success-text"><Check className="size-5" /></span><div><p className="font-medium">{t("review.manualComplete")}</p><p className="mt-1 text-muted-foreground">{t("deliver.manualCompleteDetail", { step: stepLabel("review", t) })}</p></div></CardContent></Card> : !deliveryReady ? <BlockedNotice message={t("deliver.needPreview", { step: stepLabel("review", t) })} onClick={() => goToStep("review")} /> : <DeliveryPanel project={currentProject} />}
       </WorkspaceSection>}
       </>}
     </div>
@@ -237,7 +278,9 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onRenderStarte
 function WorkspaceSection({ step, description, action, children }: { step: WorkspaceStep; description: string; action?: React.ReactNode; children: React.ReactNode }) {
   const { t } = useI18n()
   const index = stepIndex(step)
-  return <section><div className="mb-7 flex flex-wrap items-end justify-between gap-4"><div><Badge variant="secondary" className="mb-3 border-0">{t("workspace.stepCounter", { current: index + 1, total: workflow.length })}</Badge><h2 className="font-serif text-3xl font-semibold">{t(workflow[index].heading)}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p></div>{action}</div>{children}</section>
+  // No step counter here: the workflow nav is sticky directly above and
+  // already says which of the five steps this is, in the same words.
+  return <section><div className="mb-7 flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-serif text-3xl font-semibold">{t(workflow[index].heading)}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p></div>{action}</div>{children}</section>
 }
 
 // No `capitalize`: the values are translated labels or a project name, and the
@@ -253,7 +296,7 @@ function ProjectFact({ label, value }: { label: string; value: string }) { retur
  * a customer actually has here: "what is my film going to be like?"
  */
 function StylePreview({ recipe, name }: { recipe: RecipeSummary | null; name: string | null }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   if (!recipe) {
     return <Card><CardContent className="flex gap-4 p-6"><span className="grid size-11 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><Clapperboard className="size-5" /></span><div><p className="font-medium">{t("style.setsDirection")}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{t("style.setsDirectionDetail", { name: name || t("style.selectedStyle") })}</p></div></CardContent></Card>
   }
@@ -262,23 +305,30 @@ function StylePreview({ recipe, name }: { recipe: RecipeSummary | null; name: st
     <div className="grid md:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
       <RecipeSwatch recipe={recipe} className="h-full min-h-36" />
       <CardContent className="p-6">
-        <p className="text-sm leading-6 text-muted-foreground">{recipe.intro?.summary || recipe.notes}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{localized(recipe.intro?.summary, locale) || recipe.notes}</p>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
           {range && <span className="flex items-center gap-1.5"><Image className="size-3.5" /> {range}</span>}
           <span className="flex items-center gap-1.5"><Film className="size-3.5" /> {t("style.scenesAndLooks", { scenes: recipe.sceneCount, looks: recipe.signatureCount })}</span>
-          {recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {t("style.energy", { energy: humanizeTag(recipe.energy) })}</span>}
+          {recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {tagLabel(recipe.energy, t)}</span>}
         </div>
         {recipe.storyArc.length > 0 && <div className="mt-5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("style.howToldTitle")}</p>
-          <ol className="mt-2 flex flex-wrap items-center gap-1.5">{recipe.storyArc.map((beat, index) => <li key={`${beat}-${index}`} className="flex items-center gap-1.5"><span className="rounded-full bg-secondary px-2.5 py-1 text-xs capitalize">{humanizeTag(beat)}</span>{index < recipe.storyArc.length - 1 && <ArrowRight className="size-3 text-muted-foreground" aria-hidden="true" />}</li>)}</ol>
+          <ol className="mt-2 flex flex-wrap items-center gap-1.5">{recipe.storyArc.map((beat, index) => <li key={`${beat}-${index}`} className="flex items-center gap-1.5"><span className="rounded-full bg-secondary px-2.5 py-1 text-xs first-letter:uppercase">{tagLabel(beat, t)}</span>{index < recipe.storyArc.length - 1 && <ArrowRight className="size-3 text-muted-foreground" aria-hidden="true" />}</li>)}</ol>
         </div>}
-        {recipe.intro?.photos && <p className="mt-4 text-xs leading-5 text-muted-foreground"><span className="font-medium text-foreground">{t("style.worksBestWith")}</span> {recipe.intro.photos}</p>}
+        {localized(recipe.intro?.photos, locale) && <p className="mt-4 text-xs leading-5 text-muted-foreground"><span className="font-medium text-foreground">{t("style.worksBestWith")}</span> {localized(recipe.intro?.photos, locale)}</p>}
         <p className="mt-4 text-xs leading-5 text-muted-foreground">{t("style.noHandDirection")}</p>
       </CardContent>
     </div>
   </Card>
 }
-function Requirement({ done, label }: { done: boolean; label: string }) { const Icon = done ? Check : Circle; return <div className={cn("flex items-center gap-3 rounded-lg border px-4 py-3 text-sm", done && "border-success/30 bg-success/5")}><Icon className={cn("size-4", done ? "text-success" : "text-muted-foreground")} /> {label}</div> }
+// Counts against the recipe's minimum when there is one, so the checklist row
+// says how many more photos are needed rather than only whether any exist.
+function photoLabel({ count, min, t }: { count: number; min: number; t: Translate }) {
+  if (min <= 0) return count > 0 ? t("media.photosAdded", { count }) : t("media.needPhoto")
+  return count >= min ? t("media.photosEnough", { count, min }) : t("media.photosNeeded", { count, min })
+}
+
+function Requirement({ done, label }: { done: boolean; label: string }) { const Icon = done ? Check : Circle; return <div className={cn("flex items-center gap-3 rounded-lg border px-4 py-3 text-sm", done && "border-success/30 bg-success/5")}><Icon className={cn("size-4", done ? "text-success-text" : "text-muted-foreground")} /> {label}</div> }
 function NextAction({ title, detail, next, disabled = false, onClick }: { title: string; detail: string; next: WorkspaceStep; disabled?: boolean; onClick: () => void }) {
   const { t } = useI18n()
   // `detail` already explains the state (and the reason, when blocked) in the
@@ -291,12 +341,13 @@ function NextAction({ title, detail, next, disabled = false, onClick }: { title:
 }
 function BlockedNotice({ message, onClick }: { message: string; onClick: () => void }) {
   const { t } = useI18n()
-  return <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning"><span className="flex items-center gap-2"><AlertCircle className="size-4" /> {message}</span><Button variant="outline" size="sm" onClick={onClick}>{t("workspace.fixPrerequisite")}</Button></CardContent></Card>
+  return <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning-text"><span className="flex items-center gap-2"><AlertCircle className="size-4" /> {message}</span><Button variant="outline" size="sm" onClick={onClick}>{t("workspace.fixPrerequisite")}</Button></CardContent></Card>
 }
 
-function AssetSection({ projectId, kind, title, description, icon: Icon, assets, queue, deleting, onFiles, onRetry, onRemoveQueue, onDelete }: {
+function AssetSection({ projectId, kind, title, description, icon: Icon, assets, queue, deleting, onFiles, onRetry, onRemoveQueue, onDelete, selected, onToggleSelected, onSelectAll, onClearSelection, onDeleteSelected }: {
   projectId: string; kind: AssetKind; title: string; description: string; icon: typeof Image; assets: ProjectAsset[]; queue: UploadItem[]; deleting: Set<string>
   onFiles: (files: File[]) => void; onRetry: (item: UploadItem) => void; onRemoveQueue: (id: string) => void; onDelete: (asset: ProjectAsset) => void
+  selected?: Set<string>; onToggleSelected?: (id: string) => void; onSelectAll?: (ids: string[]) => void; onClearSelection?: () => void; onDeleteSelected?: () => void
 }) {
   const { t } = useI18n()
   const [dragging, setDragging] = useState(false)
@@ -311,17 +362,28 @@ function AssetSection({ projectId, kind, title, description, icon: Icon, assets,
   return <Card className="overflow-hidden"><CardHeader><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary"><Icon className="size-5" /></div><div><CardTitle className="text-base">{title}</CardTitle><CardDescription className="mt-1">{description}</CardDescription></div><Badge variant="outline" className="ml-auto font-normal">{assets.length}</Badge></div></CardHeader><CardContent className="space-y-4">
     <div onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(event) => event.preventDefault()} onDrop={drop} className={cn("grid place-items-center rounded-xl border border-dashed p-6 text-center transition-colors", assets.length ? "min-h-0 py-5" : "min-h-36", dragging ? "border-primary bg-primary/5" : "bg-card-soft")}><div><Upload className="mx-auto size-7 text-primary" /><p className="mt-3 text-sm font-medium">{t(isPhoto ? "media.dropPhotos" : "media.dropMusic")}</p><p className="mt-1 text-xs text-muted-foreground">{t("media.autoUpload")}</p><label className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-4")}><input type="file" multiple className="sr-only" accept={accepted[kind].input} onChange={(event) => { onFiles(Array.from(event.target.files || [])); event.target.value = "" }} />{t("media.chooseFiles")}</label></div></div>
     {queue.length > 0 && <div className="divide-y rounded-lg border">{queue.map((item) => <QueueRow key={item.id} item={item} onRetry={() => onRetry(item)} onRemove={() => onRemoveQueue(item.id)} />)}</div>}
+    {isPhoto && assets.length > 0 && selected && <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card-soft px-4 py-2.5 text-sm">
+      <span className="text-muted-foreground">{selected.size > 0 ? t("media.selectedCount", { count: selected.size }) : t("media.selectHint")}</span>
+      <span className="flex flex-wrap gap-2">
+        <Button variant="ghost" size="sm" onClick={() => selected.size === assets.length ? onClearSelection?.() : onSelectAll?.(assets.map((asset) => asset.id))}>{selected.size === assets.length ? t("media.clearSelection") : t("media.selectAll")}</Button>
+        <Button variant="outline" size="sm" className="text-destructive" disabled={selected.size === 0 || deleting.size > 0} onClick={onDeleteSelected}><Trash2 className="size-3.5" /> {t("media.deleteSelected", { count: selected.size })}</Button>
+      </span>
+    </div>}
     {assets.length > 0 && (isPhoto
-      ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{assets.map((asset) => <PhotoTile key={asset.id} projectId={projectId} asset={asset} deleting={deleting.has(asset.id)} onDelete={() => onDelete(asset)} />)}</div>
-      : <div className="divide-y rounded-lg border">{assets.map((asset) => <div key={asset.id} className="flex items-center gap-3 p-3"><span className="grid size-8 shrink-0 place-items-center rounded-md bg-success/10 text-success"><Check className="size-4" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{asset.originalName}</p><p className="mt-0.5 text-xs text-muted-foreground">#{asset.uploadIndex + 1} · {formatBytes(asset.size)}</p></div><Button variant="ghost" size="icon" aria-label={t("media.deleteAsset", { name: asset.originalName })} disabled={deleting.has(asset.id)} onClick={() => onDelete(asset)}><Trash2 className="size-4" /></Button></div>)}</div>)}
+      ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{assets.map((asset) => <PhotoTile key={asset.id} projectId={projectId} asset={asset} deleting={deleting.has(asset.id)} onDelete={() => onDelete(asset)} selected={selected?.has(asset.id) ?? false} onToggleSelected={onToggleSelected ? () => onToggleSelected(asset.id) : undefined} />)}</div>
+      : <div className="divide-y rounded-lg border">{assets.map((asset) => <div key={asset.id} className="flex items-center gap-3 p-3"><span className="grid size-8 shrink-0 place-items-center rounded-md bg-success/10 text-success-text"><Check className="size-4" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{asset.originalName}</p><p className="mt-0.5 text-xs text-muted-foreground">#{asset.uploadIndex + 1} · {formatBytes(asset.size)}</p></div><Button variant="ghost" size="icon" aria-label={t("media.deleteAsset", { name: asset.originalName })} disabled={deleting.has(asset.id)} onClick={() => onDelete(asset)}><Trash2 className="size-4" /></Button></div>)}</div>)}
   </CardContent></Card>
 }
 
-function PhotoTile({ projectId, asset, deleting, onDelete }: { projectId: string; asset: ProjectAsset; deleting: boolean; onDelete: () => void }) {
+function PhotoTile({ projectId, asset, deleting, onDelete, selected = false, onToggleSelected }: { projectId: string; asset: ProjectAsset; deleting: boolean; onDelete: () => void; selected?: boolean; onToggleSelected?: () => void }) {
   const { t } = useI18n()
-  return <figure className={cn("group relative overflow-hidden rounded-lg border bg-card-soft transition-opacity", deleting && "opacity-40")}>
+  return <figure className={cn("group relative overflow-hidden rounded-lg border bg-card-soft transition-opacity", deleting && "opacity-40", selected && "border-primary ring-2 ring-primary")}>
     <LazyApiImage path={`/projects/${encodeURIComponent(projectId)}/assets/${encodeURIComponent(asset.id)}/thumbnail`} alt={asset.originalName} className="aspect-square" />
     <span className="absolute left-1.5 top-1.5 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white">{asset.uploadIndex + 1}</span>
+    {onToggleSelected && <label className="absolute inset-x-0 bottom-8 top-0 flex cursor-pointer items-start justify-center p-1.5">
+      <span className="sr-only">{t("media.selectAsset", { name: asset.originalName })}</span>
+      <input type="checkbox" checked={selected} onChange={onToggleSelected} className="ml-auto mt-6 size-5 accent-[var(--primary)]" />
+    </label>}
     <Button
       variant="ghost"
       size="icon"

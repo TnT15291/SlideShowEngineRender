@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { RecipeSwatch } from "@/components/RecipeSwatch"
 import { apiGet } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
-import { useI18n, type Translate } from "@/lib/i18n"
-import { humanizeTag, photoRange } from "@/recipeFormat"
+import { useI18n, type Locale, type Translate } from "@/lib/i18n"
+import { localized, photoRange, tagLabel } from "@/recipeFormat"
 import type { RecipeSummary } from "@/types"
 
 export function RecipeLibrary({ onOpenNav }: { onOpenNav: () => void }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [recipes, setRecipes] = useState<RecipeSummary[] | null>(null)
   const [selected, setSelected] = useState<RecipeSummary | null>(null)
   const [query, setQuery] = useState("")
@@ -62,8 +62,11 @@ export function RecipeLibrary({ onOpenNav }: { onOpenNav: () => void }) {
 
       <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-10">
         <div className="mb-6 grid gap-3 md:grid-cols-[minmax(260px,1fr)_220px_180px]">
-          <label className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><input className="field mt-0 pl-9" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("recipes.search")} /></label>
-          <select className="field mt-0" value={mood} onChange={(event) => setMood(event.target.value)} aria-label={t("recipes.filterByMood")}><option value="">{t("recipes.allMoods")}</option>{moods.map((item) => <option key={item} value={item}>{humanizeTag(item)}</option>)}</select>
+          {/* `flex` makes the label exactly as tall as the input, so the icon
+              centres against the field rather than against the line box's
+              descender space. */}
+          <label className="relative flex"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input className="field mt-0 pl-9" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("recipes.search")} /></label>
+          <select className="field mt-0" value={mood} onChange={(event) => setMood(event.target.value)} aria-label={t("recipes.filterByMood")}><option value="">{t("recipes.allMoods")}</option>{moods.map((item) => <option key={item} value={item}>{tagLabel(item, t)}</option>)}</select>
           <input className="field mt-0" type="number" min="1" value={photoCount} onChange={(event) => setPhotoCount(event.target.value)} aria-label={t("recipes.photoCountFilter")} placeholder={t("recipes.photoCountPlaceholder")} />
         </div>
 
@@ -72,7 +75,7 @@ export function RecipeLibrary({ onOpenNav }: { onOpenNav: () => void }) {
 
         {recipes && <>
           <p className="mb-4 text-sm text-muted-foreground">{t("recipes.showing", { shown: filtered.length, total: recipes.length })}</p>
-          {filtered.length === 0 ? <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">{t("recipes.noMatches")}</CardContent></Card> : <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} onOpen={() => openRecipe(recipe.id)} t={t} />)}</div>}
+          {filtered.length === 0 ? <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">{t("recipes.noMatches")}</CardContent></Card> : <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} onOpen={() => openRecipe(recipe.id)} t={t} locale={locale} />)}</div>}
         </>}
       </div>
 
@@ -81,29 +84,33 @@ export function RecipeLibrary({ onOpenNav }: { onOpenNav: () => void }) {
   )
 }
 
-function RecipeCard({ recipe, onOpen, t }: { recipe: RecipeSummary; onOpen: () => void; t: Translate }) {
+function RecipeCard({ recipe, onOpen, t, locale }: { recipe: RecipeSummary; onOpen: () => void; t: Translate; locale: Locale }) {
   const range = photoRange(recipe, t)
+  const summary = localized(recipe.intro?.summary, locale) || recipe.notes
   return <button onClick={onOpen} className="text-left"><Card className="h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
     <RecipeSwatch recipe={recipe} />
-    <CardHeader className="pb-3"><CardTitle className="sr-only">{recipe.name}</CardTitle>{recipe.intro?.summary ? <p className="line-clamp-2 text-sm text-muted-foreground">{recipe.intro.summary}</p> : recipe.notes && <p className="line-clamp-2 text-sm text-muted-foreground">{recipe.notes}</p>}</CardHeader>
+    {/* The name used to live only inside the swatch overlay, so a light preview
+        image could hide it entirely. It is drawn here as well now — belt and
+        braces on the one thing a card exists to communicate. */}
+    <CardHeader className="pb-3"><CardTitle className="font-serif text-lg">{recipe.name}</CardTitle>{summary ? <p className="line-clamp-2 text-sm text-muted-foreground">{summary}</p> : null}</CardHeader>
     <CardContent className="space-y-4 pt-0">
-      {recipe.bestFor.length > 0 && <div className="flex flex-wrap gap-1.5">{recipe.bestFor.slice(0, 4).map((tag) => <Badge key={tag} variant="outline" className="font-normal">{humanizeTag(tag)}</Badge>)}</div>}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">{range && <span className="flex items-center gap-1.5"><Image className="size-3.5" /> {range}</span>}<span className="flex items-center gap-1.5"><Layers3 className="size-3.5" /> {t("recipes.scenesAndLooks", { scenes: recipe.sceneCount, looks: recipe.signatureCount })}</span>{recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {t("style.energy", { energy: humanizeTag(recipe.energy) })}</span>}</div>
-      {recipe.pacingVariants.length > 0 && <div className="flex flex-wrap gap-1.5 border-t pt-3">{recipe.pacingVariants.map((variant) => <Badge key={variant} variant="secondary" className="border-0 font-normal">{humanizeTag(variant)}</Badge>)}</div>}
+      {recipe.bestFor.length > 0 && <div className="flex flex-wrap gap-1.5">{recipe.bestFor.slice(0, 4).map((tag) => <Badge key={tag} variant="outline" className="font-normal">{tagLabel(tag, t)}</Badge>)}</div>}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">{range && <span className="flex items-center gap-1.5"><Image className="size-3.5" /> {range}</span>}<span className="flex items-center gap-1.5"><Layers3 className="size-3.5" /> {t("recipes.scenesAndLooks", { scenes: recipe.sceneCount, looks: recipe.signatureCount })}</span>{recipe.energy && <span className="flex items-center gap-1.5"><Music2 className="size-3.5" /> {tagLabel(recipe.energy, t)}</span>}</div>
+      {recipe.pacingVariants.length > 0 && <div className="flex flex-wrap gap-1.5 border-t pt-3">{recipe.pacingVariants.map((variant) => <Badge key={variant} variant="secondary" className="border-0 font-normal">{tagLabel(variant, t)}</Badge>)}</div>}
     </CardContent>
   </Card></button>
 }
 
 function RecipeDetail({ recipe, onClose }: { recipe: RecipeSummary; onClose: () => void }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   return <div className="fixed inset-0 z-50 flex justify-end bg-black/35" onClick={onClose}><aside className="h-full w-full max-w-xl overflow-y-auto bg-background p-7 shadow-2xl" onClick={(event) => event.stopPropagation()}>
-    <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-medium uppercase tracking-[0.16em] text-primary">{t("recipes.detailEyebrow")}</p><h2 className="mt-2 font-serif text-3xl font-semibold">{recipe.name}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{recipe.intro?.summary || recipe.notes}</p></div><Button variant="ghost" size="icon" onClick={onClose} aria-label={t("common.close")}><X className="size-4" /></Button></div>
-    <div className="mt-8 grid grid-cols-3 gap-3"><DetailStat label={t("recipes.scenes")} value={String(recipe.sceneCount)} /><DetailStat label={t("recipes.looks")} value={t("recipes.looksValue", { signatures: recipe.signatureCount, layouts: recipe.layoutCount })} /><DetailStat label={t("recipes.energy")} value={recipe.energy ? humanizeTag(recipe.energy) : t("recipes.flexible")} /></div>
-    {recipe.intro && <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.bestFit")}</h3><div className="mt-3 space-y-3 rounded-lg border bg-secondary/40 p-4 text-sm"><p><span className="font-medium">{t("recipes.photosLabel")}</span><span className="text-muted-foreground">{recipe.intro.photos}</span></p><p><span className="font-medium">{t("recipes.storyLabel")}</span><span className="text-muted-foreground">{recipe.intro.story}</span></p><p><span className="font-medium">{t("recipes.musicLabel")}</span><span className="text-muted-foreground">{recipe.intro.music}</span></p></div></section>}
+    <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-medium uppercase tracking-[0.16em] text-primary-text">{t("recipes.detailEyebrow")}</p><h2 className="mt-2 font-serif text-3xl font-semibold">{recipe.name}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{localized(recipe.intro?.summary, locale) || recipe.notes}</p></div><Button variant="ghost" size="icon" onClick={onClose} aria-label={t("common.close")}><X className="size-4" /></Button></div>
+    <div className="mt-8 grid grid-cols-3 gap-3"><DetailStat label={t("recipes.scenes")} value={String(recipe.sceneCount)} /><DetailStat label={t("recipes.looks")} value={t("recipes.looksValue", { signatures: recipe.signatureCount, layouts: recipe.layoutCount })} /><DetailStat label={t("recipes.energy")} value={recipe.energy ? tagLabel(recipe.energy, t) : t("recipes.flexible")} /></div>
+    {recipe.intro && <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.bestFit")}</h3><div className="mt-3 space-y-3 rounded-lg border bg-secondary/40 p-4 text-sm"><p><span className="font-medium">{t("recipes.photosLabel")}</span><span className="text-muted-foreground">{localized(recipe.intro.photos, locale)}</span></p><p><span className="font-medium">{t("recipes.storyLabel")}</span><span className="text-muted-foreground">{localized(recipe.intro.story, locale)}</span></p><p><span className="font-medium">{t("recipes.musicLabel")}</span><span className="text-muted-foreground">{localized(recipe.intro.music, locale)}</span></p></div></section>}
     <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.photoFit")}</h3><p className="mt-2 text-sm text-muted-foreground">{t("recipes.photoFitDetail", { min: recipe.minPhotos ?? "—", ideal: recipe.idealPhotos ?? "—", max: recipe.maxPhotos ?? t("recipes.openMax") })}</p></section>
-    <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.storyArc")}</h3><div className="mt-3 flex flex-wrap gap-2">{recipe.storyArc.map((beat, index) => <span key={`${beat}-${index}`} className="rounded-full bg-secondary px-3 py-1.5 text-xs">{index + 1}. {humanizeTag(beat)}</span>)}</div></section>
+    <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.storyArc")}</h3><div className="mt-3 flex flex-wrap gap-2">{recipe.storyArc.map((beat, index) => <span key={`${beat}-${index}`} className="rounded-full bg-secondary px-3 py-1.5 text-xs">{index + 1}. <span className="first-letter:uppercase">{tagLabel(beat, t)}</span></span>)}</div></section>
     <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.palette")}</h3><div className="mt-3 flex flex-wrap gap-3">{Object.entries(recipe.palette).map(([name, color]) => <div key={name} title={`${name}: ${color}`}><div className="size-10 rounded-full border shadow-sm" style={{ backgroundColor: color }} /><p className="mt-1 max-w-14 truncate text-[10px] text-muted-foreground">{name}</p></div>)}</div></section>
-    <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.bestFor")}</h3><div className="mt-3 flex flex-wrap gap-2">{recipe.bestFor.map((tag) => <Badge key={tag} variant="outline">{humanizeTag(tag)}</Badge>)}</div></section>
+    <section className="mt-8"><h3 className="text-sm font-semibold">{t("recipes.bestFor")}</h3><div className="mt-3 flex flex-wrap gap-2">{recipe.bestFor.map((tag) => <Badge key={tag} variant="outline">{tagLabel(tag, t)}</Badge>)}</div></section>
   </aside></div>
 }
 

@@ -63,40 +63,46 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
           <div className="grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
             <Clapperboard className="size-6" />
           </div>
-          <CardTitle className="mt-4 font-serif text-3xl">StoReel</CardTitle>
+          {/* The only heading on the page, so it is the h1 rather than the
+              CardTitle default of h3. */}
+          <CardTitle as="h1" className="mt-4 font-serif text-3xl">StoReel</CardTitle>
           <CardDescription className="max-w-xs leading-6">
             {registering ? t("login.registerIntro") : t("login.welcome")}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-6 pb-7 sm:px-9 sm:pb-9">
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <label className="block space-y-1.5 text-sm font-medium">
-              {t("login.username")}
+            <div className="space-y-1.5">
+              <label htmlFor="username" className="block text-sm font-medium">{t("login.username")}</label>
               <input
+                id="username"
                 autoFocus
                 autoComplete="username"
-                className="field w-full"
+                className="field mt-0 w-full"
                 minLength={registering ? 3 : undefined}
                 pattern={registering ? "[a-z0-9]+(?:-[a-z0-9]+)*" : undefined}
-                title={registering ? t("login.usernameHint") : undefined}
+                aria-describedby={registering ? "username-hint" : undefined}
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
               />
-            </label>
-            <label className="block space-y-1.5 text-sm font-medium">
-              {t("login.password")}
+              {registering && <p id="username-hint" className="text-xs text-muted-foreground">{t("login.usernameHint")}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="block text-sm font-medium">{t("login.password")}</label>
               <span className="relative block">
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   autoComplete={registering ? "new-password" : "current-password"}
-                  className="field w-full pr-10"
+                  className="field mt-0 w-full pr-10"
                   minLength={registering ? 8 : undefined}
+                  aria-describedby={registering ? "password-hint" : undefined}
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute bottom-0 right-0 top-2 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
+                  className="absolute inset-y-0 right-0 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
                   aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                   aria-pressed={showPassword}
                   onClick={() => setShowPassword((visible) => !visible)}
@@ -104,21 +110,23 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </span>
-            </label>
-            {registering && <label className="block space-y-1.5 text-sm font-medium">
-              {t("login.confirmPassword")}
+              {registering && <p id="password-hint" className="text-xs text-muted-foreground">{t("login.passwordHint")}</p>}
+            </div>
+            {registering && <div className="space-y-1.5">
+              <label htmlFor="confirm-password" className="block text-sm font-medium">{t("login.confirmPassword")}</label>
               <span className="relative block">
                 <input
+                  id="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  className="field w-full pr-10"
+                  className="field mt-0 w-full pr-10"
                   minLength={8}
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute bottom-0 right-0 top-2 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
+                  className="absolute inset-y-0 right-0 z-10 grid w-10 cursor-pointer place-items-center text-muted-foreground hover:text-foreground"
                   aria-label={showConfirmPassword ? t("login.hideConfirmPassword") : t("login.showConfirmPassword")}
                   aria-pressed={showConfirmPassword}
                   onClick={() => setShowConfirmPassword((visible) => !visible)}
@@ -126,7 +134,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
                   {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </span>
-            </label>}
+            </div>}
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" size="lg" className="w-full shadow-sm" disabled={submitting || !username.trim() || !password || (registering && !confirmPassword)}>
               {registering ? <UserPlus className="size-4" /> : <LogIn className="size-4" />}

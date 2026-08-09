@@ -33,6 +33,37 @@ const showsPhoto = (s) =>
   (s.images || []).length > 0 ||
   (s.layers || []).some((l) => l.type === "image");
 
+const canvas = { width: tl.project?.width || 1920, height: tl.project?.height || 1080 };
+
+/**
+ * WHERE to measure the exposure.
+ *
+ * `showsPhoto` above is all-or-nothing, so it answers "is this a cream closing card?" but
+ * not "how much of this frame is actually the photograph?" A Lite card is a full-frame
+ * #FBF6ED panel — luma 246 — with the photo inset over 30-50% of it. Judged whole, the
+ * design put the frame over the too_bright threshold on every run while the photograph
+ * itself was exposed perfectly well, and no repair could ever move it: the photo was never
+ * what was bright. Three such scenes reached the end of the QA loop unrepaired on a real
+ * job and it shipped `delivered_with_flags`.
+ *
+ * So measure the photograph, whose rectangle the timeline already carries. Only layer_scene
+ * needs this — everywhere else the photograph IS the frame.
+ */
+const measuredRegion = (slide) => {
+  if (slide.effect !== "layer_scene") return null;
+  const layers = slide.layers || [];
+  const images = layers.filter((l) => l.type === "image" && l.width > 0 && l.height > 0);
+  if (!images.length) return null;
+  // The largest photo is the one the scene is about; a 3-up card's tiles carry the same grade.
+  const largest = images.reduce((a, b) => (b.width * b.height > a.width * a.height ? b : a));
+  const x = Math.max(0, Math.round(largest.x ?? 0));
+  const y = Math.max(0, Math.round(largest.y ?? 0));
+  const width = Math.min(Math.round(largest.width), canvas.width - x);
+  const height = Math.min(Math.round(largest.height), canvas.height - y);
+  if (!(width > 1 && height > 1)) return null;
+  return { layer: layers.indexOf(largest), x, y, width, height };
+};
+
 const scenes = [];
 let t = 0;
 for (const s of tl.slides) {
@@ -41,6 +72,7 @@ for (const s of tl.slides) {
     id: s.id,
     effect: s.effect,
     photo: showsPhoto(s),
+    region: measuredRegion(s),
     start: t,
     dur: s.duration,
     mid: t + s.duration / 2,
@@ -48,9 +80,10 @@ for (const s of tl.slides) {
   t += s.duration - trans;
 }
 
-function statsAt(sec) {
+function statsAt(sec, region) {
+  const crop = region ? `crop=${region.width}:${region.height}:${region.x}:${region.y},` : "";
   const r = spawnSync(ffmpeg, ["-v", "error", "-ss", String(sec.toFixed(2)), "-i", video,
-    "-frames:v", "1", "-vf", "signalstats,metadata=print:file=-", "-f", "null", "-"],
+    "-frames:v", "1", "-vf", `${crop}signalstats,metadata=print:file=-`, "-f", "null", "-"],
     { encoding: "utf8", maxBuffer: 1 << 24 });
   const txt = (r.stdout || "") + (r.stderr || "");
   const get = (k) => { const m = txt.match(new RegExp(`lavfi\\.signalstats\\.${k}=([\\-0-9.]+)`)); return m ? Number(m[1]) : null; };
@@ -59,7 +92,7 @@ function statsAt(sec) {
 
 const DARK = FRAME_DARK_YAVG, BRIGHT = FRAME_BRIGHT_YAVG, FLAT = FRAME_FLAT_RANGE;
 const results = scenes.map((sc) => {
-  const st = statsAt(sc.mid);
+  const st = statsAt(sc.mid, sc.region);
   const range = st.ymax != null && st.ymin != null ? st.ymax - st.ymin : null;
 
   // A card with no photograph on it has nothing to expose badly. Skip it rather
@@ -75,14 +108,19 @@ const results = scenes.map((sc) => {
   if (st.yavg != null && st.yavg < (lenient ? FRAME_DARK_LENIENT_YAVG : DARK)) flags.push("too_dark");
   if (st.yavg != null && st.yavg > BRIGHT) flags.push("too_bright");
   if (range != null && range < FLAT) flags.push("flat_or_empty");
-  return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, photo: true, lenient, verdict: flags.length ? "review" : "ok", flags };
+  return { id: sc.id, effect: sc.effect, at: +sc.mid.toFixed(2), yavg: st.yavg, range, photo: true,
+    lenient, region: sc.region, verdict: flags.length ? "review" : "ok", flags };
 });
 
 const problems = results.filter((r) => r.verdict !== "ok");
 const report = {
   video: tl.output.path, scenes: results.length,
   passed: results.length - problems.length, flagged: problems.length,
-  problems: problems.map((p) => ({ id: p.id, check: "frame_brightness", flags: p.flags, yavg: p.yavg, range: p.range })),
+  // `layer` is what the repair needs: for a card the grade belongs on the photo that was
+  // measured, not on the whole scene (buildLayerSceneCommand applies layer.grade; it never
+  // reads slide.color at all). null means the frame itself was measured.
+  problems: problems.map((p) => ({ id: p.id, check: "frame_brightness", flags: p.flags,
+    yavg: p.yavg, range: p.range, layer: p.region?.layer ?? null })),
   results,
 };
 fs.mkdirSync(path.dirname(path.resolve(root, outPath)), { recursive: true });

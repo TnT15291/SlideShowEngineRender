@@ -171,16 +171,27 @@ export function roundedMaskGeq(radius: NonNullable<LayerFrame["radius"]>): strin
   }
 
   const [tl, tr, br, bl] = radius;
-  const corner = (r: number, dx: string, dy: string) => r === 0
-    ? "1"
+  // A rounded corner measures coverage out from its arc centre, which leaves the outermost
+  // pixel of the two straight edges it owns at 0.5 — the 1px feather the scalar mask above has
+  // always drawn. A zero corner has no arc to measure from, so it feathers off its own two
+  // edges directly. Neither shortcut works: running 0 through the arc formula returns 0.5 for
+  // the entire quadrant, and returning a flat 1 stepped alpha 127 -> 255 at the quadrant
+  // midline wherever a square corner met a round one — a visible hairline down both sides of
+  // every arch.
+  const corner = (r: number, dx: string, dy: string, edgeX: string, edgeY: string) => r === 0
+    ? `clip(min(${edgeX},${edgeY}),0,1)`
     : `clip(${r}+0.5-hypot(${dx},${dy}),0,1)`;
   const left = (r: number) => `max(${r}-X,0)`;
   const right = (r: number) => `max(X-(W-1-${r}),0)`;
   const top = (r: number) => `max(${r}-Y,0)`;
   const bottom = (r: number) => `max(Y-(H-1-${r}),0)`;
+  const [fromLeft, fromRight, fromTop, fromBottom] = ["X+0.5", "W-0.5-X", "Y+0.5", "H-0.5-Y"];
   const mask =
-    `if(lt(X,W/2),if(lt(Y,H/2),${corner(tl, left(tl), top(tl))},${corner(bl, left(bl), bottom(bl))}),` +
-    `if(lt(Y,H/2),${corner(tr, right(tr), top(tr))},${corner(br, right(br), bottom(br))}))`;
+    `if(lt(X,W/2),` +
+    `if(lt(Y,H/2),${corner(tl, left(tl), top(tl), fromLeft, fromTop)},` +
+    `${corner(bl, left(bl), bottom(bl), fromLeft, fromBottom)}),` +
+    `if(lt(Y,H/2),${corner(tr, right(tr), top(tr), fromRight, fromTop)},` +
+    `${corner(br, right(br), bottom(br), fromRight, fromBottom)}))`;
   return (
     `geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':` +
     `a='alpha(X,Y)*${mask}'`

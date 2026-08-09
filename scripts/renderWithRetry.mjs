@@ -146,6 +146,37 @@ function generate(mode, photosFile) {
     );
   }
 
+  // NODE 8b': the gate that stands in for the art director this film never had.
+  //
+  // The authored recipes are held to lib/rules/templateRules.mjs before they may ship; a
+  // composed storyboard is the same format and, until this gate, was held to nothing. It runs
+  // HERE — after the words, before the build — because half of those rules judge the copy,
+  // and the storyboard leaves every text slot empty for node 8b to fill.
+  //
+  // It REPAIRS before it judges, so --strict fails only on what nothing knows how to fix.
+  // A failure here returns to the loop rather than throwing: it is a recognised failure with
+  // a fix left to try (drop the director layer), exactly like a validation failure from the
+  // engine — see the loop below.
+  const lintArgs = ["scripts/lintComposedFilm.mjs", "--storyboard", storyboardPath, "--repair", "--strict"];
+  if (mode !== "lite" && fs.existsSync(path.resolve(root, copyPath))) lintArgs.push("--copy", copyPath);
+  const lint = sh(node, lintArgs);
+  process.stdout.write(lint.stdout || "");
+  if (lint.status !== 0) {
+    process.stderr.write(lint.stderr || "");
+    return { quality: (lint.stdout || lint.stderr || "").trim() };
+  }
+
+  // What the film is MADE of, beside the 25 recipes a person art-directed. It cannot fail a
+  // build — half of these legitimately track how rich the album is — but it is recorded per
+  // job, because the argument behind this whole pass is that a number nobody records is not
+  // a standard. Failures here are non-fatal on purpose: a missing scorecard must never cost
+  // the customer a film.
+  const grade = sh(node, [
+    "scripts/gradeComposedFilm.mjs", "--storyboard", storyboardPath, "--out", `${analysisDir}/film-scorecard.json`,
+  ]);
+  process.stdout.write(grade.stdout || "");
+  if (grade.status !== 0) console.warn(`  (scorecard skipped: ${(grade.stderr || "").trim()})`);
+
   step(
     [
       "scripts/applyStoryTemplate.mjs",
@@ -158,6 +189,11 @@ function generate(mode, photosFile) {
       "--output", videoOut,
       "--name", projectName,
       "--quality", quality,
+      // Both modes are the PREMIUM product — the lite mode here is premium failing over,
+      // not the customer buying a cheaper film — so both answer to premium's policy. The
+      // pipeline version is what records which of the two actually shipped.
+      "--tier", "premium",
+      "--pipeline-version", mode === "lite" ? "premium-fallback-lite-v1" : "premium-v1",
       ...(mode !== "lite" ? ["--copy", copyPath] : []),
       // The ledger travels into the LITE fallback too. Falling back is us failing to
       // build the film we designed — it is not the customer withdrawing what they
@@ -175,6 +211,7 @@ function generate(mode, photosFile) {
     "node 8c: render the storyboard"
   );
   step(["scripts/fitTextInTimeline.mjs", TL], "fit-text");
+  return {};
 }
 
 /** Pull missing image/background paths out of an engine validation report. */
@@ -276,7 +313,25 @@ let outcome = null;
 try {
   for (let attempt = 1; attempt <= maxAttempts && !outcome; attempt++) {
     console.log(`\n— attempt ${attempt}/${maxAttempts} (mode: ${mode}) —`);
-    generate(mode, photosFile);
+    const built = generate(mode, photosFile);
+
+    // A QUALITY failure, before the engine is asked anything. The film would validate and
+    // render perfectly well — it is the film itself that is not good enough, and the repair
+    // pass has already spent the one fix it knows. Dropping the director layer is a real
+    // second chance rather than a retry of the same arithmetic: the house grammar composes a
+    // different shot list, and without writeRecipeCopy every card is wordless, which gives
+    // the layout repair a free hand.
+    if (built.quality) {
+      lastFail = built.quality;
+      console.warn(`  composed-film gate FAILED:\n${indent(lastFail)}`);
+      if (mode === "director" && attempt < maxAttempts) {
+        console.warn("  fix: dropping the director layer → falling back to Lite (rule-based).");
+        mode = "lite";
+        continue;
+      }
+      break; // nothing left to try — the loop's own failure path reports it
+    }
+
     const res = runEngine(true); // dry-run validate
 
     if (res.code === 0) {

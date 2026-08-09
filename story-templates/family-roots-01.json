@@ -188,10 +188,10 @@
     "notes": "A family-forward wedding story that gives parents, grandparents, childhood archives and the joining of two households equal emotional weight."
   },
   "intro": {
-    "summary": "Câu chuyện lấy gia đình làm trung tâm — ông bà, cha mẹ, ký ức tuổi thơ và sự hòa quyện hai gia đình.",
-    "photos": "Cần nhiều ảnh gia đình, ảnh tư liệu cũ (thời thơ ấu, cha mẹ/ông bà) bên cạnh ảnh cưới — số lượng ảnh nên rộng rãi (23–75) để đủ chỗ cho cả hai nhánh gia đình.",
-    "story": "Phù hợp khi gia đình hai bên đóng vai trò quan trọng, muốn tôn vinh cội nguồn và sự gắn kết hai họ, không chỉ riêng cặp đôi.",
-    "music": "Hợp nhạc ấm áp, hoài niệm, giao hưởng nhẹ, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Câu chuyện lấy gia đình làm trung tâm — ông bà, cha mẹ, ký ức tuổi thơ và sự hòa quyện hai gia đình.", "en": "A family-centred story — grandparents, parents, childhood memories, and two families becoming one." },
+    "photos": { "vi": "Cần nhiều ảnh gia đình, ảnh tư liệu cũ (thời thơ ấu, cha mẹ/ông bà) bên cạnh ảnh cưới — số lượng ảnh nên rộng rãi (23–75) để đủ chỗ cho cả hai nhánh gia đình.", "en": "Needs plenty of family photos and old archive images (childhood, parents, grandparents) alongside the wedding coverage. A generous count (23–75) leaves room for both sides." },
+    "story": { "vi": "Phù hợp khi gia đình hai bên đóng vai trò quan trọng, muốn tôn vinh cội nguồn và sự gắn kết hai họ, không chỉ riêng cặp đôi.", "en": "For weddings where both families matter, and the film should honour where the couple came from rather than only the couple themselves." },
+    "music": { "vi": "Hợp nhạc ấm áp, hoài niệm, giao hưởng nhẹ, tiết tấu chậm đến vừa.", "en": "Suits warm, nostalgic music and light orchestral arrangements at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

@@ -157,6 +157,56 @@ Ví dụ overlay bokeh nền:
 Để làm nền title card thật, dùng slide `effect: "video_background"` với `background`
 trỏ tới file này (thay vì overlay).
 
+### Bộ Snow White / Tuyết trắng (`assets/*/snow-white/`)
+
+Các asset do dự án tự tạo, không dùng footage ngoài (`license: project-owned`). Tất cả
+đã được chuẩn hoá 1920×1080 và chừa vùng giữa thoáng để đặt ảnh hoặc tiêu đề.
+
+| File | Vai trò | Cách dùng khuyến nghị |
+|---|---|---|
+| `backgrounds/snow-white/snow-white-silk-frost.png` | nền lụa trắng ngọc trai, viền tinh thể băng | `video_background` cho opening/title/ending |
+| `backgrounds/snow-white/snow-white-winter-garden.png` | nền vườn đông phủ tuyết, khoảng trống giữa | `video_background` cho chapter card mùa đông |
+| `overlays/snow-white/snow-dust-screen.png` | bụi tuyết và bokeh thưa | `blend: "screen"`, `opacity: 0.18–0.28` |
+| `overlays/snow-white/frosted-edge-screen.png` | viền cành băng và ánh sao | `blend: "screen"`, `opacity: 0.22–0.30` |
+
+Ví dụ:
+
+```json
+"overlays": [
+  {
+    "path": "assets/overlays/snow-white/snow-dust-screen.png",
+    "position": "fullscreen",
+    "opacity": 0.22,
+    "blend": "screen"
+  }
+]
+```
+
+### Bộ Moonlight / Ánh trăng (`assets/*/moonlight/`)
+
+Asset project-owned cho opening, chapter card và các cảnh đêm lãng mạn. Background
+đặt mặt trăng sát mép để chừa vùng chữ; overlay dùng nền đen để ghép `screen`.
+
+| File | Vai trò | Cách dùng khuyến nghị |
+|---|---|---|
+| `backgrounds/moonlight/moonlit-silk-crescent.png` | lụa xanh bạc và trăng lưỡi liềm | `video_background` cho opening/title/ending |
+| `backgrounds/moonlight/moonlit-cloud-garden.png` | trăng tròn, mây bạc và cành hoa đêm | `video_background` cho chapter card/cảnh đêm |
+| `overlays/moonlight/lunar-dust-screen.png` | bụi sao và ánh bạc thưa | `blend: "screen"`, `opacity: 0.18–0.28` |
+| `overlays/moonlight/crescent-halo-screen.png` | quầng trăng và dải moonbeam | `blend: "screen"`, `opacity: 0.12–0.22` |
+
+Ví dụ:
+
+```json
+"overlays": [
+  {
+    "path": "assets/overlays/moonlight/crescent-halo-screen.png",
+    "position": "fullscreen",
+    "opacity": 0.18,
+    "blend": "screen"
+  }
+]
+```
+
 ### Khung trang trí (`assets/frames/`)
 
 | File | Ghi chú |

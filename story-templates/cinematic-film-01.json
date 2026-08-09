@@ -252,10 +252,10 @@
     "notes": "Moody cinematic documentary / fashion-film look (2026 trend: editorial pacing, intentional color grade, the line between wedding video and fashion film fading). Letterbox + grain + dark scenes. Original recipe."
   },
   "intro": {
-    "summary": "Phong cách phim điện ảnh u tịch, tông tối, letterbox và hạt phim — như một bộ phim ngắn hơn là video cưới thông thường.",
-    "photos": "Hợp ảnh có ánh sáng kịch tính, tông trầm, ảnh phóng sự chân thật cả ngày cưới; cần lượng ảnh khá lớn (35–70) để giữ nhịp chậm mà vẫn đủ chất liệu.",
-    "story": "Kể hành trình tình yêu đầy cảm xúc — gặp gỡ, gắn kết, gia đình, đến cao trào — theo nhịp phim tài liệu chậm rãi, sâu lắng.",
-    "music": "Hợp nhạc điện ảnh, giao hưởng nhẹ, cảm xúc và chậm — năng lượng thấp, để hình ảnh dẫn dắt."
+    "summary": { "vi": "Phong cách phim điện ảnh u tịch, tông tối, letterbox và hạt phim — như một bộ phim ngắn hơn là video cưới thông thường.", "en": "A moody, dark-toned cinematic look with letterboxing and film grain — closer to a short film than a wedding video." },
+    "photos": { "vi": "Hợp ảnh có ánh sáng kịch tính, tông trầm, ảnh phóng sự chân thật cả ngày cưới; cần lượng ảnh khá lớn (35–70) để giữ nhịp chậm mà vẫn đủ chất liệu.", "en": "Suits dramatic lighting, deep tones and honest documentary coverage of the whole day. Needs a good number of photos (35–70) to hold a slow pace with enough material." },
+    "story": { "vi": "Kể hành trình tình yêu đầy cảm xúc — gặp gỡ, gắn kết, gia đình, đến cao trào — theo nhịp phim tài liệu chậm rãi, sâu lắng.", "en": "Tells the emotional arc of a relationship — meeting, growing close, family, the high point — at the slow, considered pace of a documentary." },
+    "music": { "vi": "Hợp nhạc điện ảnh, giao hưởng nhẹ, cảm xúc và chậm — năng lượng thấp, để hình ảnh dẫn dắt.", "en": "Suits cinematic scoring or light orchestral pieces, emotional and slow — low energy, letting the images lead." }
   },
   "fit": {
     "bestFor": [

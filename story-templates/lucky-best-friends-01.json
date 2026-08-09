@@ -337,10 +337,10 @@
     "notes": "A sunlit acoustic story inspired by Lucky: two best friends discover that the person who has always felt like home is also the person they love. Timed lyrics must come from a licensed external track."
   },
   "intro": {
-    "summary": "Một câu chuyện trong trẻo về hai người bạn thân nhận ra tình yêu đã ở giữa họ từ rất lâu.",
-    "photos": "Hợp ảnh đời thường, ảnh đi chơi cùng nhau, ảnh cười tự nhiên, những lần xa cách hoặc chờ đợi, và các khoảnh khắc bình yên bên nhau.",
-    "story": "Phù hợp cặp đôi bắt đầu từ tình bạn thân — không cần một khoảnh khắc yêu sét đánh, chỉ cần hành trình nhận ra người luôn ở bên cũng chính là người mình muốn trở về.",
-    "music": "Thiết kế riêng cho Lucky của Jason Mraz và Colbie Caillat; chất acoustic nhẹ, ấm, tươi và thân mật."
+    "summary": { "vi": "Một câu chuyện trong trẻo về hai người bạn thân nhận ra tình yêu đã ở giữa họ từ rất lâu.", "en": "A clear-eyed story about two close friends realising the love had been sitting between them all along." },
+    "photos": { "vi": "Hợp ảnh đời thường, ảnh đi chơi cùng nhau, ảnh cười tự nhiên, những lần xa cách hoặc chờ đợi, và các khoảnh khắc bình yên bên nhau.", "en": "Suits everyday photos, days out together, unposed laughter, times apart or waiting, and the calm moments in between." },
+    "story": { "vi": "Phù hợp cặp đôi bắt đầu từ tình bạn thân — không cần một khoảnh khắc yêu sét đánh, chỉ cần hành trình nhận ra người luôn ở bên cũng chính là người mình muốn trở về.", "en": "For couples who started as best friends — no love-at-first-sight moment needed, just the road to realising the person always there is the one you want to come home to." },
+    "music": { "vi": "Thiết kế riêng cho Lucky của Jason Mraz và Colbie Caillat; chất acoustic nhẹ, ấm, tươi và thân mật.", "en": "Written around Lucky by Jason Mraz and Colbie Caillat: light acoustic, warm, bright and intimate." }
   },
   "fit": {
     "bestFor": [

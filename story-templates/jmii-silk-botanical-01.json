@@ -248,10 +248,10 @@
     "notes": "Elegant ivory-silk white-weddings look for all-portrait studio photo sets: portraits bleed into the cream beside restrained gold serif + script text, broken up by one procedural champagne-silk + leaf-shadow interlude. v2: body diversified per templateRules — mirrored chapter layouts, arch trio / invitation row / photo duo breathers, one floating_frame signature — so long songs no longer cycle a single text layout and the lone silk clip plays once. v3: bride/groom cards were the only Vietnamese headings in an otherwise EN-heading/VI-body film (fixed to match); their body was name-only (now a short, generic personality line per templateRules' repeat_depth pattern — 2 variants each); s10's body was silently English while its sibling body scenes (s06/s08) were Vietnamese (translated); the s06/s08/s10 repeat rounds all replayed their own base layout back-to-back (same photo-one-side/cream-text-panel frame every recurrence) — now alternate with their mirror layout and one full_bleed_quote photo-only breather per scene, so long songs don't visibly loop the same card."
   },
   "intro": {
-    "summary": "Phong cách save-the-date lụa ngà thanh lịch, dành cho bộ ảnh chân dung studio.",
-    "photos": "Cần bộ ảnh chân dung studio chất lượng cao (portrait-heavy), ít hoặc không có ảnh phóng sự đời thường — số ảnh không cần nhiều (18–40).",
-    "story": "Phù hợp cặp đôi muốn một video 'thiệp mời sống động' — giới thiệu cô dâu chú rể, lời mời, không kể chi tiết hành trình yêu.",
-    "music": "Hợp nhạc lãng mạn, thanh lịch, nhẹ nhàng, giàu cảm xúc, tiết tấu chậm đến vừa."
+    "summary": { "vi": "Phong cách save-the-date lụa ngà thanh lịch, dành cho bộ ảnh chân dung studio.", "en": "An elegant ivory-silk save-the-date look, made for a studio portrait set." },
+    "photos": { "vi": "Cần bộ ảnh chân dung studio chất lượng cao (portrait-heavy), ít hoặc không có ảnh phóng sự đời thường — số ảnh không cần nhiều (18–40).", "en": "Needs high-quality studio portraits (portrait-heavy), with little or no candid documentary coverage. The count stays small (18–40)." },
+    "story": { "vi": "Phù hợp cặp đôi muốn một video 'thiệp mời sống động' — giới thiệu cô dâu chú rể, lời mời, không kể chi tiết hành trình yêu.", "en": "For couples who want a 'living invitation' — introducing the bride and groom and extending the invitation, rather than telling the whole love story." },
+    "music": { "vi": "Hợp nhạc lãng mạn, thanh lịch, nhẹ nhàng, giàu cảm xúc, tiết tấu chậm đến vừa.", "en": "Suits romantic, elegant, gentle and emotional music at a slow to medium tempo." }
   },
   "fit": {
     "bestFor": [

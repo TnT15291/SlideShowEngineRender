@@ -23,10 +23,14 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-text: var(--success-text);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-text: var(--warning-text);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  --color-info-text: var(--info-text);
+  --color-primary-text: var(--primary-text);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
@@ -59,6 +63,23 @@
   --warning-foreground: oklch(0.98 0.02 80);
   --info: oklch(0.55 0.14 240);
   --info-foreground: oklch(0.98 0.01 240);
+
+  /*
+    Text-only variants of the semantic colours.
+    The fill values above are chosen to look right as a background, a badge or a
+    progress bar, and they are fine there. As *text* they were not: measured
+    against this palette, success ran 3.74:1 on the page background and each
+    banner's own 10 % tint pulled warning to 4.42:1 and primary to 3.90:1 —
+    below the 4.5:1 AA needs at the 11–12 px these are almost always used at.
+    Dropping lightness to 0.50 clears 4.5:1 against the worst case (the token's
+    own /10 fill) while keeping the hue, so nothing about the visual language
+    changes. Use `text-*-text` for words, the plain token for fills and icons.
+    `--destructive` already measures 5.59:1 on its own tint and needs no twin.
+  */
+  --success-text: oklch(0.50 0.12 145);
+  --warning-text: oklch(0.50 0.16 55);
+  --info-text: oklch(0.50 0.14 240);
+  --primary-text: oklch(0.50 0.12 65);
   --sidebar: oklch(0.19 0.012 55);
   --sidebar-foreground: oklch(0.97 0.008 78);
   --sidebar-muted: oklch(0.72 0.018 72);
@@ -68,9 +89,38 @@
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
-.field { margin-top: .5rem; height: 2.75rem; width: 100%; appearance: none; border-radius: .5rem; border: 1px solid var(--input); background: var(--card); padding: 0 .75rem; color: var(--foreground); font-size: .875rem; outline: none; transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease; }
-.field:hover { border-color: color-mix(in oklab, var(--foreground) 24%, var(--input)); }
-.field:focus { border-color: var(--ring); background: var(--background); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 16%, transparent); }
+
+/*
+  `.field` MUST stay inside `@layer components`. Unlayered CSS beats every
+  layered rule regardless of specificity, so when these lived outside the
+  cascade layers they silently overrode any Tailwind utility written next to
+  them: `class="field mt-0 pl-9"` still computed `margin-top: 8px` and
+  `padding-left: 12px`, which is how the search icon ended up sitting on top of
+  the placeholder and the eye toggle on top of a typed password.
+*/
+@layer components {
+  .field { margin-top: .5rem; height: 2.75rem; width: 100%; appearance: none; border-radius: .5rem; border: 1px solid var(--input); background: var(--card); padding: 0 .75rem; color: var(--foreground); font-size: .875rem; outline: none; transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease; }
+  .field:hover { border-color: color-mix(in oklab, var(--foreground) 24%, var(--input)); }
+  .field:focus { border-color: var(--ring); background: var(--background); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 16%, transparent); }
+
+  /*
+    `appearance: none` above strips the native dropdown arrow, and nothing was
+    putting one back — every <select> in the app rendered as a box identical to
+    a text input, so "Share" and "Auto" on the intake step read as uneditable
+    labels. The chevron is inlined (no external request) and stroked in
+    `currentColor` so it follows the field's own text colour.
+  */
+  select.field {
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23574c40' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 1rem 1rem;
+  }
+  select.field:focus { background-color: var(--background); }
+  /* Firefox keeps its own focus ring on top of ours. */
+  select.field:-moz-focusring { color: transparent; text-shadow: 0 0 0 var(--foreground); }
+}
 
 .login-canvas {
   background-image:

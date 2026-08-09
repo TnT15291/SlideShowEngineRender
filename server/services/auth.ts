@@ -225,6 +225,40 @@ export async function consumeRenderEntitlement(userId: string, engineRoot = proc
   })
 }
 
+/**
+ * The inverse of `consumeRenderEntitlement`, for a render that never produced a
+ * film. Charging happens at start (which is what keeps a double-submit from
+ * spending twice), so a run that dies in `build` before a single frame exists
+ * has to hand the credit back — otherwise a customer pays for a failure the
+ * pipeline caused.
+ *
+ * Callers must route through `renderBilling`, which holds the one reservation
+ * per project that makes this idempotent; calling it directly would let a
+ * repeated settle mint credits.
+ */
+export async function refundRenderEntitlement(userId: string, engineRoot = process.cwd()): Promise<void> {
+  await withLock(usersFile(engineRoot), async () => {
+    const store = await readUsers(engineRoot)
+    const userIndex = store.users.findIndex((candidate) => candidate.id === userId)
+    const user = store.users[userIndex]
+    // A deleted user is not an error here: there is nobody left to credit, and
+    // throwing would strand the job runner mid-settle.
+    if (!user) return
+    const plan = user.plan ?? defaultPlan()
+    const users = [...store.users]
+
+    if (plan.type === "per_video") {
+      users[userIndex] = { ...user, plan: { ...plan, creditsRemaining: plan.creditsRemaining + 1 } }
+    } else {
+      // If the billing period rolled over while the render was running the
+      // usage counter has already been reset, and `max(0, …)` keeps the refund
+      // from pushing it negative.
+      users[userIndex] = { ...user, plan: { ...plan, rendersUsedThisPeriod: Math.max(0, plan.rendersUsedThisPeriod - 1) } }
+    }
+    await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+  })
+}
+
 // Manual provisioning path (CLI), kept alongside the Stripe-driven functions
 // below for comp accounts or when billing.ts isn't configured.
 export async function setUserPlan(username: string, plan: Plan, engineRoot = process.cwd()): Promise<AuthenticatedUser> {

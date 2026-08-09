@@ -58,13 +58,13 @@ test("policy lookups fail loudly on unknown tiers and undeclared rules", () => {
 
 test("lite blocks integrity failures, repairs cheap defects, and only warns on taste", () => {
   for (const check of ["must_use_coverage", "text_safe_area", "caption_integrity", "closing_card",
-    "black_frame", "music_edit", "audio_drift"]) {
+    "duplicate_photo", "black_frame", "music_edit", "audio_drift"]) {
     assert.equal(actionFor("lite", check), "block", check);
   }
   for (const check of ["text_overflow", "crop", "pacing", "frame_brightness"]) {
     assert.equal(actionFor("lite", check), "repair", check);
   }
-  for (const check of ["duplicate_photo", "layout_repetition", "overlay_repetition", "hero"]) {
+  for (const check of ["layout_repetition", "overlay_repetition", "hero"]) {
     assert.equal(actionFor("lite", check), "warn", check);
   }
 });

@@ -39,6 +39,7 @@ import { resolveTemplate, gradeOf } from "./lib/lookResolver.mjs";
 import { planTemplateMusic } from "./lib/templateMusicPlan.mjs";
 import { combineMusicAnalyses, PLAYLIST_CROSSFADE_SEC } from "./lib/playlistMusic.mjs";
 import { planTemplateShotList } from "./lib/templateShotList.mjs";
+import { actionFor, POLICY_VERSION, TIERS } from "./lib/rules/policy.mjs";
 import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_MAX, EASING_EFFECTS, HYBRID_ASSET_MIN,
 } from "./lib/engineCapabilities.mjs";
@@ -57,8 +58,9 @@ const photosPath = arg("--photos", "analysis/photos.json");
 // project with no music configured) silently scored ANOTHER customer's song and
 // read the root analysis for it — the wrong film, delivered without a warning.
 const musicPath = arg("--music", "");
-if (!musicPath) {
-  console.error(`[applyStoryTemplate] FAILED: --music is required (this recipe times its scenes to the track).`);
+const targetDuration = Number(arg("--target-duration", ""));
+if (!musicPath && (!Number.isFinite(targetDuration) || targetDuration <= 0)) {
+  console.error(`[applyStoryTemplate] FAILED: --music is required unless a positive --target-duration is provided.`);
   process.exit(1);
 }
 const libraryPath = arg("--library", "layouts/library.json");
@@ -70,6 +72,7 @@ const musicModeArg = arg("--music-mode", "");
 const language = arg("--language", "vi");
 const languageEnforced = process.argv.includes("--language");
 const sequenceMode = arg("--sequence-mode", "editorial");
+const allowLegacyMusicAnalysis = process.argv.includes("--allow-legacy-music-analysis");
 // The second track for "playlist" mode (nối sang bài khác). Absent → playlist degrades to
 // loop (the engine's own -stream_loop already repeats a single track to cover any video
 // length; see buildAudioMuxArgs), and we say so rather than fail.
@@ -109,7 +112,7 @@ const photosDoc = JSON.parse(fs.readFileSync(path.resolve(root, photosPath), "ut
 // those rows onto the playlist clock and subtracts the acrossfade the engine puts between
 // tracks — the same arithmetic assessFit.mjs and runProject's playlist gate already use,
 // so the build now agrees with the plan phase about how long the music is.
-const musicTracks = [musicPath, ...extraMusicPaths];
+const musicTracks = musicPath ? [musicPath, ...extraMusicPaths] : [];
 const trackAnalyses = musicTracks.map((track) => {
   const name = path.basename(track).replace(/\.[^.]+$/, "");
   const analysisRel = `${analysisDir}/music/${name}.json`;
@@ -123,6 +126,10 @@ const trackAnalyses = musicTracks.map((track) => {
   const analysis = JSON.parse(fs.readFileSync(analysisAbs, "utf8"));
   const contract = validateMusicAnalysis(analysis);
   if (!contract.ok) {
+    if (allowLegacyMusicAnalysis && Number(analysis.duration) > 0) {
+      console.warn(`[applyStoryTemplate] legacy music analysis for "${track}" — using duration-only fallback (${contract.missing.join(", ")})`);
+      return analysis;
+    }
     throw new Error(`music analysis is stale or incomplete for "${track}" (${contract.missing.join(", ")}). ` +
       `Re-run: node scripts/analyzeMusic.mjs "${track}" --out "${analysisRel}"`);
   }
@@ -155,6 +162,10 @@ if (direction && direction.recipeId !== template.id) throw new Error(`${directio
 const ledger = directivesPath ? loadLedger(directivesPath) : { directives: [] };
 const orders = active(ledger);
 const appliedIds = new Set();
+// What the orders COST. A directive is the one thing in this pipeline allowed to
+// overwrite a plan that was already solved, so what it spends has to leave a receipt:
+// the film that prompted this counted 82 photos in its logs and put 66 on screen.
+const directiveImpact = {};
 if (orders.length) {
   // scenePhotoCount knows what each LAYOUT consumes — which is the only way a montage
   // can absorb its neighbours without over-drawing the photo budget the storyboard was
@@ -162,6 +173,7 @@ if (orders.length) {
   for (const id of applyToStoryboard(template, orders, {
     availablePhotos: photosDoc.photos?.length ?? 0,
     photoDemand: (scene) => scenePhotoCount(scene, { library, direction }),
+    report: directiveImpact,
   })) appliedIds.add(id);
 }
 // Optional AI-written copy (scripts/writeRecipeCopy.mjs). Vietnamese projects may
@@ -179,6 +191,15 @@ if (copyDoc?.language && copyDoc.language !== language) {
 const copyMap = copyDoc?.scenes ?? {};
 
 const outPath = arg("--out", `timeline/${template.id}.json`);
+
+// WHICH POLICY TABLE THIS BUILD ANSWERS TO. Every tier renders through this script, so it
+// has to be told — inferring it from a storyboard's shape is how the caption gate ended up
+// keyed to a version string. The default is a fair guess for a direct invocation (a composed
+// storyboard came from the premium composer, a hand-written recipe is the template tier);
+// the orchestrators say it outright.
+const policyTier = arg("--tier", template.source?.origin === "composed" ? "premium" : "template");
+if (!TIERS.includes(policyTier)) throw new Error(`--tier "${policyTier}" is not one of: ${TIERS.join(", ")}`);
+const pipelineVersion = arg("--pipeline-version", template.pipelineVersion || `${policyTier}-v1`);
 
 // TOKEN FALLBACKS ARE COPY, so they follow --language like every other word on screen.
 // They were all English on a pipeline that defaults to vi and only rewrites copy for "en"
@@ -361,8 +382,14 @@ const byQuality = [...photos].sort((a, b) =>
   (b.qualityNorm ?? 0) - (a.qualityNorm ?? 0) ||
   (b.sharpness ?? 0) - (a.sharpness ?? 0)
 );
-const heroPhoto = byFile.get(brief.openingPhoto) || byQuality[0];
-const endingPhoto = byFile.get(brief.endingPhoto) || heroPhoto;
+const liteV2 = template.pipelineVersion === "lite-v2";
+const heroPhoto = byFile.get(brief.openingPhoto) || byFile.get(liteV2 ? template.openingPhotoHint : "") || (liteV2
+  ? [...photos].sort((a, b) => (b.openingScore ?? b.heroScore ?? 0) - (a.openingScore ?? a.heroScore ?? 0))[0]
+  : byQuality[0]);
+const endingPhoto = byFile.get(brief.endingPhoto) || (liteV2
+  ? [...photos].filter((photo) => photo.file !== heroPhoto.file)
+    .sort((a, b) => (b.closingScore ?? b.heroScore ?? 0) - (a.closingScore ?? a.heroScore ?? 0))[0] || heroPhoto
+  : heroPhoto);
 let lastPhoto = null;
 let seq = 0;
 let globalAssignments = new Map();
@@ -700,22 +727,26 @@ const requests = buildPhotoAssignmentRequests({ scenes: expandedScenes, library,
 const mustUse = [...new Set([...(brief.mustUsePhotos || []), ...momentRequireFiles])].filter((f) => f !== heroPhoto.file && f !== endingPhoto.file);
 const flexibleRequests = requests.filter((r) => !r.hero);
 if (mustUse.length > flexibleRequests.length) throw new Error(`brief has ${mustUse.length} must-use photos but only ${flexibleRequests.length} assignable slots`);
-mustUse.forEach((file, i) => { flexibleRequests[i].preferred = file; });
+mustUse.forEach((file, i) => { flexibleRequests[i].required = file; });
 // The same reservation the budget was solved against — not a second, independently
 // derived one. Two places computing "which photos are held back" is how they drift.
 const reserved = [...reservedPhotos];
-const lockedForAssignment = new Set([...reserved, ...mustUse]);
-const representativeByGroup = new Map();
-for (const photo of photos) {
-  if (!photo.duplicateGroup || lockedForAssignment.has(photo.file)) continue;
-  const current = representativeByGroup.get(photo.duplicateGroup);
-  if (!current || photo.duplicateRepresentative) representativeByGroup.set(photo.duplicateGroup, photo.file);
+// Keep duplicate siblings available for distant scenes. assignPhotos enforces the actual
+// product invariants (never same group within a scene or adjacent scenes); deleting every
+// sibling here made the effective pool smaller than the composer budget and broke valid
+// Template/Premium albums before assignment had a chance to place them safely.
+const assignmentPhotos = photos;
+const assignmentPlan = assignPhotos({
+  photos: assignmentPhotos,
+  requests,
+  reserved,
+  sequenceMode,
+  maxReuse: Number(template.fit?.maxReuse || 1),
+  allowOrientationFallback: !liteV2,
+});
+if (!trackAnalyses.length) {
+  trackAnalyses.push({ analysisVersion: 2, duration: targetDuration, sections: [], phrases: [], downbeats: [], energyEnvelope: [] });
 }
-const assignmentPhotos = photos.filter((photo) =>
-  !photo.duplicateGroup || lockedForAssignment.has(photo.file) ||
-  representativeByGroup.get(photo.duplicateGroup) === photo.file
-);
-const assignmentPlan = assignPhotos({ photos: assignmentPhotos, requests, reserved, sequenceMode });
 if (assignmentPlan.unfilled.length) {
   const demanded = requests.reduce((n, r) => n + r.count, 0);
   throw new Error(
@@ -725,6 +756,24 @@ if (assignmentPlan.unfilled.length) {
   );
 }
 globalAssignments = assignmentPlan.assignments;
+const assignmentReportPath = `${analysisDir}/photo-assignment.json`;
+// Everything in this object describes the PLAN. The plan is not the film: a slot whose
+// assignment key is missed at build time falls back to take(), so a report that only ever
+// counts the plan can claim full coverage over a film that repeated a photograph. The
+// `timeline` block written after the slides are built is the half that is auditable.
+const assignmentReport = {
+  version: 1,
+  maxReuse: Number(template.fit?.maxReuse || 1),
+  selected: assignmentPhotos.length,
+  usedUnique: assignmentPlan.used.size,
+  references: [...assignmentPlan.assignments.values()].flat().length,
+  useCounts: Object.fromEntries(assignmentPlan.useCounts),
+  reuses: assignmentPlan.reuses,
+  adjacentCollisions: assignmentPlan.adjacentCollisions,
+  unfilled: assignmentPlan.unfilled.map((request) => request.key),
+};
+fs.mkdirSync(path.dirname(path.resolve(root, assignmentReportPath)), { recursive: true });
+fs.writeFileSync(path.resolve(root, assignmentReportPath), JSON.stringify(assignmentReport, null, 2) + "\n");
 const diversityReport = buildDiversityReport({ scenes: expandedScenes, assignments: globalAssignments, photos });
 const diversityPath = `${analysisDir}/tier1_diversity.json`;
 fs.mkdirSync(path.dirname(path.resolve(root, diversityPath)), { recursive: true });
@@ -801,7 +850,7 @@ const timeline = {
   // than the video (-stream_loop -1 in buildAudioMuxArgs) to cover it, so nothing else is
   // needed here. playlist: a second track appended; the engine's playlist path joins them
   // with acrossfade and repeats the WHOLE pair until it covers the video.
-  music: musicEdit.mode === "playlist"
+  music: !musicPath ? [] : musicEdit.mode === "playlist"
     ? musicTracks.map((track) => ({ path: track, volume: 0.82 }))
     : [{ path: musicPath, volume: 0.82,
         ...(musicEdit.mode === "highlight" ? { start: musicEdit.start, end: musicEdit.end } : {}) }],
@@ -901,9 +950,97 @@ if (targetSec > 0) {
   }
 }
 
+// Coverage as SHIPPED, measured on the finished timeline. `usedUnique` above
+// counts the assignment's own bookkeeping (reserved bookends included) and `references`
+// counts assigned slots; neither notices a photograph that reached the screen twice. These
+// are the numbers the job summary and the delivery gate should quote.
+const renderedPhotoFiles = timeline.slides.flatMap((slide) => [
+  ...(slide.image ? [slide.image] : []),
+  ...(slide.images || []),
+  ...(slide.layers || []).filter((l) => l.type === "image" && (l.path || l.src)).map((l) => l.path || l.src),
+]);
+const renderedUseCounts = new Map();
+for (const file of renderedPhotoFiles) renderedUseCounts.set(file, (renderedUseCounts.get(file) || 0) + 1);
+const selectedNotRendered = assignmentPhotos.filter((p) => !renderedUseCounts.has(p.file)).map((p) => p.file);
+// Every photograph left behind has to be attributable. The counts are what this stage can
+// actually prove — the directive layer reports what IT could not place, and the remainder
+// is the plan simply having fewer slots than the customer had photographs. Naming which
+// individual file fell to which cause would be a guess, and a guess in a receipt is worse
+// than a number with a stated scope.
+const lostToDirectives = Math.min(selectedNotRendered.length, directiveImpact.photoLost ?? 0);
+assignmentReport.timeline = {
+  references: renderedPhotoFiles.length,
+  usedUnique: renderedUseCounts.size,
+  maxUses: renderedPhotoFiles.length ? Math.max(...renderedUseCounts.values()) : 0,
+  selectedNotRendered,
+  notRenderedReasons: {
+    ...(lostToDirectives ? { directive_reduced_demand: lostToDirectives } : {}),
+    ...(selectedNotRendered.length - lostToDirectives
+      ? { budget_exceeded: selectedNotRendered.length - lostToDirectives } : {}),
+  },
+  // Assigned by the global solver but absent from the film: the signature of a slot that
+  // missed its assignment key and drew from the pool instead.
+  assignedNotRendered: [...new Set([...assignmentPlan.assignments.values()].flat())]
+    .filter((file) => !renderedUseCounts.has(file)),
+};
+// PROVENANCE travels with the film, not in a log beside it. Only the Lite generator used
+// to write any of this, so every premium and template timeline reached QA with an empty
+// `metadata: {}` — which is how qaLoop came to stamp `pipelineVersion: null` on premium's
+// static-gate.json, and how the caption gate came to be strict for exactly one tier: it
+// keyed off a version string that only Lite ever set. Lite still overwrites these after the
+// call; nothing here changes what it declares.
+timeline.metadata = {
+  ...(timeline.metadata || {}),
+  pipelineVersion,
+  qualityPolicyVersion: POLICY_VERSION,
+  // The severity of the caption gate is a POLICY decision, read from the tier's own row,
+  // rather than inferred from whether a string happened to say "lite-v2".
+  strictText: actionFor(policyTier, "text_safe_area") === "block",
+  photoCoverage: {
+    selected: assignmentPhotos.length,
+    usedUnique: assignmentReport.timeline.usedUnique,
+    ratio: assignmentPhotos.length ? +(assignmentReport.timeline.usedUnique / assignmentPhotos.length).toFixed(4) : null,
+    notRenderedReasons: assignmentReport.timeline.notRenderedReasons,
+  },
+  musicSync: musicRetiming.sync,
+  ...(orders.length ? { directiveImpact: {
+    scenesRewritten: directiveImpact.scenesRewritten ?? 0,
+    photoFreed: directiveImpact.photoFreed ?? 0,
+    photoReallocated: directiveImpact.photoReallocated ?? 0,
+    photoLost: directiveImpact.photoLost ?? 0,
+    runsCapped: directiveImpact.runsCapped ?? 0,
+  } } : {}),
+};
+
 fs.mkdirSync(path.dirname(path.resolve(root, outPath)), { recursive: true });
 fs.writeFileSync(path.resolve(root, outPath), JSON.stringify(timeline, null, 2) + "\n");
-console.log(`Wrote ${outPath}: ${slides.length} scenes, ~${Math.round(t)}s, photos used ${used.size}/${photos.length}.`);
+fs.writeFileSync(path.resolve(root, assignmentReportPath), JSON.stringify(assignmentReport, null, 2) + "\n");
+
+if (orders.length) {
+  const impactPath = `${analysisDir}/directive-impact.json`;
+  fs.mkdirSync(path.dirname(path.resolve(root, impactPath)), { recursive: true });
+  fs.writeFileSync(path.resolve(root, impactPath), JSON.stringify({
+    ...directiveImpact,
+    selected: assignmentPhotos.length,
+    usedUnique: assignmentReport.timeline.usedUnique,
+  }, null, 2) + "\n");
+}
+
+console.log(`Wrote ${outPath}: ${slides.length} scenes, ~${Math.round(t)}s, photos used ${renderedUseCounts.size}/${photos.length}.`);
+console.log(
+  `  coverage: ${assignmentReport.timeline.usedUnique} unique photo(s) over ` +
+    `${assignmentReport.timeline.references} reference(s), most-used ${assignmentReport.timeline.maxUses}x` +
+    // Both warnings, not just the second. `assignedNotRendered` catches a slot that missed
+    // its assignment key; `selectedNotRendered` catches photographs the plan never asked
+    // for at all — which is the larger loss and was the one nobody printed.
+    (selectedNotRendered.length
+      ? ` — WARNING ${selectedNotRendered.length} selected photo(s) never reached the film (`
+        + Object.entries(assignmentReport.timeline.notRenderedReasons).map(([k, n]) => `${k}: ${n}`).join(", ") + ")"
+      : "") +
+    (assignmentReport.timeline.assignedNotRendered.length
+      ? ` — WARNING ${assignmentReport.timeline.assignedNotRendered.length} assigned photo(s) never reached the film`
+      : "")
+);
 if (orders.length) {
   const missed = orders.filter((d) => !appliedIds.has(d.id));
   console.log(`  directives: ${appliedIds.size}/${orders.length} applied${missed.length ? `; not applied here: ${missed.map((d) => `${d.kind}/${d.op}`).join(", ")}` : ""}`);
