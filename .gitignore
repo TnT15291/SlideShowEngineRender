@@ -1,4 +1,5 @@
 node_modules/
+.venv-vieneu/
 apps/web/dist/
 dist/server/
 desktop/renderer-v2/

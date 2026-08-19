@@ -7,6 +7,11 @@
   },
   "include": [
     "scripts/adoptNewPrimitives.mjs",
+    "scripts/buildNarratedTimeline.mjs",
+    "scripts/exportNarrationSrt.mjs",
+    "scripts/importNarrationScript.mjs",
+    "scripts/prepareFootage.mjs",
+    "scripts/synthesizeNarration.mjs",
     "scripts/lib/colorNormalizer.mjs",
     "scripts/lib/diversityPlanner.mjs",
     "scripts/lib/feedbackLedger.mjs",
@@ -14,9 +19,12 @@
     "scripts/validateLayoutPrimitive.mjs",
     "scripts/renderPrimitiveProbe.mjs",
     "scripts/lib/motionPlanner.mjs",
+    "scripts/lib/mediaTools.mjs",
     "scripts/lib/musicAnalysis.mjs",
     "scripts/lib/musicRetime.mjs",
     "scripts/lib/pacing.mjs",
+    "scripts/lib/narratedTimeline.mjs",
+    "scripts/lib/subtitles.mjs",
     "scripts/lib/photoAssignment.mjs",
     "scripts/lib/project.mjs",
     "scripts/lib/regressionFrames.mjs",
@@ -27,6 +35,7 @@
     "scripts/lib/textMeasure.mjs",
     "scripts/lib/tier1Editorial.mjs",
     "scripts/lib/tier1QualityGate.mjs",
-    "scripts/lib/rules/**/*.mjs"
+    "scripts/lib/rules/**/*.mjs",
+    "scripts/lib/tts/**/*.mjs"
   ]
 }
