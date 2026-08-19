@@ -3,13 +3,7 @@ import path from "node:path";
 import { arg, loadProject } from "./lib/project.mjs";
 import { probeMedia, resolveFfmpeg } from "./lib/mediaTools.mjs";
 import { EASING_EFFECTS } from "./lib/engineCapabilities.mjs";
-import {
-  alignCutsToPauses,
-  coalesceShortWindows,
-  renderedDuration,
-  splitWindow,
-  transitionFor,
-} from "./lib/narratedTimeline.mjs";
+import { planGroups, renderedDuration, transitionFor } from "./lib/narratedTimeline.mjs";
 
 const project = loadProject(arg("--project"));
 const scriptPath = path.join(project.dir, "script", "script.json");
@@ -33,19 +27,14 @@ for (let index = 0; index < script.beats.length; index += 1) {
   }
 }
 
-const windows = script.beats.map((beat, index) => ({
-  start: index === 0 ? 0 : narration.segments[index].start,
-  end: index + 1 < narration.segments.length ? narration.segments[index + 1].start : narration.totalDuration,
-  speechEnd: narration.segments[index].end,
-  beats: [beat],
-}));
+
 const maxShotDuration = Number(script.project.maxShotDuration ?? 9);
 if (!Number.isFinite(maxShotDuration) || maxShotDuration < 4 || maxShotDuration > 28) {
   throw new Error("project.maxShotDuration must be between 4 and 28 seconds");
 }
 const warnings = [];
-const merged = alignCutsToPauses(coalesceShortWindows(windows));
-const groups = merged.flatMap((window) => splitWindow(window, maxShotDuration));
+// Shared with scripts/assignNarrationVisuals.mjs — see planGroups.
+const groups = planGroups(script.beats, narration, maxShotDuration);
 const missingVisuals = [];
 for (const group of groups) {
   const visuals = group.beats.flatMap((beat) => beat.visuals || (beat.visual ? [beat.visual] : []));

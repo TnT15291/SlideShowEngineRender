@@ -74,6 +74,26 @@ export function splitWindow(window, maxSpan = 28) {
   }));
 }
 
+/**
+ * The one function that turns narration timing into the shot list's shape.
+ *
+ * Both the timeline builder and the visual assigner need to know how many
+ * pictures a stretch of narration will hold, and they must agree exactly: the
+ * assigner hands out N visuals per group and the builder spends visuals[part-1],
+ * so a disagreement is either a beat with no picture or a picture nobody sees.
+ * Deriving it twice is how that disagreement gets introduced, so it is derived
+ * here and imported by both.
+ */
+export function planGroups(beats, narration, maxShotDuration = 9) {
+  const windows = beats.map((beat, index) => ({
+    start: index === 0 ? 0 : narration.segments[index].start,
+    end: index + 1 < narration.segments.length ? narration.segments[index + 1].start : narration.totalDuration,
+    speechEnd: narration.segments[index].end,
+    beats: [beat],
+  }));
+  return alignCutsToPauses(coalesceShortWindows(windows)).flatMap((window) => splitWindow(window, maxShotDuration));
+}
+
 export function renderedDuration(slides) {
   return slides.reduce((total, slide) => total + slide.duration - slide.transition.duration, 0);
 }
