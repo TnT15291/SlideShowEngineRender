@@ -10,6 +10,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { TAG_LIST, EMOTION_LIST } from "../scripts/lib/vocab.mjs";
+import { EASING_EFFECTS } from "../scripts/lib/engineCapabilities.mjs";
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
@@ -42,4 +43,24 @@ test("emotions stay a closed set", () => {
     ["calm", "celebratory", "joyful", "playful", "romantic", "solemn", "tender"],
     "the emotion vocabulary changed — check every oneOf() default that falls back to 'calm'"
   );
+});
+
+// SAME FAILURE SHAPE, DIFFERENT VOCABULARY. `easing` is legal on exactly the effects the
+// engine drives with zoompan. src/types.ts owns that list for the renderer; a .mjs composer
+// cannot import a .ts module, so scripts/lib/engineCapabilities.mjs restates it.
+//
+// It used to DERIVE it instead, from each effect's `motion` flag — and `motion` is wider:
+// panel_flip moves without zoompan. So the composer wrote `easing: "snap"` onto panel_flip
+// slides, validateTimeline rejected the film, and every `editorial_clean` Lite job failed
+// before a frame was encoded. Nothing above the renderer could see it: the timeline was
+// well-formed, the QA proxy never ran, the tier just could not be built.
+test("engineCapabilities' EASING_EFFECTS matches the engine's EASED_MOTION_EFFECTS", () => {
+  const types = fs.readFileSync("src/types.ts", "utf8");
+  const block = types.match(/EASED_MOTION_EFFECTS[^=]*=\s*new Set\(\[([\s\S]*?)\]\)/);
+  assert.ok(block, "could not find EASED_MOTION_EFFECTS in src/types.ts — update this guard, do not delete it");
+  const engine = [...block[1].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
+  // A regex that silently matched nothing would make this test vacuous.
+  assert.ok(engine.length >= 8, `parsed only ${engine.length} effects from src/types.ts`);
+  assert.deepEqual([...EASING_EFFECTS].sort(), engine.sort(),
+    "the composer would write `easing` onto slides the renderer refuses");
 });

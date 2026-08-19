@@ -38,6 +38,7 @@
     "quality": { "enum": ["draft", "share", "high", "master"] },
     "tier": { "enum": ["template", "lite", "premium"] },
     "recipe": { "type": "string", "minLength": 1 },
-    "musicMode": { "enum": ["auto", "highlight", "full_song"] }
+    "musicMode": { "enum": ["auto", "highlight", "full_song"] },
+    "styleProfile": { "enum": ["white_wedding_gentle", "warm_film_story", "editorial_clean"] }
   }
 }

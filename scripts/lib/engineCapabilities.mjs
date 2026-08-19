@@ -186,10 +186,25 @@ export const MONTAGE_EFFECTS = new Set(Object.keys(MONTAGE));
 export const MONTAGE_MAX = Object.fromEntries(Object.entries(MONTAGE).map(([id, m]) => [id, m.max]));
 export const MONTAGE_MIN = Object.fromEntries(Object.entries(MONTAGE).map(([id, m]) => [id, m.min]));
 export const MONTAGE_SLOT = Object.fromEntries(Object.entries(MONTAGE).map(([id, m]) => [id, m.slot]));
-/** The engine only accepts `easing` on the effects that actually move the frame. */
-export const EASING_EFFECTS = new Set(Object.entries(SINGLE).filter(([, m]) => m.motion).map(([id]) => id));
-/** Single-photo effects that MOVE — what a long hold needs so it does not read as dead air. */
-export const MOTION_EFFECTS = [...EASING_EFFECTS];
+/**
+ * Effects that accept `easing` — the ones the engine drives with zoompan.
+ *
+ * MUST equal `EASED_MOTION_EFFECTS` in src/types.ts; `src/effectVocabulary.test.ts` asserts it.
+ * This was derived from `motion` and that is a WIDER idea: a panel flip moves without zoompan.
+ * The three extra effects it let through (`panel_flip`, `floating_card_gallery`,
+ * `moving_background_echo`) meant the composer wrote `easing` onto slides the engine refuses,
+ * and `validateTimeline` failed the film before a single frame was encoded. Only
+ * `editorial_clean` reached one, so every Lite film in that profile was unrenderable —
+ * invisible to the timeline-level gates, which is why the per-profile render smoke exists.
+ */
+export const EASING_EFFECTS = new Set([
+  "slow_zoom_in", "slow_zoom_out",
+  "pan_left", "pan_right", "pan_up", "pan_down",
+  "kenburns_tl", "kenburns_tr", "kenburns_bl", "kenburns_br",
+]);
+/** Single-photo effects that MOVE — what a long hold needs so it does not read as dead air.
+ *  Deliberately wider than EASING_EFFECTS: moving and being eased are different questions. */
+export const MOTION_EFFECTS = Object.entries(SINGLE).filter(([, m]) => m.motion).map(([id]) => id);
 
 /** How many photographs a scene will take out of the pool. The one function that knows,
  *  so the shot list, the budget and the assignment cannot disagree about it. */

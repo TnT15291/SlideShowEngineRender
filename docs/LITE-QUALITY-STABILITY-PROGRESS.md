@@ -2,7 +2,7 @@
 
 **Kế hoạch nguồn:** `docs/LITE-QUALITY-STABILITY-PLAN.md`  
 **Bắt đầu:** 2026-08-02  
-**Trạng thái tổng thể:** P0 hoàn tất; P1 còn render smoke cho 2 profile; P2 còn canary/rollback window
+**Trạng thái tổng thể:** P0 và P1 hoàn tất (render smoke cho cả 3 profile xong 2026-08-10); P2 chỉ còn canary — rollback window đã đóng vì vô nghĩa theo cấu trúc, xem `docs/LITE-QUALITY-STABILITY-PLAN.md` §0.3
 
 ## Quy ước trạng thái
 
@@ -57,13 +57,27 @@
 
 - [x] Cài ba style profile và resolver có provenance/fallback.
 - [x] Áp profile vào typography, grade, transition và effect/layout mix.
-- [!] `white_wedding_gentle` đã có full render + contact sheet; `warm_film_story` và `editorial_clean` chưa có render smoke riêng.
+- [x] Cả ba profile đã có render smoke + contact sheet (2026-08-10). `warm_film_story` và
+      `editorial_clean` render bằng preview cut 20s trên chính album Tuân Tiên (84 ảnh thật):
+      `projects/tuan-tien-lite/analysis/qa/profile-*.contact.{jpg,json}`. Cả hai cho cùng một
+      hình dạng kết quả — 3 pass / 2 warning, cờ duy nhất là `color_review`, 0 error.
+- [x] Regression gallery theo profile: `npm run gallery:lite-profiles`, khoá bằng
+      `test/lite-profile-gallery.test.mjs`.
+- [!] **Render smoke bắt được một lỗi chặn mà mọi cổng tầng timeline đều mù.** `editorial_clean`
+      **không render được**: composer gắn `easing: "snap"` lên `panel_flip`, `validateTimeline`
+      từ chối, phim hỏng trước khi encode một khung hình. Nguyên nhân là hai danh sách lệch nhau —
+      `EASED_MOTION_EFFECTS` trong `src/types.ts` có 10 effect, còn `EASING_EFFECTS` trong
+      `scripts/lib/engineCapabilities.mjs` suy từ cờ `motion` nên có 13. Đã vá + guard chống trôi
+      trong `test/vocab.test.mjs`. Còn để mắt: khung `panel_flip` trong contact sheet nhòe gần như
+      không đọc được chữ — cần một người nhìn, QA vẫn chấm `pass`.
 
 ### Phase 7 — Rollout và loại bỏ Lite v1
 
 - [x] Ghi `pipelineVersion: lite-v2` và pin version khi resume.
-- [~] Đã tạo report so sánh baseline/v2 trên Tuân Tiên; chưa chạy corpus canary đầy đủ.
-- [~] Lite v2 đã là đường build mặc định; việc xóa rollback window cần một release ổn định thực tế.
+- [~] Đã tạo report so sánh baseline/v2 trên Tuân Tiên; **chưa chạy corpus canary đầy đủ — đây là
+      hạng mục duy nhất còn mở của cả kế hoạch.**
+- [x] Rollback window: đóng vì vô nghĩa theo cấu trúc — planner v1 bị thay thế tại chỗ, chưa bao
+      giờ chạy song song, nên không có gì để rollback về. Xem PLAN §0.3.
 - [x] Unit, API, typecheck, docs, production build và full pipeline integration đều xanh.
       **Đính chính 08-09:** dòng này đã sai trong một khoảng thời gian. `test:integration` đỏ ở
       `coverage_below_floor` — không do Lite v2, mà do `photo_coverage` mất độ phân giải trên

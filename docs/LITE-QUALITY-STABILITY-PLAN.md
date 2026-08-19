@@ -1,6 +1,6 @@
 # Kế hoạch nâng cấp Lite — chất lượng, ổn định và khả năng kiểm soát
 
-**Trạng thái:** Phase 1–5 đã triển khai; Phase 6–7 còn lại. Audit ngày 2026-08-02  
+**Trạng thái:** Phase 1–6 xong; Phase 7 đã có canary chạy được và **canary đang ĐỎ** — Lite không dựng nổi album 12 và 45 ảnh (§0.4). Audit 2026-08-02; Phase 6 đóng + canary dựng xong 2026-08-10  
 **Phạm vi:** Pipeline `tier=lite` từ Story JSON đến delivery  
 **Mục tiêu chính:** Mọi job Lite phải tạo được video đa dạng, dễ đọc, khớp nhạc và vượt qua cùng một quality contract trước khi render/delivery.  
 **Regression chuẩn đầu tiên:** project `projects/tuan-tien-lite`
@@ -37,10 +37,10 @@ Phần lớn P0 đã vào code. Số đo dưới đây lấy từ `projects/tuan
 | 6. QA và delivery chung verdict evaluator | Xong | `lib/rules/verdict.mjs`; `qaLoop` và `deliver` cùng gọi `evaluateQualityReport`; `deliver` bỏ đường đọc `proxy.verdict` thô |
 | 7. Regression Tuân Tiên | Xong | Đạt toàn bộ acceptance ở §8.5 |
 | 8. Test matrix | Phần lớn | `test/lite-tier.test.mjs` có fixture long-form khẳng định pipelineVersion, storyboard, `usedUnique`, `reuses`, montage không liền kề, ≥4 effect, không trùng trong scene, drift ≤ 0,1s, và coverage đo trên timeline (xem 0.2) |
-| 9. Ba style profile | Một nửa | `lib/liteStyleProfiles.mjs` có đủ `white_wedding_gentle`, `warm_film_story`, `editorial_clean`; **chưa có regression gallery/contact sheet cho từng profile** |
+| 9. Ba style profile | Xong | `lib/liteStyleProfiles.mjs` có đủ ba profile; **regression gallery** (`npm run gallery:lite-profiles -- --project <p>`, khoá bằng `test/lite-profile-gallery.test.mjs`) **và render smoke + contact sheet cho cả ba** (`analysis/qa/profile-*.contact.jpg`). Render smoke bắt được lỗi easing làm `editorial_clean` không dựng được — xem §0.3 |
 | 10. Pipeline/policy version + provenance | Xong | `pipelineVersion: lite-v2`, `qualityPolicyVersion: 2`, `POLICY_VERSION = 2`, `allocatorVersion: music-retime-v2`, `styleProvenance` |
-| 11. Canary | Chưa | — |
-| 12. Docs + gỡ Lite v1 | Một nửa | Planner v1 đã bị thay thế trực tiếp (không còn tồn tại song song); docs chưa cập nhật xong |
+| 11. Canary | Có công cụ, **đang đỏ** | `npm run canary:lite` chấm 5/8 chỉ số §11 trên album thật. Lần chạy đầu 5/7 case xanh; 2 case album ít ảnh không build được. Xem §0.4 |
+| 12. Docs + gỡ Lite v1 | Xong | Planner v1 đã bị thay thế trực tiếp (không còn tồn tại song song) nên không có gì để gỡ; tài liệu này cập nhật 2026-08-10 |
 
 Hai hạng mục kỹ thuật khác cũng đã đóng: ngưỡng tỷ lệ transition ở 4.4.5 được chốt bằng đo thật (`MAX_TRANSITION_RATIO = 0.30`, corpus 1.888 transition Template/Premium, p95 = 25%, max = 27%), và `deliver` nay chặn cả drift timeline↔`musicEdit` lẫn drift video-đã-render↔timeline — lỗ hổng mô tả ở 2.2.9 đã được bịt.
 
@@ -66,6 +66,123 @@ Nhưng lỗ hổng khiến chẩn đoán sai đó *trông* hợp lý thì có th
 Các assert này đã được kiểm chứng là **không rỗng**: tiêm hỏng khoá tra assignment thì test đỏ đúng dòng `the solver assigned photos that never reached the timeline`, khôi phục thì xanh. `npm run test:unit` giữ nguyên 418/418.
 
 Còn lại thuần vận hành: regression gallery cho ba style profile (Phase 6), canary và dọn docs (Phase 7).
+
+### 0.3. Phase 6 đóng ngày 2026-08-10 — một defect, một bộ số đo, và một hướng đã thử rồi bỏ
+
+**Defect: chọn profile bằng tay chưa bao giờ chạy được.** `generateProjectTimeline.mjs:34` đọc
+`project.manifest.styleProfile` và truyền vào `resolveLiteStyleProfile({ requested })`, nhưng
+`schema/project.schema.json` để `additionalProperties: false` và **không khai** `styleProfile` — nên mọi
+`project.json` mang field đó bị `loadProject()` từ chối trước khi generator kịp chạy. Nhánh `requested`
+chỉ sống trong unit test gọi thẳng hàm; đường duy nhất chọn được profile trong production là đoán từ
+keyword của prompt. Đã vá bằng một `enum` ba giá trị trong schema. Guard: `provenance === "requested"`
+trong `test/lite-profile-gallery.test.mjs` — đã kiểm chứng là **không rỗng** (gỡ bản vá schema ra thì
+test đỏ đúng dòng `Invalid project manifest`).
+
+**Gallery.** `npm run gallery:lite-profiles -- --project <p>` dựng cùng một album ba lần, mỗi lần một
+profile, **giữ nguyên project id** — `nudgeGrade()` seed theo id, nên đổi id là grade lệch vì lý do
+không liên quan tới profile và phép so sánh mất nghĩa. Fingerprint lấy từ **timeline đã sinh**, không
+lấy từ bảng cấu hình: theme, font thật sự được nạp, tập effect/transition/layout, grade, drift, coverage
+ảnh. Kèm một cổng mới: quét **cmap** của từng font để xác nhận phủ đủ dấu tiếng Việt — `subsets` của
+Google không khớp với glyph trong TTF, và một font thiếu dấu là lỗi *vô hình* với mọi cổng khác (render
+thành công, QA thấy có chữ, khách nhận về một hàng ô vuông).
+
+Số đo trên job thật `projects/tuan-tien-lite` (84 ảnh, 41 scene, cả ba profile drift 0,000s, 84/84 ảnh,
+0 trùng trong scene, 0 finding font):
+
+| Cặp | effects | transitions | layouts | trung bình |
+|---|---:|---:|---:|---:|
+| gentle vs film | 0,28 | 0,43 | **0,94** | 0,55 |
+| gentle vs editorial | 0,28 | 0,43 | **1,00** | 0,57 |
+| film vs editorial | 0,14 | 0,43 | **0,94** | 0,50 |
+
+**Nợ đã lộ ra: profile không có layout palette.** Effect và transition khác nhau rõ; **layout thì gần
+như trùng khít** — gentle và editorial dùng *chung 100%* layout. Nguyên nhân ở
+`lib/storyboard.mjs`: rotor layout rút từ **toàn bộ** library, và `layoutMix` chỉ quyết định *bao nhiêu*
+scene là card chứ không quyết định *card nào*. §5.3 liệt kê "Layout palette/family" là một phần của
+profile; phần đó chưa từng được implement.
+
+**Đã thử vá và đã bỏ — ghi lại để phiên sau không đi lại đường cũ.** Thêm `layoutPalette` cho ba profile
+(nối qua `director_notes` → grammar → rotor, kèm ưu tiên palette trong `composedRepair`) **có hiệu quả về
+chất lượng**: layout overlap 0,94–1,00 → **0,21–0,29**, trung bình 0,55 → 0,28–0,33, job 84 ảnh sạch mọi
+cổng. Nhưng nó làm **6–7 fixture album nhỏ trong `test/lite-tier.test.mjs` đỏ** với
+`Global photo assignment could not fill … the shot list is over-drawn by 0` — ngân sách đúng, *hình dạng*
+sai. Ba cách sửa đều thất bại:
+
+1. Thu hẹp rotor nhưng giữ `buckets` nguyên cho `allocatePhotos` — vẫn đỏ 7/7.
+2. Bù lại cho đủ **phủ** orientation (mỗi orientation ít nhất một layout) — còn đỏ 6/7.
+3. Bù lại cho đủ **tỷ lệ** layout `orient: "any"` bằng bucket gốc — vẫn đỏ 6/7.
+
+Kết luận đo được: thứ làm kẹt không phải orientation mà là **`assignPhotos` là greedy exact-fit và không
+backtrack**, nên bất kỳ thay đổi nào về *tỷ lệ* slot có ràng buộc đều có thể dồn nó vào ngõ cụt trên album
+khít budget. Làm layout palette an toàn đòi một solver biết quay lui — việc lớn hơn Phase 6 nhiều. Toàn bộ
+nhánh này **đã revert**; `npm run test:unit` giữ 525/525. Ai làm tiếp: đây là hạng mục **P1**, và điều kiện
+tiên quyết là solver, không phải palette.
+
+**Render smoke từng profile bắt một lỗi chặn mà cả gallery lẫn mọi cổng tầng timeline đều mù.**
+Gallery chấm `editorial_clean` sạch trên mọi chỉ số — vì nó không bao giờ thử render. Khi render
+thật thì phim **chết ở validate, trước khi encode một khung hình**:
+`slide s27 easing "snap" only applies to zoom/pan/kenburns effects (got "panel_flip")`. Nguyên nhân
+là hai danh sách nói về cùng một thứ mà lệch nhau: `EASED_MOTION_EFFECTS` trong `src/types.ts` liệt
+kê **10** effect do zoompan điều khiển, còn `EASING_EFFECTS` trong `scripts/lib/engineCapabilities.mjs`
+**suy ra từ cờ `motion`** nên có **13** — dư `panel_flip`, `floating_card_gallery`,
+`moving_background_echo`. `motion` là khái niệm rộng hơn: một cú lật panel có chuyển động nhưng
+không chạy bằng zoompan. `editorial_clean` là profile Lite duy nhất chạm tới một trong ba effect
+đó, nên **mọi phim Lite ở profile ấy đều không dựng được** — và đó chính xác là lý do mục "render
+smoke riêng cho từng profile" tồn tại. Đã vá bằng danh sách tường minh + guard chống trôi trong
+`test/vocab.test.mjs` (guard có chống rỗng: regex parse ra <8 effect là test đỏ).
+
+Sau khi vá, cả ba profile render sạch (preview cut 20s trên 84 ảnh thật), contact sheet ở
+`projects/tuan-tien-lite/analysis/qa/profile-*.contact.{jpg,json}`, cả hai profile mới cho cùng
+hình dạng kết quả: 3 pass / 2 warning, cờ duy nhất `color_review`, 0 error. **Còn để mắt:** khung
+`panel_flip` trong contact sheet nhòe tới mức gần như không đọc được chữ — QA chấm `pass`, nhưng
+đây đúng là loại việc contact sheet sinh ra để một người nhìn.
+
+**Hai hạng mục Phase 7 đóng vì vô nghĩa theo cấu trúc.** "So sánh v1/v2" và "rollback window ở cấp
+pipeline version" giả định v1 và v2 từng chạy song song. Chúng chưa bao giờ: planner v1 bị **thay thế tại
+chỗ**, không còn tồn tại để so sánh hay để rollback về. Giữ chúng làm việc-còn-mở vĩnh viễn là nói dối
+bảng trạng thái. Canary trên album thật vẫn còn giá trị và vẫn mở.
+
+### 0.4. Canary — chạy được rồi, và nó đỏ ngay lần đầu
+
+`npm run canary:lite` (`scripts/runLiteCanary.mjs`). Nó chạy **build** Lite trên corpus album
+thật và chấm **5 trong 8** chỉ số §11 — đúng những chỉ số quyết định được trước khi encode:
+build có chạy không, drift, trùng ảnh trong scene, text blocker, và tính tất định. Ba chỉ số còn
+lại (first-pass delivery, render failure rate, render time) cần encoder nên thuộc về một lượt
+render lấy mẫu riêng. Tách như vậy để canary chạy bằng **phút** thay vì 15–48 phút *mỗi album*, tức
+là chạy được đủ thường xuyên để bắt hồi quy. Album gốc **không bao giờ bị sửa**: mỗi case stage vào
+`temp/` và trỏ vào ảnh gốc theo đường dẫn, không copy một tấm nào.
+
+**Kết quả lần chạy đầu (2026-08-10): 5/7 case build được, 1 vi phạm.**
+
+| Case | Ảnh | Kết quả |
+|---|---:|---|
+| photo-rich / portrait-heavy | 85 | ✅ 31 scene, drift 0s, 0 trùng, 0 text blocker |
+| photo-fewest-real / landscape-heavy | 83 | ✅ 37 scene, drift 0s, 0 trùng, 0 text blocker |
+| photo-poor-25 | 25 | ✅ 17 scene, drift 0s, 0 trùng, 0 text blocker |
+| **photo-poor-12** | 12 | ❌ `could not fill: s04:bg, s10:wide` — over-drawn by **0** |
+| **photo-poor-45** | 45 | ❌ `could not fill: s19:hero, s33:bg` — over-drawn by **0** |
+
+Hai case đỏ là **lỗi production có thật, không phải do thay đổi nào trong pass này** (cây đã revert
+sạch, `test:unit` xanh). Ngân sách đúng — *over-drawn by 0* — nhưng solver greedy exact-fit không
+thoả nổi vài slot cụ thể. Đây chính là acceptance của §7 Phase 2 chưa hề đạt trên album thật:
+*"Small-album fixture vẫn tạo timeline hợp lệ hoặc dừng với fit decision rõ ràng — cụ thể là không
+còn kết thúc bằng lỗi `unfilled`"*. Và nó **cùng một gốc** với thứ đã chặn layout palette ở §0.3:
+`assignPhotos` không biết quay lui. Một sửa chữa, hai hạng mục.
+
+**Một báo động giả đã bị loại bỏ trước khi vào báo cáo.** Bản canary đầu dùng
+`buildLiteQualityReport().text.estimatedOverflow` và báo 8–10 caption tràn trên **mọi** album. Sai:
+trường đó là ước lượng theo số ký tự (`length > 60 && không có xuống dòng`), còn fitter thật
+(`fitTextInTimeline`) là một bước riêng của orchestrator, chưa chạy tại thời điểm đo. Canary nay tự
+gọi fitter rồi đọc `blockers` — kết quả **0 blocker trên cả 5 case**. Một canary kêu sói mỗi lần
+chạy thì không ai còn đọc nó nữa.
+
+**Hai giới hạn của corpus, ghi ra để không tưởng là đã phủ hết:**
+1. **Chỉ 5/54 album đủ điều kiện** — canary cần `story-template.generated.json`, mà 49 album kia là
+   tier template nên không có. Mở rộng corpus = sinh story stub (đường offline tất định, đã có) cho
+   những album đó. Đây là việc rẻ và nên làm trước khi coi canary là đủ đại diện.
+2. **Không có nhạc ngắn** — track ngắn nhất trên đĩa là 189s. Trục "nhạc ngắn/dài" của §7 Phase 7
+   chưa được phủ; cần cắt một track rồi `analyzeMusic` lại. Canary tự in dòng `uncovered` này mỗi
+   lần chạy.
 
 ---
 
@@ -665,14 +782,15 @@ Nguyên tắc thay đổi: ưu tiên gọi lại module hiện có; chỉ tạo 
 - Mọi blocker có evidence và scene id.
 - Repair xong bắt buộc rerun affected invariants.
 
-### Phase 6 — Style profiles và visual tuning
+### Phase 6 — Style profiles và visual tuning — ✅ đóng 2026-08-10 (xem §0.3)
 
 #### Công việc
 
-- Cài ba profile verified ban đầu.
-- Resolve prompt/directive sang profile.
-- Tạo regression gallery/contact sheet cho từng profile.
-- Tune typography, grade, transition và layout palette bằng cùng album fixtures.
+- ✅ Cài ba profile verified ban đầu.
+- ✅ Resolve prompt/directive sang profile — kể cả đường **chọn tay**, vốn bị schema chặn (§0.3).
+- ✅ Tạo regression gallery cho từng profile — `npm run gallery:lite-profiles`.
+- 🟡 Tune typography, grade, transition và layout palette bằng cùng album fixtures — typography/grade/
+  transition xong; **layout palette là nợ P1**, đã thử và revert có số đo (§0.3).
 
 #### Verify
 
@@ -685,11 +803,13 @@ Nguyên tắc thay đổi: ưu tiên gọi lại module hiện có; chỉ tạo 
 
 #### Công việc
 
-- Ghi `pipelineVersion: lite-v2` trong artifact.
-- Canary trên tập album đại diện: ít/nhiều ảnh, portrait-heavy, landscape-heavy, nhạc ngắn/dài, Việt/Anh.
-- So sánh v1/v2 bằng metrics và contact sheet.
-- Cho phép rollback ở cấp pipeline version trong giai đoạn canary.
-- Khi v2 đạt gate, chuyển default và xóa planner v1 sau một release ổn định.
+- ✅ Ghi `pipelineVersion: lite-v2` trong artifact.
+- 🟡 Canary trên tập album đại diện — `npm run canary:lite` đã phủ ít/nhiều ảnh, portrait-heavy,
+  landscape-heavy, Việt/Anh. **Chưa phủ nhạc ngắn**; corpus mới có 5/54 album đủ điều kiện; và
+  lần chạy đầu **đỏ 2 case** (§0.4). Đây là hạng mục duy nhất còn mở của cả kế hoạch.
+- ❌ So sánh v1/v2 bằng metrics và contact sheet — **vô nghĩa theo cấu trúc**, v1 không còn tồn tại (§0.3).
+- ❌ Cho phép rollback ở cấp pipeline version — cùng lý do.
+- ✅ Chuyển default và xóa planner v1 — v1 đã bị thay thế tại chỗ, không còn gì để xóa.
 
 #### Verify
 
@@ -885,10 +1005,13 @@ Lite v2 được coi là hoàn thành khi:
 6. QA và delivery dùng chung verdict evaluator.
 7. Regression Tuân Tiên vượt toàn bộ acceptance criteria.
 8. Test matrix gồm small/large/mixed albums đều pass.
-9. Ba style profile ban đầu có render smoke và regression gallery.
-10. Pipeline version, policy version và provenance xuất hiện trong artifact.
-11. Canary không cho thấy regression nghiêm trọng về render success/time.
-12. Documentation về Lite/current-state được cập nhật và Lite v1 được loại khỏi production sau rollback window.
+9. ✅ Ba style profile ban đầu có regression gallery (`npm run gallery:lite-profiles`, khoá bằng
+   `test/lite-profile-gallery.test.mjs`) **và render smoke + contact sheet cho cả ba** (§0.3).
+10. ✅ Pipeline version, policy version và provenance xuất hiện trong artifact.
+11. 🟡 Canary: công cụ đã có và chạy được (`npm run canary:lite`); **chưa đạt** — 2/7 case đỏ ở
+    build, và 3/8 chỉ số §11 vẫn cần một lượt render lấy mẫu (§0.4). **Mục cuối cùng còn mở.**
+12. ✅ Documentation về Lite được cập nhật; Lite v1 đã bị thay thế tại chỗ nên không có rollback window
+    để chờ (§0.3).
 
 ---
 
@@ -906,10 +1029,12 @@ Lite v2 được coi là hoàn thành khi:
 
 ### P1 — Nâng chất lượng hình ảnh
 
-1. Style profiles.
-2. Transition grammar theo role.
-3. Typography pairing/readability surfaces.
-4. Visual diversity report và contact-sheet regression.
+1. ✅ Style profiles.
+2. ✅ Transition grammar theo role.
+3. ✅ Typography pairing/readability surfaces.
+4. ✅ Visual diversity report và regression gallery theo profile.
+5. ⬜ **Layout palette theo profile** — nợ mới, lộ ra nhờ chính gallery ở mục 4. Điều kiện tiên quyết là
+   `assignPhotos` biết quay lui; đừng thử lại palette trước khi có việc đó (§0.3).
 
 ### P2 — Vận hành và tối ưu
 
