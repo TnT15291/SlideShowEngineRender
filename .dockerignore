@@ -1,0 +1,38 @@
+# Keep the build context small and, more importantly, keep customer data and
+# unlicensed audio out of any image that might get pushed to a registry.
+
+.git
+.github
+node_modules
+**/node_modules
+
+# Build output — regenerated inside the image.
+dist
+apps/web/dist
+
+# Customer data and run artefacts. `projects/` alone is ~41 GB.
+projects
+input
+output
+temp
+logs
+analysis
+
+# Commercial test recordings. See music/README.md — these must never reach a
+# production image, where an operator could reach for one.
+music
+
+# Local secrets. The API reads .env at runtime through compose's env_file,
+# from the host, not from a layer.
+.env
+.env.*
+!.env.example
+
+# Developer-only surface.
+desktop
+gpu-effects
+test
+**/*.test.ts
+**/*.test.mjs
+docs
+*.md

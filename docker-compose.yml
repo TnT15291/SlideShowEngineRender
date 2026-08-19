@@ -1,0 +1,72 @@
+# StoReel production stack — G2.3.
+#
+#   docker compose up -d --build
+#
+# Two services. `api` holds the render pipeline and every byte of customer
+# data; `web` terminates TLS and is the only thing with a published port.
+#
+# `restart: unless-stopped` is the process manager the plan asks for: it covers
+# both halves of the acceptance test — kill the process and Docker restarts it,
+# reboot the machine and Docker's own service brings the stack back up.
+
+services:
+  api:
+    build:
+      context: .
+      target: api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Fixed here rather than in .env because they describe the container's
+      # own shape, not a deployment choice, and getting them wrong is subtle:
+      # binding the API to loopback inside the container makes it unreachable
+      # from `web` and produces a site that loads but cannot sign anyone in.
+      STOREEL_API_HOST: 0.0.0.0
+      STOREEL_API_PORT: "8787"
+      # Same-origin behind Caddy, so this is the only origin that ever calls it.
+      STOREEL_WEB_ORIGINS: https://${STOREEL_DOMAIN}
+      STOREEL_PUBLIC_URL: https://${STOREEL_DOMAIN}
+      FFMPEG_PATH: /usr/bin/ffmpeg
+    volumes:
+      # Customer photos and finished films.
+      - ./projects:/app/projects
+      # Accounts, sessions, password-reset tokens, incidents. Small, and the
+      # single most painful thing to lose — see scripts/backupStoreel.mjs.
+      - ./server/data:/app/server/data
+    # Deliberately NO `ports:`. The API is reachable only from `web` on the
+    # compose network, which is what makes "there is no HTTP path" true rather
+    # than merely intended.
+    expose:
+      - "8787"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      # A cold start compiles nothing but does read the recipe library; 60s of
+      # grace keeps a slow first boot from being restarted mid-start.
+      start_period: 60s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      target: web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      STOREEL_DOMAIN: ${STOREEL_DOMAIN:?set STOREEL_DOMAIN in .env — Caddy cannot get a certificate without a real hostname}
+      STOREEL_TLS_EMAIL: ${STOREEL_TLS_EMAIL:?set STOREEL_TLS_EMAIL in .env — Let's Encrypt requires a contact address}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Certificates and Caddy's account key. Without this volume every restart
+      # re-requests a certificate and walks straight into Let's Encrypt's rate
+      # limit — five failures a week and the domain is locked out.
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:

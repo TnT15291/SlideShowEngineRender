@@ -1,0 +1,51 @@
+# StoReel reverse proxy.
+#
+# Caddy is here for one reason above all others: it obtains and renews a real
+# certificate on its own. G2.3 says HTTPS is mandatory because the session
+# token lives in localStorage and travels in an Authorization header — over
+# plain HTTP that is a readable credential on every request.
+#
+# STOREEL_DOMAIN must be a real hostname pointing at this machine. Setting it
+# to something Let's Encrypt cannot validate leaves Caddy retrying and the site
+# unreachable, which is the correct failure: there is deliberately no HTTP
+# fallback to quietly succeed into.
+
+{
+	email {$STOREEL_TLS_EMAIL}
+}
+
+{$STOREEL_DOMAIN} {
+	encode zstd gzip
+
+	# The API. Long timeouts because a render's SSE stream stays open for the
+	# whole run, and a run is 15–48 minutes; the default 30s would drop the
+	# progress feed a few seconds in and the page would reconnect forever.
+	handle /api/* {
+		reverse_proxy api:8787 {
+			flush_interval -1
+			transport http {
+				read_timeout 4h
+				write_timeout 4h
+			}
+		}
+	}
+
+	# The single-page app. It routes on query parameters (?view=…), not on
+	# paths, so `try_files` only has to cover a hard refresh of `/`.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# The app loads no third-party script, font, or image, and the API is
+		# same-origin behind this proxy, so the policy can stay this tight.
+		Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+}
