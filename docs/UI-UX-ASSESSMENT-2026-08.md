@@ -6,8 +6,9 @@ Status: **implemented 2026-08-07**, except two items called out under
 Surface: StoReel web studio (`apps/web`) + the API contract it renders
 Method: full signed-out → register → intake → upload → render → failure walk
 through of a real local stack (`server/index.ts` + Vite), plus computed-style
-and contrast measurements taken on the live page. Written in English to sit
-beside its predecessor, `UI-UX-ASSESSMENT.md` (2026-07-26).
+and contrast measurements taken on the live page. Its predecessor (2026-07-26,
+round 1) was retired on 2026-08-10 once every item in it had shipped; this
+document supersedes it.
 
 ## What changed since the last round
 

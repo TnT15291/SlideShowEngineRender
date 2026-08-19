@@ -11,7 +11,7 @@
 // read in six places (photoDemand, scenePhotoCount, templatePhotoRequests,
 // recipeShotList, diversityPlanner, layerSceneBuilder), four of which run BEFORE the
 // renderer, while the photo budget is being solved. Six independent merges is six
-// chances to disagree. This module is the single one (see LOOKS-MIGRATION-PLAN.md).
+// chances to disagree. This module is the single one.
 //
 // INVARIANTS
 //   I1  A look may only modify slots the layout already has — never add, remove or

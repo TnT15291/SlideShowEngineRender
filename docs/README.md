@@ -1,7 +1,5 @@
 # Tài liệu — Wedding Render Engine
 
-- [UI/UX assessment and remediation plan](UI-UX-ASSESSMENT.md)
-
 Dự án AI Wedding Slideshow gồm 2 tầng:
 
 1. **Render engine local** (Node/TypeScript + FFmpeg) — **đã hoàn thiện tính năng**:
@@ -42,6 +40,8 @@ không phải tác phẩm sáng tạo; nó là **ngôn ngữ kỹ thuật** chuy
 | Bạn cần | Đọc |
 |---|---|
 | **Trạng thái hiện tại + kế hoạch còn lại** (bảng theo dõi sống) | [current-state.md](current-state.md) |
+| **Kế hoạch đưa sản phẩm ra bán** (3 giai đoạn, điểm chặn, nghiệm thu) | [GO-LIVE-PLAN.md](../GO-LIVE-PLAN.md) |
+| Audit UI/UX vòng 2 + phần cố ý chưa làm | [UI-UX-ASSESSMENT-2026-08.md](UI-UX-ASSESSMENT-2026-08.md) |
 | Pipeline sản phẩm 2 tier: node, giá, SLA, guardrail AI, hiện trạng | [PIPELINE-V1-VA-LITE.md](PIPELINE-V1-VA-LITE.md) |
 | Engine chạy thế nào: module, CLI, exit code, log, debug, env | [ENGINE-ARCHITECTURE.md](ENGINE-ARCHITECTURE.md) |
 | Tra cứu năng lực + spec `timeline.json` đầy đủ (tiếng Việt) | [NANG-LUC-ENGINE.md](NANG-LUC-ENGINE.md) |

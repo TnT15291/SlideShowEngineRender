@@ -137,7 +137,7 @@ export function evaluateStoryTemplate(template, { library, profile = "authored" 
   // EVERY GEOMETRY RULE BELOW READS RESOLVED GEOMETRY, through the same resolver the
   // build uses. Judging the authored layout instead would mean a recipe whose look nudges
   // a slot gets measured on coordinates nobody renders — the lint would pass a frame it
-  // never looked at. See LOOKS-MIGRATION-PLAN.md §3.
+  // never looked at.
   const resolution = resolveTemplate(template, { library });
   errors.push(...resolution.errors.map((f) => finding(f.check, f.id, f.detail)));
   warnings.push(...resolution.warnings.map((f) => finding(f.check, f.id, f.detail)));
