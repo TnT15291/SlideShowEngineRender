@@ -137,6 +137,13 @@ test("project creation writes a complete template workspace and rejects duplicat
   await assert.rejects(createProject({ ...input, recipe: "missing-recipe" }, undefined, root), UnknownRecipeError)
   const created = await createProject(input, "owner-1", root)
   assert.equal(created.id, "linh-nam-wedding-film")
+
+  // đ/Đ is a letter, not a base letter plus a combining mark, so NFD leaves it
+  // intact and the slug's [^a-z0-9] filter used to delete it: this couple got
+  // the project id "uc-ha", and the directory holding their photographs was
+  // named after a word that is not their name.
+  const vietnamese = await createProject({ ...input, name: "Đức & Hà Đám cưới" }, "owner-1", root)
+  assert.equal(vietnamese.id, "duc-ha-dam-cuoi")
   assert.equal(created.status, "not_started")
   assert.equal(created.ownerId, "owner-1")
   const projectDir = path.join(root, "projects", created.id)

@@ -14,6 +14,10 @@ export function slug(value) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
+    // đ/Đ is a LETTER, not a letter plus a combining mark, so NFD leaves it
+    // whole and the [^a-z0-9] filter below deletes it outright: "Đám cưới
+    // Đông Đô" became "am-cuoi-ong-o". Vietnamese is full of it, so map it.
+    .replace(/[đĐ]/g, "d")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }

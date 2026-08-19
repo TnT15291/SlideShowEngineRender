@@ -125,8 +125,12 @@ export type CreateProjectInput = z.infer<typeof createProjectInputSchema>
 export class ProjectAlreadyExistsError extends Error {}
 export class UnknownRecipeError extends Error {}
 
+// Keep in step with slug() in scripts/lib/project.mjs — this one names a
+// customer's project directory. đ/Đ is a letter in its own right, so NFD does
+// not split it into d + a combining mark, and the [^a-z0-9] filter would then
+// delete it outright: a couple called "Đức & Hà" got the project id "uc-ha".
 function slug(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[đĐ]/g, "d").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 }
 
 async function parseJson(file: string): Promise<unknown> {
