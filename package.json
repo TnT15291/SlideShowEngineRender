@@ -41,6 +41,8 @@
     "narration:import": "node scripts/importNarrationScript.mjs",
     "footage:prepare": "node scripts/prepareFootage.mjs",
     "narration:synthesize": "node scripts/synthesizeNarration.mjs",
+    "narration:propose": "node scripts/proposeNarrationVisuals.mjs",
+    "narration:apply": "node scripts/applyNarrationVisuals.mjs",
     "narration:assign": "node scripts/assignNarrationVisuals.mjs",
     "narration:timeline": "node scripts/buildNarratedTimeline.mjs",
     "narration:srt": "node scripts/exportNarrationSrt.mjs",

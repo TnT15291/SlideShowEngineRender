@@ -7,6 +7,8 @@
   },
   "include": [
     "scripts/adoptNewPrimitives.mjs",
+    "scripts/applyNarrationVisuals.mjs",
+    "scripts/proposeNarrationVisuals.mjs",
     "scripts/assignNarrationVisuals.mjs",
     "scripts/buildNarratedTimeline.mjs",
     "scripts/exportNarrationSrt.mjs",
@@ -25,6 +27,7 @@
     "scripts/lib/musicRetime.mjs",
     "scripts/lib/pacing.mjs",
     "scripts/lib/narratedTimeline.mjs",
+    "scripts/lib/narrationDirector.mjs",
     "scripts/lib/visualAssigner.mjs",
     "scripts/lib/subtitles.mjs",
     "scripts/lib/photoAssignment.mjs",
