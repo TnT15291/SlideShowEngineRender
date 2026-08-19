@@ -14,6 +14,24 @@ import { describeFailure, redactEnginePaths, type FailureCause } from "./failure
 // without turning the manifest into a log file.
 const LOG_TAIL_LINES = 80
 
+/**
+ * How many renders may run at once, across every project and every customer.
+ *
+ * One by default. A render is 15–48 minutes of ffmpeg on a single machine, so
+ * five customers pressing the button together did not produce five films —
+ * `projectOperations.ts` only ever locked *per project*, so all five spawned,
+ * fought over the same cores, and all five took far longer than five sequential
+ * runs would have. Beyond the cap, work waits in `queue` and starts when a slot
+ * frees; nothing is rejected.
+ *
+ * Read per call so an operator can raise it in .env after moving rendering to a
+ * bigger box, without a code change.
+ */
+function maxConcurrentRenders(): number {
+  const raw = Number(process.env.STOREEL_MAX_CONCURRENT_RENDERS)
+  return Number.isInteger(raw) && raw >= 1 ? raw : 1
+}
+
 const phases = ["validate", "analyze", "plan", "build", "render", "qa", "deliver"] as const
 const phaseStatusSchema = z.enum(["pending", "running", "completed", "failed", "skipped"])
 const jobPhaseSchema = z.object({ status: phaseStatusSchema, reason: z.string().optional() }).passthrough()
@@ -59,7 +77,7 @@ export const startJobInputSchema = z.object({
 })
 
 export type StartJobInput = z.input<typeof startJobInputSchema>
-export type JobStatus = "not_started" | "pending" | "running" | "paused" | "failed" | "completed" | "completed_with_warning"
+export type JobStatus = "not_started" | "pending" | "queued" | "running" | "paused" | "failed" | "completed" | "completed_with_warning"
 export type JobSnapshot = {
   projectId: string
   status: JobStatus
@@ -67,6 +85,14 @@ export type JobSnapshot = {
   progress: number
   error: string | null
   pauseReason?: string | null
+  /**
+   * How many renders are ahead of this one, when `status` is "queued": 0 means
+   * next up. `null` for every other status.
+   *
+   * The customer is told the truth about the wait rather than watching a
+   * progress bar that has not moved because nothing has started yet.
+   */
+  queuePosition: number | null
   warnings: Array<{ code: string; message: string }>
   manuallyCompleted: boolean
   startedAt: string | null
@@ -104,6 +130,23 @@ type ActiveJob = {
   tail: string[]
 }
 
+/**
+ * A render that has been accepted and paid for but has no slot yet.
+ *
+ * Holds the project-operation lease it acquired in `start`, so a queued
+ * project cannot be re-analysed or re-edited out from under the run it is
+ * waiting for. Deliberately in-memory only: a restart clears the queue, the
+ * customer sees the project back at "not started", and pressing render again
+ * reuses the open billing hold (see `findOpenReservation` in app.ts) rather
+ * than charging twice.
+ */
+type QueuedJob = {
+  projectId: string
+  input: z.output<typeof startJobInputSchema>
+  queuedAt: string
+  releaseOperation: () => void
+}
+
 export class JobRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) {
     super(message)
@@ -137,7 +180,27 @@ function progressOf(manifest: z.infer<typeof jobManifestSchema>) {
 
 export function createJobRunner(engineRoot = process.cwd()) {
   const active = new Map<string, ActiveJob>()
+  /**
+   * Slots claimed by a `launch` that has not reached `active.set` yet.
+   *
+   * Without this the cap does not hold. `launch` awaits before it registers
+   * the job, so five `start` calls arriving in the same tick all read
+   * `active.size === 0`, all decide there is room, and all spawn — the exact
+   * five-ffmpeg pile-up the cap exists to prevent. Counting a slot from the
+   * synchronous instant it is claimed closes that window.
+   */
+  const starting = new Set<string>()
+  // FIFO. First in line is index 0, which is what `queuePosition` reports.
+  const queue: QueuedJob[] = []
   const listeners = new Map<string, Set<(event: JobEvent) => void>>()
+
+  function slotsInUse() {
+    return active.size + starting.size
+  }
+
+  function queueIndex(projectId: string) {
+    return queue.findIndex((entry) => entry.projectId === projectId)
+  }
 
   function paths(projectId: string) {
     const projectsDir = path.resolve(engineRoot, "projects")
@@ -166,6 +229,34 @@ export function createJobRunner(engineRoot = process.cwd()) {
   async function snapshotFromDisk(projectId: string): Promise<JobSnapshot> {
     const project = await loadProject(projectId)
     const running = active.get(projectId)
+
+    // Answered before the manifest is read, and it has to be: a queued project
+    // still has whatever manifest its previous run left behind (often
+    // "completed" from an earlier delivery, or nothing at all), and reporting
+    // that would tell the customer their new render had already finished.
+    const waiting = queueIndex(projectId)
+    if (waiting !== -1) {
+      const entry = queue[waiting]
+      return {
+        projectId,
+        status: "queued",
+        currentPhase: null,
+        progress: 0,
+        error: null,
+        pauseReason: null,
+        warnings: [],
+        manuallyCompleted: false,
+        startedAt: null,
+        updatedAt: entry.queuedAt,
+        mode: entry.input.mode,
+        deliver: entry.input.deliver,
+        phases: pendingPhases(),
+        cause: null,
+        logTail: [],
+        queuePosition: waiting,
+      }
+    }
+
     try {
       const raw = await readFile(project.jobManifest, "utf8")
       let manifest = jobManifestSchema.parse(JSON.parse(raw))
@@ -192,6 +283,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
         // from the manifest that `persistRunDiagnostics` wrote.
         cause: causeFromManifest(manifest),
         logTail: running?.tail ?? tailFromManifest(manifest),
+        queuePosition: null,
       }
     } catch (error) {
       if (!running && (error as NodeJS.ErrnoException).code !== "ENOENT") throw new JobRequestError(500, "INVALID_JOB_MANIFEST", "Job manifest is invalid")
@@ -212,6 +304,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
         phases: pendingPhases(),
         cause: null,
         logTail: running?.tail ?? [],
+        queuePosition: null,
       }
     }
   }
@@ -352,6 +445,7 @@ export function createJobRunner(engineRoot = process.cwd()) {
   async function start(projectId: string, rawInput: StartJobInput) {
     const input = startJobInputSchema.parse(rawInput)
     if (active.has(projectId)) throw new JobRequestError(409, "JOB_ALREADY_RUNNING", `A job is already running for ${projectId}`)
+    if (queueIndex(projectId) !== -1) throw new JobRequestError(409, "JOB_ALREADY_QUEUED", `A job is already queued for ${projectId}`)
     const project = await loadProject(projectId)
     let existingRaw: string | null = null
     try { existingRaw = await readFile(project.jobManifest, "utf8") } catch (error) {
@@ -366,6 +460,64 @@ export function createJobRunner(engineRoot = process.cwd()) {
       if (healed.status === "running") throw new JobRequestError(409, "JOB_ALREADY_RUNNING", `The project manifest already reports a running job for ${projectId}`)
     }
 
+    // Taken here rather than in `launch` so it covers the wait as well as the
+    // run — a queued project must not be re-analysed while it sits in line.
+    let releaseOperation: () => void
+    try { releaseOperation = acquireProjectOperation(engineRoot, projectId, "job") } catch (error) {
+      if (error instanceof ProjectOperationBusyError) throw new JobRequestError(409, "PROJECT_BUSY", error.message)
+      throw error
+    }
+
+    // The global cap. Checked *after* every per-project validation above, so a
+    // request that would have failed anyway fails now with its real reason
+    // instead of queueing and failing 40 minutes later.
+    //
+    // Nothing may await between this test and the `starting.add` below — that
+    // pair is the whole mutual exclusion, and an await between them lets a
+    // concurrent caller read a stale count.
+    if (slotsInUse() >= maxConcurrentRenders()) {
+      queue.push({ projectId, input, queuedAt: new Date().toISOString(), releaseOperation })
+      await publishSnapshot(projectId)
+      return snapshotFromDisk(projectId)
+    }
+    starting.add(projectId)
+
+    try {
+      return await launch(projectId, input, releaseOperation)
+    } catch (error) {
+      starting.delete(projectId)
+      releaseOperation()
+      throw error
+    }
+  }
+
+  /**
+   * Take the next queued job, if there is one and there is room.
+   *
+   * Called from the child's `close` handler and from `cancel`. Failing to
+   * launch must not wedge the line, so a job that cannot start is dropped with
+   * its manifest marked failed and the pump tries the one behind it.
+   */
+  function pump() {
+    while (queue.length > 0 && slotsInUse() < maxConcurrentRenders()) {
+      const next = queue.shift()!
+      starting.add(next.projectId)
+      launch(next.projectId, next.input, next.releaseOperation).catch(async (error) => {
+        starting.delete(next.projectId)
+        next.releaseOperation()
+        await markRunnerFailure(next.projectId, error instanceof Error ? error.message : "Queued render could not be started")
+          .catch(() => undefined)
+        await publishSnapshot(next.projectId).catch(() => undefined)
+        // The slot this job never took belongs to whoever is behind it.
+        pump()
+      })
+    }
+    // Everyone behind the job that just left moved up a place.
+    for (const entry of queue) void publishSnapshot(entry.projectId).catch(() => undefined)
+  }
+
+  async function launch(projectId: string, input: z.output<typeof startJobInputSchema>, releaseOperation: () => void) {
+    const project = await loadProject(projectId)
     const args = ["scripts/runProject.mjs", "--project", `projects/${projectId}`]
     if (input.deliver) args.push("--deliver")
     if (input.resume) args.push("--resume")
@@ -375,26 +527,15 @@ export function createJobRunner(engineRoot = process.cwd()) {
     }
 
     await mkdir(path.join(project.projectDir, "logs"), { recursive: true })
-    let releaseOperation: () => void
-    try { releaseOperation = acquireProjectOperation(engineRoot, projectId, "job") } catch (error) {
-      if (error instanceof ProjectOperationBusyError) throw new JobRequestError(409, "PROJECT_BUSY", error.message)
-      throw error
-    }
     const startedAt = new Date().toISOString()
     const logPath = path.join(project.projectDir, "logs", `job-${startedAt.replace(/[:.]/g, "-")}.log`)
-    let child: ChildProcessByStdio<null, Readable, Readable>
-    try {
-      child = spawn(process.execPath, args, {
-        cwd: engineRoot,
-        env: process.env,
-        windowsHide: true,
-        detached: process.platform !== "win32",
-        stdio: ["ignore", "pipe", "pipe"],
-      })
-    } catch (error) {
-      releaseOperation()
-      throw error
-    }
+    const child: ChildProcessByStdio<null, Readable, Readable> = spawn(process.execPath, args, {
+      cwd: engineRoot,
+      env: process.env,
+      windowsHide: true,
+      detached: process.platform !== "win32",
+      stdio: ["ignore", "pipe", "pipe"],
+    })
     const job: ActiveJob = {
       child, startedAt, mode: input.mode, deliver: input.deliver, cancelRequested: false,
       log: createWriteStream(logPath, { flags: "a" }), lastManifest: "",
@@ -402,6 +543,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
     }
     clearInterval(job.manifestTimer)
     active.set(projectId, job)
+    // Handed over from the provisional claim to the real one, in the same tick,
+    // so the slot is never counted twice and never momentarily free.
+    starting.delete(projectId)
     pipeLogs(projectId, job, "stdout")
     pipeLogs(projectId, job, "stderr")
     job.manifestTimer = setInterval(async () => {
@@ -429,6 +573,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
       active.delete(projectId)
       job.releaseOperation()
       if (!job.cancelRequested) await publishSnapshot(projectId)
+      // A slot just opened. Last, so the snapshot above still describes a
+      // finished job rather than racing the next one's first manifest write.
+      pump()
     })
 
     await publishSnapshot(projectId)
@@ -437,6 +584,20 @@ export function createJobRunner(engineRoot = process.cwd()) {
 
   async function cancel(projectId: string) {
     await loadProject(projectId)
+
+    // Cancelling something that never started is just leaving the line. No
+    // child to kill and no manifest to rewrite — writing "paused" here would
+    // invent a run that never happened, and would clobber the manifest of the
+    // last one that did.
+    const waiting = queueIndex(projectId)
+    if (waiting !== -1) {
+      const [entry] = queue.splice(waiting, 1)
+      entry.releaseOperation()
+      await publishSnapshot(projectId)
+      for (const behind of queue) void publishSnapshot(behind.projectId).catch(() => undefined)
+      return snapshotFromDisk(projectId)
+    }
+
     const job = active.get(projectId)
     if (!job) {
       const snapshot = await snapshotFromDisk(projectId)
@@ -517,6 +678,9 @@ export function createJobRunner(engineRoot = process.cwd()) {
   }
 
   async function shutdown() {
+    // Drained first, so a job finishing during teardown cannot pump a fresh
+    // render into a process that is on its way out.
+    for (const entry of queue.splice(0)) entry.releaseOperation()
     await Promise.all([...active.entries()].map(async ([projectId, job]) => {
       job.cancelRequested = true
       await terminate(job.child)
@@ -524,7 +688,12 @@ export function createJobRunner(engineRoot = process.cwd()) {
     }))
   }
 
-  return { start, cancel, completeManually, get: snapshotFromDisk, subscribe, shutdown }
+  /** Renders waiting for a slot, in line order. Read by the admin queue panel. */
+  function listQueued(): Array<{ projectId: string; queuedAt: string; position: number }> {
+    return queue.map((entry, position) => ({ projectId: entry.projectId, queuedAt: entry.queuedAt, position }))
+  }
+
+  return { start, cancel, completeManually, get: snapshotFromDisk, subscribe, shutdown, listQueued }
 }
 
 export const jobRunner = createJobRunner()

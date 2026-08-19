@@ -29,6 +29,8 @@
     "test:tier1-albums": "node --test test/tier1-album-regression.test.mjs",
     "rank:recipes": "node scripts/rankRecipes.mjs",
     "report:lite-quality": "node scripts/reportLiteQuality.mjs",
+    "gallery:lite-profiles": "node scripts/generateLiteProfileGallery.mjs",
+    "canary:lite": "node scripts/runLiteCanary.mjs --auto",
     "report:transitions": "node scripts/reportTransitionRatios.mjs",
     "analyze:assets": "node scripts/analyzeAssets.mjs",
     "analyze:faces": "node scripts/analyzePhotos.mjs",
@@ -36,6 +38,11 @@
     "select:story": "node scripts/selectStoryOption.mjs",
     "select:music": "node scripts/selectMusicEdit.mjs",
     "project:create": "node scripts/createProject.mjs",
+    "narration:import": "node scripts/importNarrationScript.mjs",
+    "footage:prepare": "node scripts/prepareFootage.mjs",
+    "narration:synthesize": "node scripts/synthesizeNarration.mjs",
+    "narration:timeline": "node scripts/buildNarratedTimeline.mjs",
+    "narration:srt": "node scripts/exportNarrationSrt.mjs",
     "project:analyze": "node scripts/analyzeProject.mjs",
     "project:policy": "node scripts/generateSelectionPolicy.mjs",
     "project:generate": "node scripts/generateProjectTimeline.mjs",
@@ -45,7 +52,7 @@
     "audit:prod": "npm audit --omit=dev",
     "docs:check": "node scripts/checkDocs.mjs",
     "test:unit": "node --test --test-timeout=30000 test/*.test.mjs",
-    "test:api": "node --import tsx --test apps/web/src/lib/sse.test.ts apps/web/src/lib/i18n.test.ts apps/web/src/lib/jobSettlement.test.ts src/effectVocabulary.test.ts src/imageSize.test.ts src/renderFinal.test.ts src/buildColorFilters.test.ts src/buildLayerSceneCommand.test.ts server/app.test.ts server/services/analysis.test.ts server/services/artifacts.test.ts server/services/assets.test.ts server/services/auth.test.ts server/services/billing.test.ts server/services/momoBilling.test.ts server/services/delivery.test.ts server/services/director.test.ts server/services/failureCause.test.ts server/services/incidents.test.ts server/services/jobs.test.ts server/services/projects.test.ts server/services/qa.test.ts server/services/rateLimit.test.ts server/services/recipes.test.ts server/services/revisions.test.ts server/services/timeline.test.ts",
+    "test:api": "node --import tsx --test apps/web/src/lib/sse.test.ts apps/web/src/lib/i18n.test.ts apps/web/src/lib/jobSettlement.test.ts src/effectVocabulary.test.ts src/imageSize.test.ts src/renderFinal.test.ts src/buildColorFilters.test.ts src/buildLayerSceneCommand.test.ts server/app.test.ts server/services/analysis.test.ts server/services/artifacts.test.ts server/services/assets.test.ts server/services/auth.test.ts server/services/billing.test.ts server/services/momoBilling.test.ts server/services/musicProvenance.test.ts server/services/delivery.test.ts server/services/director.test.ts server/services/failureCause.test.ts server/services/incidents.test.ts server/services/jobs.test.ts server/services/projects.test.ts server/services/qa.test.ts server/services/rateLimit.test.ts server/services/recipes.test.ts server/services/revisions.test.ts server/services/timeline.test.ts",
     "test:integration": "node --test --test-concurrency=1 --test-timeout=180000 test/integration/*.test.mjs",
     "test:regression": "node --test --test-concurrency=1 --test-timeout=2400000 test/regression/*.test.mjs",
     "test:release": "node --test --test-concurrency=1 --test-timeout=180000 test/release/render-smoke.test.mjs",
@@ -56,7 +63,10 @@
     "typecheck:gpu": "tsc --noEmit -p tsconfig.gpu.json",
     "typecheck:scripts": "tsc --noEmit -p tsconfig.scripts.json",
     "typecheck:web": "tsc --noEmit -p apps/web/tsconfig.json",
-    "typecheck:server": "tsc --noEmit -p tsconfig.server.json"
+    "typecheck:server": "tsc --noEmit -p tsconfig.server.json",
+    "backup": "node scripts/backupStoreel.mjs",
+    "restore": "node scripts/restoreStoreel.mjs",
+    "purge:delivered": "node scripts/purgeDeliveredProject.mjs"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.12",
@@ -79,6 +89,7 @@
     "stripe": "^22.3.2",
     "tailwind-merge": "^3.6.0",
     "three": "^0.185.1",
+    "tsx": "^4.19.2",
     "tw-animate-css": "^1.4.0",
     "zod": "^3.23.8"
   },
@@ -94,7 +105,6 @@
     "electron": "^43.1.0",
     "ffmpeg-static": "^5.3.0",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vite": "^8.1.5"
   }

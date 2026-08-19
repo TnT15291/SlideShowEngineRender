@@ -65,7 +65,7 @@ function signedIpn(createBody: Record<string, unknown>, overrides: Record<string
 
 test("MoMo checkout signs AIO v2 request and a replayed IPN grants one credit", async (context) => {
   const root = await fixture(context)
-  const user = await createUser("momo-buyer", "correct-secret", root)
+  const user = await createUser("momo-buyer", "correct-secret", {}, root)
   let createBody: Record<string, unknown> = {}
   const http: MomoHttpClient = async (url, init) => {
     assert.equal(url, MOMO_ENV.MOMO_ENDPOINT)
@@ -98,7 +98,7 @@ test("MoMo checkout signs AIO v2 request and a replayed IPN grants one credit", 
 
 test("MoMo IPN rejects invalid signatures and mismatched order amounts", async (context) => {
   const root = await fixture(context)
-  const user = await createUser("momo-guard", "correct-secret", root)
+  const user = await createUser("momo-guard", "correct-secret", {}, root)
   let createBody: Record<string, unknown> = {}
   await createMomoCheckout({
     userId: user.id,

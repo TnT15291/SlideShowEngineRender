@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from "react"
-import { AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, Sparkles, Trash2, Upload, X } from "lucide-react"
+import { AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, ShieldAlert, Sparkles, Trash2, Upload, X } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -247,6 +247,12 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementC
         <div className="space-y-6">
           <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} selected={selected} onToggleSelected={toggleSelected} onSelectAll={(ids) => setSelected(new Set(ids))} onClearSelection={() => setSelected(new Set())} onDeleteSelected={removeSelected} />
           <AssetSection projectId={project.id} kind="music" title={t("media.music")} description={t("media.musicHint")} icon={Music2} assets={assets?.music || []} queue={queue.filter((item) => item.kind === "music")} deleting={deleting} onFiles={(files) => addFiles("music", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
+          {/* G2.7. Sits at the step where the track is chosen and well before
+              the render is paid for, so "we told you" is true at the moment it
+              could still change the customer's mind — not buried in the Terms.
+              Shown whether or not a track is uploaded yet: it is advice about
+              what to pick, not a verdict on what was picked. */}
+          <MusicCopyrightNotice />
         </div>
         <AnalysisPanel project={currentProject} music={assets?.music || []} assetRevision={assetRevision} />
         <NextAction title={mediaReady ? t("media.ready") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotos") : t("media.incomplete")} detail={mediaReady ? t("media.readyDetail") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotosDetail", { name: recipeName ?? "", min: minPhotos, count: photoCount }) : t("media.incompleteDetail")} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
@@ -329,6 +335,27 @@ function photoLabel({ count, min, t }: { count: number; min: number; t: Translat
 }
 
 function Requirement({ done, label }: { done: boolean; label: string }) { const Icon = done ? Check : Circle; return <div className={cn("flex items-center gap-3 rounded-lg border px-4 py-3 text-sm", done && "border-success/30 bg-success/5")}><Icon className={cn("size-4", done ? "text-success-text" : "text-muted-foreground")} /> {label}</div> }
+
+/**
+ * The music-copyright warning required by G2.7.
+ *
+ * Deliberately not a dismissable toast and not styled as an error: it is a
+ * standing fact about the track the customer is about to choose, and the whole
+ * value of it is being read before the film is paid for and posted.
+ */
+function MusicCopyrightNotice() {
+  const { t } = useI18n()
+  return (
+    <div className="flex gap-3 rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm text-warning-text">
+      <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+      <div>
+        <p className="font-medium">{t("media.copyrightTitle")}</p>
+        <p className="mt-1 text-xs leading-5">{t("media.copyrightDetail")}</p>
+        <p className="mt-2 text-xs leading-5">{t("media.copyrightAdvice")}</p>
+      </div>
+    </div>
+  )
+}
 function NextAction({ title, detail, next, disabled = false, onClick }: { title: string; detail: string; next: WorkspaceStep; disabled?: boolean; onClick: () => void }) {
   const { t } = useI18n()
   // `detail` already explains the state (and the reason, when blocked) in the
@@ -407,7 +434,11 @@ function byUploadIndex(left: ProjectAsset, right: ProjectAsset) { return left.up
 function formatBytes(bytes: number) { return bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB` }
 
 function projectStatusFromJob(job: JobSnapshot): ProjectStatus {
-  if (job.status === "pending") return "running"
+  // "Queued" is not one of the seven states a project folder can be in on
+  // disk — it exists only in the runner's memory — so for the project list it
+  // reads as "running": work is under way from the customer's point of view,
+  // and the render step shows the real position in line.
+  if (job.status === "pending" || job.status === "queued") return "running"
   if (job.manuallyCompleted) return "completed_with_warning"
   if ((job.status === "completed" || job.status === "completed_with_warning") && job.phases.deliver !== "completed") return "paused"
   return job.status

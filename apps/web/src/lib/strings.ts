@@ -58,8 +58,11 @@ const entries = {
   "status.failed": { vi: "Thất bại", en: "Failed" },
   "status.paused": { vi: "Tạm dừng", en: "Paused" },
   "status.invalid": { vi: "Dữ liệu lỗi", en: "Invalid data" },
-  // A queued job — a job-only state, so it has no ProjectStatus counterpart.
-  "status.pending": { vi: "Đang xếp hàng", en: "Queued" },
+  // Two job-only states, neither with a ProjectStatus counterpart.
+  // `pending` means the run was accepted and is spinning up; `queued` means it
+  // is waiting for the global render slot (G2.6) and has not started at all.
+  "status.pending": { vi: "Đang chuẩn bị", en: "Starting" },
+  "status.queued": { vi: "Đang xếp hàng", en: "In queue" },
 
   // ── Pipeline phases ─────────────────────────────────────────────────────
   "phase.validate": { vi: "Kiểm tra", en: "Checks" },
@@ -443,6 +446,71 @@ const entries = {
   "login.toRegister": { vi: "Chưa có tài khoản? Tạo mới", en: "Need an account? Create one" },
   "login.or": { vi: "hoặc", en: "or" },
   "login.browseGallery": { vi: "Xem các phim được chia sẻ", en: "Browse shared films" },
+  "login.email": { vi: "Email", en: "Email" },
+  "login.emailHint": {
+    vi: "Dùng để đặt lại mật khẩu và báo cho bạn khi phim gặp sự cố. Chúng tôi không gửi quảng cáo.",
+    en: "Used to reset your password and to reach you if a render fails. No marketing email.",
+  },
+
+  // ── Forgot / reset password ─────────────────────────────────────────────
+  "reset.forgotLink": { vi: "Quên mật khẩu?", en: "Forgot your password?" },
+  "reset.forgotTitle": { vi: "Đặt lại mật khẩu", en: "Reset your password" },
+  "reset.forgotIntro": {
+    vi: "Nhập email bạn đã đăng ký. Chúng tôi sẽ gửi một liên kết đặt lại mật khẩu.",
+    en: "Enter the email you registered with and we'll send you a reset link.",
+  },
+  "reset.sendLink": { vi: "Gửi liên kết", en: "Send reset link" },
+  "reset.sending": { vi: "Đang gửi…", en: "Sending…" },
+  // Worded so it is true whether or not the address has an account — the API
+  // answers identically on purpose, and this copy must not contradict it by
+  // implying the address was found.
+  "reset.sentTitle": { vi: "Đã gửi, nếu email đó có tài khoản", en: "Sent, if that email has an account" },
+  "reset.sentDetail": {
+    vi: "Kiểm tra hộp thư (kể cả thư rác). Liên kết chỉ dùng được một lần và hết hạn sau 1 giờ.",
+    en: "Check your inbox, including spam. The link works once and expires in 1 hour.",
+  },
+  "reset.backToSignIn": { vi: "Quay lại đăng nhập", en: "Back to sign in" },
+  "reset.unableToSend": { vi: "Không gửi được email đặt lại mật khẩu", en: "Could not send the reset email" },
+  "reset.title": { vi: "Chọn mật khẩu mới", en: "Choose a new password" },
+  "reset.intro": { vi: "Đặt mật khẩu mới cho tài khoản của bạn.", en: "Set a new password for your account." },
+  "reset.newPassword": { vi: "Mật khẩu mới", en: "New password" },
+  "reset.confirmNewPassword": { vi: "Xác nhận mật khẩu mới", en: "Confirm new password" },
+  "reset.submit": { vi: "Đặt mật khẩu", en: "Set password" },
+  "reset.submitting": { vi: "Đang đặt…", en: "Setting…" },
+  "reset.doneTitle": { vi: "Đã đổi mật khẩu", en: "Password changed" },
+  "reset.doneDetail": {
+    vi: "Mọi thiết bị đang đăng nhập đã bị đăng xuất. Hãy đăng nhập lại bằng mật khẩu mới.",
+    en: "Every signed-in device was signed out. Sign in again with the new password.",
+  },
+  "reset.unableToReset": { vi: "Không đặt lại được mật khẩu", en: "Could not reset the password" },
+  "reset.missingToken": {
+    vi: "Liên kết này thiếu mã đặt lại mật khẩu. Hãy yêu cầu một liên kết mới.",
+    en: "This link is missing its reset code. Request a new one.",
+  },
+
+  // ── Terms + privacy ─────────────────────────────────────────────────────
+  "legal.terms": { vi: "Điều khoản sử dụng", en: "Terms of Service" },
+  "legal.privacy": { vi: "Chính sách bảo mật", en: "Privacy Policy" },
+  "legal.accept": { vi: "Tôi đồng ý với {terms} và {privacy}", en: "I agree to the {terms} and the {privacy}" },
+  "legal.mustAccept": {
+    vi: "Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
+    en: "You must accept the Terms of Service and the Privacy Policy.",
+  },
+  "legal.lastUpdated": { vi: "Cập nhật lần cuối: {date}", en: "Last updated: {date}" },
+
+  // ── Account completion (backfill for pre-email accounts) ────────────────
+  "account.completeTitle": { vi: "Hoàn tất tài khoản", en: "Finish setting up your account" },
+  "account.completeIntro": {
+    vi: "Tài khoản của bạn được tạo trước khi StoReel yêu cầu email. Cần thêm email để bạn có thể đặt lại mật khẩu và để chúng tôi báo khi phim gặp sự cố.",
+    en: "Your account was created before StoReel required an email address. We need one so you can reset your password and so we can reach you if a render fails.",
+  },
+  "account.completeTermsOnly": {
+    vi: "Điều khoản sử dụng và Chính sách bảo mật đã được cập nhật. Hãy xem qua và xác nhận để tiếp tục.",
+    en: "The Terms of Service and Privacy Policy have been published. Review and accept them to continue.",
+  },
+  "account.save": { vi: "Lưu và tiếp tục", en: "Save and continue" },
+  "account.unableToSave": { vi: "Không lưu được", en: "Could not save" },
+  "account.signOutInstead": { vi: "Đăng xuất", en: "Sign out instead" },
 
   // ── Change password ─────────────────────────────────────────────────────
   "password.title": { vi: "Đổi mật khẩu", en: "Change password" },
@@ -624,6 +692,15 @@ const entries = {
   "media.photosHint": { vi: "JPEG, PNG, WebP hoặc HEIC · tối đa 50 MB mỗi tệp", en: "JPEG, PNG, WebP or HEIC · up to 50 MB each" },
   "media.music": { vi: "Nhạc nền", en: "Soundtrack" },
   "media.musicHint": { vi: "MP3, WAV, M4A, AAC, FLAC hoặc OGG · tối đa 200 MB mỗi tệp", en: "MP3, WAV, M4A, AAC, FLAC or OGG · up to 200 MB each" },
+  "media.copyrightTitle": { vi: "Về bản quyền bản nhạc bạn chọn", en: "About the copyright of the music you choose" },
+  "media.copyrightDetail": {
+    vi: "Nhạc thương mại phổ biến gần như chắc chắn bị YouTube, Facebook hoặc TikTok nhận diện bản quyền. Video có thể bị tắt tiếng, bị chặn ở một số quốc gia, hoặc doanh thu bị chuyển cho chủ sở hữu bản quyền. Đây không phải lỗi kỹ thuật của phim và không thuộc phạm vi hoàn tiền.",
+    en: "Well-known commercial music will almost certainly be matched by YouTube, Facebook or TikTok. The video may be muted, blocked in some countries, or have its revenue redirected to the rights holder. That is not a technical fault in the film and is not covered by the refund policy.",
+  },
+  "media.copyrightAdvice": {
+    vi: "Nếu bạn định đăng phim công khai, hãy dùng nhạc bạn đã có giấy phép hoặc nhạc miễn phí bản quyền. Nếu chỉ chiếu riêng trong tiệc cưới thì không sao.",
+    en: "If you plan to post the film publicly, use music you have licensed or music that is royalty-free. For a film shown only at the wedding itself, any track is fine.",
+  },
   "media.dropPhotos": { vi: "Thả ảnh vào đây", en: "Drop photos here" },
   "media.dropMusic": { vi: "Thả nhạc vào đây", en: "Drop music here" },
   "media.autoUpload": { vi: "Tệp tự động tải lên sau khi chọn", en: "Files upload automatically after selection" },
@@ -696,6 +773,17 @@ const entries = {
   "job.paused": { vi: "Pipeline đang tạm dừng", en: "The pipeline is paused" },
   "job.startingPipeline": { vi: "Đang bắt đầu", en: "Getting started" },
   "job.readyToStart": { vi: "Sẵn sàng bắt đầu", en: "Ready to start" },
+  "job.queued": { vi: "Đang xếp hàng", en: "Waiting in the queue" },
+  "job.queuedNext": {
+    vi: "Phim của bạn là đơn kế tiếp và sẽ bắt đầu ngay khi phim đang dựng xong.",
+    en: "Yours is next and starts the moment the film currently rendering finishes.",
+  },
+  "job.queuedAhead_one": { vi: "Còn {count} phim đang chờ trước bạn.", en: "There is {count} film ahead of yours." },
+  "job.queuedAhead_other": { vi: "Còn {count} phim đang chờ trước bạn.", en: "There are {count} films ahead of yours." },
+  "job.queuedExplain": {
+    vi: "Mỗi phim được dựng một lần một đơn để giữ chất lượng và tốc độ. Mỗi phim mất khoảng 15–60 phút. Bạn có thể đóng trang này — tiến độ vẫn được giữ.",
+    en: "Films are rendered one at a time so each keeps its quality and speed. Each takes roughly 15–60 minutes. You can close this page; your place is kept.",
+  },
   "job.detailRunning": { vi: "Tiến độ tự cập nhật. Bạn có thể để trang này mở trong lúc phim được chuẩn bị.", en: "Progress updates automatically. You can keep this page open while the film is being prepared." },
   "job.detailCompleted": { vi: "Đã xử lý xong. Phim mới nhất có ở phần Xem kết quả bên dưới.", en: "Processing is complete. The latest film is available in Render review below." },
   "job.detailFailed": { vi: "Xem lý do bên dưới, khắc phục rồi thử tạo lại. Lượt kết xuất đã được hoàn lại.", en: "Read the reason below, fix it, then try again. Your render credit has been returned." },
@@ -1131,6 +1219,13 @@ const entries = {
   "apiError.ALREADY_SUBSCRIBED": { vi: "Tài khoản này đã có gói thuê bao.", en: "This account already has a subscription." },
   "apiError.RECIPE_NOT_FOUND": { vi: "Không tìm thấy phong cách.", en: "Recipe not found." },
   "apiError.VALIDATION_ERROR": { vi: "Có trường nhập chưa hợp lệ.", en: "Some of the submitted values are invalid." },
+  "apiError.EMAIL_EXISTS": { vi: "Email này đã được dùng cho một tài khoản khác.", en: "That email address is already registered." },
+  "apiError.INVALID_RESET_TOKEN": { vi: "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Hãy yêu cầu liên kết mới.", en: "This password reset link is invalid or has expired. Request a new one." },
+  "apiError.EMAIL_NOT_CONFIGURED": { vi: "Máy chủ chưa cấu hình gửi email. Hãy liên hệ hỗ trợ.", en: "Email delivery is not configured on the server. Contact support." },
+  "apiError.EMAIL_SEND_FAILED": { vi: "Không gửi được email lúc này. Hãy thử lại sau ít phút.", en: "The email could not be sent right now. Try again in a few minutes." },
+  "apiError.RENDER_QUEUE_BUSY": { vi: "Một phim khác đang được dựng. Đơn của bạn đã vào hàng đợi.", en: "Another film is rendering. Your order is in the queue." },
+  "apiError.JOB_ALREADY_QUEUED": { vi: "Phim này đã nằm trong hàng đợi.", en: "This film is already in the queue." },
+  "apiError.DEV_MUSIC_NOT_LICENSED": { vi: "Bản nhạc này là bản dùng để thử nghiệm nội bộ, không được phép giao cho khách. Hãy thay bằng bản nhạc bạn có quyền sử dụng.", en: "That track is one of the internal test recordings and cannot be delivered. Replace it with music you have the right to use." },
 } satisfies Record<string, { vi: string; en: string }>
 
 export const strings: Record<string, { vi: string; en: string }> = entries

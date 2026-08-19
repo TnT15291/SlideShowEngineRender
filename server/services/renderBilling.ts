@@ -64,9 +64,13 @@ export async function reserveRender(projectId: string, userId: string, engineRoo
 /**
  * Close the hold for a job that has reached a terminal state.
  *
- * `failed` refunds; a delivered film keeps the charge. `running`, `pending` and
- * `paused` are deliberately no-ops — a paused job is one the customer is
- * expected to resume, and resuming must not cost a second credit.
+ * `failed` refunds; a delivered film keeps the charge. `running`, `pending`,
+ * `queued` and `paused` are deliberately no-ops — a paused job is one the
+ * customer is expected to resume, and resuming must not cost a second credit.
+ *
+ * The allow-list below is what keeps that true as states are added: `queued`
+ * (G2.6) arrives on every snapshot poll while an order waits for a render
+ * slot, and a deny-list would have refunded the credit out from under it.
  *
  * Idempotent by construction: the refund and the deletion of the hold happen
  * under the same lock, so two concurrent settles cannot both refund.

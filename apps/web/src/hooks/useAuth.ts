@@ -33,9 +33,25 @@ export function useAuth() {
     setUser(response.user)
   }, [])
 
-  const register = useCallback(async (username: string, password: string) => {
-    const response = await apiPost<{ token: string; user: StudioUser }>("/auth/register", { username, password })
+  const register = useCallback(async (input: { username: string; password: string; email: string }) => {
+    // `acceptedTerms` is not a checkbox value forwarded from the form — the
+    // form refuses to submit unless it is ticked, and the server rejects
+    // anything but literal true, so sending it here states the same fact once.
+    const response = await apiPost<{ token: string; user: StudioUser }>("/auth/register", { ...input, acceptedTerms: true })
     setStoredToken(response.token)
+    setUser(response.user)
+  }, [])
+
+  // The backfill pair for accounts that predate email and the policy pages.
+  // Both return the updated user so the gate that opened the dialog closes on
+  // the server's answer rather than on an optimistic local guess.
+  const setEmail = useCallback(async (email: string) => {
+    const response = await apiPost<{ user: StudioUser }>("/auth/email", { email })
+    setUser(response.user)
+  }, [])
+
+  const acceptTerms = useCallback(async () => {
+    const response = await apiPost<{ user: StudioUser }>("/auth/accept-terms", {})
     setUser(response.user)
   }, [])
 
@@ -46,5 +62,5 @@ export function useAuth() {
     })
   }, [])
 
-  return { user, loading, login, register, logout, reloadUser: refresh }
+  return { user, loading, login, register, logout, setEmail, acceptTerms, reloadUser: refresh }
 }

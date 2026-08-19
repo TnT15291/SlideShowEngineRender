@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { AlertCircle, Check, ChevronDown, ChevronRight, Circle, Film, LoaderCircle, Minus, Play, Square } from "lucide-react"
+import { AlertCircle, Check, ChevronDown, ChevronRight, Circle, Clock, Film, LoaderCircle, Minus, Play, Square } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -112,7 +112,12 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
     }
   }
 
+  // Queued counts as "in flight" for the button: the render was ordered and
+  // paid for, so the action offered is Cancel, not a second Create that would
+  // be refused as JOB_ALREADY_QUEUED.
+  const queued = job?.status === "queued"
   const running = job?.status === "running" || job?.status === "pending"
+  const inFlight = running || queued
   const progress = job?.progress || 0
   const progressTitle = job?.status === "completed" || job?.status === "completed_with_warning"
     ? t("job.filmReady")
@@ -120,18 +125,25 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
       ? t("job.needsAttention")
       : job?.status === "paused"
         ? t("job.paused")
-        : job?.currentPhase
-          ? t(phaseLongLabelKey[job.currentPhase])
-          : running ? t("job.startingPipeline") : t("job.readyToStart")
-  const progressDetail = running
-    ? t("job.detailRunning")
-    : job?.status === "completed" || job?.status === "completed_with_warning"
-      ? t("job.detailCompleted")
-      : job?.status === "failed"
-        ? t("job.detailFailed")
-        : job?.status === "paused"
-          ? t("job.detailPaused")
-          : t("job.detailIdle")
+        : queued
+          ? t("job.queued")
+          : job?.currentPhase
+            ? t(phaseLongLabelKey[job.currentPhase])
+            : running ? t("job.startingPipeline") : t("job.readyToStart")
+  const progressDetail = queued
+    // 0 ahead means this is the next one to start, which is a different
+    // sentence from "there are N in front of you" — a plural-aware "0 films
+    // ahead" would be technically true and read as a bug.
+    ? job?.queuePosition ? t("job.queuedAhead", { count: job.queuePosition }) : t("job.queuedNext")
+    : running
+      ? t("job.detailRunning")
+      : job?.status === "completed" || job?.status === "completed_with_warning"
+        ? t("job.detailCompleted")
+        : job?.status === "failed"
+          ? t("job.detailFailed")
+          : job?.status === "paused"
+            ? t("job.detailPaused")
+            : t("job.detailIdle")
 
   return <><Card className="mt-6 overflow-hidden">
     <CardHeader className="border-b bg-card-soft"><div className="flex flex-wrap items-start justify-between gap-4"><div><CardTitle className="flex items-center gap-2 text-base"><Film className="size-4 text-primary" /> {t("job.title")}</CardTitle><CardDescription className="mt-1">{t("job.description")}</CardDescription></div><div className="flex items-center gap-2"><span className={cn("size-2 rounded-full", connected ? "bg-success" : "bg-muted-foreground")} /><span className="text-xs text-muted-foreground">{connected ? t("job.live") : t("job.reconnecting")}</span>{job && <Badge variant="outline">{t(jobStatusLabelKey[job.status])}</Badge>}</div></div></CardHeader>
@@ -146,7 +158,8 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
             twice on one screen; the disabled button and its tooltip carry the
             reason at the point of action. */}
         <div className="rounded-lg border bg-background p-4 text-xs leading-5 text-muted-foreground">{renderBlocked ? blockedReason : t("job.runsOnItsOwn")}</div>
-        <div className="mt-6 flex gap-3">{running ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? t("job.stopping") : t("common.cancel")}</Button> : <Button onClick={() => void start()} disabled={submitting || renderBlocked} title={renderBlocked ? blockedReason : undefined}><Play className="size-4" /> {submitting ? t("job.starting") : job?.status === "paused" || job?.status === "failed" ? t("job.tryAgain") : t("job.createVideo")}</Button>}</div>
+        <div className="mt-6 flex gap-3">{inFlight ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? t("job.stopping") : t("common.cancel")}</Button> : <Button onClick={() => void start()} disabled={submitting || renderBlocked} title={renderBlocked ? blockedReason : undefined}><Play className="size-4" /> {submitting ? t("job.starting") : job?.status === "paused" || job?.status === "failed" ? t("job.tryAgain") : t("job.createVideo")}</Button>}</div>
+        {queued && <div className="mt-4 flex gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm"><Clock className="mt-0.5 size-4 shrink-0 text-primary" /><div><p className="font-medium">{t("job.queued")}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{t("job.queuedExplain")}</p></div></div>}
         {job?.status === "paused" && job.pauseReason?.startsWith("PLAYLIST_FIT_CONFIRMATION_REQUIRED:") && <PlaylistFitConfirmation reason={job.pauseReason} accepting={submitting} onAccept={() => void start(true)} />}
         {error && <p className="mt-4 flex gap-2 text-sm text-destructive"><AlertCircle className="mt-0.5 size-4 shrink-0" /> {error}</p>}
         {job?.status === "failed" && <FailureExplanation cause={job.cause} fallback={job.error} />}

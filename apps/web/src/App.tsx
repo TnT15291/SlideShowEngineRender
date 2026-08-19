@@ -17,10 +17,13 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { AccountCompletionPage } from "@/AccountCompletionPage"
 import { AssetsPage, type WorkspaceFocus } from "@/AssetsPage"
 import { BillingPage } from "@/BillingPage"
 import { AdminIncidentsPage } from "@/AdminIncidentsPage"
 import { ChangePasswordDialog } from "@/ChangePasswordDialog"
+import { LegalPage } from "@/LegalPage"
+import { ResetPasswordPage } from "@/ResetPasswordPage"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LanguageToggle } from "@/components/LanguageToggle"
@@ -40,20 +43,20 @@ import { ProjectsPage } from "@/ProjectsPage"
 import { RecipeLibrary } from "@/RecipeLibrary"
 import type { IncidentList, ProjectSummary, StudioUser } from "@/types"
 
-type AppView = "dashboard" | "director" | "timeline" | "render" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin"
+type AppView = "dashboard" | "director" | "timeline" | "render" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin" | "terms" | "privacy" | "reset-password"
 
 function routeFromUrl(): { view: AppView; projectId: string | null } {
   const params = new URLSearchParams(window.location.search)
   const raw = params.get("view")
   const view = raw === "project" ? "assets"
-    : raw === "director" || raw === "timeline" || raw === "render" || raw === "assets" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" ? raw
+    : raw === "director" || raw === "timeline" || raw === "render" || raw === "assets" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" || raw === "terms" || raw === "privacy" || raw === "reset-password" ? raw
     : "dashboard"
   return { view, projectId: params.get("project") }
 }
 
 export function App() {
   const { t } = useI18n()
-  const { user, loading, login, register, logout, reloadUser } = useAuth()
+  const { user, loading, login, register, logout, setEmail, acceptTerms, reloadUser } = useAuth()
   const initialRoute = useMemo(routeFromUrl, [])
   const [view, setView] = useState<AppView>(initialRoute.view)
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null)
@@ -126,9 +129,25 @@ export function App() {
   }, [userId])
 
   if (loading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">{t("common.loading")}</main>
-  // Reachable with zero login — checked before the auth gate below.
+  // Reachable with zero login — checked before the auth gate below. The two
+  // policy pages must be readable by someone still deciding whether to
+  // register (and by a payment provider reviewing the merchant application);
+  // the reset page exists precisely for someone who cannot sign in.
   if (view === "gallery") return <GalleryPage onBack={() => navigate("dashboard")} />
+  if (view === "terms" || view === "privacy") return <LegalPage document={view} onBack={() => navigate("dashboard")} />
+  if (view === "reset-password") {
+    // Read straight from the URL rather than through `routeFromUrl`: the token
+    // belongs to this one screen and has no business in the app's route state.
+    const token = new URLSearchParams(window.location.search).get("token")
+    return <ResetPasswordPage token={token} onDone={() => navigate("dashboard")} />
+  }
   if (!user) return <LoginPage onLogin={login} onRegister={register} onBrowseGallery={() => navigate("gallery")} />
+  // Accounts that predate email / the policy pages finish setting up here
+  // before they can reach anything else. Placed above `routeLoading` so a deep
+  // link into a project cannot slip past it.
+  if (!user.email || !user.termsAccepted) {
+    return <AccountCompletionPage user={user} onSetEmail={setEmail} onAcceptTerms={acceptTerms} onSignOut={logout} />
+  }
   if (routeLoading) return <main className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">{t("app.openingProject")}</main>
 
   // The intake wizard is a focused, linear, exit-avoiding flow and isn't a
@@ -234,6 +253,13 @@ function AppShell({ user, active, navOpen, onCloseNav, onNavigate, onCreate, onU
             <span className="text-xs text-sidebar-muted">{t("common.language")}</span>
             <LanguageToggle tone="dark" />
           </div>
+          {/* The app shell has no footer — the sidebar runs the full height —
+              so the two policy pages hang off the bottom of it instead. */}
+          <p className="mt-4 text-xs text-sidebar-muted">
+            <button onClick={() => onNavigate("terms")} className="underline underline-offset-2 hover:text-white">{t("legal.terms")}</button>
+            <span className="px-2">·</span>
+            <button onClick={() => onNavigate("privacy")} className="underline underline-offset-2 hover:text-white">{t("legal.privacy")}</button>
+          </p>
         </div>
       </aside>
 

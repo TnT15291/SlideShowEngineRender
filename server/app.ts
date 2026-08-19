@@ -8,7 +8,8 @@ import { config } from "./config.js"
 import { HttpError, readJsonBody, readRawBody, sendError, sendJson } from "./http.js"
 import { bearerToken, clientIp, methodNotAllowed, parseResourceId, sendArtifact, sendTimelineImage, setCorsHeaders } from "./requestHelpers.js"
 import { createRateLimiter } from "./services/rateLimit.js"
-import { AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createSession, createUser, deleteSession, getSession, getUserById, isAdminUsername, loginInputSchema, registerInputSchema, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type LoginInput, type RegisterInput } from "./services/auth.js"
+import { acceptTerms, AuthRequestError, changePassword, changePasswordInputSchema, consumeRenderEntitlement, createPasswordReset, createSession, createUser, deleteSession, forgotPasswordInputSchema, getSession, getUserById, isAdminUsername, loginInputSchema, registerInputSchema, resetPasswordInputSchema, resetPasswordWithToken, setEmailInputSchema, setUserEmail, verifyLogin, type AuthenticatedUser, type ChangePasswordInput, type ForgotPasswordInput, type LoginInput, type RegisterInput, type ResetPasswordInput, type SetEmailInput } from "./services/auth.js"
+import { EmailRequestError, requireEmailConfig, sendPasswordResetEmail } from "./services/email.js"
 import { BillingRequestError, createCheckoutSession, getPlanCatalog, handleWebhookEvent, type PlanId } from "./services/billing.js"
 import { createMomoCheckout, handleMomoIpn, MomoBillingError } from "./services/momoBilling.js"
 import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type UploadAssetInput } from "./services/assets.js"
@@ -25,11 +26,16 @@ import { revisionInputSchema, revisionService, revisionUndoSchema, RevisionReque
 import { replaceTimelineImageSchema, timelineService, TimelineRequestError, type ReplaceTimelineImageInput, type TimelineImageFile, type TimelineSnapshot } from "./services/timeline.js"
 import { findOpenReservation, releaseReservation, reserveRender, settleRender, type RenderReservation } from "./services/renderBilling.js"
 import { assertRenderPreconditions } from "./services/renderPreconditions.js"
+import { assertLicensedMusic } from "./services/musicProvenance.js"
 
 type Services = {
   verifyLogin: (input: LoginInput) => Promise<AuthenticatedUser>
   createUser: (input: RegisterInput) => Promise<AuthenticatedUser>
   changePassword: (userId: string, input: ChangePasswordInput) => Promise<void>
+  setUserEmail: (userId: string, input: SetEmailInput) => Promise<AuthenticatedUser>
+  acceptTerms: (userId: string) => Promise<AuthenticatedUser>
+  requestPasswordReset: (input: ForgotPasswordInput) => Promise<void>
+  resetPassword: (input: ResetPasswordInput) => Promise<void>
   createSession: (userId: string) => Promise<string>
   deleteSession: (token: string) => Promise<void>
   getSession: (token: string) => Promise<{ userId: string } | null>
@@ -52,6 +58,7 @@ type Services = {
   getProjectAssetFile: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
   getProjectAssetThumbnail: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
   deleteProjectAsset: (projectId: string, assetId: string) => Promise<ProjectAssets>
+  assertLicensedMusic: (projectId: string) => Promise<void>
   getJob: (projectId: string) => Promise<JobSnapshot>
   startJob: (projectId: string, input: StartJobInput) => Promise<JobSnapshot>
   cancelJob: (projectId: string) => Promise<JobSnapshot>
@@ -94,13 +101,41 @@ type Services = {
 // credential-stuffing run can't dodge the login limit by hitting register.
 const authRateLimiter = createRateLimiter(10, 5 * 60 * 1000)
 
+/**
+ * Job states that still own something the runner has to be told to let go of.
+ *
+ * A named set rather than an inline `||` chain because it has already drifted
+ * once: `queued` was added to `JobStatus` and the DELETE-project check was not
+ * updated with it, so deleting a project while its render waited in line left
+ * a phantom entry in the queue — inflating every later customer's reported
+ * position, and, because a project id is the slug of its name, re-creating a
+ * project under the same name would collide with it. Whatever the next status
+ * is, add it here if the runner holds state for it.
+ */
+const JOB_STATES_HOLDING_RUNNER_STATE: ReadonlySet<JobStatus> = new Set(["running", "pending", "queued"])
+
 const defaultServices: Services = {
   verifyLogin: (input) => verifyLogin(input.username, input.password),
-  createUser: (input) => createUser(input.username, input.password),
+  createUser: (input) => createUser(input.username, input.password, { email: input.email, acceptedTerms: input.acceptedTerms }),
   changePassword: (userId, input) => changePassword(userId, input.currentPassword, input.newPassword),
+  setUserEmail: (userId, input) => setUserEmail(userId, input.email),
+  acceptTerms,
+  // Configuration is checked BEFORE the account lookup on purpose. Doing it
+  // the other way round would make an unconfigured deployment answer 409 for a
+  // registered address and 200 for an unknown one — turning the endpoint into
+  // the account-enumeration oracle that `createPasswordReset` returning null
+  // exists to prevent.
+  requestPasswordReset: async (input) => {
+    const config = requireEmailConfig()
+    const reset = await createPasswordReset(input.email)
+    if (!reset) return
+    await sendPasswordResetEmail({ to: reset.email, username: reset.username, token: reset.token, config })
+  },
+  resetPassword: (input) => resetPasswordWithToken(input.token, input.newPassword),
   createSession, deleteSession, getSession, getUserById, consumeRenderEntitlement,
   findOpenReservation, reserveRender, settleRender, releaseReservation,
   listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, deleteProjectAsset,
+  assertLicensedMusic: (projectId) => assertLicensedMusic(projectId),
   getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, completeJobManually: jobRunner.completeManually, subscribeToJob: jobRunner.subscribe,
   getAnalysis: analysisService.get, startAnalysis: analysisService.start, suggestCull: analysisService.suggestCull, applyCull: analysisService.applyCull,
   listProjectArtifacts: artifactService.list, getProjectArtifact: artifactService.get,
@@ -233,6 +268,63 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     const input = await readJsonBody(request, changePasswordInputSchema)
     await services.changePassword(session.userId, input)
     sendJson(response, 200, { ok: true, data: { changed: true } })
+    return
+  }
+
+  // Unauthenticated by definition — the caller is someone who cannot sign in.
+  // Always answers 200 `{ sent: true }`, whether or not the address belongs to
+  // an account, so it cannot be used to test who is a customer here.
+  if (url.pathname === "/api/auth/password/forgot") {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many attempts, try again later")
+    const input = await readJsonBody(request, forgotPasswordInputSchema)
+    await services.requestPasswordReset(input)
+    sendJson(response, 200, { ok: true, data: { sent: true } })
+    return
+  }
+
+  // Also unauthenticated: the token in the body *is* the credential.
+  if (url.pathname === "/api/auth/password/reset") {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    if (!services.checkAuthRateLimit(clientIp(request))) throw new HttpError(429, "TOO_MANY_ATTEMPTS", "Too many attempts, try again later")
+    const input = await readJsonBody(request, resetPasswordInputSchema)
+    await services.resetPassword(input)
+    sendJson(response, 200, { ok: true, data: { reset: true } })
+    return
+  }
+
+  // The backfill endpoint for accounts created before email was required.
+  if (url.pathname === "/api/auth/email") {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    const session = await requireSession(request, services)
+    const input = await readJsonBody(request, setEmailInputSchema)
+    const user = await services.setUserEmail(session.userId, input)
+    sendJson(response, 200, { ok: true, data: { user } })
+    return
+  }
+
+  // Ticking the policy box on the same backfill prompt.
+  if (url.pathname === "/api/auth/accept-terms") {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports POST")
+      return
+    }
+    const session = await requireSession(request, services)
+    const user = await services.acceptTerms(session.userId)
+    sendJson(response, 200, { ok: true, data: { user } })
     return
   }
 
@@ -781,6 +873,9 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
         assets: await services.listProjectAssets(projectId),
         recipe: project.recipe ? await services.getRecipe(project.recipe) : null,
       })
+      // G2.7. Also before the charge: a film we refuse to deliver must not be
+      // one the customer paid for.
+      await services.assertLicensedMusic(projectId)
 
       // Resuming a paused run, or retrying after the credit was handed back,
       // reuses the open hold instead of charging again.
@@ -813,7 +908,7 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     }
     if (request.method === "DELETE") {
       const job = await services.getJob(projectId)
-      if (job.status === "running" || job.status === "pending") await services.cancelJob(projectId)
+      if (JOB_STATES_HOLDING_RUNNER_STATE.has(job.status)) await services.cancelJob(projectId)
       // Drop the hold without refunding. Deleting a project you started a
       // render for is not a pipeline failure, and refunding here would make
       // "start, delete, repeat" a free-render loop.
@@ -839,6 +934,10 @@ function handleFailure(response: ServerResponse, error: unknown) {
     return
   }
   if (error instanceof AuthRequestError) {
+    sendError(response, error.status, error.code, error.message)
+    return
+  }
+  if (error instanceof EmailRequestError) {
     sendError(response, error.status, error.code, error.message)
     return
   }

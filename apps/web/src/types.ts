@@ -7,6 +7,9 @@ export interface StudioUser {
   username: string
   plan: Plan
   isAdmin: boolean
+  /** `null` on accounts created before email was required — see AccountCompletionDialog. */
+  email: string | null
+  termsAccepted: boolean
 }
 
 export interface Incident {
@@ -129,7 +132,7 @@ export interface ProjectAssets {
   limits: { photoMaxBytes: number; musicMaxBytes: number }
 }
 
-export type JobStatus = "not_started" | "pending" | "running" | "paused" | "failed" | "completed" | "completed_with_warning"
+export type JobStatus = "not_started" | "pending" | "queued" | "running" | "paused" | "failed" | "completed" | "completed_with_warning"
 
 export interface JobSnapshot {
   projectId: string
@@ -138,6 +141,8 @@ export interface JobSnapshot {
   progress: number
   error: string | null
   pauseReason?: string | null
+  /** Renders ahead of this one while `status` is "queued"; 0 means next. */
+  queuePosition?: number | null
   warnings?: Array<{ code: string; message: string }>
   manuallyCompleted: boolean
   startedAt: string | null

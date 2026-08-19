@@ -24,6 +24,7 @@ export const statusLabelKey: Record<ProjectStatus, StringKey> = {
 export const jobStatusLabelKey: Record<JobStatus, StringKey> = {
   not_started: "status.not_started",
   pending: "status.pending",
+  queued: "status.queued",
   running: "status.running",
   paused: "status.paused",
   failed: "status.failed",

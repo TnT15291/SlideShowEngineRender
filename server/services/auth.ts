@@ -15,6 +15,10 @@ const KEY_LENGTH = 64
 const SESSION_BYTES = 32
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000
 const SUBSCRIPTION_PERIOD_MS = 30 * 24 * 60 * 60 * 1000
+const PASSWORD_RESET_BYTES = 32
+// Short on purpose: the token is a bearer credential for the account, and a
+// customer who asked for a reset acts on it within minutes.
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000
 
 const planSchema = z.discriminatedUnion("type", [
   z.object({
@@ -39,6 +43,14 @@ const userSchema = z.object({
   username: z.string().min(1),
   passwordHash: z.string().min(1),
   createdAt: z.string().datetime(),
+  // Optional so accounts created before email existed keep parsing. Every new
+  // account is required to supply one (see registerInputSchema); the older,
+  // email-less accounts are pushed through the backfill prompt at their next
+  // sign-in, which is why the absence has to be representable at all.
+  email: z.string().email().optional(),
+  // When this account ticked the Terms of Service + Privacy Policy box. Absent
+  // on accounts created before those pages existed — see `termsAccepted`.
+  termsAcceptedAt: z.string().datetime().optional(),
   // Optional so accounts created before billing plans existed keep parsing;
   // treated as defaultPlan() (no render entitlement) wherever it's read.
   plan: planSchema.optional(),
@@ -60,11 +72,37 @@ const sessionSchema = z.object({
 })
 const sessionStoreSchema = z.object({ version: z.literal(1), sessions: z.array(sessionSchema) })
 
+// Password-reset tokens are stored exactly like sessions — hashed, never in
+// the clear — so a leaked copy of server/data/ cannot be replayed into an
+// account takeover. `usedAt` is what makes a token single-use: it is kept
+// rather than deleted so a replay is rejected as used, not as unknown.
+const passwordResetSchema = z.object({
+  tokenHash: z.string().min(1),
+  userId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  expiresAt: z.string().datetime(),
+  usedAt: z.string().datetime().optional(),
+})
+const passwordResetStoreSchema = z.object({ version: z.literal(1), resets: z.array(passwordResetSchema) })
+
+// One place that decides what "the same email" means, so a lookup can never
+// disagree with the uniqueness check that was supposed to prevent the clash.
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase()
+}
+
+const emailSchema = z.string().trim().toLowerCase().email().max(200)
+
 export const loginInputSchema = z.object({ username: z.string().min(1), password: z.string().min(1) })
 export type LoginInput = z.infer<typeof loginInputSchema>
 export const registerInputSchema = z.object({
   username: z.string().trim().min(3).max(40).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Username must use lowercase letters, numbers, or hyphens"),
   password: z.string().min(8).max(200),
+  email: emailSchema,
+  // Literal `true`, not a boolean: a request that omits the field or sends
+  // false is rejected by the schema, so "registered without accepting" is not
+  // a state the store can reach.
+  acceptedTerms: z.literal(true),
 })
 export type RegisterInput = z.infer<typeof registerInputSchema>
 export const changePasswordInputSchema = z.object({
@@ -72,9 +110,30 @@ export const changePasswordInputSchema = z.object({
   newPassword: z.string().min(8).max(200),
 })
 export type ChangePasswordInput = z.infer<typeof changePasswordInputSchema>
+export const setEmailInputSchema = z.object({ email: emailSchema })
+export type SetEmailInput = z.infer<typeof setEmailInputSchema>
+export const forgotPasswordInputSchema = z.object({ email: emailSchema })
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordInputSchema>
+export const resetPasswordInputSchema = z.object({
+  token: z.string().min(1).max(200),
+  newPassword: z.string().min(8).max(200),
+})
+export type ResetPasswordInput = z.infer<typeof resetPasswordInputSchema>
 
 export type StudioUser = z.infer<typeof userSchema>
-export type AuthenticatedUser = { id: string; username: string; plan: Plan; isAdmin: boolean }
+export type AuthenticatedUser = {
+  id: string
+  username: string
+  plan: Plan
+  isAdmin: boolean
+  /**
+   * `null` for an account created before email was required. The web app reads
+   * this to decide whether to run the one-time backfill prompt, so it has to be
+   * distinguishable from "not loaded" rather than silently defaulted.
+   */
+  email: string | null
+  termsAccepted: boolean
+}
 
 // Single source for "is this account an admin" — app.ts's requireAdmin gate
 // and the isAdmin flag handed to the frontend both call this, so a change to
@@ -85,7 +144,14 @@ export function isAdminUsername(username: string): boolean {
 }
 
 function redactUser(user: StudioUser): AuthenticatedUser {
-  return { id: user.id, username: user.username, plan: user.plan ?? defaultPlan(), isAdmin: isAdminUsername(user.username) }
+  return {
+    id: user.id,
+    username: user.username,
+    plan: user.plan ?? defaultPlan(),
+    isAdmin: isAdminUsername(user.username),
+    email: user.email ?? null,
+    termsAccepted: Boolean(user.termsAcceptedAt),
+  }
 }
 
 export class AuthRequestError extends Error {
@@ -106,6 +172,10 @@ function sessionsFile(engineRoot: string) {
   return path.join(dataDir(engineRoot), "studio-sessions.json")
 }
 
+function passwordResetsFile(engineRoot: string) {
+  return path.join(dataDir(engineRoot), "studio-password-resets.json")
+}
+
 async function readUsers(engineRoot: string) {
   try {
     return userStoreSchema.parse(JSON.parse(await readFile(usersFile(engineRoot), "utf8")))
@@ -121,6 +191,15 @@ async function readSessions(engineRoot: string) {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return { version: 1 as const, sessions: [] }
     throw new AuthRequestError(500, "INVALID_SESSION_STORE", "Studio session store is invalid")
+  }
+}
+
+async function readPasswordResets(engineRoot: string) {
+  try {
+    return passwordResetStoreSchema.parse(JSON.parse(await readFile(passwordResetsFile(engineRoot), "utf8")))
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return { version: 1 as const, resets: [] }
+    throw new AuthRequestError(500, "INVALID_RESET_STORE", "Password reset store is invalid")
   }
 }
 
@@ -143,25 +222,82 @@ async function verifyPassword(password: string, stored: string) {
   return derived.length === expected.length && timingSafeEqual(derived, expected)
 }
 
-export async function createUser(username: string, password: string, engineRoot = process.cwd()): Promise<AuthenticatedUser> {
+export async function createUser(
+  username: string,
+  password: string,
+  options: { email?: string; acceptedTerms?: boolean } = {},
+  engineRoot = process.cwd(),
+): Promise<AuthenticatedUser> {
   const normalized = username.trim().toLowerCase()
   if (!normalized) throw new AuthRequestError(400, "INVALID_USERNAME", "Username must not be empty")
   if (password.length < 8) throw new AuthRequestError(400, "WEAK_PASSWORD", "Password must be at least 8 characters")
+  const email = options.email ? normalizeEmail(options.email) : undefined
+  const now = new Date().toISOString()
 
   return withLock(usersFile(engineRoot), async () => {
     const store = await readUsers(engineRoot)
     if (store.users.some((user) => user.username === normalized)) {
       throw new AuthRequestError(409, "USER_EXISTS", `A user named ${normalized} already exists`)
     }
+    // One address, one account: `createPasswordReset` resolves an account *by
+    // email*, so a shared address would make "reset my password" ambiguous.
+    if (email && store.users.some((user) => user.email === email)) {
+      throw new AuthRequestError(409, "EMAIL_EXISTS", "That email address is already registered")
+    }
     const user: StudioUser = {
       id: randomUUID(),
       username: normalized,
       passwordHash: await hashPassword(password),
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      email,
+      termsAcceptedAt: options.acceptedTerms ? now : undefined,
       plan: defaultPlan(),
     }
     await writeJsonAtomic(usersFile(engineRoot), { version: 1, users: [...store.users, user] })
     return redactUser(user)
+  })
+}
+
+/**
+ * The backfill path for accounts that predate the email requirement, and the
+ * only way an address can change afterwards.
+ *
+ * Deliberately does not send a confirmation mail: an account with no address
+ * at all cannot be reached to confirm one, so requiring confirmation would
+ * lock exactly the users this exists for out of the flow. The trade is that a
+ * typo is recoverable only while the customer is still signed in — which is
+ * why the web app makes this a prompt at sign-in rather than a silent default.
+ */
+export async function setUserEmail(userId: string, email: string, engineRoot = process.cwd()): Promise<AuthenticatedUser> {
+  const normalized = normalizeEmail(email)
+  return withLock(usersFile(engineRoot), async () => {
+    const store = await readUsers(engineRoot)
+    const userIndex = store.users.findIndex((candidate) => candidate.id === userId)
+    const user = store.users[userIndex]
+    if (!user) throw new AuthRequestError(401, "UNAUTHENTICATED", "Session user no longer exists")
+    if (store.users.some((candidate) => candidate.email === normalized && candidate.id !== userId)) {
+      throw new AuthRequestError(409, "EMAIL_EXISTS", "That email address is already registered")
+    }
+    const users = [...store.users]
+    users[userIndex] = { ...user, email: normalized }
+    await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+    return redactUser(users[userIndex])
+  })
+}
+
+// Recorded when an existing account ticks the box on the backfill prompt, so
+// consent is dated rather than assumed for anyone who registered before the
+// policy pages existed.
+export async function acceptTerms(userId: string, engineRoot = process.cwd()): Promise<AuthenticatedUser> {
+  return withLock(usersFile(engineRoot), async () => {
+    const store = await readUsers(engineRoot)
+    const userIndex = store.users.findIndex((candidate) => candidate.id === userId)
+    const user = store.users[userIndex]
+    if (!user) throw new AuthRequestError(401, "UNAUTHENTICATED", "Session user no longer exists")
+    const users = [...store.users]
+    users[userIndex] = { ...user, termsAcceptedAt: user.termsAcceptedAt ?? new Date().toISOString() }
+    await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+    return redactUser(users[userIndex])
   })
 }
 
@@ -429,6 +565,92 @@ export async function deleteSession(token: string, engineRoot = process.cwd()): 
     const sessions = store.sessions.filter((session) => session.tokenHash !== tokenHash)
     await writeJsonAtomic(sessionsFile(engineRoot), { version: 1, sessions })
   })
+}
+
+// Called after a password reset. A reset exists because the customer may have
+// lost control of the account, so every session minted under the old password
+// has to die with it — otherwise whoever caused the reset keeps their access.
+async function deleteSessionsForUser(userId: string, engineRoot: string): Promise<void> {
+  await withLock(sessionsFile(engineRoot), async () => {
+    const store = await readSessions(engineRoot)
+    const sessions = store.sessions.filter((session) => session.userId !== userId)
+    await writeJsonAtomic(sessionsFile(engineRoot), { version: 1, sessions })
+  })
+}
+
+/**
+ * Mint a one-time password-reset token for whoever owns `email`.
+ *
+ * Returns `null` for an address with no account. The caller must answer the
+ * HTTP request identically either way — the endpoint is unauthenticated, so a
+ * distinguishable response turns it into a "does this person have an account
+ * here?" oracle over a customer list of real wedding couples.
+ */
+export async function createPasswordReset(
+  email: string,
+  engineRoot = process.cwd(),
+): Promise<{ token: string; username: string; email: string; expiresAt: string } | null> {
+  const normalized = normalizeEmail(email)
+  const store = await readUsers(engineRoot)
+  const user = store.users.find((candidate) => candidate.email === normalized)
+  if (!user) return null
+
+  const token = randomBytes(PASSWORD_RESET_BYTES).toString("base64url")
+  const now = Date.now()
+  const expiresAt = new Date(now + PASSWORD_RESET_TTL_MS).toISOString()
+  await withLock(passwordResetsFile(engineRoot), async () => {
+    const resets = await readPasswordResets(engineRoot)
+    // Drop rows that can never be redeemed again so a long-lived deployment
+    // doesn't accumulate them, and invalidate this user's earlier outstanding
+    // tokens: asking for a second link is how someone says the first one is
+    // not in their hands.
+    const retained = resets.resets.filter((reset) =>
+      !reset.usedAt && Date.parse(reset.expiresAt) > now && reset.userId !== user.id)
+    await writeJsonAtomic(passwordResetsFile(engineRoot), {
+      version: 1,
+      resets: [...retained, { tokenHash: hashToken(token), userId: user.id, createdAt: new Date(now).toISOString(), expiresAt }],
+    })
+  })
+  return { token, username: user.username, email: normalized, expiresAt }
+}
+
+/**
+ * Redeem a reset token and set the new password.
+ *
+ * Marks the token used *inside the same lock* that reads it, so two requests
+ * racing on one token cannot both pass the check.
+ */
+export async function resetPasswordWithToken(token: string, newPassword: string, engineRoot = process.cwd()): Promise<void> {
+  if (newPassword.length < 8) throw new AuthRequestError(400, "WEAK_PASSWORD", "Password must be at least 8 characters")
+  const tokenHash = hashToken(token)
+  const now = Date.now()
+
+  const userId = await withLock(passwordResetsFile(engineRoot), async () => {
+    const store = await readPasswordResets(engineRoot)
+    const index = store.resets.findIndex((reset) => reset.tokenHash === tokenHash)
+    const reset = store.resets[index]
+    // One error code for unknown / used / expired. Telling them apart would
+    // confirm to a stranger that a token they guessed once existed.
+    if (!reset || reset.usedAt || Date.parse(reset.expiresAt) <= now) {
+      throw new AuthRequestError(400, "INVALID_RESET_TOKEN", "This password reset link is invalid or has expired")
+    }
+    const resets = [...store.resets]
+    resets[index] = { ...reset, usedAt: new Date(now).toISOString() }
+    await writeJsonAtomic(passwordResetsFile(engineRoot), { version: 1, resets })
+    return reset.userId
+  })
+
+  await withLock(usersFile(engineRoot), async () => {
+    const store = await readUsers(engineRoot)
+    const userIndex = store.users.findIndex((candidate) => candidate.id === userId)
+    const user = store.users[userIndex]
+    if (!user) throw new AuthRequestError(400, "INVALID_RESET_TOKEN", "This password reset link is invalid or has expired")
+    const users = [...store.users]
+    users[userIndex] = { ...user, passwordHash: await hashPassword(newPassword) }
+    await writeJsonAtomic(usersFile(engineRoot), { version: 1, users })
+  })
+
+  await deleteSessionsForUser(userId, engineRoot)
 }
 
 export async function getUserById(userId: string, engineRoot = process.cwd()): Promise<AuthenticatedUser | null> {

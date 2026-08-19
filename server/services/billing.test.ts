@@ -45,7 +45,7 @@ test("getPlanCatalog falls back to documented placeholder prices when env is uns
 
 test("createCheckoutSession creates and links a Stripe customer once, then reuses it", async (context) => {
   const root = await tempRoot(context)
-  const user = await createUser("iris", "correct-secret", root)
+  const user = await createUser("iris", "correct-secret", {}, root)
 
   const sessionCalls: Stripe.Checkout.SessionCreateParams[] = []
   let customerCreateCalls = 0
@@ -72,7 +72,7 @@ test("createCheckoutSession creates and links a Stripe customer once, then reuse
 
 test("createCheckoutSession surfaces a clear error when Stripe returns no url", async (context) => {
   const root = await tempRoot(context)
-  const user = await createUser("jack", "correct-secret", root)
+  const user = await createUser("jack", "correct-secret", {}, root)
   const stripe = fakeStripe({ checkout: { sessions: { create: async () => ({ url: null }) } } })
   await assert.rejects(
     createCheckoutSession({ userId: user.id, username: user.username, plan: "per_video", successUrl: "https://app.test/success", cancelUrl: "https://app.test/cancel" }, root, stripe),
@@ -82,8 +82,8 @@ test("createCheckoutSession surfaces a clear error when Stripe returns no url", 
 
 test("webhook: checkout.session.completed activates a subscription and grants per-video credits", async (context) => {
   const root = await tempRoot(context)
-  const subscriber = await createUser("kim", "correct-secret", root)
-  const buyer = await createUser("liam", "correct-secret", root)
+  const subscriber = await createUser("kim", "correct-secret", {}, root)
+  const buyer = await createUser("liam", "correct-secret", {}, root)
 
   // Link both users to Stripe customers the way createCheckoutSession would.
   const stripeForSetup = fakeStripe({ customers: { create: async () => ({ id: "cus_subscriber" } as { id: string }) } })
@@ -116,7 +116,7 @@ test("webhook: checkout.session.completed activates a subscription and grants pe
 
 test("webhook: invoice.paid resets the billing period only for an active subscription", async (context) => {
   const root = await tempRoot(context)
-  const user = await createUser("morgan", "correct-secret", root)
+  const user = await createUser("morgan", "correct-secret", {}, root)
   const setup = fakeStripe({ customers: { create: async () => ({ id: "cus_morgan" }) } })
   await createCheckoutSession({ userId: user.id, username: user.username, plan: "subscription", successUrl: "https://app.test/s", cancelUrl: "https://app.test/c" }, root, setup)
 
@@ -144,7 +144,7 @@ test("webhook: invoice.paid resets the billing period only for an active subscri
 
 test("webhook: customer.subscription.deleted reverts the account to the zero-entitlement default", async (context) => {
   const root = await tempRoot(context)
-  const user = await createUser("nadia", "correct-secret", root)
+  const user = await createUser("nadia", "correct-secret", {}, root)
   const setup = fakeStripe({ customers: { create: async () => ({ id: "cus_nadia" }) } })
   await createCheckoutSession({ userId: user.id, username: user.username, plan: "subscription", successUrl: "https://app.test/s", cancelUrl: "https://app.test/c" }, root, setup)
 

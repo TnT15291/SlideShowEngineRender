@@ -240,15 +240,27 @@ test("login and register share one rate limit and reject once it's exhausted", a
 
 test("registration creates a user and signs the new account in", async () => {
   const user = { id: "22222222-2222-4222-8222-222222222222", username: "new-user" }
-  let registered: { username: string; password: string } | null = null
+  let registered: { username: string; password: string; email: string; acceptedTerms: true } | null = null
+  const valid = { username: "new-user", password: "correct-secret", email: "New-User@Example.com", acceptedTerms: true }
   await withServer(async (baseUrl) => {
-    const invalid = await fetch(`${baseUrl}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "Bad Name", password: "short" }) })
-    assert.equal(invalid.status, 400)
+    const post = (body: unknown) => fetch(`${baseUrl}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
 
-    const response = await fetch(`${baseUrl}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "new-user", password: "correct-secret" }) })
+    assert.equal((await post({ username: "Bad Name", password: "short" })).status, 400)
+    // G2.2: the policy checkbox is enforced server-side, so a client that
+    // simply doesn't send it cannot create an account that never consented.
+    assert.equal((await post({ ...valid, acceptedTerms: false })).status, 400)
+    assert.equal((await post({ username: valid.username, password: valid.password, email: valid.email })).status, 400)
+    // G2.1: an account with no reachable address is what left older users
+    // unrecoverable, so email is required rather than optional here.
+    assert.equal((await post({ username: valid.username, password: valid.password, acceptedTerms: true })).status, 400)
+    assert.equal((await post({ ...valid, email: "not-an-address" })).status, 400)
+
+    const response = await post(valid)
     assert.equal(response.status, 201)
     assert.deepEqual(await response.json(), { ok: true, data: { token: "new-session", user } })
-    assert.deepEqual(registered, { username: "new-user", password: "correct-secret" })
+    // Normalised by the schema before the service sees it, so two accounts
+    // cannot differ only by the casing of their address.
+    assert.deepEqual(registered, { username: "new-user", password: "correct-secret", email: "new-user@example.com", acceptedTerms: true })
   }, {
     createUser: async (input) => { registered = input; return user },
     createSession: async (userId) => {
@@ -511,6 +523,54 @@ test("DELETE project cancels a running job before removing its workspace", async
       warnings: [], startedAt: "2026-07-25T10:00:00.000Z", updatedAt: "2026-07-25T10:01:00.000Z",
       mode: "render", deliver: false,
       phases: { validate: "completed", analyze: "completed", plan: "completed", build: "completed", render: "running", qa: "pending", deliver: "pending" },
+    }),
+    cancelJob: async () => { calls.push("cancel"); return { projectId: "linh-nam", status: "paused" } as JobSnapshot },
+    deleteProject: async () => { calls.push("delete"); return { id: "linh-nam" } },
+  })
+})
+
+// A render waiting for a slot is state the runner is holding, exactly like a
+// running one: it occupies a place in the queue and keeps the project's
+// operation lease. Skipping the cancel left the entry behind, so everyone
+// after it was told the wrong position — and since a project id is the slug of
+// its name, re-creating the project under the same name collided with the
+// phantom (409 JOB_ALREADY_QUEUED, then a run of the NEW project with the OLD
+// input). Deleting must take the job out of the line.
+test("DELETE project cancels a job that is still queued, not just a running one", async () => {
+  const calls: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam`, { method: "DELETE" })
+    assert.equal(response.status, 200)
+    assert.deepEqual(calls, ["cancel", "delete"])
+  }, {
+    getProject: async () => OWNED_PROJECT,
+    getJob: async () => ({
+      projectId: "linh-nam", status: "queued", currentPhase: null, progress: 0, error: null,
+      queuePosition: 2, warnings: [], startedAt: null, updatedAt: "2026-08-19T10:00:00.000Z",
+      mode: "render", deliver: false,
+      phases: { validate: "pending", analyze: "pending", plan: "pending", build: "pending", render: "pending", qa: "pending", deliver: "pending" },
+    }),
+    cancelJob: async () => { calls.push("cancel"); return { projectId: "linh-nam", status: "not_started" } as JobSnapshot },
+    deleteProject: async () => { calls.push("delete"); return { id: "linh-nam" } },
+  })
+})
+
+// The other half of the same rule: a project with nothing in flight must not
+// have cancelJob called on it, or every delete would rewrite a manifest that
+// belongs to the last run that actually happened.
+test("DELETE project does not cancel when no run is in flight", async () => {
+  const calls: string[] = []
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/projects/linh-nam`, { method: "DELETE" })
+    assert.equal(response.status, 200)
+    assert.deepEqual(calls, ["delete"])
+  }, {
+    getProject: async () => OWNED_PROJECT,
+    getJob: async () => ({
+      projectId: "linh-nam", status: "completed", currentPhase: null, progress: 100, error: null,
+      queuePosition: null, warnings: [], startedAt: "2026-08-19T09:00:00.000Z", updatedAt: "2026-08-19T09:40:00.000Z",
+      mode: "render", deliver: true,
+      phases: { validate: "completed", analyze: "completed", plan: "completed", build: "completed", render: "completed", qa: "completed", deliver: "completed" },
     }),
     cancelJob: async () => { calls.push("cancel"); return { projectId: "linh-nam", status: "paused" } as JobSnapshot },
     deleteProject: async () => { calls.push("delete"); return { id: "linh-nam" } },

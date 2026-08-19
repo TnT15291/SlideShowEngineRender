@@ -1,40 +1,56 @@
 import { useState } from "react"
-import { ArrowRight, Clapperboard, Eye, EyeOff, Film, LogIn, UserPlus } from "lucide-react"
+import { ArrowRight, CheckCircle2, Clapperboard, Eye, EyeOff, Film, LogIn, Mail, UserPlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LanguageToggle } from "@/components/LanguageToggle"
+import { LegalLink, TermsAcceptance } from "@/components/TermsAcceptance"
 import { apiMessage } from "@/lib/apiMessage"
+import { apiPost } from "@/lib/api"
 import { useI18n } from "@/lib/i18n"
 
 type LoginPageProps = {
   onLogin: (username: string, password: string) => Promise<void>
-  onRegister: (username: string, password: string) => Promise<void>
+  onRegister: (input: { username: string; password: string; email: string }) => Promise<void>
   onBrowseGallery: () => void
 }
 
+type Mode = "login" | "register" | "forgot"
+
 export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPageProps) {
   const { t } = useI18n()
-  const [mode, setMode] = useState<"login" | "register">("login")
+  const [mode, setMode] = useState<Mode>("login")
   const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  if (mode === "forgot") return <ForgotPasswordCard onBack={() => { setMode("login"); setError(null) }} />
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
-    if (mode === "register" && password !== confirmPassword) {
-      setError(t("login.passwordsDoNotMatch"))
-      return
+    if (mode === "register") {
+      if (password !== confirmPassword) {
+        setError(t("login.passwordsDoNotMatch"))
+        return
+      }
+      // The submit button is already disabled without it; this is the guard
+      // for a form submitted by pressing Enter in a text field.
+      if (!acceptedTerms) {
+        setError(t("legal.mustAccept"))
+        return
+      }
     }
     setSubmitting(true)
     try {
       if (mode === "login") await onLogin(username, password)
-      else await onRegister(username.trim(), password)
+      else await onRegister({ username: username.trim(), password, email: email.trim() })
     } catch (reason) {
       setError(apiMessage(reason, t, mode === "login" ? "login.unableToSignIn" : "login.unableToRegister"))
     } finally {
@@ -46,6 +62,7 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
     setMode(mode === "login" ? "register" : "login")
     setError(null)
     setConfirmPassword("")
+    setAcceptedTerms(false)
     setShowPassword(false)
     setShowConfirmPassword(false)
   }
@@ -87,6 +104,22 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
               />
               {registering && <p id="username-hint" className="text-xs text-muted-foreground">{t("login.usernameHint")}</p>}
             </div>
+            {/* Registration only. Sign-in stays username+password so the
+                millions of muscle-memory logins already out there still work. */}
+            {registering && <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-sm font-medium">{t("login.email")}</label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                className="field mt-0 w-full"
+                aria-describedby="email-hint"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <p id="email-hint" className="text-xs text-muted-foreground">{t("login.emailHint")}</p>
+            </div>}
             <div className="space-y-1.5">
               <label htmlFor="password" className="block text-sm font-medium">{t("login.password")}</label>
               <span className="relative block">
@@ -135,13 +168,28 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
                 </button>
               </span>
             </div>}
+            {registering && <TermsAcceptance checked={acceptedTerms} onChange={setAcceptedTerms} disabled={submitting} idPrefix="register" />}
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" size="lg" className="w-full shadow-sm" disabled={submitting || !username.trim() || !password || (registering && !confirmPassword)}>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full shadow-sm"
+              disabled={submitting || !username.trim() || !password || (registering && (!confirmPassword || !email.trim() || !acceptedTerms))}
+            >
               {registering ? <UserPlus className="size-4" /> : <LogIn className="size-4" />}
               {submitting
                 ? registering ? t("login.creatingAccount") : t("login.signingIn")
                 : registering ? t("login.createAccount") : t("login.signIn")}
             </Button>
+            {!registering && (
+              <button
+                type="button"
+                onClick={() => { setMode("forgot"); setError(null) }}
+                className="w-full text-center text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+              >
+                {t("reset.forgotLink")}
+              </button>
+            )}
             <Button type="button" variant="outline" className="w-full" disabled={submitting} onClick={toggleMode}>
               {registering ? t("login.toSignIn") : t("login.toRegister")}
             </Button>
@@ -162,8 +210,102 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>
+          <LegalFooter />
         </CardContent>
       </Card>
     </main>
+  )
+}
+
+/**
+ * Step one of the reset: hand over an email address.
+ *
+ * The confirmation deliberately does not say whether an account was found —
+ * the API answers identically either way, and copy that implied otherwise
+ * would give away the distinction the endpoint is built to hide.
+ */
+function ForgotPasswordCard({ onBack }: { onBack: () => void }) {
+  const { t } = useI18n()
+  const [email, setEmail] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [sent, setSent] = useState(false)
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    setError(null)
+    setSubmitting(true)
+    try {
+      await apiPost("/auth/password/forgot", { email: email.trim() })
+      setSent(true)
+    } catch (reason) {
+      setError(apiMessage(reason, t, "reset.unableToSend"))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <main className="login-canvas grid min-h-screen place-items-center bg-sidebar px-4 py-10 text-sidebar-foreground">
+      <Card className="relative w-full max-w-md overflow-hidden border-white/10 bg-background text-foreground shadow-2xl shadow-black/30">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+        <div className="absolute right-4 top-4 z-10"><LanguageToggle /></div>
+        <CardHeader className="items-center px-6 pb-7 pt-8 text-center sm:px-9">
+          <div className={sent
+            ? "grid size-14 place-items-center rounded-2xl bg-success/15 text-success-text"
+            : "grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25"}>
+            {sent ? <CheckCircle2 className="size-6" /> : <Mail className="size-6" />}
+          </div>
+          <CardTitle as="h1" className="mt-4 font-serif text-2xl">{sent ? t("reset.sentTitle") : t("reset.forgotTitle")}</CardTitle>
+          <CardDescription className="max-w-xs leading-6">{sent ? t("reset.sentDetail") : t("reset.forgotIntro")}</CardDescription>
+        </CardHeader>
+        <CardContent className="px-6 pb-9 sm:px-9">
+          {sent ? (
+            <Button size="lg" className="w-full" onClick={onBack}>{t("reset.backToSignIn")}</Button>
+          ) : (
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="space-y-1.5">
+                <label htmlFor="forgot-email" className="block text-sm font-medium">{t("login.email")}</label>
+                <input
+                  id="forgot-email"
+                  autoFocus
+                  type="email"
+                  required
+                  autoComplete="email"
+                  className="field mt-0 w-full"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              <Button type="submit" size="lg" className="w-full" disabled={submitting || !email.trim()}>
+                {submitting ? t("reset.sending") : t("reset.sendLink")}
+              </Button>
+              <Button type="button" variant="outline" className="w-full" disabled={submitting} onClick={onBack}>
+                {t("reset.backToSignIn")}
+              </Button>
+            </form>
+          )}
+        </CardContent>
+      </Card>
+    </main>
+  )
+}
+
+/**
+ * Both policies, linked from the one page every customer passes through.
+ *
+ * G2.2 asks for a footer link. The app shell has no footer — the sidebar runs
+ * the full height — so the signed-out card is where a link reaches everyone,
+ * including someone deciding whether to register at all.
+ */
+export function LegalFooter() {
+  const { t } = useI18n()
+  return (
+    <p className="mt-6 border-t pt-4 text-center text-xs text-muted-foreground">
+      <LegalLink document="terms" label={t("legal.terms")} />
+      <span className="px-2">·</span>
+      <LegalLink document="privacy" label={t("legal.privacy")} />
+    </p>
   )
 }
