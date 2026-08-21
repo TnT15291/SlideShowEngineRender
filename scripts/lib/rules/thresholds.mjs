@@ -74,6 +74,39 @@ export function textSafeInsets(canvas, fraction = TEXT_SAFE_MARGIN) {
   return { x: width * fraction, y: height * fraction };
 }
 
+/**
+ * How tall each cinematic bar is, or 0 when this grade draws none. Restates the arithmetic
+ * in src/buildColorFilters.ts `letterboxBarHeight` because that side is TypeScript the
+ * script layer cannot import. The two are pinned to the same numbers from both ends:
+ * test/composed-letterbox.test.mjs asserts 138px here, src/preflightTimeline.test.ts asserts
+ * the renderer's 138px there. Either one drifting turns a suite red.
+ */
+export function letterboxBarHeight(color, canvas) {
+  if (!color?.letterbox) return 0;
+  const width = canvas?.width ?? 1920;
+  const height = canvas?.height ?? 1080;
+  const aspect = typeof color.letterbox === "number" ? color.letterbox : 2.39;
+  return Math.max(0, Math.round((height - width / aspect) / 2));
+}
+
+/**
+ * Would this layout put words where a cinematic bar will cover them?
+ *
+ * Judged on what the renderer is CERTAIN to draw, not on the slot box. drawtext anchors the
+ * block at the slot's y and never wraps by itself, so the top of the first line is always
+ * `slot.y` and the bottom of that line is always `slot.y + sizePx` — both known before a
+ * single word is written, which is what lets the composer avoid these layouts while the
+ * cards are still empty. A slot whose BOX dips into a bar while its line of text sits well
+ * above it is how several shipping cards are authored (cinematic-film-01's full_bleed_quote
+ * clears by 32px), and excluding those would cost the film compositions for nothing.
+ */
+export function textSlotsClearLetterbox(layout, bar, canvas) {
+  if (bar <= 0) return true;
+  const height = canvas?.height ?? 1080;
+  return (layout?.textSlots ?? []).every((slot) =>
+    slot.y >= bar && slot.y + (slot.sizePx ?? 0) <= height - bar);
+}
+
 // A 26px date or caption is intentionally quieter than a 26px paragraph. `fontRole`
 // chooses the typeface; the semantic `role` decides how large the words must be to do
 // their job. Keep this shared by the primitive validator and the all-recipe contract.

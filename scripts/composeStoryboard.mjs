@@ -182,6 +182,14 @@ topUp("singlePhotoEffects", DEFAULT_GRAMMAR.singlePhotoEffects, 5);
 topUp("montageEffects", DEFAULT_GRAMMAR.montageEffects, 2);
 topUp("transitionPalette", DEFAULT_GRAMMAR.transitionPalette, 5); // one per transition role
 
+// The canvas both the composer and the emitted recipe reason about. One constant, because
+// the layouts the composer may pick depend on where this film's bars fall.
+const canvas = { width: 1920, height: 1080 };
+// `composedGrade` nudges the four continuous fields and carries `letterbox` through
+// untouched, so the theme's own value IS the one the film will be graded with — knowable
+// here, hundreds of lines before the grade is assembled.
+const themeGrade = library.designTokens?.themes?.[theme]?.colorGrade;
+
 const { scenes: composedScenes, fit } = composeStoryboard({
   // One selected photo is reserved for the closing full-bleed background. The opening
   // hero is already counted by its layout; the closing background is not a layout slot.
@@ -193,6 +201,8 @@ const { scenes: composedScenes, fit } = composeStoryboard({
   maxReuse,
   grammar,
   montageEffect: notes.montageEffect,
+  color: themeGrade,
+  canvas,
 });
 
 /**
@@ -373,7 +383,7 @@ const recipe = {
   source: { origin: "composed", notes: `Solved against ${editorialPhotoCount} editorial photos and a ${music.duration.toFixed(0)}s track.` },
   musicEdit,
   defaults: {
-    project: { width: 1920, height: 1080, fps: 30, quality: arg("--quality", "share") },
+    project: { ...canvas, fps: 30, quality: arg("--quality", "share") },
     audio: { fade_in: 1.5, fade_out: 3.5, crossfade: 0 },
     // The film's OWN theme, nudged per job. These four numbers used to be hardcoded — and
     // they were white_weddings' grade verbatim, applied to every composed film whatever

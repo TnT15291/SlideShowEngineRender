@@ -9,7 +9,7 @@ import { resolveTemplate, visualSignature } from "../scripts/lib/lookResolver.mj
 import { perceptualSignature } from "../scripts/lib/geometrySignature.mjs";
 import { hasEnglishCopy, inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
 import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
-import { minimumTextSize } from "../scripts/lib/rules/thresholds.mjs";
+import { letterboxBarHeight, minimumTextSize, textSlotsClearLetterbox } from "../scripts/lib/rules/thresholds.mjs";
 import { createTextMeasurer } from "../scripts/lib/textMeasure.mjs";
 
 const root = process.cwd();
@@ -421,6 +421,39 @@ test("the white-weddings title reprise fits its slot instead of leaning on fit_t
   } finally {
     createdMeasurer.close();
   }
+});
+
+// Cinematic bars are painted over the finished card, so a layer_scene's own words end up
+// UNDER them — and every other gate waves it through: the bars are inside the canvas, they
+// are below the 5% title-safe margin, and the text still fits its own slot. preflightTimeline
+// stops such a render, but only once someone runs one. `cinematic-film-01` is the only recipe
+// that draws bars today and every one of its cards clears them by 12px or more; this is what
+// keeps that true the next time someone reaches for a different layout.
+//
+// Judged on the first line, which is all the renderer guarantees: drawtext anchors the block
+// at slot.y and never wraps by itself. A slot whose BOX dips into a bar while its line of
+// text sits above it is deliberate — full_bleed_quote is authored exactly that way.
+test("a recipe that draws cinematic bars puts no words underneath them", () => {
+  const canvas = { width: 1920, height: 1080 };
+  let checked = 0;
+  for (const recipe of recipes) {
+    const bar = letterboxBarHeight(recipe.defaults?.color, canvas);
+    if (!bar) continue;
+    for (const scene of recipe.scenes) {
+      const layoutId = recipe.looks?.[scene.look]?.layout ?? scene.layout;
+      const layout = library.layouts.find((item) => item.id === layoutId);
+      if (!layout) continue;
+      const hidden = (layout.textSlots ?? []).filter((slot) =>
+        slot.y < bar || slot.y + (slot.sizePx ?? 0) > canvas.height - bar);
+      assert.equal(textSlotsClearLetterbox(layout, bar, canvas), true,
+        `${recipe.id}/${scene.id} draws ${bar}px bars over ${layoutId}'s ` +
+        `${hidden.map((slot) => `${slot.id} (y=${slot.y}, ${slot.sizePx}px)`).join(", ")}`);
+      checked += (layout.textSlots ?? []).length;
+    }
+  }
+  // A contract that silently checks nothing is worse than no contract: if the look-to-layout
+  // resolution above ever stops finding layouts, this says so instead of going green.
+  assert.ok(checked >= 10, `only measured ${checked} text slot(s) — the letterbox contract has stopped reaching the recipes`);
 });
 
 test("an art-directed recipe thumbnail names a real renderable scene", () => {

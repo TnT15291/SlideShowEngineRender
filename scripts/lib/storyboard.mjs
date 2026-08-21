@@ -39,6 +39,7 @@ import {
   SINGLE_PHOTO_EFFECTS, MONTAGE_EFFECTS, MONTAGE_MAX, MONTAGE_MIN, MONTAGE_SLOT,
   EASING_EFFECTS, MOTION_EFFECTS, layoutsByPhotoCount,
 } from "./engineCapabilities.mjs";
+import { letterboxBarHeight, textSlotsClearLetterbox } from "./rules/thresholds.mjs";
 
 export const CLOSING_SEC = 8;
 export const DEFAULT_MAX_REUSE = 1;
@@ -242,6 +243,8 @@ export function composeStoryboard({
   maxReuse = DEFAULT_MAX_REUSE,
   grammar = {},
   montageEffect,
+  color,
+  canvas,
 }) {
   const g = { ...DEFAULT_GRAMMAR, ...grammar };
   // A director that named a montage effect the old way still gets heard.
@@ -273,7 +276,33 @@ export function composeStoryboard({
     return pick;
   }
 
+  // CINEMATIC BARS ARE DECIDED BEFORE THE WORDS ARE.
+  //
+  // A film whose grade carries `letterbox` paints two black bars over the finished card, and
+  // six of the library's layouts declare a text slot underneath one of them — a heading at
+  // y=75 against a 138px bar. The card is then authored legally, measured as fitting its own
+  // slot, and rendered with the couple's names invisible; preflightTimeline stops the render
+  // outright when it sees it, which for a composed film means a job that dies instead of a
+  // film that ships.
+  //
+  // It is fixed HERE rather than in the repair pass because HERE the cards are still empty.
+  // Swapping a layout later means carrying its words across, and for three of the six there
+  // is no equal-cost layout with the same slots to carry them into (`three_photo_row` has a
+  // `caption`; no other three-photo layout does) — while a composer that never picks them
+  // has nothing to move. Only films that actually draw bars pay anything for this.
+  const bar = letterboxBarHeight(color, canvas);
+  const layoutById = new Map((library?.layouts ?? []).map((l) => [l.id, l]));
   const buckets = layoutsByPhotoCount(library);
+  if (bar > 0) {
+    for (const [n, ids] of buckets) {
+      const clear = ids.filter((id) => textSlotsClearLetterbox(layoutById.get(id), bar, canvas));
+      // A bucket emptied by the filter is a worse defect than the bars: without a layout the
+      // composer cannot render the photo count at all. Today every bucket keeps 2-7 layouts;
+      // this guards a future library edit, and says so out loud rather than silently.
+      if (clear.length) buckets.set(n, clear);
+      else console.warn(`[storyboard] every ${n}-photo layout puts text under the letterbox — bars kept, text at risk`);
+    }
+  }
   const layoutRotors = new Map();
   for (const [n, ids] of buckets) layoutRotors.set(n, createRotor(ids, ids[0]));
 

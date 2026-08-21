@@ -312,6 +312,33 @@ dừng trước khi encode. Luật xét khối chữ chứ không xét ô chứa
 thanh trong khi dòng chữ nằm cao hơn hẳn), và không tính caption — caption cố ý vẽ SAU thanh đen
 để đọc như phụ đề phim.
 
+**Nửa còn lại, 2026-08-20:** luật trên là cửa chặn đúng cho recipe người viết — có người sửa
+được. Với phim **composed** thì không: không ai soạn tay cái thẻ đó, nên luật biến một phim thành
+một job chết. Đo lại thì đúng là có thật: `composedGrade()` bê nguyên `letterbox` của theme, còn
+`composeStoryboard` được phép chọn **toàn bộ** layout thư viện, và 6 trong số đó khai text slot
+nằm dưới thanh (`three_photo_row` heading y=91, `diagonal_staircase_trio` y=75,
+`magazine_page_turn`, `invitation_row`, `quad_grid_caption`, `duo_tinted_spread`). Repro dựng
+tay: cả 6 đều bị preflight chặn trước khi encode một khung.
+
+Sửa ở **chỗ chọn layout**, không ở tầng repair. Repair phải mang chữ theo khi đổi layout, và
+với 3 trong 6 không có layout nào cùng chi phí ảnh mang đủ slot để nhận (`three_photo_row` có
+`caption`, không layout 3-ảnh nào khác có; `invitation_row` có `names+invite`, không layout
+4-ảnh nào khác có) — trong khi ở chỗ chọn thì thẻ còn rỗng, không có gì để mang. Nên
+`composeStoryboard` nhận thêm grade của phim và loại các layout đó khỏi bucket **chỉ khi** phim
+thật sự vẽ thanh.
+
+Phép thử là thứ renderer chắc chắn vẽ, không phải ô chứa: drawtext neo khối chữ ở `slot.y` và
+không tự xuống dòng, nên đỉnh dòng đầu luôn là `slot.y` và đáy nó luôn là `slot.y + sizePx` —
+biết được trước khi có một chữ nào. Nhờ vậy `full_bleed_quote` (ô thò xuống y=1000 nhưng dòng
+56px của nó cao hơn thanh) vẫn được dùng, đúng như `cinematic-film-01` đang chạy.
+
+**Giá phải trả, đã đo:** phim `dark_film` mất 2 composition — 11 → 9 layout khác nhau trên job
+90 ảnh và job 200 ảnh, số thẻ không đổi (13 và 15); job 23 ảnh không suy suyển. Gate composed
+không có sàn cho `distinctLayouts` (chỉ đo và chấm điểm), nên đây là điểm scorecard thấp hơn
+chứ không phải một cửa mới. Test: `test/composed-letterbox.test.mjs` (5 test, trong đó một test
+tự chứng minh bộ lọc có thật sự loại thứ gì đó, và một test bảo đảm không bucket ảnh nào bị lọc
+đến rỗng). Luật trong `preflightTimeline` giữ nguyên làm lưới an toàn cuối.
+
 **Và grade `layer_scene` giờ có chốt nhìn vào pixel.** `test/release/render-smoke.test.mjs`
 thêm một thẻ `layer_scene` mang trọn bộ grade (LUT 3D + glow + vignette + grain + thanh 2.39),
 rồi đọc lại khung đã encode: các hàng trong thanh phải đen, giữa thẻ phải không đen. Nền thẻ cố
