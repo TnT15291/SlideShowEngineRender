@@ -50,6 +50,7 @@ export function IntakeWizard({ onBack, onCreated }: { onBack: () => void; onCrea
   const [recipeQuery, setRecipeQuery] = useState("")
   const [recipeMood, setRecipeMood] = useState("all")
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<DetailField, string>>>({})
+  const [creationMode, setCreationMode] = useState<"quick" | "custom">("quick")
 
   useEffect(() => {
     apiGet<RecipeSummary[]>("/recipes").then(setRecipes).catch((reason: unknown) => setError(apiMessage(reason, t))).finally(() => setLoadingRecipes(false))
@@ -69,15 +70,20 @@ export function IntakeWizard({ onBack, onCreated }: { onBack: () => void; onCrea
     setFieldErrors((current) => ({ ...current, [field]: message }))
   }
 
-  function continueFromDetails() {
+  function detailsAreValid() {
     const fields: DetailField[] = ["name", "bride", "groom"]
     const nextErrors = Object.fromEntries(fields.filter((field) => !form[field].trim()).map((field) => [field, t(detailMessageKeys[field])])) as Partial<Record<DetailField, string>>
     setFieldErrors(nextErrors)
     const firstInvalidField = fields.find((field) => nextErrors[field])
     if (firstInvalidField) {
       requestAnimationFrame(() => document.getElementById(firstInvalidField)?.focus())
-      return
+      return false
     }
+    return true
+  }
+
+  function continueFromDetails() {
+    if (!detailsAreValid()) return
     setStep(1)
   }
 
@@ -98,16 +104,21 @@ export function IntakeWizard({ onBack, onCreated }: { onBack: () => void; onCrea
     return matchesQuery && (recipeMood === "all" || recipe.moods.includes(recipeMood))
   })
 
-  async function submit() {
+  async function submit(input = form) {
     setSubmitting(true)
     setError(null)
     try {
-      onCreated(await apiPost<ProjectSummary>("/projects", form))
+      onCreated(await apiPost<ProjectSummary>("/projects", input))
     } catch (reason) {
       setError(apiMessage(reason, t))
     } finally {
       setSubmitting(false)
     }
+  }
+
+  async function submitQuickProject() {
+    if (!detailsAreValid() || !recommendedRecipe) return
+    await submit({ ...form, tier: "template", recipe: recommendedRecipe.id, sequenceMode: "editorial", quality: "share", musicMode: "auto", creativeBrief: "" })
   }
 
   return <main className="min-h-screen bg-background text-foreground">
@@ -125,7 +136,7 @@ export function IntakeWizard({ onBack, onCreated }: { onBack: () => void; onCrea
     <div className="mx-auto max-w-5xl px-6 py-10 md:px-10">
       {error && <Card className="mb-6 border-destructive/40 bg-destructive/5"><CardContent className="p-5 text-sm text-destructive">{error}</CardContent></Card>}
 
-      {step === 0 && <section><PageTitle title={t("intake.details.title")} description={t("intake.details.description")} /><Card><CardContent className="grid gap-5 p-6 md:grid-cols-2">
+      {step === 0 && <section><PageTitle title={t("intake.details.title")} description={t(creationMode === "quick" ? "intake.quick.description" : "intake.details.description")} /><div className="mb-5 grid gap-3 sm:grid-cols-2"><button type="button" onClick={() => setCreationMode("quick")} className={cn("rounded-xl border p-4 text-left transition", creationMode === "quick" ? "border-primary bg-primary/10 ring-2 ring-primary" : "bg-card hover:border-primary/40")}><span className="flex items-center gap-2 text-sm font-semibold"><Sparkles className="size-4 text-primary" /> {t("intake.quick.title")}</span><span className="mt-1.5 block text-xs leading-5 text-muted-foreground">{t("intake.quick.hint")}</span></button><button type="button" onClick={() => setCreationMode("custom")} className={cn("rounded-xl border p-4 text-left transition", creationMode === "custom" ? "border-primary bg-primary/10 ring-2 ring-primary" : "bg-card hover:border-primary/40")}><span className="flex items-center gap-2 text-sm font-semibold"><WandSparkles className="size-4 text-primary" /> {t("intake.custom.title")}</span><span className="mt-1.5 block text-xs leading-5 text-muted-foreground">{t("intake.custom.hint")}</span></button></div><Card><CardContent className="grid gap-5 p-6 md:grid-cols-2">
         <p className="text-xs text-muted-foreground md:col-span-2"><span className="font-semibold text-destructive" aria-hidden="true">*</span> {t("common.requiredFields")}</p>
         <Field label={t("intake.field.name")} htmlFor="name" required error={fieldErrors.name}><input id="name" className="field" value={form.name} onChange={(event) => update("name", event.target.value)} onBlur={() => validateDetailField("name")} placeholder={t("intake.field.namePlaceholder")} required aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? "name-error" : undefined} /></Field><div />
         <Field label={t("intake.field.bride")} htmlFor="bride" required error={fieldErrors.bride}><input id="bride" className="field" value={form.bride} onChange={(event) => update("bride", event.target.value)} onBlur={() => validateDetailField("bride")} placeholder="Linh" required aria-invalid={Boolean(fieldErrors.bride)} aria-describedby={fieldErrors.bride ? "bride-error" : undefined} /></Field>
@@ -146,7 +157,7 @@ export function IntakeWizard({ onBack, onCreated }: { onBack: () => void; onCrea
 
       {/* Sticky: step 2 is a ~4,000 px scroll of recipe cards, so selecting the
           first one used to mean scrolling back past all of them to continue. */}
-      <div className="sticky bottom-0 -mx-6 mt-8 flex items-end justify-between gap-4 border-t bg-background/95 px-6 py-4 backdrop-blur md:-mx-10 md:px-10"><Button variant="ghost" onClick={step === 0 ? onBack : () => setStep((current) => current - 1)}>{step === 0 ? t("intake.backToDashboard") : t("common.back")}</Button>{step < 2 ? <div className="text-right">{step === 1 && !directionReady && <p className="mb-2 text-xs text-muted-foreground">{t("intake.selectRecipeToContinue")}</p>}<Button onClick={step === 0 ? continueFromDetails : () => setStep((current) => current + 1)} disabled={step === 1 && !directionReady}>{t("common.continue")} <ArrowRight className="size-4" /></Button></div> : <Button onClick={submit} disabled={submitting}>{submitting ? t("intake.creating") : t("intake.create")} <ArrowRight className="size-4" /></Button>}</div>
+      <div className="sticky bottom-0 -mx-6 mt-8 flex items-end justify-between gap-4 border-t bg-background/95 px-6 py-4 backdrop-blur md:-mx-10 md:px-10"><Button variant="ghost" onClick={step === 0 ? onBack : () => setStep((current) => current - 1)}>{step === 0 ? t("intake.backToDashboard") : t("common.back")}</Button>{step === 0 && creationMode === "quick" ? <div className="text-right"><p className="mb-2 text-xs text-muted-foreground">{t("intake.quick.defaults")}</p><Button onClick={() => void submitQuickProject()} disabled={submitting || loadingRecipes || !recommendedRecipe}>{submitting ? t("intake.creating") : t("intake.quick.create")} <ArrowRight className="size-4" /></Button></div> : step < 2 ? <div className="text-right">{step === 1 && !directionReady && <p className="mb-2 text-xs text-muted-foreground">{t("intake.selectRecipeToContinue")}</p>}<Button onClick={step === 0 ? continueFromDetails : () => setStep((current) => current + 1)} disabled={step === 1 && !directionReady}>{t("common.continue")} <ArrowRight className="size-4" /></Button></div> : <Button onClick={() => void submit()} disabled={submitting}>{submitting ? t("intake.creating") : t("intake.create")} <ArrowRight className="size-4" /></Button>}</div>
     </div>
   </main>
 }

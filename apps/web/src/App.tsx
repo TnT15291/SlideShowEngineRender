@@ -43,13 +43,13 @@ import { ProjectsPage } from "@/ProjectsPage"
 import { RecipeLibrary } from "@/RecipeLibrary"
 import type { IncidentList, ProjectSummary, StudioUser } from "@/types"
 
-type AppView = "dashboard" | "director" | "timeline" | "render" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin" | "terms" | "privacy" | "reset-password"
+type AppView = "dashboard" | "director" | "timeline" | "render" | "deliver" | "intake" | "projects" | "recipes" | "assets" | "gallery" | "billing" | "admin" | "terms" | "privacy" | "reset-password"
 
 function routeFromUrl(): { view: AppView; projectId: string | null } {
   const params = new URLSearchParams(window.location.search)
   const raw = params.get("view")
   const view = raw === "project" ? "assets"
-    : raw === "director" || raw === "timeline" || raw === "render" || raw === "assets" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" || raw === "terms" || raw === "privacy" || raw === "reset-password" ? raw
+    : raw === "director" || raw === "timeline" || raw === "render" || raw === "deliver" || raw === "assets" || raw === "intake" || raw === "projects" || raw === "recipes" || raw === "gallery" || raw === "billing" || raw === "admin" || raw === "terms" || raw === "privacy" || raw === "reset-password" ? raw
     : "dashboard"
   return { view, projectId: params.get("project") }
 }
@@ -60,11 +60,11 @@ export function App() {
   const initialRoute = useMemo(routeFromUrl, [])
   const [view, setView] = useState<AppView>(initialRoute.view)
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null)
-  const [routeLoading, setRouteLoading] = useState(["assets", "director", "timeline", "render"].includes(initialRoute.view) && Boolean(initialRoute.projectId))
+  const [routeLoading, setRouteLoading] = useState(["assets", "director", "timeline", "render", "deliver"].includes(initialRoute.view) && Boolean(initialRoute.projectId))
   const [navOpen, setNavOpen] = useState(false)
 
   function navigate(next: AppView, project?: ProjectSummary) {
-    const projectView = ["assets", "director", "timeline", "render"].includes(next)
+    const projectView = ["assets", "director", "timeline", "render", "deliver"].includes(next)
     const retainedProject = project || (projectView ? activeProject : null)
     if (projectView && !retainedProject) {
       const retainedId = window.sessionStorage.getItem("storeel.activeProjectId")
@@ -108,7 +108,7 @@ export function App() {
     async function syncRoute() {
       const route = routeFromUrl()
       setView(route.view)
-      if (!["assets", "director", "timeline", "render"].includes(route.view) || !route.projectId) {
+      if (!["assets", "director", "timeline", "render", "deliver"].includes(route.view) || !route.projectId) {
         if (active) setRouteLoading(false)
         return
       }
@@ -133,7 +133,7 @@ export function App() {
   // policy pages must be readable by someone still deciding whether to
   // register (and by a payment provider reviewing the merchant application);
   // the reset page exists precisely for someone who cannot sign in.
-  if (view === "gallery") return <GalleryPage onBack={() => navigate("dashboard")} />
+  if (view === "gallery") return <GalleryPage projectId={new URLSearchParams(window.location.search).get("project")} onBack={() => navigate("dashboard")} />
   if (view === "terms" || view === "privacy") return <LegalPage document={view} onBack={() => navigate("dashboard")} />
   if (view === "reset-password") {
     // Read straight from the URL rather than through `routeFromUrl`: the token
@@ -158,16 +158,17 @@ export function App() {
   const shell = { user, active: view, navOpen, onCloseNav: () => setNavOpen(false), onNavigate: navigate, onCreate: () => navigate("intake"), onUpgrade: () => navigate("billing"), onAdmin: () => navigate("admin"), onLogout: logout }
 
   if (view === "projects") return <AppShell {...shell}><ProjectsPage onOpenNav={onOpenNav} onOpen={(project) => navigate("assets", project)} /></AppShell>
-  if (["assets", "director", "timeline", "render"].includes(view) && !activeProject) {
+  if (["assets", "director", "timeline", "render", "deliver"].includes(view) && !activeProject) {
     const labels = toolRoute(view, t)
     return <AppShell {...shell}><ProjectsPage onOpenNav={onOpenNav} title={labels.title} description={labels.description} onOpen={(project) => navigate(view, project)} /></AppShell>
   }
-  if (activeProject && ["assets", "director", "timeline", "render"].includes(view)) {
-    const config: Record<"assets" | "director" | "timeline" | "render", { step: "media" | "direct" | "review"; focus: WorkspaceFocus }> = {
+  if (activeProject && ["assets", "director", "timeline", "render", "deliver"].includes(view)) {
+    const config: Record<"assets" | "director" | "timeline" | "render" | "deliver", { step: "media" | "direct" | "review" | "deliver"; focus: WorkspaceFocus }> = {
       assets: { step: "media", focus: "all" },
       director: { step: "direct", focus: "director" },
       timeline: { step: "direct", focus: "timeline" },
       render: { step: "review", focus: "all" },
+      deliver: { step: "deliver", focus: "all" },
     }
     const selected = config[view as keyof typeof config]
     return <AppShell {...shell}><AssetsPage key={`${activeProject.id}:${view}`} project={activeProject} initialStep={selected.step} focus={selected.focus} plan={user.plan} onOpenNav={onOpenNav} onUpgrade={() => navigate("billing")} onEntitlementChanged={reloadUser} /></AppShell>
@@ -182,6 +183,7 @@ function toolRoute(view: AppView, t: Translate) {
   if (view === "assets") return { title: t("route.assets.title"), description: t("route.assets.description") }
   if (view === "director") return { title: t("route.director.title"), description: t("route.director.description") }
   if (view === "timeline") return { title: t("route.timeline.title"), description: t("route.timeline.description") }
+  if (view === "deliver") return { title: t("workspace.heading.deliver"), description: t("deliver.description") }
   return { title: t("route.render.title"), description: t("route.render.description") }
 }
 
@@ -220,7 +222,7 @@ function AppShell({ user, active, navOpen, onCloseNav, onNavigate, onCreate, onU
     [FolderOpen, "nav.projects", "projects"],
     [Sparkles, "nav.recipes", "recipes"],
   ] as const satisfies ReadonlyArray<readonly [typeof Film, StringKey, AppView]>
-  const projectViews: AppView[] = ["assets", "director", "timeline", "render"]
+  const projectViews: AppView[] = ["assets", "director", "timeline", "render", "deliver"]
 
   return (
     <main className="flex min-h-screen bg-background text-foreground">
@@ -289,6 +291,7 @@ function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNa
   const { data, error, loading, reload } = useProjects()
   const projects = data?.projects || []
   const featured = projects.find((project) => project.status === "running" || project.status === "paused") || projects[0]
+  const featuredAction = featured ? nextProjectAction(featured, t) : null
   const counts = {
     total: projects.length,
     running: projects.filter((project) => project.status === "running").length,
@@ -344,7 +347,7 @@ function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNa
             <div className="relative flex min-h-[360px] flex-col justify-end p-8">
               <Badge className="mb-4 w-fit border-0 bg-white/15 text-white">{t(statusLabelKey[featured.status])}</Badge>
               <h2 className="font-serif text-4xl font-semibold">{featured.name}</h2><p className="mt-1 text-white/75">{t(tierLabelKey[featured.tier] ?? "tier.template")} · {featured.currentPhase ? t(phaseLabelKey[featured.currentPhase]) : t("status.not_started")} · {t("dashboard.updatedAt", { date: formatDate(featured.updatedAt, locale) })}</p>
-              <div className="mt-6 flex gap-3"><Button variant="secondary" onClick={() => onNavigate("assets", featured)}><FolderOpen className="size-4" /> {t("dashboard.openProject")}</Button></div>
+              <div className="mt-6 flex gap-3"><Button variant="secondary" onClick={() => onNavigate(featuredAction?.view ?? "assets", featured)}><ArrowRight className="size-4" /> {featuredAction?.label ?? t("dashboard.openProject")}</Button></div>
             </div>
           </Card> : <Card className="grid min-h-[360px] place-items-center border-dashed"><CardContent className="text-center"><FolderOpen className="mx-auto size-10 text-muted-foreground" /><h2 className="mt-4 font-serif text-2xl font-semibold">{t("dashboard.noProjects")}</h2><p className="mt-2 text-sm text-muted-foreground">{t("dashboard.noProjectsDetail")}</p><Button className="mt-5" onClick={onCreate}><Plus className="size-4" /> {t("dashboard.createFilm")}</Button></CardContent></Card>}
 
@@ -370,6 +373,18 @@ function Dashboard({ onOpenNav, onCreate, onNavigate, onReloadUser }: { onOpenNa
 }
 
 type AttentionItem = { key: string; title: string; detail: string; severe: boolean; onSelect: () => void }
+
+function nextProjectAction(project: ProjectSummary, t: Translate): { view: AppView; label: string } {
+  if (project.status === "completed" || project.status === "completed_with_warning" || project.manuallyCompleted || project.phases.deliver === "completed") {
+    return { view: "deliver", label: t("dashboard.action.delivery") }
+  }
+  if (project.status === "failed" || project.status === "paused") return { view: "render", label: t("dashboard.action.fix") }
+  if (project.status === "running" || project.currentPhase === "render" || project.currentPhase === "qa" || project.currentPhase === "deliver") {
+    return { view: "render", label: t("dashboard.action.progress") }
+  }
+  if (project.phases.plan === "completed" || project.phases.build === "completed") return { view: "render", label: t("dashboard.action.create") }
+  return { view: "assets", label: t("dashboard.action.addMedia") }
+}
 
 function DashboardHeroSkeleton() {
   const { t } = useI18n()

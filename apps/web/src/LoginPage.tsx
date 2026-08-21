@@ -69,7 +69,17 @@ export function LoginPage({ onLogin, onRegister, onBrowseGallery }: LoginPagePro
 
   const registering = mode === "register"
   return (
-    <main className="login-canvas grid min-h-screen place-items-center bg-sidebar px-4 py-10 text-sidebar-foreground">
+    <main className="login-canvas grid min-h-screen place-items-center bg-sidebar px-4 py-10 text-sidebar-foreground lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,.9fr)] lg:gap-12 lg:px-12 xl:px-20">
+      <section className="relative hidden min-h-[680px] w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 lg:flex lg:flex-col lg:justify-end">
+        <img src="/recipe-previews/white-weddings-full-01.jpg" alt="" className="absolute inset-0 size-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />
+        <div className="relative max-w-xl p-10 xl:p-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">StoReel Studio</p>
+          <h2 className="mt-4 font-serif text-4xl font-semibold leading-tight text-white xl:text-5xl">{t("login.heroTitle")}</h2>
+          <p className="mt-4 text-sm leading-6 text-white/75">{t("login.heroDetail")}</p>
+          <div className="mt-7 flex flex-wrap gap-2 text-xs text-white/85"><span className="rounded-full bg-white/10 px-3 py-2 backdrop-blur">{t("login.heroBenefit.story")}</span><span className="rounded-full bg-white/10 px-3 py-2 backdrop-blur">{t("login.heroBenefit.quality")}</span><span className="rounded-full bg-white/10 px-3 py-2 backdrop-blur">{t("login.heroBenefit.delivery")}</span></div>
+        </div>
+      </section>
       <Card className="relative w-full max-w-md overflow-hidden border-white/10 bg-background text-foreground shadow-2xl shadow-black/30">
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
         {/* Sign-in is the first screen a customer sees and sits outside the app

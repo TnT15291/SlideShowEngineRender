@@ -21,11 +21,12 @@ function displayDate(updatedAt: string, locale: Locale) {
     : new Intl.DateTimeFormat(intlLocales[locale], { day: "numeric", month: "short", year: "numeric" }).format(date)
 }
 
-export function GalleryPage({ onBack }: { onBack: () => void }) {
+export function GalleryPage({ onBack, projectId }: { onBack: () => void; projectId?: string | null }) {
   const { t, locale } = useI18n()
   const [films, setFilms] = useState<SharedFilm[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [playingFilmId, setPlayingFilmId] = useState<string | null>(null)
+  const selectedFilm = projectId ? films?.find((film) => film.id === projectId) : null
 
   useEffect(() => {
     let active = true
@@ -55,28 +56,29 @@ export function GalleryPage({ onBack }: { onBack: () => void }) {
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 md:px-8">
-        <div className="mb-8 max-w-xl">
+        <div className={projectId ? "mb-8 text-center" : "mb-8 max-w-xl"}>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-text">{t("gallery.eyebrow")}</p>
-          <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{t("gallery.heading")}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("gallery.intro")}</p>
+          <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{selectedFilm ? displayFilmName(selectedFilm.name) : t("gallery.heading")}</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{selectedFilm ? t("gallery.singleIntro") : t("gallery.intro")}</p>
         </div>
         {error && <Card className="mb-6 border-destructive/40 bg-destructive/5"><CardContent className="p-5 text-sm text-destructive">{error}</CardContent></Card>}
         {films === null && !error && <p className="text-sm text-muted-foreground">{t("gallery.loading")}</p>}
-        {films && films.length === 0 && (
+        {films && (films.length === 0 || (projectId && !selectedFilm)) && (
           <Card className="grid place-items-center border-dashed py-16">
             <CardContent className="text-center">
               <Film className="mx-auto size-10 text-muted-foreground" />
-              <p className="mt-4 text-sm text-muted-foreground">{t("gallery.empty")}</p>
+              <p className="mt-4 text-sm text-muted-foreground">{projectId ? t("gallery.notAvailable") : t("gallery.empty")}</p>
+              {projectId && <Button className="mt-5" variant="outline" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete("project"); window.location.assign(url) }}>{t("gallery.browseAll")}</Button>}
             </CardContent>
           </Card>
         )}
-        {films && films.length > 0 && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {films.map((film) => (
+        {films && films.length > 0 && (!projectId || selectedFilm) && (
+          <div className={selectedFilm ? "mx-auto max-w-4xl" : "grid gap-5 sm:grid-cols-2 lg:grid-cols-3"}>
+            {(selectedFilm ? [selectedFilm] : films).map((film) => (
               <Card key={film.id} className="group overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                {playingFilmId === film.id ? (
+                {selectedFilm || playingFilmId === film.id ? (
                   <video
-                    autoPlay
+                    autoPlay={playingFilmId === film.id}
                     controls
                     preload="metadata"
                     poster={apiEventUrl(`/gallery/${encodeURIComponent(film.id)}/thumbnail`)}
@@ -103,7 +105,7 @@ export function GalleryPage({ onBack }: { onBack: () => void }) {
                   </button>
                 )}
                 <CardHeader className="gap-2 p-5">
-                  <CardTitle className="font-serif text-xl">{displayFilmName(film.name)}</CardTitle>
+                  {!selectedFilm && <CardTitle className="font-serif text-xl">{displayFilmName(film.name)}</CardTitle>}
                   {displayDate(film.updatedAt, locale) && (
                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <CalendarDays className="size-3.5" />
@@ -113,6 +115,7 @@ export function GalleryPage({ onBack }: { onBack: () => void }) {
                 </CardHeader>
               </Card>
             ))}
+            {selectedFilm && <div className="mt-5 text-center"><Button variant="ghost" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete("project"); window.location.assign(url) }}>{t("gallery.browseAll")}</Button></div>}
           </div>
         )}
       </div>

@@ -79,7 +79,6 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
   }, [project.id])
 
   useEffect(() => { if (logOpen) logEnd.current?.scrollIntoView({ block: "nearest" }) }, [logs, logOpen])
-  useEffect(() => { if (job?.status === "failed") setLogOpen(true) }, [job?.status])
 
   async function start(acceptMusicMismatch = false) {
     setSubmitting(true)
@@ -158,6 +157,7 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
             twice on one screen; the disabled button and its tooltip carry the
             reason at the point of action. */}
         <div className="rounded-lg border bg-background p-4 text-xs leading-5 text-muted-foreground">{renderBlocked ? blockedReason : t("job.runsOnItsOwn")}</div>
+        {inFlight && <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground"><Clock className="size-3.5" /> {t("job.safeToLeave")}</p>}
         <div className="mt-6 flex gap-3">{inFlight ? <Button variant="outline" onClick={cancel} disabled={submitting}><Square className="size-4" /> {submitting ? t("job.stopping") : t("common.cancel")}</Button> : <Button onClick={() => void start()} disabled={submitting || renderBlocked} title={renderBlocked ? blockedReason : undefined}><Play className="size-4" /> {submitting ? t("job.starting") : job?.status === "paused" || job?.status === "failed" ? t("job.tryAgain") : t("job.createVideo")}</Button>}</div>
         {queued && <div className="mt-4 flex gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm"><Clock className="mt-0.5 size-4 shrink-0 text-primary" /><div><p className="font-medium">{t("job.queued")}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{t("job.queuedExplain")}</p></div></div>}
         {job?.status === "paused" && job.pauseReason?.startsWith("PLAYLIST_FIT_CONFIRMATION_REQUIRED:") && <PlaylistFitConfirmation reason={job.pauseReason} accepting={submitting} onAccept={() => void start(true)} />}
@@ -171,7 +171,11 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
             <div className="shrink-0 text-right"><span className="font-serif text-4xl font-semibold tabular-nums">{progress}%</span><p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{t("job.complete")}</p></div>
           </div>
           <div className="mt-5 h-3 overflow-hidden rounded-full bg-muted"><div className={cn("h-full rounded-full bg-primary transition-[width] duration-500", running && "animate-pulse")} style={{ width: `${progress}%` }} /></div>
-          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">{phaseNames.map((phase) => <Phase key={phase} label={t(phaseLabelKey[phase])} status={job?.phases[phase] || "pending"} />)}</div>
+          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+            <Phase label={t("job.stage.prepare")} status={groupPhaseStatus(job, ["validate", "analyze", "plan"])} />
+            <Phase label={t("job.stage.create")} status={groupPhaseStatus(job, ["build", "render"])} />
+            <Phase label={t("job.stage.finish")} status={groupPhaseStatus(job, ["qa", "deliver"])} />
+          </div>
         </div>
       </section>
       <section className="min-w-0 border-t bg-[#1f1c1a] px-5 py-4 text-[#eee8df]">
@@ -179,7 +183,7 @@ export function JobRunnerPanel({ project, styleName, renderBlocked = false, bloc
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">{logOpen ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />} {t("job.technicalDetails")} <span className="font-normal normal-case text-[#a99f95]">{t("job.livePipelineOutput")}</span></span>
           <span className="shrink-0 text-[11px] text-[#a99f95]">{t("job.logLines", { count: logs.length })}</span>
         </button>
-        {logOpen && <div className="mt-3 h-72 overflow-y-auto rounded-lg bg-black/25 p-4 font-mono text-xs leading-5">{logs.length ? logs.map((line, index) => <div key={`${index}-${line}`} className={line.startsWith("!") ? "text-red-300" : "text-[#d8d0c7]"}>{line}</div>) : <p className="text-[#8f867d]">{t("job.logEmpty")}</p>}<div ref={logEnd} /></div>}
+        {logOpen && <><div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">{phaseNames.map((phase) => <Phase key={phase} label={t(phaseLabelKey[phase])} status={job?.phases[phase] || "pending"} />)}</div><div className="mt-3 h-72 overflow-y-auto rounded-lg bg-black/25 p-4 font-mono text-xs leading-5">{logs.length ? logs.map((line, index) => <div key={`${index}-${line}`} className={line.startsWith("!") ? "text-red-300" : "text-[#d8d0c7]"}>{line}</div>) : <p className="text-[#8f867d]">{t("job.logEmpty")}</p>}<div ref={logEnd} /></div></>}
         {job?.error && <p className="mt-3 text-xs text-red-300">{job.error}</p>}
       </section>
     </CardContent>
@@ -210,6 +214,14 @@ function FailureExplanation({ cause, fallback }: { cause: JobSnapshot["cause"]; 
       </>
       : <p className="mt-1.5 break-words leading-6">{fallback}</p>}
   </div>
+}
+
+function groupPhaseStatus(job: JobSnapshot | null, phases: readonly (typeof phaseNames)[number][]) {
+  const values = phases.map((phase) => job?.phases[phase] || "pending")
+  if (values.includes("failed")) return "failed"
+  if (values.includes("running")) return "running"
+  if (values.every((value) => value === "completed" || value === "skipped")) return "completed"
+  return "pending"
 }
 
 // A skipped phase used to share the completed styling — a green tick for work
