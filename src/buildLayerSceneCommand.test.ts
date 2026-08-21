@@ -67,6 +67,36 @@ test("border padding happens before a four-corner mask", () => {
   assert.ok(filter.indexOf("pad=100:140:6:6") < filter.indexOf("geq="));
 });
 
+test("layer scenes apply the merged slide grade and cinematic bars after compositing", () => {
+  const step = {
+    type: "render_slide",
+    slideId: "graded-card",
+    renderer: "ffmpeg",
+    rendererAssets: [],
+    rendererParams: {},
+    input: "",
+    inputs: [],
+    layers: [{ type: "rect", x: 0, y: 0, width: 1920, height: 1080, color: "#ffffff", opacity: 1, start: 0, end: 1, animation: "none" }],
+    output: "out.mp4",
+    duration: 1,
+    effect: "layer_scene",
+    requestedEffect: "layer_scene",
+    autoPortrait: false,
+    transition: { type: "none", duration: 0 },
+    captions: [],
+    color: { brightness: -0.1, saturation: 0.9, letterbox: 2.39 },
+    width: 1920,
+    height: 1080,
+    fps: 30,
+    quality: QUALITY_PRESETS.draft,
+  } satisfies RenderSlideStep;
+  const args = buildLayerSceneArgs(step);
+  const filter = args[args.indexOf("-filter_complex") + 1];
+  assert.match(filter, /\[ls1\]eq=brightness=-0\.1:saturation=0\.9\[lspost0\]/);
+  assert.match(filter, /\[lspost0\]drawbox=.*\[lspost1\]/);
+  assert.match(filter, /\[lspost1\]fps=30,format=yuv420p\[vout\]/);
+});
+
 const alphaPlane = (radius: Parameters<typeof roundedMaskGeq>[0], width: number, height: number) => {
   const rendered = spawnSync(ffmpegBin(), [
     "-v", "error", "-f", "lavfi", "-i", `color=white:s=${width}x${height}:d=0.1`,

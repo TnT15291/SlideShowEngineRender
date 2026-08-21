@@ -6,6 +6,7 @@ import {
   probeDurationSeconds,
   ValidationError,
 } from "./fileUtils";
+import { letterboxBarHeight } from "./buildColorFilters";
 import { coverCropLoss, readImageSize } from "./imageSize";
 import type { Caption, SceneLayer, Slide, TextSceneLayer, Timeline } from "./types";
 
@@ -116,10 +117,16 @@ function checkLayerScenes(
   const w = timeline.project.width;
   const h = timeline.project.height;
   for (const slide of timeline.slides) {
+    // The same merge compileTimeline performs, because the bars a slide gets
+    // are usually the film's, not the slide's.
+    const barHeight = letterboxBarHeight({ ...timeline.color, ...slide.color }, w, h);
     for (const [li, layer] of (slide.layers ?? []).entries()) {
       const label = `slide ${slide.id} layers[${li}]`;
       checkLayerBox(label, layer, w, h, stats);
-      if (layer.type === "text") checkTextLayer(label, layer, stats);
+      if (layer.type === "text") {
+        checkTextLayer(label, layer, stats);
+        checkTextUnderLetterbox(label, layer, barHeight, h, stats);
+      }
       if (layer.type === "image") {
         checkImageLayerCropRisk(label, layer, baseDir, stats);
       }
@@ -149,21 +156,30 @@ function checkLayerBox(
   }
 }
 
+/** Lines and glyph extents as the renderer will lay them out: drawtext anchors
+ *  the block at layer.y and never wraps by itself, so by the time a timeline
+ *  reaches here the newlines fitTextInTimeline wrote ARE the line breaks. */
+function estimateTextBlock(layer: TextSceneLayer): { estimatedWidth: number; estimatedHeight: number } {
+  const lines = layer.wrap
+    ? wrapForEstimate(layer.text, layer.width, layer.size)
+    : layer.text.split("\n");
+  const maxLine = Math.max(0, ...lines.map((line) => line.length));
+  const lineSpacing = layer.lineSpacing ?? Math.round(layer.size * 0.22);
+  return {
+    estimatedWidth:
+      maxLine * layer.size * AVG_GLYPH +
+      Math.max(0, maxLine - 1) * Math.max(0, layer.letterSpacing ?? 0),
+    estimatedHeight:
+      lines.length * layer.size + Math.max(0, lines.length - 1) * lineSpacing,
+  };
+}
+
 function checkTextLayer(
   label: string,
   layer: TextSceneLayer,
   stats: PreflightStats
 ): void {
-  const lines = layer.wrap
-    ? wrapForEstimate(layer.text, layer.width, layer.size)
-    : layer.text.split("\n");
-  const maxLine = Math.max(0, ...lines.map((line) => line.length));
-  const estimatedWidth =
-    maxLine * layer.size * AVG_GLYPH +
-    Math.max(0, maxLine - 1) * Math.max(0, layer.letterSpacing ?? 0);
-  const lineSpacing = layer.lineSpacing ?? Math.round(layer.size * 0.22);
-  const estimatedHeight =
-    lines.length * layer.size + Math.max(0, lines.length - 1) * lineSpacing;
+  const { estimatedWidth, estimatedHeight } = estimateTextBlock(layer);
 
   if (estimatedWidth > layer.width * 1.08) {
     stats.warnings.push(
@@ -175,6 +191,41 @@ function checkTextLayer(
       `${label} text may overflow height: estimated ${Math.round(estimatedHeight)}px > ${layer.height}px`
     );
   }
+}
+
+/**
+ * Cinematic bars are painted over the finished card, so a layer-scene's own
+ * text is UNDER them — unlike a caption, which is drawn after the bars on
+ * purpose so it reads like a film subtitle. Nothing else notices: the bars are
+ * inside the canvas, so the bounds check passes; they are below the 5%
+ * title-safe margin, so the layout rules pass; and the QA text measurer only
+ * asks whether the text fits its own slot. A title can therefore be authored
+ * legally, measured as fitting, and rendered completely invisible — which is
+ * exactly what a probe of a 2.39 grade with text at the title-safe limit shows.
+ *
+ * Judged on the glyph block rather than the slot box: a slot that reaches into
+ * the bar while its one line of text sits well above it is how several shipping
+ * cards are authored, and failing those would be crying wolf. An entrance
+ * animation that slides text up from under the bottom bar is deliberate and is
+ * not counted either — this is about where the text comes to rest.
+ */
+function checkTextUnderLetterbox(
+  label: string,
+  layer: TextSceneLayer,
+  barHeight: number,
+  frameHeight: number,
+  stats: PreflightStats
+): void {
+  if (barHeight <= 0 || layer.opacity === 0) return;
+  const top = layer.y;
+  const bottom = layer.y + estimateTextBlock(layer).estimatedHeight;
+  const hidden = top < barHeight ? "top" : bottom > frameHeight - barHeight ? "bottom" : null;
+  if (!hidden) return;
+  stats.errors.push(
+    `${label} text runs under the ${hidden} letterbox bar: glyphs at ` +
+      `${Math.round(top)}-${Math.round(bottom)} with ${barHeight}px bars on ${frameHeight}px; ` +
+      `move it inside ${barHeight}-${frameHeight - barHeight} or drop the letterbox`
+  );
 }
 
 function checkImageLayerCropRisk(

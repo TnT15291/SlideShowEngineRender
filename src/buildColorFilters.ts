@@ -154,6 +154,22 @@ export function buildColorFilter(
 }
 
 /**
+ * How tall each black bar is, or 0 when this grade draws none. Exported
+ * because the preflight gate has to reason about the same band the renderer
+ * paints: two copies of this arithmetic would drift, and the failure it
+ * guards against (text hidden under a bar) is invisible in every other check.
+ */
+export function letterboxBarHeight(
+  g: RenderSlideStep["color"],
+  w: number,
+  h: number
+): number {
+  if (!g || !g.letterbox) return 0;
+  const aspect = typeof g.letterbox === "number" ? g.letterbox : 2.39;
+  return Math.max(0, Math.round((h - w / aspect) / 2));
+}
+
+/**
  * Cinematic letterbox: two black bars that mask the 16:9 frame down to a wider
  * aspect (default 2.39:1). Drawn after the grade and before the captions, so
  * bottom captions sit inside the bar like film subtitles. Applied per slide —
@@ -164,9 +180,7 @@ export function buildLetterboxFilter(
   w: number,
   h: number
 ): string | undefined {
-  if (!g || !g.letterbox) return undefined;
-  const aspect = typeof g.letterbox === "number" ? g.letterbox : 2.39;
-  const barH = Math.round((h - w / aspect) / 2);
+  const barH = letterboxBarHeight(g, w, h);
   if (barH <= 0) return undefined;
   return (
     `drawbox=x=0:y=0:w=${w}:h=${barH}:color=black:t=fill,` +

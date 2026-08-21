@@ -1,4 +1,5 @@
 import { toFfmpegPath } from "./fileUtils";
+import { buildColorFilter, buildLetterboxFilter } from "./buildColorFilters";
 import { buildLayerGradeFilter, buildTechnicalColorFilter, clamp01, cssColor, quoteFilterPath } from "./ffmpegFilterHelpers";
 import { videoEncodeArgs } from "./quality";
 import type { LayerFrame, RenderSlideStep } from "./types";
@@ -82,6 +83,15 @@ function buildLayerSceneFilter(step: RenderSlideStep): string {
     layerIndex++;
   }
 
+  const post = [
+    buildColorFilter(step.color),
+    buildLetterboxFilter(step.color, step.width, step.height),
+  ].filter((filter): filter is string => Boolean(filter));
+  post.forEach((filter, index) => {
+    const next = `lspost${index}`;
+    filters.push(`[${current}]${filter}[${next}]`);
+    current = next;
+  });
   filters.push(`[${current}]fps=${step.fps},format=yuv420p[vout]`);
   return filters.join(";");
 }

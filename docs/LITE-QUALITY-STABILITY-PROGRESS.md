@@ -293,7 +293,27 @@ pass. Test mới: `test/exposure-repair.test.mjs` (11 test, khoá cả tương t
 và việc trừ lại grade đã áp khi đo) và `test/frame-brightness-region.test.mjs` (4 test, dựng
 video tổng hợp bằng ffmpeg nên nhanh và tất định).
 
-**Ghi nhận, chưa sửa:** `slide.color` bị `layer_scene` bỏ qua hoàn toàn là một lỗi thật —
-schema và `compileTimeline` đều hứa hẹn nó. Không sửa ở đây vì `timeline.color` hiện có trên mọi
-phim, nên nối dây vào sẽ đổi diện mạo **mọi** `layer_scene` đã từng render; đó là một thay đổi
-riêng, cần render smoke của chính nó.
+**Đã sửa 2026-08-19:** `slide.color` trước đây bị `layer_scene` bỏ qua dù schema và
+`compileTimeline` đều hứa hẹn nó. Renderer nay áp grade và letterbox sau khi compositing toàn
+card; có command regression và render probe thật với grade `editorial_clean`.
+
+**Đính chính cùng ngày:** probe `editorial_clean` chỉ chứng minh được nửa việc — profile này
+không có `letterbox`, nên lần render đó chạy qua `eq`/`glow` chứ không chạm `drawbox`. Recipe
+duy nhất bật letterbox là `cinematic-film-01` (2.39 → hai thanh đen 138px), cộng phim composed
+premium theo theme `dark_film` qua `composedLooks.mjs`. Đã render probe 2.39 thật trên ảnh cưới:
+**không thẻ nào trong 11 `layer_scene` của recipe đó bị cắt chữ** — biên hẹp nhất là 12px
+(`collage_cluster_text`) và 32px (`full_bleed_quote`), đo bằng font metrics thật chứ không phải
+ước lượng. Nhưng biên đó không do luật nào giữ: thanh đen nằm TRONG canvas nên qua được kiểm tra
+bounds, nằm ngoài lề title-safe 5% (54px) nên qua được luật layout, và text vẫn "vừa ô của nó"
+nên qua được cả `text_overflow`. Probe thứ hai đặt chữ ở đúng mép title-safe hợp lệ (y=970,
+cao 56) render ra một khung **mất hẳn tên cô dâu chú rể** mà mọi gate đều xanh. Vì thế
+`preflightTimeline` có thêm một luật: text layer nào có khối chữ chạm vào thanh đen thì render
+dừng trước khi encode. Luật xét khối chữ chứ không xét ô chứa (nhiều thẻ đang chạy có ô thò vào
+thanh trong khi dòng chữ nằm cao hơn hẳn), và không tính caption — caption cố ý vẽ SAU thanh đen
+để đọc như phụ đề phim.
+
+**Và grade `layer_scene` giờ có chốt nhìn vào pixel.** `test/release/render-smoke.test.mjs`
+thêm một thẻ `layer_scene` mang trọn bộ grade (LUT 3D + glow + vignette + grain + thanh 2.39),
+rồi đọc lại khung đã encode: các hàng trong thanh phải đen, giữa thẻ phải không đen. Nền thẻ cố
+tình để sáng — thẻ tối thì thanh đen lẫn với nền và assertion không chứng minh được gì. Đã thử
+gỡ dây nối grade ra: test đỏ đúng chỗ (hàng 2 đọc 235 thay vì 16).
