@@ -38,6 +38,7 @@
     "select:story": "node scripts/selectStoryOption.mjs",
     "select:music": "node scripts/selectMusicEdit.mjs",
     "project:create": "node scripts/createProject.mjs",
+    "narration:build": "node scripts/buildNarratedFilm.mjs",
     "narration:import": "node scripts/importNarrationScript.mjs",
     "footage:prepare": "node scripts/prepareFootage.mjs",
     "narration:synthesize": "node scripts/synthesizeNarration.mjs",

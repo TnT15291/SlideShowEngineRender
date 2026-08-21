@@ -23,6 +23,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { arg, loadProject } from "./lib/project.mjs";
+import { POOL_FILES, resolvePoolsFile } from "./lib/photoIndex.mjs";
 import { planGroups, transitionFor } from "./lib/narratedTimeline.mjs";
 import { buildDirectorPrompt, stubProposal, validateProposal } from "./lib/narrationDirector.mjs";
 import * as deepseek from "./lib/deepseek.mjs";
@@ -51,7 +52,11 @@ if (script.beats.length !== narration.segments.length) {
 }
 
 const photoIndex = readJson("analysis/photo-index.json");
-const rawPools = readJson("analysis/pools-curated.json");
+// Curated pools win where a curation pass has happened; a first film has only
+// analysis/pools.json (see lib/photoIndex.mjs).
+const poolsFile = resolvePoolsFile(project.dir);
+if (!poolsFile) throw new Error(`Required input not found: ${POOL_FILES.map((name) => `${project.relDir}/${name}`).join(" or ")}`);
+const rawPools = readJson(poolsFile);
 const pools = Object.fromEntries(Object.entries(rawPools).filter(([name]) => !name.startsWith("_")));
 const footage = readJson("footage/footage.json", { required: false }) ?? { clips: [] };
 // Written by the vision node when it has been run; absent is fine, the director

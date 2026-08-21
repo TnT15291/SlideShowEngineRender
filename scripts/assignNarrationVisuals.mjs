@@ -13,7 +13,9 @@
  * weak/duplicate/sensitive removals in curation.json already applied) and
  * footage/footage.json. Those files ARE the editorial intent; inventing a
  * parallel scheme of pool-named folders would have thrown that judgement away
- * and asked for it again.
+ * and asked for it again. A film that has not had a curation pass keeps its pools
+ * in the plainly-named analysis/pools.json, which is read when the curated one is
+ * absent — one album's history is not the shape of every album after it.
  *
  * MUST RUN AFTER `narration:synthesize`. How many pictures a stretch of script
  * needs is decided by how long it takes to read aloud — planGroups() derives it
@@ -23,6 +25,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { arg, loadProject } from "./lib/project.mjs";
+import { POOL_FILES, resolvePoolsFile } from "./lib/photoIndex.mjs";
 import { planGroups, transitionFor } from "./lib/narratedTimeline.mjs";
 import { assignVisuals, hasAuthoredVisual } from "./lib/visualAssigner.mjs";
 
@@ -53,7 +56,11 @@ if (script.beats.length !== narration.segments.length) {
 // photo-index.json is the fuller record (every file, with dimensions);
 // pools-curated.json indexes into it and already has curation.json applied.
 const photos = readJson("analysis/photo-index.json");
-const rawPools = readJson("analysis/pools-curated.json");
+// Curated pools win where a curation pass has happened; a first film has only
+// analysis/pools.json (see lib/photoIndex.mjs).
+const poolsFile = resolvePoolsFile(project.dir);
+if (!poolsFile) throw new Error(`Required input not found: ${POOL_FILES.map((name) => `${project.relDir}/${name}`).join(" or ")}`);
+const rawPools = readJson(poolsFile);
 const pools = Object.fromEntries(Object.entries(rawPools).filter(([name]) => !name.startsWith("_")));
 const footage = readJson("footage/footage.json", { required: false }) ?? { clips: [] };
 

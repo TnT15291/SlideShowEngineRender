@@ -218,7 +218,7 @@ pool và hướng ảnh. Muốn khớp đúng nghĩa từng tấm thì cần m�
 đám cưới sẵn có (`analyzePhotoContent.mjs`) **không dùng lại được**: nó import cứng `TAG_VOCAB` 29
 tag đám cưới. Đây là hạng mục tốn tiền thật và đang chờ quyết định.
 
-## N3 — Một lệnh chạy hết
+## N3 — Một lệnh chạy hết  ✅ XONG 2026-08-21
 
 **Việc:** `npm run narration:build -- --project <dir>` chạy tuần tự import → synthesize → timeline →
 render, dừng ở cổng đầu tiên không qua và nói rõ vì sao. Không thêm năng lực mới, chỉ gói lại.
@@ -227,6 +227,77 @@ render, dừng ở cổng đầu tiên không qua và nói rõ vì sao. Không t
 `footage/clips/<pool>/`, một lệnh cho ra `.mp4` xem được.
 
 **Quy mô:** nhỏ.
+
+### Đã làm
+
+**Tách phần QUYẾT ĐỊNH khỏi phần LÀM.** `lib/narratedBuildPlan.mjs` đọc dự án rồi trả về danh sách
+quyết định — chạy / bỏ qua / dừng, kèm lý do — mà không viết, không gọi, không đo gì cả.
+`buildNarratedFilm.mjs` chỉ thi hành danh sách đó. Hai hệ quả đáng giá: `--dry-run` là bản xem
+trước **đúng thật** chứ không phải mô tả, và 15 test phủ mọi cổng chạy được **không cần ffmpeg,
+không cần key TTS, không cần mạng**.
+
+**Mọi cổng miễn phí được xét TRƯỚC bước tốn tiền.** Nội dung đã ký duyệt chưa, nhạc kịch bản khai
+có nằm trong dự án không, section có khai pool không và pool ấy có thật không — tất cả quyết được
+từ file. Phim đầu tiên bị dựng bằng `--allow-unapproved` chính vì cổng nội dung chỉ hiện ra sau
+khi TTS đã chạy.
+
+**Chạy lại là chuyện bình thường.** Bước nào có kết quả mới hơn đầu vào thì bỏ qua, nên một lần
+build đứt ở khâu render sẽ chạy lại đúng khâu render.
+
+**Một bước mới, ngược với câu "không thêm năng lực mới" của chính kế hoạch này: `photo-index`.**
+N2 đã bỏ ý tưởng thư mục `photos/<pool>/` để đọc thẳng dữ liệu curation có sẵn — nhưng dữ liệu ấy
+là của phim ANTT, làm tay. Phim thứ hai không có cách nào sinh ra `analysis/photo-index.json`, nên
+lời hứa "một lệnh" chết ngay ở bước gán. Ranh giới đã chọn: **cái ĐO ĐƯỢC thì máy làm, cái PHÁN
+ĐOÁN thì người làm.** Kích thước và hướng ảnh là đo được → `lib/photoIndex.mjs` dựng chỉ mục.
+Ảnh nào thuộc chủ đề nào là phán đoán → cổng `pools` dừng lại, in ra danh sách section đang chờ
+và nói rõ phải viết file gì.
+
+**Cổng chống trôi chỉ mục.** Pool trỏ vào `photo-index.json` **theo vị trí**. Nếu thư mục ảnh đã
+đổi thứ tự thì dựng lại chỉ mục sẽ lặng lẽ trỏ mọi pool sang ảnh khác — không cổng nào phía sau
+thấy được. Nên khi chỉ mục không còn mô tả đúng thư mục, build dừng và chỉ ra vị trí đầu tiên lệch;
+còn thư mục chỉ *dài thêm* thì đó là ghi chú (ảnh mới chưa thuộc pool nào), vì vị trí cũ vẫn đúng.
+
+**Đề xuất của đạo diễn AI chưa ký thì dừng, không đi vòng.** Có `script/visual-review.json` mà
+`approved` chưa `true` thì build dừng — không âm thầm thay bằng lựa chọn của bộ gán tất định.
+
+### Ba lỗi thật do chính lần nghiệm thu tìm ra
+
+1. **`assignNarrationVisuals` viết cứng `analysis/pools-curated.json`.** Phim mới chưa qua đợt
+   curation nào vẫn bị bắt đặt tên file là "curated". Đã đổi cả ba script (assign/apply/propose)
+   sang đọc `pools-curated.json` trước, `pools.json` sau — cùng một danh sách với bộ lập kế hoạch,
+   để một cổng đã cho qua không thể là file mà lệnh kế tiếp từ chối.
+2. **`buildNarratedTimeline` viết cứng toạ độ 1920×1080 cho thẻ chương và cỡ chữ caption.** Phim
+   khai `960×540` trong front-matter dựng xong thì **chết ở preflight** với 4 lỗi "vượt khung" mà
+   người dùng không sửa được. Nay toạ độ nhân theo tỉ lệ từng trục, cỡ chữ theo tỉ lệ nhỏ hơn
+   trong hai trục. Ở 1920×1080 hệ số bằng 1 nên phim ANTT không đổi một con số nào.
+3. **Gán ảnh làm hỏng giọng đọc.** Bộ gán ghi lại `script.json`, và luật "mới hơn theo mtime" đọc
+   đó là "kịch bản đã đổi" rồi tổng hợp lại toàn bộ giọng nói y hệt cũ — 53 beat phim đầu tiên.
+   Nay độ tươi của giọng xét theo **chữ**: id + lời của từng beat, cộng provider/voice/style/speed —
+   đúng bốn thứ mà cache TTS khoá theo. Sửa xong lại lộ tiếp một lỗi cùng họ: lời đọc nằm ở
+   `beat.narration`, không phải `beat.text`, nên bản so sánh đầu tiên coi mọi beat là đã bị viết
+   lại và tổng hợp lại mỗi lần chạy.
+
+### Nghiệm thu (đo được)
+
+- **Một dự án mới, từ trống đến phim, bằng đúng một lệnh lặp lại nhiều lần.** `temp/narration-acceptance`:
+  6 ảnh sinh bằng ffmpeg, kịch bản 3 beat 2 section, không nhạc. Lần chạy đầu dừng ở cổng nội dung;
+  duyệt xong dừng ở cổng pool **sau khi** đã dựng chỉ mục 6 ảnh (4 ngang, 2 dọc) để người viết pool
+  có cái mà trỏ vào; viết `pools.json` xong thì chạy hết: giọng VieNeu thật (3 beat, 17,14s),
+  gán 4 ảnh / 0 clip / pillarbox 0%, timeline 5 slide 20,14s, render **960×540 h264 20,17s**,
+  phụ đề 5 cue. Chạy lại lần nữa: **0 bước chạy, 10 bước đã mới**.
+- **Phim ANTT thật (53 beat) xem qua luật mới**: `narration skip — voice/narration.json already
+  says these 53 beats`, mọi bước khác skip, chỉ còn phụ đề chưa xuất.
+- 15 test trong `test/narrated-build-plan.test.mjs`.
+
+### Còn hở
+
+- **`tools/styleTimeline.mjs` không nằm trong lệnh gộp.** Diện mạo bản ANTT đã giao (thẻ chương,
+  bảng màu riêng) đến từ một pass biên tập viết cứng cho phim đó. Lệnh gộp cho ra phim theo khuôn
+  chung; muốn đúng bản đã giao thì `--no-render`, chạy pass ấy, rồi build lại. Muốn khép thật thì
+  phải nâng nó thành dữ liệu (theme của phim), không phải thêm một hook chạy script tuỳ ý.
+- **Chưa có `job-manifest`.** Lệnh này in ra bảng cho người đọc; N4 cần một tệp trạng thái máy đọc
+  được thì hàng đợi render trên web mới theo dõi được.
+- Cổng giấy phép nhạc (`assertLicensedMusic`) vẫn nằm ở phía server, lệnh gộp chưa gọi.
 
 ---
 
