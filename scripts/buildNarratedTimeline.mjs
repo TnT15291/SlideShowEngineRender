@@ -77,13 +77,26 @@ function repoAsset(relative, beatId) {
   return path.relative(process.cwd(), absolute).replace(/\\/g, "/");
 }
 
+// The cards below were drawn against a 1920x1080 frame, and a layer that sticks out of
+// the canvas is refused by preflight before a frame is encoded — so a film in any other
+// size used to die at the render with four bounds errors it could do nothing about.
+// Positions take each axis' own scale; type takes the smaller of the two, because a
+// typeface stretched on one axis is not a typeface.
+const frameWidth = script.project.width || 1920;
+const frameHeight = script.project.height || 1080;
+const scaleX = frameWidth / 1920;
+const scaleY = frameHeight / 1080;
+const px = (value) => Math.round(value * scaleX);
+const py = (value) => Math.round(value * scaleY);
+const pt = (value) => Math.max(12, Math.round(value * Math.min(scaleX, scaleY)));
+
 function cardLayers(title, subtitle = "") {
   const layers = /** @type {any[]} */ ([
-    { type: "rect", color: "#081f33", x: 0, y: 0, width: 1920, height: 1080 },
-    { type: "rect", color: "#c89b3c", x: 230, y: 360, width: 10, height: 360 },
-    { type: "text", text: title, font, size: 68, color: "#ffffff", x: 290, y: 350, width: 1340, height: 260, align: "left", lineSpacing: 1.2, wrap: true, animation: "fade" },
+    { type: "rect", color: "#081f33", x: 0, y: 0, width: frameWidth, height: frameHeight },
+    { type: "rect", color: "#c89b3c", x: px(230), y: py(360), width: Math.max(2, px(10)), height: py(360) },
+    { type: "text", text: title, font, size: pt(68), color: "#ffffff", x: px(290), y: py(350), width: px(1340), height: py(260), align: "left", lineSpacing: 1.2, wrap: true, animation: "fade" },
   ]);
-  if (subtitle) layers.push({ type: "text", text: subtitle, font, size: 34, color: "#d8e5ef", x: 295, y: 660, width: 1260, height: 130, align: "left", lineSpacing: 1.2, wrap: true, animation: "fade", start: 0.25 });
+  if (subtitle) layers.push({ type: "text", text: subtitle, font, size: pt(34), color: "#d8e5ef", x: px(295), y: py(660), width: px(1260), height: py(130), align: "left", lineSpacing: 1.2, wrap: true, animation: "fade", start: 0.25 });
   return layers;
 }
 
@@ -105,9 +118,9 @@ async function visualSlide(id, visual, caption, contentSpan, transition) {
       start: 0.3,
       duration: Math.max(0, Number((duration - 0.6).toFixed(3))),
       font,
-      size: 44,
+      size: pt(44),
       color: "white",
-      outline: { color: "black", width: 3 },
+      outline: { color: "black", width: Math.max(1, Math.round(3 * Math.min(scaleX, scaleY))) },
       shadow: true,
       animation: "fade",
     });
