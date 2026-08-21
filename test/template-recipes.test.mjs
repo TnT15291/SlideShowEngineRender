@@ -10,6 +10,7 @@ import { perceptualSignature } from "../scripts/lib/geometrySignature.mjs";
 import { hasEnglishCopy, inspectCaptionLanguage } from "../scripts/lib/captionLanguage.mjs";
 import { scenePhotoCount } from "../scripts/lib/scenePhotoCount.mjs";
 import { minimumTextSize } from "../scripts/lib/rules/thresholds.mjs";
+import { createTextMeasurer } from "../scripts/lib/textMeasure.mjs";
 
 const root = process.cwd();
 const library = JSON.parse(fs.readFileSync(path.join(root, "layouts", "library.json"), "utf8"));
@@ -370,6 +371,55 @@ test("the multisong album offers copy variants for its long-form narrative cards
       assert.equal(scene.text[slot].length, 3, `${recipe.id}/${sceneId}/${slot} needs three variants`);
       assert.equal(new Set(scene.text[slot]).size, 3, `${recipe.id}/${sceneId}/${slot} repeats a variant`);
     }
+  }
+});
+
+test("the white-weddings title reprise does not repeat its opening copy verbatim", () => {
+  const recipe = recipes.find((item) => item.id === "white-weddings-full-01");
+  const reprise = recipe.scenes.find((item) => item.id === "s84_title_reprise");
+  const earlier = recipe.scenes.slice(0, recipe.scenes.indexOf(reprise));
+  const authored = new Set(earlier.flatMap((scene) => [
+    ...Object.values(scene.text ?? {}).flatMap((value) => Array.isArray(value) ? value : [value]),
+    ...(Array.isArray(scene.captionPattern) ? scene.captionPattern : [scene.captionPattern]),
+  ]).filter((value) => typeof value === "string" && value.trim()));
+  for (const value of Object.values(reprise.text)) {
+    assert.ok(!authored.has(value), `${recipe.id}/${reprise.id} repeats earlier copy: ${value}`);
+  }
+});
+
+// Clearing `duplicate_caption` is not free: the first rewrite cleared it with a
+// heading that no longer fitted — three wrapped lines, 285px of text in a 150px
+// slot — which `fit_text` then rescues by dropping the title from 72px to 56px.
+// Surviving QA by being repaired is not the same as being authored to fit, and
+// nothing else in the suite could tell the two apart, so this measures the real
+// glyphs against the real slot. Customer names are substituted at a typical
+// length: the recipe cannot control how long a couple's names are, and fit_text
+// remains the right answer for the pair that does not fit.
+test("the white-weddings title reprise fits its slot instead of leaning on fit_text", () => {
+  const recipe = recipes.find((item) => item.id === "white-weddings-full-01");
+  const reprise = recipe.scenes.find((item) => item.id === "s84_title_reprise");
+  const layout = library.layouts.find((item) => item.id === recipe.looks[reprise.look].layout);
+  const sample = (value) => value.replace(/\{\{bride\}\}/g, "Linh").replace(/\{\{groom\}\}/g, "Nam").replace(/\{\{[^}]+\}\}/g, "X");
+  const measure = (text, slot) => createdMeasurer.inspect({
+    text: sample(text), fontFile: recipe.defaults.fonts[slot.fontRole], size: slot.sizePx,
+    width: slot.width, height: slot.height, lineSpacing: slot.lineSpacing || 0,
+  });
+  const createdMeasurer = createTextMeasurer({ root });
+  try {
+    for (const slot of layout.textSlots) {
+      const value = reprise.text[slot.id];
+      if (typeof value !== "string") continue;
+      const measured = measure(value, slot);
+      assert.ok(measured.fits, `${recipe.id}/${reprise.id}:${slot.id} measures ` +
+        `${Math.round(measured.widest)}x${Math.round(measured.blockHeight)} inside ${slot.width}x${slot.height}`);
+    }
+    // Proved red against the copy this replaced, so the test cannot quietly
+    // start passing for a reason other than the one it was written for.
+    const heading = layout.textSlots.find((slot) => slot.id === "heading");
+    assert.equal(measure("{{bride}} & {{groom}} · Chuyện chúng mình", heading).fits, false,
+      "the overflow that made this test necessary now fits — the measurement has lost its teeth");
+  } finally {
+    createdMeasurer.close();
   }
 });
 

@@ -159,7 +159,7 @@ Ghi lại ở đây để không mất khi dọn các tracker đã đóng:
 
 | Nợ | Nguồn | Ảnh hưởng việc bán |
 |---|---|---|
-| `duplicate_caption` trên repeat variant, 5 recipe | tracker Layout Primitives (đã đóng, xoá 2026-08-10) | Nhẹ — lời lặp, không dính hình học |
+| ~~`duplicate_caption` trên repeat variant, 5 recipe~~ | ✅ Đo lại 2026-08-19: bốn ca cũ là echo mở/kết có chủ ý; ca thật còn lại ở `white-weddings-full-01` đã đổi copy và canary còn 0 `duplicate_caption` | Đã đóng |
 | Lite còn Phase 6–7; P1 còn render smoke 2 profile, P2 còn canary | `docs/LITE-QUALITY-STABILITY-PROGRESS.md` | Nhẹ nếu chỉ bán tier template |
 | Premium còn Hướng B (Phase 3); P2 hoãn có lý do | `docs/PREMIUM-QUALITY-STABILITY-PROGRESS.md` | Chặn việc bán gói Premium |
 | `test:api` còn 1 test job-runner chập chờn | — | Nhẹ, nhưng đừng để nó che một lỗi thật |

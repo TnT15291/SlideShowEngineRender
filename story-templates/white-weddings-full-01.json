@@ -1255,8 +1255,8 @@
         }
       ],
       "text": {
-        "heading": "{{bride}} & {{groom}}",
-        "caption": "{{date}}"
+        "heading": "Chuyện đôi mình",
+        "caption": "Những trang kỷ niệm dẫn về ngày chung đôi"
       },
       "look": "magazine_page_turn_page"
     },
