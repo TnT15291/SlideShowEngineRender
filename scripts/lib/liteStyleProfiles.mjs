@@ -54,7 +54,7 @@ export const LITE_STYLE_PROFILES = Object.freeze({
     captionBacking: { color: "#000000", opacity: 0.36 },
     singlePhotoEffects: [
       "slow_zoom_in", "pan_right", "spotlight_focus", "mirror_split", "portrait_reflection",
-      "slow_zoom_out", "tilt_shift", "panel_flip",
+      "slow_zoom_out", "tilt_shift", "prism_split",
     ],
     montageEffects: ["collage_grid", "memory_wall", "film_roll_right"],
     transitionPalette: ["crossfade", "wipe_left", "smooth_right", "fade_to_black", "dissolve"],

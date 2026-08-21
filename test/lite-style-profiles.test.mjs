@@ -17,6 +17,13 @@ test("Lite ships exactly three verified initial style profiles", () => {
   }
 });
 
+test("Lite does not offer panel_flip after its real contact sheet proved unreadable", () => {
+  for (const profile of Object.values(LITE_STYLE_PROFILES)) {
+    assert.ok(!profile.singlePhotoEffects.includes("panel_flip"), `${profile.id} still offers panel_flip`);
+  }
+  assert.ok(LITE_STYLE_PROFILES.editorial_clean.singlePhotoEffects.includes("prism_split"));
+});
+
 // A profile must NOT carry fonts: `defaults.fonts` outranks the library theme in
 // resolveFont(), so any value here silently replaces the theme's display face with a
 // UI sans and every Lite film comes out in a single typeface.

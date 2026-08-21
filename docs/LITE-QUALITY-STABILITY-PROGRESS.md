@@ -68,8 +68,9 @@
       từ chối, phim hỏng trước khi encode một khung hình. Nguyên nhân là hai danh sách lệch nhau —
       `EASED_MOTION_EFFECTS` trong `src/types.ts` có 10 effect, còn `EASING_EFFECTS` trong
       `scripts/lib/engineCapabilities.mjs` suy từ cờ `motion` nên có 13. Đã vá + guard chống trôi
-      trong `test/vocab.test.mjs`. Còn để mắt: khung `panel_flip` trong contact sheet nhòe gần như
-      không đọc được chữ — cần một người nhìn, QA vẫn chấm `pass`.
+      trong `test/vocab.test.mjs`. Contact sheet sau đó xác nhận `panel_flip` nhòe gần như không
+      đọc được chữ; ngày 2026-08-19 effect này đã bị loại khỏi palette Lite `editorial_clean`
+      (thay bằng `prism_split`). Engine và recipe authoring vẫn giữ effect cho nơi có art direction riêng.
 
 ### Phase 7 — Rollout và loại bỏ Lite v1
 
