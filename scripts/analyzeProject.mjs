@@ -18,6 +18,7 @@ run([
   "--dir", project.rel(project.manifest.inputDir),
   "--out", photos,
   "--file-prefix", project.rel(project.manifest.inputDir),
+  "--upload-manifest", project.rel(`${project.manifest.analysisDir}/uploads.json`),
 ], "photos");
 
 // Vision is the ONLY node whose cost scales with the photo count, and the template

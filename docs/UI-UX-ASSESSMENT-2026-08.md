@@ -386,12 +386,24 @@ product; the second is a feature with server-side consequences (changing a
 recipe after a render invalidates the timeline). Everything else in P2.5 —
 navigable completed steps in the intake stepper — did ship.
 
-**Photo reordering.** The Media step still promises "upload order is preserved
-for chronological edits" and still offers no way to change that order.
-Reordering needs an endpoint that rewrites `uploadIndex` across the asset set,
-which does not exist. What did ship is the half that needed no new contract:
-multi-select with a bulk delete, which is what makes a 140–220 photo album
-manageable at all.
+**Photo reordering (shipped 2026-08-19).** The Media grid reorders photographs
+through an owner-scoped endpoint that rewrites the complete `uploadIndex` order
+atomically. Technical analysis reads that manifest order, so an edit uses what
+the customer sees rather than the immutable prefix in the stored filename.
+Multi-select bulk delete remains available for large 140–220 photo albums.
+
+Two things the first cut got wrong, both fixed the same day. The control was
+offered on every project, but only a **chronological** project reads upload
+order at all — the editorial solver seats photographs by role and image quality
+and never looks at `uploadIndex` (`scripts/lib/photoAssignment.mjs`). Since the
+intake wizard defaults to editorial and labels it "Recommended", most customers
+would have rearranged their album, waited, and watched an unchanged film. The
+grid now offers reordering only where it does something, and says plainly on an
+editorial project that the order here is not the order on screen. And the only
+gesture was a one-step arrow: on the 140–220 photo album this feature exists
+for, bringing the last photograph to the front cost 199 clicks and 199 round
+trips. Dragging a tile onto its new place is one request; the arrows stay for
+keyboard and touch.
 
 ## What verification actually ran
 

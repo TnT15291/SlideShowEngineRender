@@ -45,7 +45,7 @@ export function inspectResume(project) {
   const timelineBase = path.basename(project.manifest.timeline, path.extname(project.manifest.timeline));
   const rules = {
     analyze: {
-      inputs: [project.manifest.inputDir, ...project.manifest.music],
+      inputs: [project.manifest.inputDir, `${analysis}/uploads.json`, ...project.manifest.music],
       outputs: [`${analysis}/photos.json`, `${analysis}/photo_content.json`, ...musicAnalysis]
     },
     // directives.json is an OUTPUT of plan (node 0 compiles it) and an INPUT to build.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from "react"
-import { AlertCircle, ArrowRight, Check, ChevronRight, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, ShieldAlert, Sparkles, Trash2, Upload, X } from "lucide-react"
+import { AlertCircle, ArrowLeft, ArrowRight, Check, ChevronRight, Circle, Clapperboard, CreditCard, Film, Image, Menu, Music2, PackageCheck, RefreshCw, RotateCcw, ShieldAlert, Sparkles, Trash2, Upload, X } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LazyApiImage } from "@/components/LazyApiImage"
 import { RecipeSwatch } from "@/components/RecipeSwatch"
 import { localized, photoRange, tagLabel } from "@/recipeFormat"
-import { apiDelete, apiGet, apiUpload } from "@/lib/api"
+import { apiDelete, apiGet, apiPatch, apiUpload } from "@/lib/api"
 import { apiMessage } from "@/lib/apiMessage"
 import { useI18n, type Translate } from "@/lib/i18n"
 import type { StringKey } from "@/lib/strings"
@@ -61,6 +61,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementC
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<Set<string>>(new Set())
+  const [reordering, setReordering] = useState(false)
   const [recipe, setRecipe] = useState<RecipeSummary | null>(null)
   // Bumped by every write to `assets`. Panels further down (analysis today,
   // anything asset-derived tomorrow) key their own fetch on it, because they
@@ -188,6 +189,51 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementC
     }
   }
 
+  // Only a chronological project reads the upload order: the editorial solver
+  // orders photographs by role and quality and never looks at uploadIndex
+  // (scripts/lib/photoAssignment.mjs). Offering the control on an editorial
+  // project would promise a change the film does not make.
+  const canReorder = currentProject.sequenceMode === "chronological"
+
+  async function commitPhotoOrder(assetIds: string[]) {
+    if (reordering) return
+    setReordering(true)
+    setError(null)
+    try {
+      applyAssets(await apiPatch<ProjectAssets>(`/projects/${project.id}/assets/order`, { assetIds }))
+    } catch (reason) {
+      setError(apiMessage(reason, t))
+    } finally {
+      setReordering(false)
+    }
+  }
+
+  function movePhoto(assetId: string, direction: -1 | 1) {
+    if (!assets) return
+    const current = assets.photos.findIndex((asset) => asset.id === assetId)
+    const target = current + direction
+    if (current < 0 || target < 0 || target >= assets.photos.length) return
+    const next = assets.photos.map((asset) => asset.id)
+    const moved = next[current]
+    next[current] = next[target]
+    next[target] = moved
+    void commitPhotoOrder(next)
+  }
+
+  // Dropping A onto B means "put A here", so A takes B's place and everything
+  // between shifts one along. A swap would fling B to the far end of the album,
+  // which is never what the drag meant — and on a 200-photo album the whole
+  // point is that an arbitrary move costs one drag instead of 199 clicks.
+  function dropPhoto(assetId: string, targetId: string) {
+    if (!assets || assetId === targetId) return
+    const next = assets.photos.map((asset) => asset.id)
+    const from = next.indexOf(assetId)
+    const to = next.indexOf(targetId)
+    if (from < 0 || to < 0) return
+    next.splice(to, 0, ...next.splice(from, 1))
+    void commitPhotoOrder(next)
+  }
+
   const uploading = queue.some((item) => item.status === "uploading")
 
   // The recipe's authored minimum is the real bar, not "at least one". Letting
@@ -245,7 +291,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementC
       {step === "media" && <WorkspaceSection step="media" description={t("media.description")} action={uploading ? <Badge variant="secondary" className="border-0"><RefreshCw className="mr-1 size-3 animate-spin" /> {t("media.uploading")}</Badge> : undefined}>
         <Card className="mb-6"><CardContent className="grid gap-3 p-4 sm:grid-cols-2"><Requirement done={enoughPhotos} label={photoLabel({ count: photoCount, min: minPhotos, t })} /><Requirement done={hasMusic} label={hasMusic ? t("media.tracksAdded", { count: assets?.music.length ?? 0 }) : t("media.needMusic")} /></CardContent></Card>
         <div className="space-y-6">
-          <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} selected={selected} onToggleSelected={toggleSelected} onSelectAll={(ids) => setSelected(new Set(ids))} onClearSelection={() => setSelected(new Set())} onDeleteSelected={removeSelected} />
+          <AssetSection projectId={project.id} kind="photo" title={t("media.photos")} description={t("media.photosHint")} icon={Image} assets={assets?.photos || []} queue={queue.filter((item) => item.kind === "photo")} deleting={deleting} onFiles={(files) => addFiles("photo", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} selected={selected} onToggleSelected={toggleSelected} onSelectAll={(ids) => setSelected(new Set(ids))} onClearSelection={() => setSelected(new Set())} onDeleteSelected={removeSelected} onMovePhoto={canReorder ? movePhoto : undefined} onDropPhoto={canReorder ? dropPhoto : undefined} orderNote={t(canReorder ? "media.reorderHint" : "media.orderIgnored")} reordering={reordering} />
           <AssetSection projectId={project.id} kind="music" title={t("media.music")} description={t("media.musicHint")} icon={Music2} assets={assets?.music || []} queue={queue.filter((item) => item.kind === "music")} deleting={deleting} onFiles={(files) => addFiles("music", files)} onRetry={uploadOne} onRemoveQueue={(id) => setQueue((current) => current.filter((item) => item.id !== id))} onDelete={removeAsset} />
           {/* G2.7. Sits at the step where the track is chosen and well before
               the render is paid for, so "we told you" is true at the moment it
@@ -255,7 +301,7 @@ export function AssetsPage({ project, plan, onOpenNav, onUpgrade, onEntitlementC
           <MusicCopyrightNotice />
         </div>
         <AnalysisPanel project={currentProject} music={assets?.music || []} assetRevision={assetRevision} />
-        <NextAction title={mediaReady ? t("media.ready") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotos") : t("media.incomplete")} detail={mediaReady ? t("media.readyDetail") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotosDetail", { name: recipeName ?? "", min: minPhotos, count: photoCount }) : t("media.incompleteDetail")} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
+        <NextAction sticky title={mediaReady ? t("media.ready") : hasMusic && !enoughPhotos && minPhotos > 0 ? t("media.tooFewPhotos") : t("media.incomplete")} detail={mediaReady ? t("media.readySummary", { photos: photoCount, tracks: assets?.music.length ?? 0 }) : t("media.readinessSummary", { photos: photoCount, min: Math.max(1, minPhotos), tracks: assets?.music.length ?? 0 })} next="direct" disabled={!mediaReady} onClick={() => goToStep("direct")} />
       </WorkspaceSection>}
 
       {step === "direct" && <WorkspaceSection step="direct" description={currentProject.tier === "template" ? t("direct.templateDescription") : t("direct.aiDescription")}>
@@ -356,12 +402,12 @@ function MusicCopyrightNotice() {
     </div>
   )
 }
-function NextAction({ title, detail, next, disabled = false, onClick }: { title: string; detail: string; next: WorkspaceStep; disabled?: boolean; onClick: () => void }) {
+function NextAction({ title, detail, next, disabled = false, sticky = false, onClick }: { title: string; detail: string; next: WorkspaceStep; disabled?: boolean; sticky?: boolean; onClick: () => void }) {
   const { t } = useI18n()
   // `detail` already explains the state (and the reason, when blocked) in the
   // left-hand block; repeating it under the button just said the same sentence
   // twice side by side.
-  return <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-sidebar p-5 text-white">
+  return <div className={cn("mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-sidebar p-5 text-white", sticky && "sticky bottom-3 z-10 shadow-xl shadow-black/15")}>
     <div><p className="text-sm font-medium">{title}</p><p id="next-action-detail" className="mt-1 text-xs leading-5 text-sidebar-muted">{detail}</p></div>
     <Button size="lg" disabled={disabled} aria-describedby={disabled ? "next-action-detail" : undefined} onClick={onClick}>{t("workspace.continueTo", { step: stepLabel(next, t) })} <ArrowRight className="size-4" /></Button>
   </div>
@@ -371,10 +417,11 @@ function BlockedNotice({ message, onClick }: { message: string; onClick: () => v
   return <Card className="mb-6 border-warning/40 bg-warning/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-5 text-sm text-warning-text"><span className="flex items-center gap-2"><AlertCircle className="size-4" /> {message}</span><Button variant="outline" size="sm" onClick={onClick}>{t("workspace.fixPrerequisite")}</Button></CardContent></Card>
 }
 
-function AssetSection({ projectId, kind, title, description, icon: Icon, assets, queue, deleting, onFiles, onRetry, onRemoveQueue, onDelete, selected, onToggleSelected, onSelectAll, onClearSelection, onDeleteSelected }: {
+function AssetSection({ projectId, kind, title, description, icon: Icon, assets, queue, deleting, onFiles, onRetry, onRemoveQueue, onDelete, selected, onToggleSelected, onSelectAll, onClearSelection, onDeleteSelected, onMovePhoto, onDropPhoto, orderNote, reordering = false }: {
   projectId: string; kind: AssetKind; title: string; description: string; icon: typeof Image; assets: ProjectAsset[]; queue: UploadItem[]; deleting: Set<string>
   onFiles: (files: File[]) => void; onRetry: (item: UploadItem) => void; onRemoveQueue: (id: string) => void; onDelete: (asset: ProjectAsset) => void
   selected?: Set<string>; onToggleSelected?: (id: string) => void; onSelectAll?: (ids: string[]) => void; onClearSelection?: () => void; onDeleteSelected?: () => void
+  onMovePhoto?: (id: string, direction: -1 | 1) => void; onDropPhoto?: (id: string, targetId: string) => void; orderNote?: string; reordering?: boolean
 }) {
   const { t } = useI18n()
   const [dragging, setDragging] = useState(false)
@@ -396,16 +443,37 @@ function AssetSection({ projectId, kind, title, description, icon: Icon, assets,
         <Button variant="outline" size="sm" className="text-destructive" disabled={selected.size === 0 || deleting.size > 0} onClick={onDeleteSelected}><Trash2 className="size-3.5" /> {t("media.deleteSelected", { count: selected.size })}</Button>
       </span>
     </div>}
+    {isPhoto && assets.length > 0 && orderNote && <p className="text-xs text-muted-foreground">{orderNote}</p>}
     {assets.length > 0 && (isPhoto
-      ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{assets.map((asset) => <PhotoTile key={asset.id} projectId={projectId} asset={asset} deleting={deleting.has(asset.id)} onDelete={() => onDelete(asset)} selected={selected?.has(asset.id) ?? false} onToggleSelected={onToggleSelected ? () => onToggleSelected(asset.id) : undefined} />)}</div>
+      ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{assets.map((asset, index) => <PhotoTile key={asset.id} projectId={projectId} asset={asset} deleting={deleting.has(asset.id)} onDelete={() => onDelete(asset)} selected={selected?.has(asset.id) ?? false} onToggleSelected={onToggleSelected ? () => onToggleSelected(asset.id) : undefined} onMove={onMovePhoto ? (direction) => onMovePhoto(asset.id, direction) : undefined} onDropPhoto={onDropPhoto} canMoveBack={index > 0} canMoveForward={index < assets.length - 1} reordering={reordering} />)}</div>
       : <div className="divide-y rounded-lg border">{assets.map((asset) => <div key={asset.id} className="flex items-center gap-3 p-3"><span className="grid size-8 shrink-0 place-items-center rounded-md bg-success/10 text-success-text"><Check className="size-4" /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{asset.originalName}</p><p className="mt-0.5 text-xs text-muted-foreground">#{asset.uploadIndex + 1} · {formatBytes(asset.size)}</p></div><Button variant="ghost" size="icon" aria-label={t("media.deleteAsset", { name: asset.originalName })} disabled={deleting.has(asset.id)} onClick={() => onDelete(asset)}><Trash2 className="size-4" /></Button></div>)}</div>)}
   </CardContent></Card>
 }
 
-function PhotoTile({ projectId, asset, deleting, onDelete, selected = false, onToggleSelected }: { projectId: string; asset: ProjectAsset; deleting: boolean; onDelete: () => void; selected?: boolean; onToggleSelected?: () => void }) {
+function PhotoTile({ projectId, asset, deleting, onDelete, selected = false, onToggleSelected, onMove, onDropPhoto, canMoveBack = false, canMoveForward = false, reordering = false }: { projectId: string; asset: ProjectAsset; deleting: boolean; onDelete: () => void; selected?: boolean; onToggleSelected?: () => void; onMove?: (direction: -1 | 1) => void; onDropPhoto?: (id: string, targetId: string) => void; canMoveBack?: boolean; canMoveForward?: boolean; reordering?: boolean }) {
   const { t } = useI18n()
-  return <figure className={cn("group relative overflow-hidden rounded-lg border bg-card-soft transition-opacity", deleting && "opacity-40", selected && "border-primary ring-2 ring-primary")}>
-    <LazyApiImage path={`/projects/${encodeURIComponent(projectId)}/assets/${encodeURIComponent(asset.id)}/thumbnail`} alt={asset.originalName} className="aspect-square" />
+  const [dropTarget, setDropTarget] = useState(false)
+  const draggable = Boolean(onDropPhoto) && !deleting && !reordering
+  // The payload is read back through the same id list the drop handler works
+  // on, so a stray text/uri-list from some other drag resolves to no photo and
+  // does nothing, rather than reordering the album by accident.
+  return <figure
+    draggable={draggable}
+    onDragStart={(event) => { event.dataTransfer.setData("text/plain", asset.id); event.dataTransfer.effectAllowed = "move" }}
+    onDragOver={(event) => { if (!onDropPhoto) return; event.preventDefault(); event.stopPropagation(); event.dataTransfer.dropEffect = "move"; setDropTarget(true) }}
+    onDragLeave={() => setDropTarget(false)}
+    onDragEnd={() => setDropTarget(false)}
+    onDrop={(event) => {
+      if (!onDropPhoto) return
+      event.preventDefault()
+      event.stopPropagation()
+      setDropTarget(false)
+      const moved = event.dataTransfer.getData("text/plain")
+      if (moved && moved !== asset.id) onDropPhoto(moved, asset.id)
+    }}
+    className={cn("group relative overflow-hidden rounded-lg border bg-card-soft transition-opacity", deleting && "opacity-40", selected && "border-primary ring-2 ring-primary", draggable && "cursor-grab active:cursor-grabbing", dropTarget && "border-primary ring-2 ring-primary ring-offset-2")}
+  >
+    <LazyApiImage path={`/projects/${encodeURIComponent(projectId)}/assets/${encodeURIComponent(asset.id)}/thumbnail`} alt={asset.originalName} className="aspect-square" draggable={false} />
     <span className="absolute left-1.5 top-1.5 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white">{asset.uploadIndex + 1}</span>
     {onToggleSelected && <label className="absolute inset-x-0 bottom-8 top-0 flex cursor-pointer items-start justify-center p-1.5">
       <span className="sr-only">{t("media.selectAsset", { name: asset.originalName })}</span>
@@ -420,7 +488,7 @@ function PhotoTile({ projectId, asset, deleting, onDelete, selected = false, onT
       // Always reachable by keyboard and on touch; only fades in on hover for pointers.
       className="absolute right-1 top-1 size-8 bg-black/55 text-white opacity-0 hover:bg-destructive hover:text-destructive-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
     ><Trash2 className="size-3.5" /></Button>
-    <figcaption className="px-2 py-1.5"><p className="truncate text-[11px] font-medium" title={asset.originalName}>{asset.originalName}</p><p className="text-[10px] text-muted-foreground">{formatBytes(asset.size)}</p></figcaption>
+    <figcaption className="flex items-center gap-1 px-2 py-1.5"><span className="min-w-0 flex-1"><p className="truncate text-[11px] font-medium" title={asset.originalName}>{asset.originalName}</p><p className="text-[10px] text-muted-foreground">{formatBytes(asset.size)}</p></span>{onMove && <span className="flex shrink-0"><Button variant="ghost" size="icon" className="size-7" aria-label={t("media.moveEarlier", { name: asset.originalName })} disabled={!canMoveBack || reordering || deleting} onClick={() => onMove(-1)}><ArrowLeft className="size-3.5" /></Button><Button variant="ghost" size="icon" className="size-7" aria-label={t("media.moveLater", { name: asset.originalName })} disabled={!canMoveForward || reordering || deleting} onClick={() => onMove(1)}><ArrowRight className="size-3.5" /></Button></span>}</figcaption>
   </figure>
 }
 

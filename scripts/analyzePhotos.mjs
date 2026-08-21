@@ -9,6 +9,7 @@ import { spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import { deriveRoleScores } from "./lib/tier1Editorial.mjs";
 import { createYunetDetector } from "./lib/yunetFaceDetector.mjs";
+import { orderPhotoInputFiles } from "./lib/photoInputOrder.mjs";
 
 const root = process.cwd();
 const dirIdx = process.argv.indexOf("--dir");
@@ -17,6 +18,8 @@ const outIdx = process.argv.indexOf("--out");
 const outPath = outIdx >= 0 ? process.argv[outIdx + 1] : "analysis/photos.json";
 const prefixIdx = process.argv.indexOf("--file-prefix");
 const filePrefix = prefixIdx >= 0 ? process.argv[prefixIdx + 1] : path.basename(inputDir);
+const uploadManifestIdx = process.argv.indexOf("--upload-manifest");
+const uploadManifestPath = uploadManifestIdx >= 0 ? path.resolve(root, process.argv[uploadManifestIdx + 1]) : "";
 const facesIdx = process.argv.indexOf("--faces");
 const facesPath = facesIdx >= 0 ? process.argv[facesIdx + 1] : "";
 const detectedFaces = facesPath ? JSON.parse(fs.readFileSync(path.resolve(root, facesPath), "utf8")) : null;
@@ -118,9 +121,10 @@ function hamming(a, b) {
 }
 
 
-const files = fs.readdirSync(inputDir)
-  .filter((n) => /\.(jpe?g|png|webp|heic|heif)$/i.test(n))
-  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+const files = orderPhotoInputFiles(
+  fs.readdirSync(inputDir).filter((n) => /\.(jpe?g|png|webp|heic|heif)$/i.test(n)),
+  uploadManifestPath,
+);
 
 if (!files.length) { console.error(`[analyzePhotos] FAILED: no supported photo files found in ${inputDir}`); process.exit(1); }
 

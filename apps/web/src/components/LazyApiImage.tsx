@@ -12,11 +12,14 @@ import { cn } from "@/lib/utils"
  * project with a hundred photos would fire a hundred blob requests the moment
  * the Media step mounted.
  */
-export function LazyApiImage({ path, alt, className, rootMargin = "400px" }: {
+export function LazyApiImage({ path, alt, className, rootMargin = "400px", draggable = true }: {
   path: string | null | undefined
   alt: string
   className?: string
   rootMargin?: string
+  // An <img> is draggable by default and outranks a draggable ancestor as the
+  // drag source, so a tile that wants to BE the dragged thing has to say so.
+  draggable?: boolean
 }) {
   const { t } = useI18n()
   const holder = useRef<HTMLDivElement>(null)
@@ -57,7 +60,7 @@ export function LazyApiImage({ path, alt, className, rootMargin = "400px" }: {
   }, [inView, path])
 
   return <div ref={holder} className={cn("relative overflow-hidden bg-muted", className)}>
-    {url && <img src={url} alt={alt} className="h-full w-full object-cover" />}
+    {url && <img src={url} alt={alt} draggable={draggable} className="h-full w-full object-cover" />}
     {!url && <div className={cn("h-full w-full", !failed && "animate-pulse bg-secondary/60")} />}
     {failed && <span className="absolute inset-0 grid place-items-center px-2 text-center text-[10px] leading-tight text-muted-foreground">{t("media.previewUnavailable")}</span>}
   </div>

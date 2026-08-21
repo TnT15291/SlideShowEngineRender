@@ -213,6 +213,19 @@ test("resume invalidates plan and downstream phases after prompt changes", (t) =
   assert.deepEqual([...state.reusable], ["analyze"]);
 });
 
+test("resume reanalyzes photos after the upload order changes", (t) => {
+  const f = completedFixture();
+  t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));
+  const uploadsPath = path.join(f.dir, "analysis/uploads.json");
+  fs.writeFileSync(uploadsPath, JSON.stringify({ photos: [] }));
+  const future = new Date(Date.now() + 2000);
+  fs.utimesSync(uploadsPath, future, future);
+
+  const state = inspectResume(f.project);
+  assert.equal(state.invalidatedAt, "analyze");
+  assert.deepEqual([...state.reusable], []);
+});
+
 test("resume rebuilds older English template projects that have no rewritten captions", (t) => {
   const f = completedFixture({ tier: "template", language: "en", recipe: "warm-film-01" });
   t.after(() => fs.rmSync(f.dir, { recursive: true, force: true }));

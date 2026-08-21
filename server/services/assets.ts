@@ -26,6 +26,9 @@ const assetSchema = z.object({
   uploadedAt: z.string().datetime(),
 })
 const uploadManifestSchema = z.object({ version: z.literal(1), assets: z.array(assetSchema) })
+export const reorderProjectPhotosInputSchema = z.object({
+  assetIds: z.array(z.string().uuid()).max(10_000),
+})
 
 export type AssetKind = z.infer<typeof assetKindSchema>
 export type ProjectAsset = z.infer<typeof assetSchema>
@@ -44,6 +47,7 @@ export type UploadAssetInput = {
   contentLength?: number
   body: AsyncIterable<Uint8Array>
 }
+export type ReorderProjectPhotosInput = z.infer<typeof reorderProjectPhotosInputSchema>
 
 const allowedFiles = {
   photo: {
@@ -144,6 +148,29 @@ export async function listProjectAssets(projectId: string, engineRoot = process.
   const paths = projectPaths(projectId, engineRoot)
   await ensureProject(paths.projectManifest)
   return responseFromAssets((await readUploads(paths.uploadManifest)).assets)
+}
+
+/** Replace the complete photo order without changing stable asset ids or file names. */
+export async function reorderProjectPhotos(projectId: string, input: ReorderProjectPhotosInput, engineRoot = process.cwd()): Promise<ProjectAssets> {
+  return withProjectLock(projectId, async () => {
+    const paths = projectPaths(projectId, engineRoot)
+    await ensureProject(paths.projectManifest)
+    const manifest = await readUploads(paths.uploadManifest)
+    const photos = manifest.assets.filter((asset) => asset.kind === "photo")
+    const requested = input.assetIds
+    const unique = new Set(requested)
+    if (unique.size !== requested.length) throw new AssetRequestError(400, "DUPLICATE_ASSET_ID", "Photo order contains the same asset more than once")
+    const expected = new Set(photos.map((asset) => asset.id))
+    if (requested.length !== photos.length || requested.some((id) => !expected.has(id))) {
+      throw new AssetRequestError(409, "PHOTO_ORDER_MISMATCH", "Photo order must contain every uploaded photo exactly once")
+    }
+    const order = new Map(requested.map((id, index) => [id, index]))
+    const assets = manifest.assets.map((asset) => asset.kind === "photo"
+      ? { ...asset, uploadIndex: order.get(asset.id)! }
+      : asset)
+    await writeJsonAtomic(paths.uploadManifest, { version: 1, assets })
+    return responseFromAssets(assets)
+  })
 }
 
 export async function getProjectAssetFile(projectId: string, assetId: string, engineRoot = process.cwd()): Promise<ProjectAssetFile> {

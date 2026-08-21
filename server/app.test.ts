@@ -418,6 +418,14 @@ test("project asset routes forward binary uploads and support list and delete", 
     assert.equal(listResponse.status, 200)
     assert.deepEqual((await listResponse.json() as { data: typeof assets }).data, assets)
 
+    const orderResponse = await fetch(`${baseUrl}/api/projects/linh-nam/assets/order`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assetIds: [asset.id] }),
+    })
+    assert.equal(orderResponse.status, 200)
+    assert.deepEqual((await orderResponse.json() as { data: typeof assets }).data, assets)
+
     const deleteResponse = await fetch(`${baseUrl}/api/projects/linh-nam/assets/${asset.id}`, { method: "DELETE" })
     assert.equal(deleteResponse.status, 200)
     assert.deepEqual((await deleteResponse.json() as { data: typeof assets }).data, assets)
@@ -430,6 +438,10 @@ test("project asset routes forward binary uploads and support list and delete", 
       return asset
     },
     listProjectAssets: async () => assets,
+    reorderProjectPhotos: async (_projectId, input) => {
+      assert.deepEqual(input.assetIds, [asset.id])
+      return assets
+    },
     deleteProjectAsset: async () => assets,
   })
 })

@@ -6,7 +6,7 @@ import path from "node:path"
 import { Readable } from "node:stream"
 import test from "node:test"
 
-import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, MUSIC_MAX_BYTES, uploadProjectAsset } from "./assets.js"
+import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, MUSIC_MAX_BYTES, reorderProjectPhotos, uploadProjectAsset } from "./assets.js"
 
 async function createWorkspace() {
   const root = await mkdtemp(path.join(os.tmpdir(), "storeel-assets-"))
@@ -71,6 +71,30 @@ test("asset service keeps every track from a multi-file upload", async (context)
   assert.deepEqual(
     JSON.parse(await readFile(path.join(projectDir, "project.json"), "utf8")).music,
     tracks.map((track) => `music/${track.storedName}`),
+  )
+})
+
+test("photo reorder replaces the complete order and leaves music untouched", async (context) => {
+  const { root, projectDir } = await createWorkspace()
+  context.after(() => rm(root, { recursive: true, force: true }))
+
+  const first = await upload(root, { filename: "First.jpg", uploadIndex: 3 })
+  const second = await upload(root, { filename: "Second.jpg", uploadIndex: 7 })
+  const music = await upload(root, { kind: "music", filename: "Song.mp3", uploadIndex: 4, mimeType: "audio/mpeg" })
+  const reordered = await reorderProjectPhotos("linh-nam", { assetIds: [second.id, first.id] }, root)
+
+  assert.deepEqual(reordered.photos.map((asset) => [asset.id, asset.uploadIndex]), [[second.id, 0], [first.id, 1]])
+  assert.deepEqual(reordered.music.map((asset) => [asset.id, asset.uploadIndex]), [[music.id, 4]])
+  const persisted = JSON.parse(await readFile(path.join(projectDir, "analysis", "uploads.json"), "utf8"))
+  assert.deepEqual(persisted.assets.filter((asset: { kind: string }) => asset.kind === "photo").map((asset: { id: string; uploadIndex: number }) => [asset.id, asset.uploadIndex]), [[first.id, 1], [second.id, 0]])
+
+  await assert.rejects(
+    reorderProjectPhotos("linh-nam", { assetIds: [first.id, first.id] }, root),
+    (error: unknown) => error instanceof AssetRequestError && error.code === "DUPLICATE_ASSET_ID",
+  )
+  await assert.rejects(
+    reorderProjectPhotos("linh-nam", { assetIds: [first.id] }, root),
+    (error: unknown) => error instanceof AssetRequestError && error.code === "PHOTO_ORDER_MISMATCH",
   )
 })
 

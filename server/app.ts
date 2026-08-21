@@ -12,7 +12,7 @@ import { acceptTerms, AuthRequestError, changePassword, changePasswordInputSchem
 import { EmailRequestError, requireEmailConfig, sendPasswordResetEmail } from "./services/email.js"
 import { BillingRequestError, createCheckoutSession, getPlanCatalog, handleWebhookEvent, type PlanId } from "./services/billing.js"
 import { createMomoCheckout, handleMomoIpn, MomoBillingError } from "./services/momoBilling.js"
-import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type UploadAssetInput } from "./services/assets.js"
+import { AssetRequestError, deleteProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, listProjectAssets, reorderProjectPhotos, reorderProjectPhotosInputSchema, uploadProjectAsset, type ProjectAsset, type ProjectAssetFile, type ProjectAssets, type ReorderProjectPhotosInput, type UploadAssetInput } from "./services/assets.js"
 import { analysisService, AnalysisRequestError, cullInputSchema, startAnalysisInputSchema, type AnalysisSnapshot, type StartAnalysisInput } from "./services/analysis.js"
 import { directorGenerateSchema, directorMusicChoiceSchema, directorService, directorStoryChoiceSchema, DirectorRequestError, type DirectorGenerateInput, type DirectorMusicChoiceInput, type DirectorState, type DirectorStoryChoiceInput } from "./services/director.js"
 import { deliveryService, DeliveryRequestError, type DeliverySnapshot } from "./services/delivery.js"
@@ -54,6 +54,7 @@ type Services = {
   setProjectShared: (projectId: string, shared: boolean) => Promise<ProjectSummary>
   listSharedProjects: () => Promise<ProjectSummary[]>
   listProjectAssets: (projectId: string) => Promise<ProjectAssets>
+  reorderProjectPhotos: (projectId: string, input: ReorderProjectPhotosInput) => Promise<ProjectAssets>
   uploadProjectAsset: (input: UploadAssetInput) => Promise<ProjectAsset>
   getProjectAssetFile: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
   getProjectAssetThumbnail: (projectId: string, assetId: string) => Promise<ProjectAssetFile>
@@ -134,7 +135,7 @@ const defaultServices: Services = {
   resetPassword: (input) => resetPasswordWithToken(input.token, input.newPassword),
   createSession, deleteSession, getSession, getUserById, consumeRenderEntitlement,
   findOpenReservation, reserveRender, settleRender, releaseReservation,
-  listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, uploadProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, deleteProjectAsset,
+  listRecipes, getRecipe, listProjects, getProject, createProject, deleteProject, setProjectShared, listSharedProjects, listProjectAssets, reorderProjectPhotos, uploadProjectAsset, getProjectAssetFile, getProjectAssetThumbnail, deleteProjectAsset,
   assertLicensedMusic: (projectId) => assertLicensedMusic(projectId),
   getJob: jobRunner.get, startJob: jobRunner.start, cancelJob: jobRunner.cancel, completeJobManually: jobRunner.completeManually, subscribeToJob: jobRunner.subscribe,
   getAnalysis: analysisService.get, startAnalysis: analysisService.start, suggestCull: analysisService.suggestCull, applyCull: analysisService.applyCull,
@@ -560,6 +561,19 @@ async function routeRequest(request: IncomingMessage, response: ServerResponse, 
     }
     response.setHeader("Allow", "GET, POST, OPTIONS")
     sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports GET and POST")
+    return
+  }
+
+  const projectAssetOrderMatch = url.pathname.match(/^\/api\/projects\/([^/]+)\/assets\/order$/)
+  if (projectAssetOrderMatch) {
+    if (request.method !== "PATCH") {
+      response.setHeader("Allow", "PATCH, OPTIONS")
+      sendError(response, 405, "METHOD_NOT_ALLOWED", "This endpoint only supports PATCH")
+      return
+    }
+    const projectId = parseResourceId(projectAssetOrderMatch[1])
+    const input = await readJsonBody(request, reorderProjectPhotosInputSchema)
+    sendJson(response, 200, { ok: true, data: await services.reorderProjectPhotos(projectId, input) })
     return
   }
 
