@@ -15,7 +15,13 @@ function card(dir, { surround, c0, c1, size = [620, 500], at = [650, 290] }) {
   const file = path.join(dir, `${surround}-${c0}.mp4`);
   const result = spawnSync(ffmpeg, ["-v", "error", "-y",
     "-f", "lavfi", "-i", `color=c=${surround}:s=1920x1080:d=1:r=30`,
-    "-f", "lavfi", "-i", `gradients=s=${size[0]}x${size[1]}:c0=${c0}:c1=${c1}:d=1:r=30`,
+    // `seed` and `speed` are pinned, and that is load-bearing: `gradients` defaults to
+    // seed=-1 (random gradient endpoints) and speed=0.01 (it rotates), so this exact
+    // command wrote a DIFFERENT image — and a different YAVG — on every run. The gap
+    // assertion below then failed inside the full suite and passed when the file ran
+    // alone, which reads like a load problem and is not one. The asset generators
+    // (generateMasks / generateLightLeaks / generateAdvancedAssets) already seed theirs.
+    "-f", "lavfi", "-i", `gradients=s=${size[0]}x${size[1]}:c0=${c0}:c1=${c1}:seed=7:speed=0:d=1:r=30`,
     // A full second of frames, not one: qaClip samples the MIDDLE of the scene, and a
     // single-frame file has nothing to seek to at 0.5s.
     "-filter_complex", `[0:v][1:v]overlay=x=${at[0]}:y=${at[1]},format=yuv420p[v]`,
