@@ -12,7 +12,7 @@ Video 16:9, **thời lượng linh hoạt theo kịch bản đã duyệt**, dự
 
 ---
 
-## Tình trạng (cập nhật 2026-08-15)
+## Tình trạng (cập nhật 2026-08-23)
 
 Phần **code** của Phase 1–3 đã dựng xong và có test chạy thật trong `npm run test:unit`
 (`test/narrated-project.test.mjs`: 11 test, trong đó có một lần `--dry-run` thật xuyên qua
@@ -26,10 +26,15 @@ và đó mới là đường găng.
 | `npm run narration:synthesize` — TTS + ghép | ✅ có; adapter VieNeu (bridge Python) + FPT.AI, cache theo hash, loudnorm hai lượt |
 | `npm run narration:timeline` — dựng timeline | ✅ có; đủ 9 luật dựng + cổng chặn tư liệu thiếu |
 | `npm run narration:srt` — xuất phụ đề | ✅ có; tự cắt beat dài thành cue đọc được |
-| Kịch bản đã duyệt nội dung/số liệu | ❌ `reviewStatus: "needs-content-approval"` — cổng chặn đang đóng |
-| Gán tư liệu cho từng beat | ❌ mọi beat còn `visual.kind = "pending"` |
-| Kho clip đã kiểm kê | ❌ chưa có số phút dùng được |
-| Nhạc nền có giấy phép | ❌ chưa chọn |
+| Kịch bản đã duyệt nội dung/số liệu | ❌ vẫn `reviewStatus: "needs-content-approval"` (đo 23-08) — bản phim hiện có dựng bằng `--allow-unapproved`, **chưa giao được** |
+| Gán tư liệu cho từng beat | ✅ **53/53 beat đã có hình**: 81 ảnh + 18 clip. Từ 19-08 việc này do `narration:assign` / `narration:propose` + `narration:apply` làm, không còn đặt tay — xem [PLAN-NARRATED-PRODUCT.md](PLAN-NARRATED-PRODUCT.md) §N2 |
+| Kho clip đã kiểm kê | ✅ `review/footage-inventory.md` |
+| Nhạc nền có giấy phép | ❌ đã **chọn** nhưng chưa rõ giấy phép; file nằm ở `input/music/` nên `assertLicensedMusic` (vốn chỉ soi `music/`) **không thấy** |
+
+**Phim đã có, chưa giao.** `output/antt-lao-bao-2026.mp4` — **10:46**, 1920×1080, h264+aac, 640 MB
+(render 2026-08-17). Timeline hiện tại `timeline/antt-lao-bao.json` **mới hơn bản đã render**:
+106 slide / 718s so với 97 slide của bản dựng ra file trên. `output/archive/` còn giữ **8 bản render
+cũ, 3,7 GB** — một mình dự án này chiếm ~4,4 GB trong 50 GB của `projects/`.
 
 **Cổng chặn:** cả `narration:synthesize` lẫn `narration:timeline` đều từ chối chạy khi
 `script.reviewStatus !== "approved"`. Cờ `--allow-unapproved` chỉ để thử giọng, không để

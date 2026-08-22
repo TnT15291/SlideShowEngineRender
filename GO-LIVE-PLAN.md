@@ -17,7 +17,32 @@ Trả lời: **hai câu hỏi khác nhau, hai đáp án khác nhau.**
 | Hình thức bán | Trạng thái |
 |---|---|
 | **Nhận ảnh → tự render → giao file** (anh là người vận hành) | ✅ **Bán được ngay hôm nay** |
-| **Web public tự phục vụ** (khách tự đăng ký, trả tiền, render) | ❌ **Chưa** — 6 điểm chặn cứng ở §2 |
+| **Web public tự phục vụ** (khách tự đăng ký, trả tiền, render) | 🟡 **Còn 1 điểm chặn** — 5/6 đã đóng trong code; xem khối *Kiểm lại 2026-08-23* ngay dưới |
+
+### Kiểm lại 2026-08-23 — 5/6 điểm chặn đã đóng
+
+Bảng §2 bên dưới **giữ nguyên nguyên văn** để còn đọc được lý do từng việc tồn tại. Trạng thái
+thật của chúng, đo lại trên nhánh `narrated-ai-director`:
+
+| | Trạng thái | Bằng chứng |
+|---|---|---|
+| G2.1 email + reset mật khẩu | ✅ | [`auth.ts`](server/services/auth.ts): `emailSchema`, token hash + hạn dùng, backfill tài khoản cũ |
+| G2.2 ToS + Privacy | 🟡 | [`LegalPage.tsx`](apps/web/src/LegalPage.tsx) mở được khi chưa đăng nhập; đăng ký chặn bằng `acceptedTerms: z.literal(true)`. **Còn 5 trường `businessDetails` là `TODO:`** — trang tự tố cáo, nhưng chưa điền là chưa dùng được |
+| G2.3 deploy + HTTPS | ✅ | `Dockerfile` hai target + [`deploy/Caddyfile`](deploy/Caddyfile); API không listen ra ngoài |
+| G2.4 sao lưu | 🟡 | `scripts/backupStoreel.mjs` + `restoreStoreel.mjs` đã có. **Chưa có test, chưa từng restore thử** — mà nghiệm thu của chính G2.4 là *phục hồi lên một máy trắng* |
+| G2.5 key live + giá thật | ❌ | **Điểm chặn duy nhất còn lại.** Việc kinh doanh, không phải việc code |
+| G2.6 trần render đồng thời | ✅ | [`jobs.test.ts`](server/services/jobs.test.ts): 5 job đồng thời → 1 chạy, 4 xếp hàng, drain đúng thứ tự |
+| G2.7 bản quyền nhạc | ✅ | `musicProvenance.ts` hash từng track → `409 DEV_MUSIC_NOT_LICENSED`. Cưỡng chế bằng **code**, không chỉ bằng ToS |
+
+**Gate đo cùng ngày:** typecheck 5/5 · build · `docs:check` · `test:api` 157/157 · `test:unit` 595/595 ·
+`test:integration` 1/1 · `npm audit --omit=dev` 0 lỗ hổng. Lần chạy đầu đỏ 594/595 vì một test flaky
+thật — `test/frame-brightness-region.test.mjs` dựng ảnh bằng `gradients` mà không truyền `seed`, nên
+mỗi lần encode ra một ảnh khác. Đã vá cùng ngày. Nhớ rằng `check` nối bằng `&&`: một test đỏ ở
+`test:unit` làm `test:integration` và `audit:prod` **không chạy lần nào**.
+
+**Đĩa, đo lại:** `projects/` **50 GB / 59 dự án** (10-08 đo 41 GB/58), `input/` 9,9 GB, `video tests/`
+3,8 GB, `temp/` 2,3 GB, `templates/` 1,6 GB, `.git` 4,4 GB — tổng cây **74 GB**. G1.4 (kỷ luật lưu trữ)
+vẫn mở: `npm run purge:delivered` có sẵn nhưng con số nói nó chưa thành thói quen.
 
 ### Bằng chứng đo được (2026-08-10)
 
@@ -52,6 +77,9 @@ anh định, thì toàn bộ Giai đoạn 2 là công vô ích. Đây là lý do
 ---
 
 ## 2. Giai đoạn 2 — Web bán nửa tự phục vụ
+
+> **2026-08-23:** năm trong bảy mục dưới đây đã đóng. Giữ nguyên văn để còn đọc được *vì sao*
+> từng việc tồn tại — trạng thái hiện tại nằm ở khối *Kiểm lại* trong §0.
 
 Khách đăng ký, upload, trả tiền trên web. **Render vẫn do anh bấm** — `JobRunnerPanel.tsx` và admin
 incident center đã có sẵn. Cách này bỏ được điểm chặn nặng nhất (hàng đợi render) mà vẫn thu tiền tự động.
