@@ -7,6 +7,7 @@ import { z } from "zod"
 import { listProjectAssets } from "./assets.js"
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
 import { writeJsonAtomic } from "./atomicFile.js"
+import { isInside } from "./pathGuard.js"
 
 const projectSchema = z.object({
   id: z.string(), analysisDir: z.string().min(1), timeline: z.string().min(1), output: z.string().min(1),
@@ -48,11 +49,6 @@ const imageMime = new Map([
   [".jpg", "image/jpeg"], [".jpeg", "image/jpeg"], [".png", "image/png"], [".webp", "image/webp"],
   [".heic", "image/heic"], [".heif", "image/heif"],
 ])
-
-function isInside(parent: string, target: string) {
-  const relative = path.relative(parent, target)
-  return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
-}
 
 function slotsOf(slide: z.infer<typeof slideSchema>): TimelineImageSlot[] {
   const slots: TimelineImageSlot[] = []

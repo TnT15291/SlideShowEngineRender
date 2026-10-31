@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
 import { writeJsonAtomic } from "./atomicFile.js"
+import { isInside } from "./pathGuard.js"
 
 export const revisionInputSchema = z.object({ request: z.string().trim().min(1).max(10_000), maxRounds: z.number().int().min(1).max(20).default(2), confirmRestory: z.boolean().optional() })
 export const revisionUndoSchema = z.object({ round: z.number().int().positive(), maxRounds: z.number().int().min(1).max(20).default(2) })
@@ -24,11 +25,6 @@ export class RevisionRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string, readonly details?: unknown) { super(message) }
 }
 
-function inside(parent: string, child: string) {
-  const relative = path.relative(parent, child)
-  return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
-}
-
 export function createRevisionService(engineRoot = process.cwd(), revisionScript = path.resolve(engineRoot, "scripts", "reviseProject.mjs")) {
   const projectsRoot = path.resolve(engineRoot, "projects")
 
@@ -40,7 +36,7 @@ export function createRevisionService(engineRoot = process.cwd(), revisionScript
       if (manifest.id !== projectId) throw new RevisionRequestError(409, "PROJECT_ID_MISMATCH", "Project directory and manifest ids do not match")
       const ledgerFile = path.resolve(projectDir, "directives.json")
       const jobFile = path.resolve(projectDir, manifest.analysisDir, "job-manifest.json")
-      if (!inside(projectDir, ledgerFile) || !inside(projectDir, jobFile)) throw new RevisionRequestError(500, "INVALID_PROJECT_MANIFEST", "A project artifact path escapes the project directory")
+      if (!isInside(projectDir, ledgerFile) || !isInside(projectDir, jobFile)) throw new RevisionRequestError(500, "INVALID_PROJECT_MANIFEST", "A project artifact path escapes the project directory")
       return { projectDir, ledgerFile, jobFile }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") throw new RevisionRequestError(404, "PROJECT_NOT_FOUND", `Project not found: ${projectId}`)

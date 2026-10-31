@@ -4,6 +4,7 @@ import path from "node:path"
 import { z } from "zod"
 
 import { manualCompletionReason } from "./jobs.js"
+import { isInside } from "./pathGuard.js"
 
 const projectSchema = z.object({ id: z.string(), analysisDir: z.string().min(1), timeline: z.string().min(1), output: z.string().min(1).default("output/final.mp4") }).passthrough()
 const stateSchema = z.object({
@@ -38,8 +39,6 @@ export type QaSnapshot = {
 export class QaRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) { super(message) }
 }
-
-function isInside(parent: string, child: string) { const relative = path.relative(parent, child); return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative) }
 
 export function createQaService(engineRoot = process.cwd()) {
   const projectsRoot = path.resolve(engineRoot, "projects")

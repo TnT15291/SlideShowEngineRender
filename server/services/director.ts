@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { acquireProjectOperation, ProjectOperationBusyError } from "./projectOperations.js"
 import { writeJsonAtomic, writeTextAtomic } from "./atomicFile.js"
+import { isInside } from "./pathGuard.js"
 
 export const directorGenerateSchema = z.object({ brief: z.string().trim().min(1).max(10_000) })
 export const directorStoryChoiceSchema = z.object({ choice: z.enum(["A", "B", "C", "D"]) })
@@ -26,11 +27,6 @@ const projectSchema = z.object({
 
 export class DirectorRequestError extends Error {
   constructor(readonly status: number, readonly code: string, message: string, readonly details?: unknown) { super(message) }
-}
-
-function isInside(parent: string, child: string) {
-  const relative = path.relative(parent, child)
-  return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
 }
 
 export function createDirectorService(engineRoot = process.cwd(), commandRunner?: (args: string[]) => Promise<string>) {
