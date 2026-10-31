@@ -10,6 +10,7 @@ import {
 import {
   ensureDir,
   FfmpegError,
+  ffmpegSupportsOptionFiles,
   Logger,
   probeDurationSeconds,
   runFfmpeg,
@@ -250,13 +251,17 @@ export function chunkXfadeInputs<T>(
  * slides, `-i` arguments plus the inline graph exceed CreateProcess' length limit
  * before FFmpeg can even start. FFmpeg's script option reads the exact same graph
  * from disk and leaves the spawned argument list small enough to launch. */
-export function externalizeFilterComplex(args: string[], scriptPath: string): string[] {
+export function externalizeFilterComplex(
+  args: string[],
+  scriptPath: string,
+  optionFiles = ffmpegSupportsOptionFiles()
+): string[] {
   const index = args.indexOf("-filter_complex");
   if (index < 0 || !args[index + 1]) return args;
   fs.writeFileSync(scriptPath, args[index + 1], "utf8");
   return [
     ...args.slice(0, index),
-    "-filter_complex_script",
+    optionFiles ? "-/filter_complex" : "-filter_complex_script",
     scriptPath,
     ...args.slice(index + 2),
   ];

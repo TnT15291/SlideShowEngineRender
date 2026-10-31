@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -108,6 +108,26 @@ function quoteArg(a: string): string {
 /** Resolve ffmpeg: FFMPEG_PATH env override > bundled ffmpeg-static > PATH. */
 export function ffmpegBin(): string {
   return process.env.FFMPEG_PATH || ffmpegStaticPath || "ffmpeg";
+}
+
+const optionFileSupport = new Map<string, boolean>();
+
+/**
+ * Whether ffmpeg reads option values from files via `-/option <file>` (FFmpeg
+ * 7.0+). FFmpeg 8 removed the older `-filter_complex_script`, and 5.x/6.x do not
+ * know the new form, so the choice has to follow the installed binary.
+ */
+export function ffmpegSupportsOptionFiles(): boolean {
+  const bin = ffmpegBin();
+  const cached = optionFileSupport.get(bin);
+  if (cached !== undefined) return cached;
+  const result = spawnSync(bin, ["-hide_banner", "-version"], { encoding: "utf8", windowsHide: true });
+  const banner = result.stdout ?? "";
+  const release = /ffmpeg version n?(\d+)\./.exec(banner);
+  // Git snapshot builds report "N-<commit count>-g<hash>" and are newer than any release.
+  const supported = release ? Number(release[1]) >= 7 : /ffmpeg version N-/.test(banner);
+  optionFileSupport.set(bin, supported);
+  return supported;
 }
 
 /**

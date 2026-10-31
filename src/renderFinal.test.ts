@@ -15,12 +15,24 @@ test("large xfade graphs are written to a script instead of the Windows command 
   ).join(";");
   const args = ["-y", "-i", "one.mp4", "-filter_complex", graph, "-map", "[vout]", "out.mp4"];
 
-  const result = externalizeFilterComplex(args, script);
+  const result = externalizeFilterComplex(args, script, false);
 
   assert.equal(result.includes("-filter_complex"), false);
   assert.equal(result[result.indexOf("-filter_complex_script") + 1], script);
   assert.equal(readFileSync(script, "utf8"), graph);
   assert.ok(result.join(" ").length < args.join(" ").length / 10);
+});
+
+test("FFmpeg 7+ reads the graph through -/filter_complex, since 8 removed -filter_complex_script", (t) => {
+  const temp = mkdtempSync(path.join(os.tmpdir(), "xfade-script-"));
+  t.after(() => rmSync(temp, { recursive: true, force: true }));
+  const script = path.join(temp, "xfade-filter.txt");
+  const args = ["-y", "-i", "one.mp4", "-filter_complex", "[0:v]null[vout]", "-map", "[vout]", "out.mp4"];
+
+  const result = externalizeFilterComplex(args, script, true);
+
+  assert.deepEqual(result, ["-y", "-i", "one.mp4", "-/filter_complex", script, "-map", "[vout]", "out.mp4"]);
+  assert.equal(readFileSync(script, "utf8"), "[0:v]null[vout]");
 });
 
 test("large xfade jobs are split into decoder-safe batches", () => {
