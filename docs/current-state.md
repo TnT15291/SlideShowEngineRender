@@ -1,6 +1,7 @@
 # Trạng thái hiện tại & kế hoạch
 
-> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-08-01**
+> Tài liệu **sống** — cập nhật mỗi khi xong một bước. Cập nhật cuối: **2026-10-31** (đối chiếu
+> backlog UI §4c với code). Trước đó: **2026-08-01**
 > (khảo sát trend 2026 tiếp tục — 3 field color grade mới: `halation`/`duotone`/`vhs`, xem
 > [SLIDESHOW_RESEARCH.md](SLIDESHOW_RESEARCH.md) research pass cùng ngày).
 > (`runProject.mjs` là orchestrator duy nhất cho cả ba tier; Premium có hai cổng quyết định
@@ -779,7 +780,10 @@ Dùng: `node scripts/deliver.mjs <timeline.json> [--tier director|lite] [--out-d
 Đợt rà soát giao diện `apps/web` ngày 2026-07-28 đã đóng toàn bộ P0/P1 và phần lớn P2. Những
 mục dưới đây **chưa làm vì cần bạn quyết định**, không phải vì khó — mỗi mục ghi rõ vướng ở đâu.
 
-- ⬜ **Consent của bước vision analysis không hợp lệ khi chưa có ước tính.**
+- 🟡 **Consent của bước vision analysis không hợp lệ khi chưa có ước tính.** *(2026-10-31: nút
+  gửi đã khoá tới khi technical analysis xong — `technicalReady` — tức là không gửi được ảnh khi
+  chưa có con số; nhưng checkbox vẫn tick được lúc ô ước tính còn `—`. Lựa chọn (a)/(b) dưới đây
+  vẫn chưa chốt.)*
   `AnalysisPanel.tsx` hiện checkbox *"I reviewed this estimate and approve sending N photo
   previews to api.openai.com"* trong khi ô **Est. USD hiển thị `—`** (`vision.estimatedUsd` là
   `null` cho tới khi chạy technical analysis xong). Khách không thể "review" một con số không
@@ -788,10 +792,10 @@ mục dưới đây **chưa làm vì cần bạn quyết định**, không phả
   Cần chốt trước khi sửa: (a) chặn hẳn checkbox + nút khi chưa có ước tính, hay (b) hiện một
   khoảng giá trần tính từ `photoCount × đơn giá` rồi mới cho tick? (a) an toàn hơn nhưng buộc
   chạy technical analysis trước; (b) mượt hơn nhưng phải cam kết một con số trần.
-- ⬜ **i18n cho UI.** Nội dung recipe là tiếng Việt, `language` mặc định `vi`, có tích hợp MoMo —
-  nhưng toàn bộ chrome là tiếng Anh. Đây là một hạng mục kiến trúc (mọi chuỗi trong ~15 file +
-  chọn thư viện + chốt nguồn dịch), không phải polish. Cần quyết: VN-only hay song ngữ?
-- ⬜ **Nhãn "Bride"/"Groom" cứng và bắt buộc** ở intake. Đổi sang trung tính (vd "Partner 1/2")
+- ✅ **i18n cho UI.** Đã chốt song ngữ: `apps/web/src/lib/i18n.tsx` + bảng chuỗi vi/en
+  `lib/strings.ts` (có `i18n.test.ts`); chrome dùng `t()` ở hầu hết các trang.
+- ⬜ **Nhãn "Bride"/"Groom" cứng và bắt buộc** ở intake (nay đã dịch "Cô dâu"/"Chú rể", nhưng
+  vẫn là hai trường bắt buộc). Đổi sang trung tính (vd "Partner 1/2")
   là quyết định về định vị sản phẩm, không phải kỹ thuật — engine/recipe copy đang dùng
   `bride`/`groom` ở nhiều chỗ nên đổi sẽ lan xuống `copyVariants`/`writeRecipeCopy`.
 - ⬜ **Mô hình giá theo tier.** Ba tier hiện tiêu **cùng 1 render credit** dù Premium tốn nhiều
