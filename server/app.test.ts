@@ -467,6 +467,23 @@ test("project asset content route streams uploaded media for instant preview", a
   })
 })
 
+// Starting a render now has preconditions (renderPreconditions.ts) that run
+// BEFORE the charge, so every job test has to supply media a run could
+// actually succeed with. `recipe: null` means "no authored minimum", which is
+// how Lite and Premium projects behave.
+const READY_ASSETS = {
+  photos: [{ id: "p1" }, { id: "p2" }] as never,
+  music: [{ id: "m1" }] as never,
+  limits: { photoMaxBytes: 1, musicMaxBytes: 1 },
+}
+const readyToRender = {
+  listProjectAssets: async () => READY_ASSETS,
+  getRecipe: async () => null,
+  findOpenReservation: async () => null,
+  reserveRender: async () => undefined,
+  settleRender: async () => false,
+}
+
 test("project job routes validate start, cancel, and open an SSE snapshot stream", async () => {
   const snapshot: JobSnapshot = {
     projectId: "linh-nam", status: "running", currentPhase: "analyze", progress: 14, error: null,
@@ -502,6 +519,7 @@ test("project job routes validate start, cancel, and open an SSE snapshot stream
     await new Promise((resolve) => setTimeout(resolve, 20))
     assert.equal(unsubscribed, true)
   }, {
+    ...readyToRender,
     getProject: async () => OWNED_PROJECT,
     consumeRenderEntitlement: async () => undefined,
     getJob: async () => snapshot,
@@ -515,6 +533,7 @@ test("project job routes validate start, cancel, and open an SSE snapshot stream
     assert.equal(response.status, 409)
     assert.equal((await response.json() as { error: { code: string } }).error.code, "JOB_ALREADY_RUNNING")
   }, {
+    ...readyToRender,
     getProject: async () => OWNED_PROJECT,
     consumeRenderEntitlement: async () => undefined,
     startJob: async () => { throw new JobRequestError(409, "JOB_ALREADY_RUNNING", "already running") },
@@ -588,23 +607,6 @@ test("DELETE project does not cancel when no run is in flight", async () => {
     deleteProject: async () => { calls.push("delete"); return { id: "linh-nam" } },
   })
 })
-
-// Starting a render now has preconditions (renderPreconditions.ts) that run
-// BEFORE the charge, so every job test has to supply media a run could
-// actually succeed with. `recipe: null` means "no authored minimum", which is
-// how Lite and Premium projects behave.
-const READY_ASSETS = {
-  photos: [{ id: "p1" }, { id: "p2" }] as never,
-  music: [{ id: "m1" }] as never,
-  limits: { photoMaxBytes: 1, musicMaxBytes: 1 },
-}
-const readyToRender = {
-  listProjectAssets: async () => READY_ASSETS,
-  getRecipe: async () => null,
-  findOpenReservation: async () => null,
-  reserveRender: async () => undefined,
-  settleRender: async () => false,
-}
 
 test("every public job is a metered render", async () => {
   const snapshot: JobSnapshot = {
