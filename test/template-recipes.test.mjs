@@ -401,7 +401,7 @@ test("the white-weddings title reprise fits its slot instead of leaning on fit_t
   const layout = library.layouts.find((item) => item.id === recipe.looks[reprise.look].layout);
   const sample = (value) => value.replace(/\{\{bride\}\}/g, "Linh").replace(/\{\{groom\}\}/g, "Nam").replace(/\{\{[^}]+\}\}/g, "X");
   const measure = (text, slot) => createdMeasurer.inspect({
-    text: sample(text), fontFile: recipe.defaults.fonts[slot.fontRole], size: slot.sizePx,
+    text: sample(text), font: recipe.defaults.fonts[slot.fontRole], size: slot.sizePx,
     width: slot.width, height: slot.height, lineSpacing: slot.lineSpacing || 0,
   });
   const createdMeasurer = createTextMeasurer({ root });
