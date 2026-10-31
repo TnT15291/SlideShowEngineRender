@@ -190,7 +190,7 @@ Ghi lại ở đây để không mất khi dọn các tracker đã đóng:
 | ~~`duplicate_caption` trên repeat variant, 5 recipe~~ | ✅ Đo lại 2026-08-19: bốn ca cũ là echo mở/kết có chủ ý; ca thật còn lại ở `white-weddings-full-01` đã đổi copy và canary còn 0 `duplicate_caption` | Đã đóng |
 | Lite còn Phase 6–7; P1 còn render smoke 2 profile, P2 còn canary | `docs/LITE-QUALITY-STABILITY-PROGRESS.md` | Nhẹ nếu chỉ bán tier template |
 | Premium còn Hướng B (Phase 3); P2 hoãn có lý do | `docs/PREMIUM-QUALITY-STABILITY-PROGRESS.md` | Chặn việc bán gói Premium |
-| `test:api` còn 1 test job-runner chập chờn | — | Nhẹ, nhưng đừng để nó che một lỗi thật |
+| ~~`test:api` còn 1 test job-runner chập chờn~~ | ✅ 2026-10-31: không chập chờn mà hỏng chắc chắn — test route job không stub `listProjectAssets`, nên POST `/job` đọc `projects/` thật và trả 404 trên mọi máy không có dự án đó (CI, Release Gate). Đã stub | Đã đóng |
 | Sắp xếp lại thứ tự ảnh chưa có endpoint | `docs/UI-UX-ASSESSMENT-2026-08.md` §"Deliberately not done" | Nhẹ — UI vẫn hứa "giữ thứ tự upload" |
 
 ---
