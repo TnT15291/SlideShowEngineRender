@@ -16,7 +16,7 @@ const summarySchema = z.object({
   preflightPasses: z.number().int().nonnegative().default(0), preflightFixes: z.number().int().nonnegative().default(0), preflightCapped: z.boolean().default(false),
   journal: z.array(z.string()).default([]), manualReview: z.array(z.string()).default([]),
 })
-const proxySchema = z.object({ verdict: z.enum(["ok", "review"]), problems: z.array(z.object({ id: z.string(), check: z.string(), flags: z.array(z.string()), detail: z.string().optional() })).default([]), checks: z.record(z.unknown()).default({}) }).passthrough()
+const proxySchema = z.object({ verdict: z.enum(["ok", "review"]), problems: z.array(z.object({ id: z.string(), check: z.string(), flags: z.array(z.string()), detail: z.string().optional() })).default([]), checks: z.record(z.string(), z.unknown()).default({}) }).passthrough()
 const clipSchema = z.object({ scenes: z.number().int().optional(), passed: z.number().int().optional(), flagged: z.number().int().optional(), problems: z.array(z.object({ id: z.string(), check: z.string(), flags: z.array(z.string()) })).default([]) }).passthrough()
 const jobSchema = z.object({
   status: z.enum(["running", "completed", "completed_with_warning", "failed", "paused"]),

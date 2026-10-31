@@ -220,7 +220,7 @@ const timelineSchema = z.object({
         renderer: z.enum(["ffmpeg", "remotion", "blender"]).default("ffmpeg"),
         template: z.string().min(1).optional(),
         assets: z.array(z.string().min(1)).default([]),
-        params: z.record(z.unknown()).default({}),
+        params: z.record(z.string(), z.unknown()).default({}),
         image: z.string().min(1).optional(),
         images: z.array(z.string().min(1)).optional(),
         background: z.string().min(1).optional(),

@@ -37,7 +37,7 @@ const recipeSchema = z.object({
     moods: z.array(z.string()).optional(),
     energy: z.string().optional(),
   }).optional(),
-  looks: z.record(z.object({ layout: z.string() }).passthrough()).optional(),
+  looks: z.record(z.string(), z.object({ layout: z.string() }).passthrough()).optional(),
   scenes: z.array(z.object({
     layout: z.string().optional(),
     look: z.string().optional(),
@@ -49,14 +49,14 @@ const recipeSchema = z.object({
   source: z.object({ notes: z.string().optional() }).optional(),
   storyArc: z.object({ sequence: z.array(z.string()).optional() }).optional(),
   defaults: z.object({
-    palette: z.record(z.string()).optional(),
-    fonts: z.record(z.string()).optional(),
+    palette: z.record(z.string(), z.string()).optional(),
+    fonts: z.record(z.string(), z.string()).optional(),
   }).optional(),
 }).passthrough()
 
 const librarySchema = z.object({
   designTokens: z.object({
-    themes: z.record(z.object({
+    themes: z.record(z.string(), z.object({
       background: z.string().optional(),
       palette: z.object({ accent: z.string().optional() }).passthrough().optional(),
     }).passthrough()),
@@ -87,8 +87,8 @@ export const recipeSummarySchema = z.object({
   moods: z.array(z.string()),
   energy: z.string().nullable(),
   storyArc: z.array(z.string()),
-  palette: z.record(z.string()),
-  fonts: z.record(z.string()),
+  palette: z.record(z.string(), z.string()),
+  fonts: z.record(z.string(), z.string()),
   sceneCount: z.number().int().nonnegative(),
   signatureCount: z.number().int().nonnegative(),
   layoutCount: z.number().int().nonnegative(),

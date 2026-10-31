@@ -63,7 +63,7 @@ export const projectSummarySchema = z.object({
   error: z.string().nullable(),
   warnings: z.array(z.object({ code: z.string(), message: z.string() }).passthrough()).optional(),
   manuallyCompleted: z.boolean(),
-  phases: z.record(phaseStatusSchema),
+  phases: z.record(z.string(), phaseStatusSchema),
   // null = pre-existing project directory with no recorded owner (created
   // before multi-tenant support); such projects are invisible through the
   // owner-scoped API but remain readable by id for internal/CLI use.

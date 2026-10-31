@@ -70,7 +70,7 @@ const projectManifestSchema = z.object({
 }).passthrough()
 
 export const startJobInputSchema = z.object({
-  mode: z.literal("render").default("render"),
+  mode: z.literal("render", { error: (issue) => `Only "render" jobs can be started, not ${JSON.stringify(issue.input)}` }).default("render"),
   resume: z.boolean().default(true),
   deliver: z.boolean().default(false),
   acceptMusicMismatch: z.boolean().default(false),

@@ -15,7 +15,7 @@ const imageLayerSchema = z.object({ type: z.literal("image"), path: z.string().m
 const slideSchema = z.object({
   id: z.string().min(1), duration: z.number().positive(), effect: z.string().min(1), renderer: z.string().optional(), template: z.string().optional(),
   transition: z.object({ type: z.string(), duration: z.number().nonnegative() }), captions: z.array(z.object({ text: z.string() }).passthrough()),
-  image: z.string().optional(), images: z.array(z.string()).optional(), assets: z.array(z.string()).optional(), layers: z.array(z.record(z.unknown())).optional(),
+  image: z.string().optional(), images: z.array(z.string()).optional(), assets: z.array(z.string()).optional(), layers: z.array(z.record(z.string(), z.unknown())).optional(),
 }).passthrough()
 const timelineSchema = z.object({
   project: z.object({ name: z.string(), width: z.number(), height: z.number(), fps: z.number() }).passthrough(),
