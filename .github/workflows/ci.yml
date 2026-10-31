@@ -26,4 +26,5 @@ jobs:
       # (and to the public API) without opening the log.
       - name: Surface failures
         if: failure()
-        run: grep -E "^not ok|error TS|^npm error|^\s+error: " check.log | head -20 | sed 's/^/::error::/' || true
+        run: |
+          grep -E "^not ok|error TS|^npm error|^\s+error: " check.log | head -20 | sed 's/^/::error::/' || true
