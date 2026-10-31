@@ -21,7 +21,9 @@ function card(dir, { surround, c0, c1, size = [620, 500], at = [650, 290] }) {
     // assertion below then failed inside the full suite and passed when the file ran
     // alone, which reads like a load problem and is not one. The asset generators
     // (generateMasks / generateLightLeaks / generateAdvancedAssets) already seed theirs.
-    "-f", "lavfi", "-i", `gradients=s=${size[0]}x${size[1]}:c0=${c0}:c1=${c1}:seed=7:speed=0:d=1:r=30`,
+    // speed is the floor FFmpeg 6.x accepts (1e-5); 0 is only legal from 7.0 on, and CI's
+    // Ubuntu ffmpeg is 6.1. Over one second it turns the gradient by nothing measurable.
+    "-f", "lavfi", "-i", `gradients=s=${size[0]}x${size[1]}:c0=${c0}:c1=${c1}:seed=7:speed=0.00001:d=1:r=30`,
     // A full second of frames, not one: qaClip samples the MIDDLE of the scene, and a
     // single-frame file has nothing to seek to at 0.5s.
     "-filter_complex", `[0:v][1:v]overlay=x=${at[0]}:y=${at[1]},format=yuv420p[v]`,
