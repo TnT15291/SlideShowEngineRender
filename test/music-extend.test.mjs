@@ -43,8 +43,17 @@ function build(template, photoCount, musicPath, extra) {
   const photosPath = path.join(dir, "photos.json");
   const outPath = path.join(dir, "tl.json");
   fs.writeFileSync(photosPath, JSON.stringify({ photos: buildPhotoFixture(photoCount) }));
+  // Its own analysis dir, seeded with each track's real analysis: applyStoryTemplate writes
+  // photo-assignment.json and friends there, and the default is the repo's real analysis/.
+  const analysisDir = path.join(dir, "analysis");
+  fs.mkdirSync(path.join(analysisDir, "music"), { recursive: true });
+  const extraTracks = (extra || []).filter((_, i, all) => all[i - 1] === "--extra-music");
+  for (const track of [musicPath, ...extraTracks]) {
+    const file = `${path.basename(track).replace(/\.[^.]+$/, "")}.json`;
+    fs.copyFileSync(path.join(root, "analysis", "music", file), path.join(analysisDir, "music", file));
+  }
   const args = ["scripts/applyStoryTemplate.mjs", "--template", template, "--photos", photosPath,
-    "--music", musicPath, "--out", outPath, "--accept-misfit", ...(extra || [])];
+    "--music", musicPath, "--analysis-dir", analysisDir, "--out", outPath, "--accept-misfit", ...(extra || [])];
   const r = spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
   const out = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, "utf8")) : null;
   fs.rmSync(dir, { recursive: true, force: true });
@@ -122,7 +131,8 @@ test("an extended film still passes the engine's own validator", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "music-extend-dry-"));
   const tlPath = path.join(dir, "tl.json");
   fs.writeFileSync(tlPath, JSON.stringify(out));
-  const r = spawnSync(process.execPath, ["--import", "tsx", "src/index.ts", "--timeline", tlPath, "--dry-run"], { cwd: root, encoding: "utf8" });
+  // --job-dir keeps the dry run's temp/ and logs/ in the scratch dir instead of the repo's.
+  const r = spawnSync(process.execPath, ["--import", "tsx", "src/index.ts", "--timeline", tlPath, "--job-dir", dir, "--dry-run"], { cwd: root, encoding: "utf8" });
   fs.rmSync(dir, { recursive: true, force: true });
   assert.equal(r.status, 0, (r.stdout || "") + (r.stderr || ""));
 });

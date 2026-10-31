@@ -549,12 +549,13 @@ test("every recipe's authored copy is Vietnamese", () => {
 // three things that each used to leak English or drop a track.
 test("a two-song Vietnamese job keeps both tracks and puts no English on screen", (t) => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), "multisong-vi-"));
-  const names = [`multisong-a-${process.pid}-${Date.now()}`, `multisong-b-${process.pid}-${Date.now()}`];
-  const analyses = names.map((name) => path.join(root, "analysis", "music", `${name}.json`));
-  t.after(() => {
-    fs.rmSync(temp, { recursive: true, force: true });
-    for (const file of analyses) fs.rmSync(file, { force: true });
-  });
+  t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
+  // Its own analysis dir: applyStoryTemplate writes photo-assignment.json and friends there,
+  // and the default is the repo's real analysis/.
+  const analysisDir = path.join(temp, "analysis");
+  fs.mkdirSync(path.join(analysisDir, "music"), { recursive: true });
+  const names = ["multisong-a", "multisong-b"];
+  const analyses = names.map((name) => path.join(analysisDir, "music", `${name}.json`));
 
   const durations = [190, 255];
   analyses.forEach((file, index) => fs.writeFileSync(file, JSON.stringify({
@@ -584,6 +585,7 @@ test("a two-song Vietnamese job keeps both tracks and puts no English on screen"
     "--photos", photosPath,
     "--music", `music/${names[0]}.mp3`,
     "--extra-music", `music/${names[1]}.mp3`,
+    "--analysis-dir", analysisDir,
     "--out", outPath,
     "--language", "vi",
     "--music-mode", "full_song",

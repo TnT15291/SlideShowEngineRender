@@ -31,12 +31,13 @@ test("shot-list sizing preserves a montage's fixed photo-count contract", () => 
 
 test("repeatable template scenes scale with photos and music", (t) => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), "template-scaling-"));
-  const musicName = `template-scaling-${process.pid}-${Date.now()}`;
-  const musicAnalysis = path.join(root, "analysis", "music", `${musicName}.json`);
-  t.after(() => {
-    fs.rmSync(temp, { recursive: true, force: true });
-    fs.rmSync(musicAnalysis, { force: true });
-  });
+  t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
+  // Its own analysis dir: applyStoryTemplate writes photo-assignment.json and friends there,
+  // and the default is the repo's real analysis/.
+  const analysisDir = path.join(temp, "analysis");
+  fs.mkdirSync(path.join(analysisDir, "music"), { recursive: true });
+  const musicName = "template-scaling";
+  const musicAnalysis = path.join(analysisDir, "music", `${musicName}.json`);
 
   const photosPath = path.join(temp, "photos.json");
   const outPath = path.join(temp, "timeline.json");
@@ -58,6 +59,7 @@ test("repeatable template scenes scale with photos and music", (t) => {
     "--template", "story-templates/warm-film-01.json",
     "--photos", photosPath,
     "--music", `music/${musicName}.mp3`,
+    "--analysis-dir", analysisDir,
     "--out", outPath,
     // This fixture's film covers 82% of its own 150s track, so applyStoryTemplate now
     // refuses to write it. That refusal is correct and is NOT what this test is about:
